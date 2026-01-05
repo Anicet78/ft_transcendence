@@ -1,0 +1,62 @@
+services:
+  nginx:
+    build:
+      context: ./requirements/nginx
+      dockerfile: Dockerfile
+    container_name: nginx-c
+    restart: on-failure
+    ports:
+      - 443:443
+    volumes:
+      - postgres:/var/lib/
+    env_file:
+      - .env
+    depends_on:
+      - wordpress
+    networks:
+      - inception
+
+  backup:
+    build:
+      context: ./requirements/backup
+      dockerfile: Dockerfile
+    container_name: backup-c
+    restart: on-failure
+    env_file:
+      - .env
+    secrets:
+      - db_password
+    depends_on:
+      - mariadb
+      - wordpress
+    networks:
+      - inception
+
+  postgres:
+    build:
+      context: ./Postgres
+      dockerfile: Dockerfile
+    container_name: postgres-c
+    restart: on-failure
+    volumes:
+      -
+    env_file:
+      - .env
+    secrets:
+      - db_root_password
+      - db_password
+    networks:
+      - inception
+
+secrets:
+  db_root_password:
+    file: ./secrets/db_root_password.txt
+  db_password:
+    file: ./secrets/db_password.txt
+
+volumes:
+  postgres:
+
+networks:
+  inception:
+    driver: bridge
