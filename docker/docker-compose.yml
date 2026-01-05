@@ -1,62 +1,58 @@
 services:
+  db:
+    image: postgres
+    container_name: postgre-c
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - postgres-v:/var/lib/postgresql
+    networks:
+      - transcendence
+
   nginx:
-    build:
-      context: ./requirements/nginx
-      dockerfile: Dockerfile
+    image: nginx
     container_name: nginx-c
-    restart: on-failure
+    restart: always
     ports:
-      - 443:443
+      - 8080:80
+      - 8443:443
+    env_file:
+      - .env
     volumes:
-      - postgres:/var/lib/
-    env_file:
-      - .env
-    depends_on:
-      - wordpress
+      - ./nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./certs:/etc/nginx/certs
     networks:
-      - inception
+      - transcendence
 
-  backup:
-    build:
-      context: ./requirements/backup
-      dockerfile: Dockerfile
-    container_name: backup-c
-    restart: on-failure
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-c
+    restart: always
+    ports:
+      - 5050:80
     env_file:
       - .env
+    environment:
+      - PGADMIN_DEFAULT_PASSWORD_FILE=/run/secrets/pgadmin_password
     secrets:
-      - db_password
+      - pgadmin_password
     depends_on:
-      - mariadb
-      - wordpress
-    networks:
-      - inception
-
-  postgres:
-    build:
-      context: ./Postgres
-      dockerfile: Dockerfile
-    container_name: postgres-c
-    restart: on-failure
-    volumes:
-      -
-    env_file:
-      - .env
-    secrets:
-      - db_root_password
-      - db_password
-    networks:
-      - inception
+      - db
 
 secrets:
-  db_root_password:
-    file: ./secrets/db_root_password.txt
   db_password:
     file: ./secrets/db_password.txt
+  pgadmin_password:
+    file: ./secrets/pgadmin_password.txt
 
 volumes:
-  postgres:
+  postgres-v:
 
 networks:
-  inception:
+  transcendence:
     driver: bridge

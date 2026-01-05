@@ -1,2 +1,8 @@
 # VS Code
 .vscode
+
+# Secrets
+docker/secrets
+
+# Certificate
+docker/certs
