@@ -41,6 +41,8 @@ services:
       - PGADMIN_DEFAULT_PASSWORD_FILE=/run/secrets/pgadmin_password
     secrets:
       - pgadmin_password
+    networks:
+      - transcendence
     depends_on:
       - db
 
