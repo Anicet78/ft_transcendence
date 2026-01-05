@@ -16,4 +16,7 @@ enum KeyPressSurfaces {
 	KEY_PRESS_SURFACE_TOTAL
 };
 
+int	init_sdl(SDL_Window *window, SDL_Surface **keySurfaces);
+int mainloop(SDL_Window *window, SDL_Surface **keySurfaces);
+
 #endif

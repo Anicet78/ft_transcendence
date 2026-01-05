@@ -71,72 +71,64 @@ void    free_surfaces(SDL_Surface **surf) {
     return ;
 }
 
-int main(int argc, char* argv[])
+int	init_sdl(SDL_Window *window, SDL_Surface **keySurfaces)
 {
+	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+		std::cerr << "SDL_Init error: " << SDL_GetError() << std::endl;
+		return (0);
+	}
 
-    SDL_Surface *keySurfaces[KEY_PRESS_SURFACE_TOTAL];
+	window = SDL_CreateWindow("Ma fenetre SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
+	if (!window) {
+		std::cerr << "Window error: " << SDL_GetError() << std::endl;
+		SDL_Quit();
+		return (0);
+	}
 
-    // Init SDL
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        std::cerr << "SDL_Init error: " << SDL_GetError() << std::endl;
-        return 1;
-    }
+	SDL_Surface *surf = SDL_GetWindowSurface(window);
 
-    // Créer la fenêtre
-    SDL_Window* window = SDL_CreateWindow("Ma fenetre SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
-    if (!window) {
-        std::cerr << "Window error: " << SDL_GetError() << std::endl;
-        SDL_Quit();
-        return 1;
-    }
+	if (loadMedia(keySurfaces, surf) == false)
+		std::cerr << "BIG ERROR OMG" << std::endl;
+	return (1);
+}
 
-    SDL_Surface *surf = SDL_GetWindowSurface(window);
+int mainloop(SDL_Window *window, SDL_Surface **keySurfaces)
+{
+	SDL_Surface *surf = SDL_GetWindowSurface(window);
 
-    SDL_Surface *image;
-
-    if (loadMedia(keySurfaces, surf) == false)
-        std::cerr << "BIG ERROR OMG" << std::endl;
-	//-----------------------------------
-    // Boucle principale
-    bool running = true;
-    SDL_Event event;
-    while (running) {
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                running = false;
-            }
-            else if (event.type == SDL_KEYDOWN)
-            {
-                SDL_FillRect(surf, NULL, SDL_MapRGB(surf->format, 0xFF, 0xFF, 0xFF));
-                switch (event.key.keysym.sym)
-                {
-                    case SDLK_UP:
-                        image = keySurfaces[KEY_PRESS_SURFACE_UP];
-                        break;
-                    case SDLK_LEFT:
-                        image = keySurfaces[KEY_PRESS_SURFACE_LEFT];
-                        break;
-                    case SDLK_RIGHT:
-                        image = keySurfaces[KEY_PRESS_SURFACE_RIGHT];
-                        break;
-                    case SDLK_DOWN:
-                        image = keySurfaces[KEY_PRESS_SURFACE_DOWN];
-                        break;
-                    default:
-                        image = keySurfaces[KEY_PRESS_SURFACE_DEFAULT];
-                        break;
-                }
-                SDL_BlitSurface(image, NULL, surf, 0);
-            }
-        }
-        SDL_UpdateWindowSurface(window);
-    }
-	//-----------------------------------
-
-
-    // Cleanup
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-
-    return 0;
+	bool running = true;
+	SDL_Event event;
+	while (running) {
+		while (SDL_PollEvent(&event)) {
+			if (event.type == SDL_QUIT) {
+				running = false;
+			}
+			else if (event.type == SDL_KEYDOWN)
+			{
+				SDL_FillRect(surf, NULL, SDL_MapRGB(surf->format, 0xFF, 0xFF, 0xFF));
+				SDL_Surface *image;
+				switch (event.key.keysym.sym)
+				{
+					case SDLK_UP:
+						image = keySurfaces[KEY_PRESS_SURFACE_UP];
+						break;
+					case SDLK_LEFT:
+						image = keySurfaces[KEY_PRESS_SURFACE_LEFT];
+						break;
+					case SDLK_RIGHT:
+						image = keySurfaces[KEY_PRESS_SURFACE_RIGHT];
+						break;
+					case SDLK_DOWN:
+						image = keySurfaces[KEY_PRESS_SURFACE_DOWN];
+						break;
+					default:
+						image = keySurfaces[KEY_PRESS_SURFACE_DEFAULT];
+						break;
+				}
+				SDL_BlitSurface(image, NULL, surf, 0);
+			}
+		}
+		SDL_UpdateWindowSurface(window);
+	}
+	return 0;
 }
