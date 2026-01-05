@@ -9,5 +9,10 @@
 # include <ctime>
 # include <memory>
 # include <vector>
+# include <map>
+# include <sys/types.h>
+# include <dirent.h>
+# include <exception>
+# include <fstream>
 
 #endif
