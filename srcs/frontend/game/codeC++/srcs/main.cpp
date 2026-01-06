@@ -2,7 +2,8 @@
 
 int main()
 {
-	Map floor0(30, 30);
+	Map floor0(5, 5);
+	srand(time(0));
 	try
 	{
 		Room::importRooms();
@@ -13,13 +14,13 @@ int main()
 	}
 	
 	quadList row = floor0.getHead();
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		quadList col = row;
-		for (int j = 0; j < 30; j++)
+		for (int j = 0; j < 5; j++)
 		{
 			if (col->getRoom())
-				std::cout << col->getRoom()->getSize();
+				std::cout << col->getRoom()->getWidth();
 			else
 				std::cout << '.';
 			std::cout << ' ';
@@ -29,5 +30,9 @@ int main()
 		row = row->_south.lock();
 	}
 	
+	auto f0 = Room::getFloor0();
+
+	Room r1 = *f0.at("l").get();
+	std::cout << r1 << std::endl;
 	return 0;
 }
