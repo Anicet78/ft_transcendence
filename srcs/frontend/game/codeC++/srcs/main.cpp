@@ -1,18 +1,19 @@
 #include"game_sdl.hpp"
 
-
+Engine gSdl;
 
 int main(void) {
-	SDL_Surface	*keySurfaces[KEY_PRESS_SURFACE_TOTAL];
-	SDL_Window	*window = NULL;
+	SDL_Texture	*keyTextures[KEY_PRESS_SURFACE_TOTAL];
+	// Engine gSdl;
 
-	if (!init_sdl(window, keySurfaces)) {
+	if (!init_sdl(gSdl)) {
 		std::cerr << "Error in sdl init" << std::endl;
 		return (1);
 	}
-	if (!mainloop(window, keySurfaces)) {
-		SDL_DestroyWindow(window);
-		SDL_Quit();
-	}
+	// if (!init_surfaces(keyTextures, gSdl)) {
+	// 	std::cerr << "Error in surfaces init" << std::endl;
+	// 	return (1);
+	// }
+	mainloop(gSdl, keyTextures);
 	return (0);
 }

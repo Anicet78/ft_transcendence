@@ -6,6 +6,13 @@
 # include <memory>
 # include <vector>
 # include <fstream>
+# include "Engine.hpp"
+# include "Texture.hpp"
+
+# define SCREEN_WIDTH 800
+# define SCREEN_HEIGHT 600
+
+class Engine;
 
 enum KeyPressSurfaces {
 	KEY_PRESS_SURFACE_DEFAULT,
@@ -16,7 +23,12 @@ enum KeyPressSurfaces {
 	KEY_PRESS_SURFACE_TOTAL
 };
 
-int	init_sdl(SDL_Window *window, SDL_Surface **keySurfaces);
-int mainloop(SDL_Window *window, SDL_Surface **keySurfaces);
+extern Engine gSdl;
+
+int	init_sdl(Engine &gSdl);
+int init_surfaces(SDL_Texture **keySurfaces, Engine &sdl);
+int mainloop(Engine &sdl, SDL_Texture **keySurfaces);
+SDL_Texture *loadTexture(std::string path, Engine &sdl);
+bool loadMedia(SDL_Texture **keySurfaces, Engine &sdl);
 
 #endif
