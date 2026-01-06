@@ -13,21 +13,8 @@ Room &Room::operator=(Room const &rhs)
 	this->_name = rhs._name;
 	this->_height = rhs._height;
 	this->_width = rhs._width;
-	if (!rhs._roomPlan.empty())
-	{
-		int num = rand() % 4;
-		if (num == 1)
-			turnMapLeft(this->_roomPlan, rhs._roomPlan, rhs._width);
-		else if (num == 2)
-			turnMapRight(this->_roomPlan, rhs._roomPlan, rhs._width);
-		else if (num == 3)
-			turnMapUpDown(this->_roomPlan, rhs._roomPlan);
-		else
-			this->_roomPlan = rhs._roomPlan;
-		this->identifyExits();
-	}
-	else
-		this->_exits = rhs._exits;
+	this->_exits = rhs._exits;
+	this->_roomPlan = rhs._roomPlan;
 	return *this;
 }
 
@@ -41,23 +28,9 @@ Room::Room(void)
 	this->_name = "Empty";
 }
 
-Room::Room(Room const &rhs): _width(rhs._width), _height(rhs._height), _exits(rhs._exits), _name(rhs._name)
-{
-	if (!rhs._roomPlan.empty())
-	{
-		this->_exits = {0, 0, 0, 0};
-		int num = rand() % 4;
-		if (num == 1)
-			turnMapLeft(this->_roomPlan, rhs._roomPlan, rhs._width);
-		else if (num == 2)
-			turnMapRight(this->_roomPlan, rhs._roomPlan, rhs._width);
-		else if (num == 3)
-			turnMapUpDown(this->_roomPlan, rhs._roomPlan);
-		else
-			this->_roomPlan = rhs._roomPlan;
-		this->identifyExits();
-	}
-}
+Room::Room(Room const &rhs): _width(rhs._width), _height(rhs._height),
+				_exits(rhs._exits), _name(rhs._name), _roomPlan(rhs._roomPlan)
+{}
 
 Room::~Room()
 {}
@@ -84,13 +57,42 @@ std::vector<std::string> Room::getRoomPlan() const
 	return this->_roomPlan;
 }
 
-std::array<int, 4> Room::getExits() const
+std::array<bool, 4> Room::getExits() const
 {
 	return this->_exits;
 }
 
+void Room::updateSize()
+{
+	int nWidth = 0, nHeight = 0;
+
+	for (auto &line : this->_roomPlan)
+	{
+		nHeight++;
+		if (nWidth < static_cast<int>(line.size()))
+			nWidth = line.size();
+	}
+	this->_width = nWidth;
+	this->_height = nHeight;
+}
+
+void Room::randomizeRoom()
+{
+	if (this->_roomPlan.empty())
+		return ;
+	this->_exits = {0, 0, 0, 0};
+	int num = rand() % 4;
+	if (num == 1)
+		this->turnMapLeft();
+	else if (num == 2)
+		this->turnMapRight();
+	else if (num == 3)
+		this->turnMapUpDown();
+}
+
 void Room::identifyExits()
 {
+	_exits = {0, 0, 0, 0};
     for (size_t i = 0; i < _roomPlan.size(); ++i)
     {
         const std::string& line = _roomPlan[i];
@@ -119,15 +121,14 @@ void Room::identifyExits()
 }
 
 
-void Room::turnMapLeft(std::vector<std::string> &dest,
-                       const std::vector<std::string> &src,
-                       int width)
+void Room::turnMapLeft()
 {
-	dest.clear();
+	auto src = this->_roomPlan;
+	this->_roomPlan.clear();
 
 	int height = src.size();
 
-	for (int x = width - 1; x >= 0; x--)
+	for (int x = _width - 1; x >= 0; x--)
 	{
 		std::string line;
 		for (int y = 0; y < height; y++)
@@ -137,19 +138,20 @@ void Room::turnMapLeft(std::vector<std::string> &dest,
 			else
 				line += ' ';
 		}
-		dest.push_back(line);
+		this->_roomPlan.push_back(line);
 	}
+	this->updateSize();
+	this->identifyExits();
 }
 
-void Room::turnMapRight(std::vector<std::string> &dest,
-                       const std::vector<std::string> &src,
-                       int width)
+void Room::turnMapRight()
 {
-	dest.clear();
+	auto src = this->_roomPlan;
+	this->_roomPlan.clear();
 
 	int height = src.size();
 
-	for (int x = 0; x < width; x++)
+	for (int x = 0; x < _width; x++)
 	{
 		std::string line;
 		for (int y = height - 1; y >= 0; y--)
@@ -159,14 +161,21 @@ void Room::turnMapRight(std::vector<std::string> &dest,
 			else
 				line += ' ';
 		}
-		dest.push_back(line);
+		this->_roomPlan.push_back(line);
 	}
+	this->updateSize();
+	this->identifyExits();
 }
 
-void	Room::turnMapUpDown(std::vector<std::string> &dest, const std::vector<std::string> &src)
+void	Room::turnMapUpDown(void)
 {
+	auto src = this->_roomPlan;
+	this->_roomPlan.clear();
+
 	for (int i = src.size() - 1; i >= 0; i--)
-		dest.push_back(src[i]);
+		this->_roomPlan.push_back(src[i]);
+	this->updateSize();
+	this->identifyExits();
 }
 
 std::map<std::string, std::shared_ptr<Room>> Room::getFloor0()
@@ -224,8 +233,8 @@ void Room::importRooms()
 	}
 	closedir(dir);
 
-	for (auto &pair : _RoomsF0)
-		std::cout << *pair.second.get() << std::endl;
+	// for (auto &room : _RoomsF0)
+	// 	std::cout << *room.second.get() << std::endl;
 }
 
 std::ostream &operator<<(std::ostream &o, Room const &obj)

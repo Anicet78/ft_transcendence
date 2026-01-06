@@ -1,8 +1,31 @@
 #include "Map.hpp"
 
+void printRooms(Map &map)
+{
+	auto nodes = map.getNodes();
+    for (int y = 0; y < 100; y++)
+    {
+        for (int x = 0; x < 100; x++)
+        {
+            auto node = nodes[y * 100 + x];
+            if (!node->getRoom()) continue;
+
+            auto room = node->getRoom();
+            auto exits = room->getExits();
+            std::cout << "Room at (" << x << "," << y << "): " 
+                      << room->getName() << " | "
+                      << "N=" << exits[0] << " E=" << exits[1] 
+                      << " S=" << exits[2] << " W=" << exits[3] 
+                      << std::endl;
+        }
+    }
+}
+
+
+
 int main()
 {
-	Map floor0(5, 5);
+	Map floor0(100, 100);
 	srand(time(0));
 	try
 	{
@@ -13,26 +36,23 @@ int main()
 		std::cerr << e.what() << '\n';
 	}
 	
-	quadList row = floor0.getHead();
-	for (int i = 0; i < 5; i++)
+	floor0.fillMap();
+
+	auto tab = floor0.getNodes();
+	for (int i = 0; i < 100; i++)
 	{
-		quadList col = row;
-		for (int j = 0; j < 5; j++)
+		for (int j = 0; j < 100; j++)
 		{
-			if (col->getRoom())
-				std::cout << col->getRoom()->getWidth();
+			if (tab[i * 100 + j]->getPath() == 1)
+				std::cout << 1;
+			else if (tab[i * 100 + j]->getPath() == 2)
+				std::cout << 2;
 			else
 				std::cout << '.';
 			std::cout << ' ';
-			col = col->_east.lock();
 		}
 		std::cout << '\n';
-		row = row->_south.lock();
 	}
-	
-	auto f0 = Room::getFloor0();
-
-	Room r1 = *f0.at("l").get();
-	std::cout << r1 << std::endl;
+	printRooms(floor0);
 	return 0;
 }
