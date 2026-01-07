@@ -1,30 +1,43 @@
-NAME = game
+CXX			= c++
+CXXFLAGS	= -Wall -Werror -Wextra -w -lSDL2 -Iincludes -std=c++20 -g
 
-CC = c++
-CFLAGS = -Wall -Wextra -Werror -std=c++20 -Iincludes -g
+HEADERS		= ./includes/
+SRC_DIR		= ./srcs/
+OBJ_DIR		= ./objs/
 
-SRC_DIR = srcs
-OBJ_DIR = obj
+CXXFLAGS += -I$(HEADERS)
 
-SRC_FILES = mapMain.cpp Room.cpp Map.cpp
+SRCS		=	main.cpp \
+				engine/sdl_loop.cpp \
+				engine/load_image.cpp \
+				engine/Engine.cpp \
+				engine/Texture.cpp \
+				engine/Key.cpp \
+				mapMain.cpp Room.cpp Map.cpp 
 
-OBJ_FILES = $(addprefix $(OBJ_DIR)/,$(SRC_FILES:.cpp=.o))
+OBJS		= $(patsubst %.cpp, $(OBJ_DIR)%.o, $(SRCS))
+DEPS		= $(OBJS:.o=.d)
+
+NAME		= feur
 
 all: $(NAME)
 
-$(NAME): $(OBJ_FILES)
-	$(CC) $(CFLAGS) $^ -o $@
+$(NAME): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+$(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	rm -rf $(OBJ_DIR)
 
 fclean: clean
-	rm -f $(NAME)
+	rm -rf $(NAME)
 
 re: fclean all
 
+-include $(DEPS)
+
 .PHONY: all clean fclean re
+
