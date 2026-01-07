@@ -12,13 +12,16 @@ private:
 public:
 	Texture(std::string path);
 	~Texture();
+	Texture(Texture const &src);
+	Texture	&operator=(Texture const &src);
 
 	void		render(void);
 	void		renderRect(int x, int y, SDL_Rect *rect);	//render the texture on screen
-	bool		loadImage(std::string &path);			//create the texture based on an image
-	int			getWidth(void);
-	int			getHeight(void);
+	bool		loadImage(std::string &path);				//create the texture based on an image
+	int			getW(void);
+	int			getH(void);
 	SDL_Texture	*getTexture(void);
+
 };
 
 

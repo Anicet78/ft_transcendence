@@ -1,8 +1,34 @@
 #include "Texture.hpp"
 
-Texture::Texture(std::string path) {
+Texture::Texture(std::string path) : _texture(NULL) {
 	loadImage(path);
 	return ;
+}
+
+Texture::Texture(Texture const &src) {
+	*this = src;
+	return ;
+}
+
+Texture	&Texture::operator=(Texture const &src) {
+	Uint32	format;
+	int access;
+	int w;
+	int h;
+
+	if (this == &src)
+		return (*this);
+	if (this->_texture != NULL)
+		SDL_DestroyTexture(_texture);
+	SDL_QueryTexture(src._texture, &format, &access, &w, &h);
+	this->_texture = SDL_CreateTexture(gSdl.renderer, format, SDL_TEXTUREACCESS_TARGET, w, h);
+	SDL_Texture* oldTarget = SDL_GetRenderTarget(gSdl.renderer);
+	SDL_SetRenderTarget(gSdl.renderer, this->_texture);
+	SDL_RenderCopy(gSdl.renderer, src._texture, NULL, NULL);
+	SDL_SetRenderTarget(gSdl.renderer, oldTarget);
+	this->_imageHeight = src._imageHeight;
+	this->_imageWidth = src._imageWidth;
+	return (*this);
 }
 
 Texture::~Texture(void) {
@@ -11,12 +37,16 @@ Texture::~Texture(void) {
 }
 
 bool	Texture::loadImage(std::string &path) {
+
+	// load BMP file into a surface
 	SDL_Surface *image = SDL_LoadBMP(path.c_str());
 	if (!image)
 	{
 		std::cerr << "Image " << path << " load failed ! " << "SDL Error: " << SDL_GetError() << std::endl;
 		return (0);
 	}
+	
+	//convert it into texture
 	SDL_Texture *texture = SDL_CreateTextureFromSurface(gSdl.renderer, image);
 	if (!texture)
 	{
@@ -26,6 +56,8 @@ bool	Texture::loadImage(std::string &path) {
 	_imageHeight = image->h;
 	_imageWidth = image->w;
 	_texture = texture;
+
+	//dont need surface anymore after conversion
 	SDL_FreeSurface(image);
 	return (1);
 }
@@ -50,11 +82,11 @@ void	Texture::renderRect(int x, int y, SDL_Rect *rect) {
 	SDL_RenderCopy(gSdl.renderer, _texture, rect, &renderRect);
 }
 
-int	Texture::getHeight(void) {
+int	Texture::getH(void) {
 	return (_imageHeight);
 }
 
-int	Texture::getWidth(void) {
+int	Texture::getW(void) {
 	return (_imageWidth);
 }
 
