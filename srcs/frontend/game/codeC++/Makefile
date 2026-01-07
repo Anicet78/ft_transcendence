@@ -1,5 +1,5 @@
 CXX			= c++
-CXXFLAGS	= -Wall -Werror -Wextra -w -lSDL2 -g
+CXXFLAGS	= -Wall -Werror -Wextra -w -lSDL2 -std=c++20 -g
 
 HEADERS		= ./includes/
 SRC_DIR		= ./srcs/
@@ -11,7 +11,8 @@ SRCS		=	main.cpp \
 				engine/sdl_loop.cpp \
 				engine/load_image.cpp \
 				engine/Engine.cpp \
-				engine/Texture.cpp
+				engine/Texture.cpp \
+				engine/Key.cpp
 
 OBJS		= $(patsubst %.cpp, $(OBJ_DIR)%.o, $(SRCS))
 DEPS		= $(OBJS:.o=.d)

@@ -13,7 +13,8 @@ public:
 	Texture(std::string path);
 	~Texture();
 
-	void		render(int x, int y, SDL_Rect *rect);	//render the texture on screen
+	void		render(void);
+	void		renderRect(int x, int y, SDL_Rect *rect);	//render the texture on screen
 	bool		loadImage(std::string &path);			//create the texture based on an image
 	int			getWidth(void);
 	int			getHeight(void);

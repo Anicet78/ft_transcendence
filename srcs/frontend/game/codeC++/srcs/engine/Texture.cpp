@@ -30,7 +30,16 @@ bool	Texture::loadImage(std::string &path) {
 	return (1);
 }
 
-void	Texture::render(int x, int y, SDL_Rect *rect) {
+
+//render the texture scaled to the window full size
+void	Texture::render(void) {
+	SDL_RenderCopy(gSdl.renderer, _texture, NULL, NULL);
+	return ;
+}
+
+
+//render a part of the texture on a precise spot x, y and use 'rect' to define the part of texture to take
+void	Texture::renderRect(int x, int y, SDL_Rect *rect) {
 
 	SDL_Rect	renderRect = {x, y, _imageWidth, _imageHeight};
 	if (rect != NULL)

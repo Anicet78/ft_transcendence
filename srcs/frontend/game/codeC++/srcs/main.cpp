@@ -14,6 +14,6 @@ int main(void) {
 	// 	std::cerr << "Error in surfaces init" << std::endl;
 	// 	return (1);
 	// }
-	mainloop(gSdl, keyTextures);
+	mainloop(gSdl);
 	return (0);
 }

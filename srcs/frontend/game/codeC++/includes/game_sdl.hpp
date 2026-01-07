@@ -6,6 +6,7 @@
 # include <memory>
 # include <vector>
 # include <fstream>
+# include "Key.hpp"
 # include "Engine.hpp"
 # include "Texture.hpp"
 
@@ -27,7 +28,8 @@ extern Engine gSdl;
 
 int	init_sdl(Engine &gSdl);
 int init_surfaces(SDL_Texture **keySurfaces, Engine &sdl);
-int mainloop(Engine &sdl, SDL_Texture **keySurfaces);
+// int mainloop(Engine &sdl, SDL_Texture **keySurfaces);
+int mainloop(Engine &sdl);
 SDL_Texture *loadTexture(std::string path, Engine &sdl);
 bool loadMedia(SDL_Texture **keySurfaces, Engine &sdl);
 
