@@ -18,7 +18,7 @@ SRCS		=	main.cpp \
 OBJS		= $(patsubst %.cpp, $(OBJ_DIR)%.o, $(SRCS))
 DEPS		= $(OBJS:.o=.d)
 
-NAME		= feur
+NAME		= game
 
 all: $(NAME)
 

@@ -3,11 +3,11 @@
 void printRooms(Map &map)
 {
 	auto nodes = map.getNodes();
-    for (int y = 0; y < 5; y++)
+    for (int y = 0; y < 7; y++)
     {
-        for (int x = 0; x < 5; x++)
+        for (int x = 0; x < 7; x++)
         {
-            auto node = nodes[y * 5 + x];
+            auto node = nodes[y * 7 + x];
             if (!node->getRoom()) continue;
 
             auto room = node->getRoom();
@@ -25,7 +25,7 @@ void printRooms(Map &map)
 
 int main()
 {
-	Map floor0(5, 5);
+	Map floor0(7, 7);
 	srand(time(0));
 	try
 	{
@@ -39,18 +39,22 @@ int main()
 	floor0.fillMap();
 
 	auto tab = floor0.getNodes();
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 7; i++)
 	{
-		for (int j = 0; j < 5; j++)
+		for (int j = 0; j < 7; j++)
 		{
-			if (tab[i * 5 + j]->getPath() == 1)
-				std::cout << 1;
-			else if (tab[i * 5 + j]->getPath() == 2)
-				std::cout << 2;
-			else if (tab[i * 5 + j]->getPath() == 3)
-				std::cout << 3;
+			if (tab[i * 7 + j]->getRoom() && tab[i * 7 + j]->getRoom()->getName() == "start")
+				std::cout << "P ";
+			else if (tab[i * 7 + j]->getRoom() && tab[i * 7 + j]->getRoom()->getName() == "stairs")
+				std::cout << "S ";
+			else if (tab[i * 7 + j]->getPath())
+			{
+				std::cout << tab[i * 7 + j]->getPath();
+				if (tab[i * 7 + j]->getPath() < 10)
+					std::cout << ' ';
+			}
 			else
-				std::cout << '.';
+				std::cout << ". ";
 			std::cout << ' ';
 		}
 		std::cout << '\n';

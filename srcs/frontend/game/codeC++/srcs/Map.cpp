@@ -216,25 +216,25 @@ static void chooseDirections(quadList &node, std::array<bool, 4> &directions)
 {
 	if (node.get()->north.expired() == false)
 	{
-		auto next = node.get()->north.lock();
+		quadList next = node.get()->north.lock();
 		if (next && next->getPath())
 			directions[0] = 1;
 	}
 	if (node.get()->east.expired() == false)
 	{
-		auto next = node.get()->east.lock();
+		quadList next = node.get()->east.lock();
 		if (next && next->getPath())
 			directions[1] = 1;
 	}
 	if (node.get()->south.expired() == false)
 	{
-		auto next = node.get()->south.lock();
+		quadList next = node.get()->south.lock();
 		if (next && next->getPath())
 			directions[2] = 1;
 	}
 	if (node.get()->west.expired() == false)
 	{
-		auto next = node.get()->west.lock();
+		quadList next = node.get()->west.lock();
 		if (next && next->getPath())
 			directions[3] = 1;
 	}
@@ -254,6 +254,11 @@ static void selectRoom(std::vector<Room> &candidates, std::array<bool, 4> &direc
 			for (i = 0; i < 4; i++)
 			{
 				if (directions[i] && !temp.getExits()[i])
+				{
+					flag = 1;
+					break ;
+				}
+				if (!directions[i] && temp.getExits()[i])
 				{
 					flag = 1;
 					break ;
@@ -304,61 +309,51 @@ void Map::fillMap(void)
 	}
 	tmp2->setPath(1);
 
-	for (auto &node : this->_nodes)
+	int count = 1, gen = 1;
+	while (count)
 	{
-		if (node->getPath() != 1)
-			continue ;
-		
-		std::vector<Room> candidates;
-		std::array<bool, 4> directions = {0, 0, 0, 0};
+		count = 0;
 	
-		if (!node->getRoom())
+		for (auto &node : this->_nodes)
 		{
-			chooseDirections(node, directions);
-
-			selectRoom(candidates, directions);
-
-			if (candidates.empty())
+			if (node->getPath() != gen)
 				continue ;
-			int r = rand() % candidates.size();
-			node->addRoom(candidates[r]);
-		}
-		if (!node->north.expired() && !node->north.lock()->getPath())
-			node->north.lock()->setPath(2);
-		if (!node->east.expired() && !node->east.lock()->getPath())
-			node->east.lock()->setPath(2);
-		if (!node->south.expired() && !node->south.lock()->getPath())
-			node->south.lock()->setPath(2);
-		if (!node->west.expired() && !node->west.lock()->getPath())
-			node->west.lock()->setPath(2);
-	}
-
-	for (auto &node : this->_nodes)
-	{
-		if (node->getPath() != 2)
-			continue ;
+			
+			std::vector<Room> candidates;
+			std::array<bool, 4> directions = {0, 0, 0, 0};
 		
-		std::vector<Room> candidates;
-		std::array<bool, 4> directions = {0, 0, 0, 0};
-	
-		if (!node->getRoom())
-		{
-			chooseDirections(node, directions);
+			if (!node->getRoom())
+			{
+				chooseDirections(node, directions);
 
-			selectRoom(candidates, directions);
+				selectRoom(candidates, directions);
 
-			if (candidates.empty())
-				continue ;
-			int r = rand() % candidates.size();
-			node->addRoom(candidates[r]);
+				if (candidates.empty())
+					continue ;
+				int r = rand() % candidates.size();
+				node->addRoom(candidates[r]);
+			}
+			if (!node->north.expired() && !node->north.lock()->getPath())
+			{
+				node->north.lock()->setPath(gen + 1);
+				count++;
+			}
+			if (!node->east.expired() && !node->east.lock()->getPath())
+			{
+				node->east.lock()->setPath(gen + 1);
+				count++;
+			}
+			if (!node->south.expired() && !node->south.lock()->getPath())
+			{
+				node->south.lock()->setPath(gen + 1);
+				count++;
+			}
+			if (!node->west.expired() && !node->west.lock()->getPath())
+			{
+				node->west.lock()->setPath(gen + 1);
+				count++;
+			}
 		}
-		if (!node->north.expired() && !node->north.lock()->getPath())
-			node->north.lock()->setPath(3);
-		if (!node->east.expired() && !node->east.lock()->getPath())
-			node->east.lock()->setPath(3);
-		if (!node->south.expired() && !node->south.lock()->getPath())
-			node->south.lock()->setPath(3);
-		if (!node->west.expired() && !node->west.lock()->getPath())
-			node->west.lock()->setPath(3);
+		gen++;
 	}
 }
