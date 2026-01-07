@@ -7,7 +7,7 @@ int	init_sdl(Engine &gSdl)
 		return (0);
 	}
 
-	gSdl.window = SDL_CreateWindow("Ma fenetre SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
+	gSdl.window = SDL_CreateWindow("Ma fenetre SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 800, SDL_WINDOW_SHOWN);
 	if (!gSdl.window) {
 		std::cerr << "Window error: " << SDL_GetError() << std::endl;
 		SDL_Quit();
@@ -87,7 +87,8 @@ void	game_loop(void) {
 
 int mainloop(Engine &sdl)
 {
-	// Texture	text("../images/test.bmp");
+	Texture	text("../images/assets.bmp");
+	Texture::importAssets("../images/assets.bmp");
 	bool	running = true;
 	long	frame = 0;
 	while (running) {
@@ -97,9 +98,10 @@ int mainloop(Engine &sdl)
 				running = false;
 			else if (sdl.event.type == SDL_KEYDOWN)
 			{
-				// SDL_RenderClear(gSdl.renderer);
+				SDL_RenderClear(gSdl.renderer);
 				key_down();
-				// text.render();
+				SDL_Rect rect = {3 * 16, 0, 16, 16};
+				text.renderRect(0, 0, Texture::getRect(1));
 			}
 			else if (sdl.event.type == SDL_KEYUP)
 			{

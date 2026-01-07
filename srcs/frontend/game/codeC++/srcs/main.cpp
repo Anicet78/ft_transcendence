@@ -3,9 +3,17 @@
 Engine gSdl;
 
 int main(void) {
-	SDL_Texture	*keyTextures[KEY_PRESS_SURFACE_TOTAL];
-	// Engine gSdl;
+	try
+	{
+		Room::importRooms();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	gSdl.room = *Room::getFloor0()["cross"];
 
+	std::cout << gSdl.room << std::endl;
 	if (!init_sdl(gSdl)) {
 		std::cerr << "Error in sdl init" << std::endl;
 		return (1);

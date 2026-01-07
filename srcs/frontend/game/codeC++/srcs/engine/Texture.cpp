@@ -1,5 +1,7 @@
 #include "Texture.hpp"
 
+std::map<int, SDL_Rect> Texture::_assets;
+
 Texture::Texture(std::string path) : _texture(NULL) {
 	loadImage(path);
 	return ;
@@ -92,4 +94,45 @@ int	Texture::getW(void) {
 
 SDL_Texture	*Texture::getTexture(void) {
 	return (_texture);
+}
+
+void Texture::importAssets(std::string path) {
+	SDL_Surface *image = SDL_LoadBMP(path.c_str());
+	if (!image)
+	{
+		std::cerr << "Image " << path << " load failed ! " << "SDL Error: " << SDL_GetError() << std::endl;
+		return ;
+	}
+	
+	//convert it into texture
+	SDL_Texture *texture = SDL_CreateTextureFromSurface(gSdl.renderer, image);
+	if (!texture)
+	{
+		std::cerr << "Texture " << path << " conversion failed ! " << "SDL Error: " << SDL_GetError() << std::endl;
+		return ;
+	}
+
+	int width = image->w;
+	int height = image->h;
+	//dont need surface anymore after conversion
+	SDL_FreeSurface(image);
+
+	int y = 0;
+	int i = 0;
+	while (y * 16 < height)
+	{
+		int x = 0;
+		while (x * 16 < width)
+		{
+			SDL_Rect rect = {x * 16, y * 16, 16, 16};
+			_assets.emplace(i, rect);
+			i++;
+			x++;
+		}
+		y++;
+	}
+}
+
+SDL_Rect	*Texture::getRect(int index) {
+	return (&_assets[index]);
 }
