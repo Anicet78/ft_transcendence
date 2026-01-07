@@ -48,7 +48,7 @@ class Room
 		std::vector<std::string> getRoomPlan() const;
 		static std::map<std::string, std::shared_ptr<Room>> getFloor0();
 		static void importRooms();
-		void randomizeRoom();
+		void	randomizeRoom();
 		void	turnMapLeft(void);
 		void	turnMapRight(void);
 		void	turnMapUpDown(void);

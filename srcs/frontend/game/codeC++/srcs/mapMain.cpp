@@ -3,11 +3,11 @@
 void printRooms(Map &map)
 {
 	auto nodes = map.getNodes();
-    for (int y = 0; y < 100; y++)
+    for (int y = 0; y < 5; y++)
     {
-        for (int x = 0; x < 100; x++)
+        for (int x = 0; x < 5; x++)
         {
-            auto node = nodes[y * 100 + x];
+            auto node = nodes[y * 5 + x];
             if (!node->getRoom()) continue;
 
             auto room = node->getRoom();
@@ -25,7 +25,7 @@ void printRooms(Map &map)
 
 int main()
 {
-	Map floor0(100, 100);
+	Map floor0(5, 5);
 	srand(time(0));
 	try
 	{
@@ -39,20 +39,22 @@ int main()
 	floor0.fillMap();
 
 	auto tab = floor0.getNodes();
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 5; i++)
 	{
-		for (int j = 0; j < 100; j++)
+		for (int j = 0; j < 5; j++)
 		{
-			if (tab[i * 100 + j]->getPath() == 1)
+			if (tab[i * 5 + j]->getPath() == 1)
 				std::cout << 1;
-			else if (tab[i * 100 + j]->getPath() == 2)
+			else if (tab[i * 5 + j]->getPath() == 2)
 				std::cout << 2;
+			else if (tab[i * 5 + j]->getPath() == 3)
+				std::cout << 3;
 			else
 				std::cout << '.';
 			std::cout << ' ';
 		}
 		std::cout << '\n';
 	}
-	printRooms(floor0);
+	//printRooms(floor0);
 	return 0;
 }

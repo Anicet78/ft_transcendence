@@ -213,6 +213,7 @@ void Room::importMap(std::string mapName)
 	room->_width = maxWidth;
 	room->_height = maxHeight;
 	room->_name = mapName;
+	room->identifyExits();
 	_RoomsF0.emplace(mapName, room);
 }
 

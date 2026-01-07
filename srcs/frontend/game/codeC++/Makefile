@@ -6,7 +6,7 @@ CFLAGS = -Wall -Wextra -Werror -std=c++20 -Iincludes -g
 SRC_DIR = srcs
 OBJ_DIR = obj
 
-SRC_FILES = main.cpp Room.cpp Map.cpp
+SRC_FILES = mapMain.cpp Room.cpp Map.cpp
 
 OBJ_FILES = $(addprefix $(OBJ_DIR)/,$(SRC_FILES:.cpp=.o))
 
