@@ -16,6 +16,7 @@ SRCS		=	main.cpp \
 				engine/Engine.cpp \
 				engine/Texture.cpp \
 				engine/Key.cpp \
+				mapMain.cpp Room.cpp Map.cpp aStar.cpp mapGen/mapGen.cpp
 				Room.cpp Map.cpp
 
 EMSRCS		= $(patsubst %, $(SRC_DIR)%, $(SRCS))
@@ -23,7 +24,7 @@ EMSRCS		= $(patsubst %, $(SRC_DIR)%, $(SRCS))
 OBJS		= $(patsubst %.cpp, $(OBJ_DIR)%.o, $(SRCS))
 DEPS		= $(OBJS:.o=.d)
 
-NAME		= feur
+NAME		= game
 EMNAME		= /build/game.js
 
 all: $(NAME)
