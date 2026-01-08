@@ -1,18 +1,8 @@
 services:
-  emscripten:
-    image: emscripten/emsdk
-    container_name: emscripten-c
-    volumes:
-      - ../srcs/game:/src
-      - ../srcs/frontend/game:/build
-    networks:
-      - transcendence
-    entrypoint: ["make", "wasm"]
-
   db:
     image: postgres
     container_name: postgre-c
-    restart: always
+    restart: on-failure
     env_file:
       - .env
     environment:
@@ -44,7 +34,7 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin-c
-    restart: always
+    restart: on-failure
     ports:
       - 5050:80
     env_file:
@@ -57,6 +47,17 @@ services:
       - transcendence
     depends_on:
       - db
+
+  emscripten:
+    image: emscripten/emsdk
+    container_name: emscripten-c
+    volumes:
+      - ../srcs/game:/src
+      - ../srcs/frontend/game:/build
+    networks:
+      - transcendence
+    entrypoint: ["make", "wasm"]
+
 
 secrets:
   db_password:
