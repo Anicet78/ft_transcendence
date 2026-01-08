@@ -17,7 +17,6 @@ SRCS		=	main.cpp \
 				engine/Texture.cpp \
 				engine/Key.cpp \
 				mapMain.cpp Room.cpp Map.cpp aStar.cpp mapGen/mapGen.cpp
-				Room.cpp Map.cpp
 
 EMSRCS		= $(patsubst %, $(SRC_DIR)%, $(SRCS))
 
