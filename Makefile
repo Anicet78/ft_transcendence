@@ -2,7 +2,7 @@ NAME = transcendence
 DOMAIN = localhost
 
 COMPOSE_PATH = docker/docker-compose.yml
-DOCKER_COMPOSE = docker-compose -f $(COMPOSE_PATH) -p $(NAME)
+DOCKER_COMPOSE = docker compose -f $(COMPOSE_PATH) -p $(NAME)
 
 CERT_PATH = ./docker/certs
 
