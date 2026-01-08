@@ -40,12 +40,12 @@ CREATE TABLE user_role (
 
 	CONSTRAINT fk_role_receiver
 		FOREIGN KEY (attributed_to)
-		REFERENCES app_user(app_user_id)
+		REFERENCES app_user(app_user_id),
 		-- ON DELETE CASCADE,
 
 	CONSTRAINT fk_role_giver
 		FOREIGN KEY (attributed_by)
-		REFERENCES app_user(app_user_id)
+		REFERENCES app_user(app_user_id),
 		-- ON DELETE CASCADE,
 
 	CHECK ("role" IN ('guest', 'user', 'app_admin', 'banned_user'))
@@ -64,12 +64,12 @@ CREATE TABLE friendship (
 
 	CONSTRAINT fk_friendship_sender
 		FOREIGN KEY (sender_id)
-		REFERENCES app_user(app_user_id)
+		REFERENCES app_user(app_user_id),
 		-- ON DELETE CASCADE,
 
 	CONSTRAINT fk_friendship_receiver
 		FOREIGN KEY (receiver_id)
-		REFERENCES app_user(app_user_id)
+		REFERENCES app_user(app_user_id),
 		-- ON DELETE CASCADE,
 
 	CONSTRAINT chk_friendship_not_self
@@ -131,7 +131,7 @@ CREATE TABLE game_result (
 
 	CONSTRAINT fk_game_result_match
 		FOREIGN KEY (game_id)
-		REFERENCES game_session(session_id)
+		REFERENCES game_session(session_id),
 		-- ON DELETE CASCADE,
 
 	CONSTRAINT fk_game_result_user
@@ -169,7 +169,7 @@ CREATE TABLE chat_member (
 		PRIMARY KEY (chat_id, user_id),
 
 	FOREIGN KEY (chat_id)
-		REFERENCES chat(chat_id)
+		REFERENCES chat(chat_id),
 		-- ON DELETE CASCADE,
 
 	FOREIGN KEY (user_id)
@@ -187,12 +187,10 @@ CREATE TABLE private_chat (
 	deleted_at TIMESTAMP,
 
 	FOREIGN KEY (user1_id)
-		REFERENCES app_user(app_user_id)
+		REFERENCES app_user(app_user_id),
 
 	FOREIGN KEY (user2_id)
 		REFERENCES app_user(app_user_id)
-
-	UNIQUE (LEAST(user1_id, user2_id), GREATEST(user1_id, user2_id))
 );
 
 CREATE TYPE chat_role_type AS ENUM ('owner', 'admin', 'moderator', 'read_only');
@@ -211,11 +209,11 @@ CREATE TABLE chat_role (
 		PRIMARY KEY (chat_id, user_id, "role"),
 
 	FOREIGN KEY (user_id)
-		REFERENCES app_user(app_user_id)
+		REFERENCES app_user(app_user_id),
 		-- ON DELETE CASCADE,
 
 	FOREIGN KEY (chat_id)
-		REFERENCES chat(chat_id)
+		REFERENCES chat(chat_id),
 		-- ON DELETE CASCADE,
 
 	FOREIGN KEY (attributed_by)
@@ -238,11 +236,11 @@ CREATE TABLE chat_message (
 	moderated_by UUID,
 
 	FOREIGN KEY (chat_id)
-		REFERENCES chat(chat_id)
+		REFERENCES chat(chat_id),
 		-- ON DELETE CASCADE,
 
 	FOREIGN KEY (user_id)
-		REFERENCES app_user(app_user_id)
+		REFERENCES app_user(app_user_id),
 		-- ON DELETE SET NULL,
 
 	FOREIGN KEY (moderated_by)
@@ -263,11 +261,11 @@ CREATE TABLE chat_ban (
 	PRIMARY KEY (chat_id, user_id),
 
 	FOREIGN KEY (chat_id)
-		REFERENCES chat(chat_id)
+		REFERENCES chat(chat_id),
 		-- ON DELETE CASCADE,
 
 	FOREIGN KEY (user_id)
-		REFERENCES app_user(app_user_id)
+		REFERENCES app_user(app_user_id),
 		-- ON DELETE CASCADE,
 
 	FOREIGN KEY (banned_by)
