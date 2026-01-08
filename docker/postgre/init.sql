@@ -12,18 +12,43 @@ CREATE TABLE app_user (
 	avatar_url TEXT,
 
 	"availability" BOOLEAN NOT NULL DEFAULT false,
-	"role" VARCHAR(20) NOT NULL DEFAULT 'guest',
+	-- "role" VARCHAR(20) NOT NULL DEFAULT 'guest',
 	region VARCHAR(50),
 
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	deleted_at TIMESTAMP,
-	last_connected_at TIMESTAMP DEFAULT created_at,
+	last_connected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
 	CHECK (trim(first_name) <> ''),
 	CHECK (trim(last_name) <> ''),
 	CHECK (trim(username) <> ''),
-	CHECK (trim(mail_address) <> ''),
-	CHECK (role IN ('guest', 'user', 'app_admin', 'banned_user'))
+	CHECK (trim(mail_address) <> '')
+	-- CHECK ("role" IN ('guest', 'user', 'app_admin', 'banned_user'))
+);
+
+CREATE TABLE user_role (
+	user_role_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+	attributed_to UUID,
+	attributed_by UUID,
+
+	"role" VARCHAR(20) NOT NULL DEFAULT 'guest',
+
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	deleted_at TIMESTAMP,
+
+	CONSTRAINT fk_role_receiver
+		FOREIGN KEY (attributed_to)
+		REFERENCES app_user(app_user_id)
+		ON DELETE CASCADE,
+
+	CONSTRAINT fk_role_giver
+		FOREIGN KEY (attributed_by)
+		REFERENCES app_user(app_user_id)
+		ON DELETE CASCADE,
+
+	CHECK ("role" IN ('guest', 'user', 'app_admin', 'banned_user'))
 );
 
 CREATE TABLE friendship (
@@ -31,6 +56,8 @@ CREATE TABLE friendship (
 	receiver_id UUID,
 	"status" VARCHAR(10) NOT NULL DEFAULT 'waiting',
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	deleted_at TIMESTAMP,
 
 	CONSTRAINT friendship_id
 		PRIMARY KEY (sender_id, receiver_id),
@@ -46,13 +73,16 @@ CREATE TABLE friendship (
 		ON DELETE CASCADE,
 
 	CONSTRAINT chk_friendship_not_self
-		CHECK (sender_id <> receiver_id)
+		CHECK (sender_id <> receiver_id),
 	
-	CHECK (role IN ('waiting', 'accepted', 'rejected'))
+	CHECK ("status" IN ('waiting', 'accepted', 'rejected', 'deleted'))
 );
 
 CREATE TABLE game_profile (
 	game_profile_id UUID PRIMARY KEY,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	deleted_at TIMESTAMP,
 	total_games INT DEFAULT 0,
 	total_wins INT DEFAULT 0,
 	total_loses INT DEFAULT 0,
@@ -69,6 +99,9 @@ CREATE TABLE game_profile (
 
 CREATE TABLE game_session (
 	session_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	deleted_at TIMESTAMP,
 	map_name VARCHAR(100) NOT NULL,
 
 	started_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -84,6 +117,10 @@ CREATE TABLE game_result (
 	game_id UUID,
 	player_id UUID,
 
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	deleted_at TIMESTAMP,
+
 	completion_time INT, -- minutes ? seconds ?
 	ennemies_killed INT NOT NULL DEFAULT 0,
 	gained_xp INT NOT NULL DEFAULT 0,
@@ -92,77 +129,129 @@ CREATE TABLE game_result (
 	CONSTRAINT game_result_pk
 		PRIMARY KEY (game_id, player_id),
 
-    CONSTRAINT fk_game_result_match
-        FOREIGN KEY (game_id)
-        REFERENCES game_session(session_id)
-        ON DELETE CASCADE,
+	CONSTRAINT fk_game_result_match
+		FOREIGN KEY (game_id)
+		REFERENCES game_session(session_id)
+		ON DELETE CASCADE,
 
-    CONSTRAINT fk_game_result_user
-        FOREIGN KEY (player_id)
-        REFERENCES app_user(app_user_id)
-        ON DELETE CASCADE
+	CONSTRAINT fk_game_result_user
+		FOREIGN KEY (player_id)
+		REFERENCES app_user(app_user_id)
+		ON DELETE CASCADE
 );
 
--- CREATE TABLE chat (
--- 	chat_id
--- 	members
--- 	banned_users
--- 	type
--- 	creation_date
--- 	deletion_date
--- 	chat_history
--- 	state
--- 	moderators
--- 	read-only
--- );
+CREATE TABLE chat (
+	chat_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 
--- CREATE TABLE chat_history (
--- 	comment_id
--- 	comment
--- 	status
--- 	posted_by
--- 	posted_in
--- 	posting_date
--- 	deletion_date
--- 	moderated_by
--- );
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	deleted_at TIMESTAMP,
 
--- CREATE TABLE chat_member (
--- 	user_id
--- 	role
--- 	chat_id
--- 	role_assigned_at
--- 	joined_at
--- );
+	chat_type VARCHAR(20) NOT NULL DEFAULT 'private',
+	chat_name VARCHAR(255) NOT NULL,
+	-- chat_history
 
--- CREATE TABLE banlist (
--- 	ban_id
--- 	ban_type
--- 	banned_at
--- 	expires_at
--- 	reason
--- 	chat_id
--- 	banned_by
--- 	banned_person
--- );
+	CHECK (chat_type IN ('private', 'group'))
+);
 
+CREATE TABLE chat_member (
+	chat_id UUID,
+	user_id UUID,
 
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	deleted_at TIMESTAMP,
 
--- CREATE TABLE chat (
---     chat_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
---     name VARCHAR(100),
---     type VARCHAR(10) NOT NULL, -- private, group
---     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
--- );
+	joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	left_at TIMESTAMP,
 
--- CREATE TABLE chat_member (
---     chat_id UUID,
---     user_id UUID,
---     role VARCHAR(10) DEFAULT 'member',
---     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT chat_member_id
+		PRIMARY KEY (chat_id, user_id),
 
---     PRIMARY KEY (chat_id, user_id),
+	FOREIGN KEY (chat_id)
+		REFERENCES chat(chat_id)
+		ON DELETE CASCADE,
 
---     FOREIGN KEY (chat_id) REFERENCES chat(chat_id) ON DELETE CASCADE,
---     FOREIGN KEY (user_id) REFERENCES app_user(app_user_id) ON DELETE CASCADE
--- );
+	FOREIGN KEY (user_id)
+		REFERENCES app_user(app_user_id)
+		ON DELETE CASCADE
+);
+
+CREATE TYPE chat_role_type AS ENUM ('owner', 'admin', 'moderator', 'read_only');
+
+CREATE TABLE chat_role (
+	chat_id UUID,
+	user_id UUID,
+	"role" chat_role_type NOT NULL,
+
+	attributed_by UUID,
+	attributed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	modified_at TIMESTAMP,
+	deleted_at TIMESTAMP,
+
+	CONSTRAINT chat_role_id
+		PRIMARY KEY (chat_id, user_id, "role"),
+
+	FOREIGN KEY (user_id)
+		REFERENCES app_user(app_user_id)
+		ON DELETE CASCADE,
+
+	FOREIGN KEY (chat_id)
+		REFERENCES chat(chat_id)
+		ON DELETE CASCADE,
+
+	FOREIGN KEY (attributed_by)
+		REFERENCES app_user(app_user_id)
+);
+
+CREATE TYPE message_status AS ENUM ('posted', 'edited', 'deleted', 'moderated');
+
+CREATE TABLE chat_message (
+	message_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+	chat_id UUID NOT NULL,
+	user_id UUID NOT NULL,
+
+	content TEXT NOT NULL,
+	"status" message_status NOT NULL DEFAULT 'posted',
+
+	posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	edited_at TIMESTAMP,
+	deleted_at TIMESTAMP,
+	moderated_by UUID,
+
+	FOREIGN KEY (chat_id)
+		REFERENCES chat(chat_id)
+		ON DELETE CASCADE,
+
+	FOREIGN KEY (user_id)
+		REFERENCES app_user(app_user_id)
+		ON DELETE SET NULL,
+
+	FOREIGN KEY (moderated_by)
+		REFERENCES app_user(app_user_id)
+);
+
+CREATE TABLE chat_ban (
+	chat_id UUID,
+	user_id UUID,
+
+	banned_by UUID,
+	banned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	reason TEXT,
+	expires_at TIMESTAMP,
+	updated_at TIMESTAMP,
+	deleted_at TIMESTAMP,
+
+	PRIMARY KEY (chat_id, user_id),
+
+	FOREIGN KEY (chat_id)
+		REFERENCES chat(chat_id)
+		ON DELETE CASCADE,
+
+	FOREIGN KEY (user_id)
+		REFERENCES app_user(app_user_id)
+		ON DELETE CASCADE,
+
+	FOREIGN KEY (banned_by)
+		REFERENCES app_user(app_user_id)
+);
