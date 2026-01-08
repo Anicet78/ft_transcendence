@@ -11,11 +11,11 @@ Engine::~Engine(void) {
 	return ;
 }
 
-void	Engine::setTileSize(int tile_size) {
+void	Engine::setMapTileSize(int tile_size) {
 	_tile_size = tile_size;
 	return ;
 }
 
-int		Engine::getTileSize(void) {
+int		Engine::getMapTileSize(void) {
 	return (_tile_size);
 }

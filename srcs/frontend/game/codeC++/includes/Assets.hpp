@@ -6,10 +6,12 @@
 class Assets
 {
 private:
-	static std::map<int, SDL_Rect>	_assets;
-	static SDL_Texture				*_texture;
-	static int						_imgW;
-	static int						_imgH;
+//map param
+	static std::map<int, SDL_Rect>	_mapAssets;
+	static SDL_Texture				*_MapTexture;
+	static int						_MapImgW;
+	static int						_MapImgH;
+
 	Assets(void);
 	~Assets(void);
 public:
@@ -18,7 +20,7 @@ public:
 
 	// static SDL_Rect	*getAssets(int index);
 
-	static void		render(int x, int y, int index, int scale);
+	static void		rendMap(int x, int y, int index, int scale);
 	
 	enum AssetIndex {
 

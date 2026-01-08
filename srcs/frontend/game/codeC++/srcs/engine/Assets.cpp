@@ -1,16 +1,16 @@
 #include"Assets.hpp"
 
-std::map<int, SDL_Rect>	Assets::_assets;
-SDL_Texture				*Assets::_texture;
-int						Assets::_imgH;
-int						Assets::_imgW;
+std::map<int, SDL_Rect>	Assets::_mapAssets;
+SDL_Texture				*Assets::_MapTexture;
+int						Assets::_MapImgH;
+int						Assets::_MapImgW;
 
 Assets::Assets(void) {
 	return ;
 }
 
 Assets::~Assets(void) {
-	SDL_DestroyTexture(_texture);
+	SDL_DestroyTexture(_MapTexture);
 	return ;
 }
 
@@ -26,8 +26,8 @@ void Assets::importAssets(std::string path, int tile_size) {
 	}
 
 	//convert it into texture
-	_texture = SDL_CreateTextureFromSurface(gSdl.renderer, image);
-	if (!_texture)
+	_MapTexture = SDL_CreateTextureFromSurface(gSdl.renderer, image);
+	if (!_MapTexture)
 	{
 		std::string error = "Error in surface conversion to texture : ";
 		error += SDL_GetError();
@@ -35,38 +35,38 @@ void Assets::importAssets(std::string path, int tile_size) {
 		return ;
 	}
 
-	_imgW = image->w;
-	_imgH = image->h;
+	_MapImgW = image->w;
+	_MapImgH = image->h;
 
 	//dont need surface anymore after conversion
 	SDL_FreeSurface(image);
 
-	//define every tile asset position and stock it in _assets
+	//define every tile asset position and stock it in _mapAssets
 	int y = 0;
 	int i = 0;
-	while (y * tile_size < _imgH)
+	while (y * tile_size < _MapImgH)
 	{
 		int x = 0;
-		while (x * tile_size < _imgW)
+		while (x * tile_size < _MapImgW)
 		{
 			SDL_Rect rect = {x * tile_size, y * tile_size, tile_size, tile_size};
-			_assets.emplace(i, rect);
+			_mapAssets.emplace(i, rect);
 			i++;
 			x++;
 		}
 		y++;
 	}
-	gSdl.setTileSize(tile_size);
+	gSdl.setMapTileSize(tile_size);
 }
 
 // SDL_Rect	*Assets::getAssets(int index) {
-// 	return (&_assets[index]);
+// 	return (&_mapAssets[index]);
 // }
 
 
 // render the asset at index "assetIndex" scaled by "scale" at the position x, y
 // scale is supposed to be > 0
-void		Assets::render(int x, int y, int assetIndex, int scale) {
+void		Assets::rendMap(int x, int y, int assetIndex, int scale) {
 
 	if (assetIndex < 0) {
 		std::cerr << "Invalid index" << std::endl;
@@ -77,8 +77,8 @@ void		Assets::render(int x, int y, int assetIndex, int scale) {
 		return ;
 	}
 
-	SDL_Rect	renderRect = {x, y, _imgW, _imgH};
-	SDL_Rect	*rect = &_assets[assetIndex];
+	SDL_Rect	renderRect = {x, y, _MapImgW, _MapImgH};
+	SDL_Rect	*rect = &_mapAssets[assetIndex];
 
 	if (rect != NULL)
 	{
@@ -86,5 +86,6 @@ void		Assets::render(int x, int y, int assetIndex, int scale) {
 		renderRect.h = rect->h * scale;
 	}
 
-	SDL_RenderCopy(gSdl.renderer, _texture, rect, &renderRect);
+	SDL_RenderCopy(gSdl.renderer, _MapTexture, rect, &renderRect);
 }
+

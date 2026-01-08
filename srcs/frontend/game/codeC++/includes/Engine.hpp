@@ -17,8 +17,8 @@ public:
 
 	Engine();
 	~Engine();
-	void	setTileSize(int tile_size);
-	int		getTileSize(void);
+	void	setMapTileSize(int tile_size);
+	int		getMapTileSize(void);
 };
 
 

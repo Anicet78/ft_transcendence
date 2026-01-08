@@ -1,6 +1,6 @@
 #include "Texture.hpp"
 
-// std::map<int, SDL_Rect> Texture::_assets;
+// std::map<int, SDL_Rect> Texture::_mapAssets;
 
 Texture::Texture(std::string path) : _texture(NULL) {
 	loadImage(path);
@@ -125,7 +125,7 @@ SDL_Texture	*Texture::getTexture(void) {
 // 		while (x * 16 < width)
 // 		{
 // 			SDL_Rect rect = {x * 16, y * 16, 16, 16};
-// 			_assets.emplace(i, rect);
+// 			_mapAssets.emplace(i, rect);
 // 			i++;
 // 			x++;
 // 		}
@@ -134,5 +134,5 @@ SDL_Texture	*Texture::getTexture(void) {
 // }
 
 // SDL_Rect	*Texture::getRect(int index) {
-// 	return (&_assets[index]);
+// 	return (&_mapAssets[index]);
 // }
