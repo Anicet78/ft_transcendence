@@ -1,6 +1,9 @@
 CXX			= c++
 CXXFLAGS	= -Wall -Werror -Wextra -w -lSDL2 -Iincludes -std=c++20 -g
 
+EMSCRIPTEN	= em++
+EMFLAGS		= -O3 -s WASM=1 -s USE_SDL=2 -lembind $(CXXFLAGS)
+
 HEADERS		= ./includes/
 SRC_DIR		= ./srcs/
 OBJ_DIR		= ./objs/
@@ -17,12 +20,15 @@ SRCS		=	main.cpp \
 				engine/init_sdl.cpp \
 				engine/key_action.cpp \
 				engine/map_printer.cpp \
-				mapMain.cpp Room.cpp Map.cpp
+				mapMain.cpp Room.cpp Map.cpp aStar.cpp mapGen/mapGen.cpp
+
+EMSRCS		= $(patsubst %, $(SRC_DIR)%, $(SRCS))
 
 OBJS		= $(patsubst %.cpp, $(OBJ_DIR)%.o, $(SRCS))
 DEPS		= $(OBJS:.o=.d)
 
-NAME		= feur
+NAME		= game
+EMNAME		= /build/game.js
 
 all: $(NAME)
 
@@ -32,6 +38,9 @@ $(NAME): $(OBJS)
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+wasm:
+	$(EMSCRIPTEN) $(EMSRCS) $(EMFLAGS) -o $(EMNAME)
 
 clean:
 	rm -rf $(OBJ_DIR)
@@ -44,4 +53,3 @@ re: fclean all
 -include $(DEPS)
 
 .PHONY: all clean fclean re
-
