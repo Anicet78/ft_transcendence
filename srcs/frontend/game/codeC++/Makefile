@@ -13,7 +13,8 @@ SRCS		=	main.cpp \
 				engine/Engine.cpp \
 				engine/Texture.cpp \
 				engine/Key.cpp \
-				mapMain.cpp Room.cpp Map.cpp 
+				mapMain.cpp Room.cpp Map.cpp \
+				engine/Assets.cpp
 
 OBJS		= $(patsubst %.cpp, $(OBJ_DIR)%.o, $(SRCS))
 DEPS		= $(OBJS:.o=.d)

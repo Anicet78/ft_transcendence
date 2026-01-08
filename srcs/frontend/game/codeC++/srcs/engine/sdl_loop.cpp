@@ -19,16 +19,6 @@ int	init_sdl(Engine &gSdl)
 	return (1);
 }
 
-int init_surfaces(SDL_Texture **keySurfaces, Engine &sdl)
-{
-	if (loadMedia(keySurfaces, sdl) == false)
-	{
-		std::cerr << "BIG ERROR OMG" << std::endl;
-		return (0);
-	}
-	return (1);
-}
-
 void	key_down(void)
 {
 	switch(gSdl.event.key.keysym.sym)
@@ -77,18 +67,44 @@ void	key_action(void) {
 	Key	*key = &gSdl.key;
 
 	if (key->w_key)
-		;
+		Assets::render(0, 0, 5, 1);
+	if (key->a_key)
+		Assets::render(0, 0, 1, 1);
+	if (key->s_key)
+		Assets::render(0, 0, 10, 1);
+	if (key->d_key)
+		Assets::render(0, 0, 15, 1);
+	Assets::FLOOR;
+}
+
+void	manage_wall(int x, int y) {
+	int	tile_s = gSdl.getTileSize();
+}
+
+void	print_map(void) {
+	int	tile_s = gSdl.getTileSize();
+	int h = gSdl.room.getRoomPlan().size();
+	for (int y = 0; y < h; y++)
+	{
+		int w = gSdl.room.getRoomPlan()[y].size();
+		for (int x = 0; x < w; x++)
+		{
+			char c = gSdl.room.getRoomPlan()[y][x];
+			if (c == '1')
+				Assets::render(x * tile_s * 2, y * tile_s * 2, Assets::WALL, 2);
+			else if (c == '0')
+				Assets::render(x * tile_s * 2, y * tile_s * 2, Assets::FLOOR, 2);
+		}
+	}
 }
 
 void	game_loop(void) {
-	//print_map
-	key_action();
+	print_map();
+	// key_action();
 }
 
 int mainloop(Engine &sdl)
 {
-	Texture	text("../images/assets.bmp");
-	Texture::importAssets("../images/assets.bmp");
 	bool	running = true;
 	long	frame = 0;
 	while (running) {
@@ -100,8 +116,8 @@ int mainloop(Engine &sdl)
 			{
 				SDL_RenderClear(gSdl.renderer);
 				key_down();
-				SDL_Rect rect = {3 * 16, 0, 16, 16};
-				text.renderRect(0, 0, Texture::getRect(1));
+				// SDL_Rect rect = {3 * 16, 0, 16, 16};
+				// text.renderRect(0, 0, Texture::getRect(1));
 			}
 			else if (sdl.event.type == SDL_KEYUP)
 			{
@@ -110,7 +126,7 @@ int mainloop(Engine &sdl)
 			}
 		}
 		SDL_RenderPresent(sdl.renderer);
-		// std::cout << frame++ << std::endl;
+		std::cout << frame++ << std::endl;
 	}
 	return 0;
 }

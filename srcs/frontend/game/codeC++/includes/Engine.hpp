@@ -6,6 +6,8 @@
 
 class Engine
 {
+private:
+	int	_tile_size;
 public:
 	SDL_Window		*window;
 	SDL_Renderer	*renderer;
@@ -15,6 +17,8 @@ public:
 
 	Engine();
 	~Engine();
+	void	setTileSize(int tile_size);
+	int		getTileSize(void);
 };
 
 

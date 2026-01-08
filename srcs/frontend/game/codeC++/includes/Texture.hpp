@@ -7,8 +7,6 @@ class Texture
 {
 private:
 
-	static std::map<int, SDL_Rect> _assets;
-
 	SDL_Texture	*_texture;
 	int			_imageWidth;
 	int			_imageHeight;
@@ -25,10 +23,6 @@ public:
 	int			getW(void);
 	int			getH(void);
 	SDL_Texture	*getTexture(void);
-	static SDL_Rect	*getRect(int index);
-
-	static void	importAssets(std::string path);
-
 };
 
 #endif

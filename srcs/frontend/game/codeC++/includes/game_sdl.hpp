@@ -7,9 +7,11 @@
 # include <vector>
 # include <map>
 # include <fstream>
+# include <exception>
 # include "Key.hpp"
 # include "Engine.hpp"
 # include "Texture.hpp"
+# include "Assets.hpp"
 
 # define SCREEN_WIDTH 800
 # define SCREEN_HEIGHT 600
