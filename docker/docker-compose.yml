@@ -11,6 +11,7 @@ services:
       - db_password
     volumes:
       - postgres-v:/var/lib/postgresql
+      - ./postgre:/docker-entrypoint-initdb.d
     networks:
       - transcendence
 
