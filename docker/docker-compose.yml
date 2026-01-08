@@ -14,22 +14,20 @@ services:
     networks:
       - transcendence
 
-  nginx:
-    image: nginx
-    container_name: nginx-c
-    restart: always
-    ports:
-      - 8080:80
-      - 8443:443
+  node:
+    build:
+      context: ../srcs/backend
+      dockerfile: Dockerfile
+    container_name: node-c
+    restart: on-failure
     env_file:
       - .env
-    volumes:
-      - ./nginx/conf/:/etc/nginx/conf.d/:ro
-      - ./certs:/etc/nginx/certs
+    secrets:
+      - db_password
     networks:
       - transcendence
     depends_on:
-      - emscripten
+      - db
 
   pgadmin:
     image: dpage/pgadmin4
@@ -58,6 +56,22 @@ services:
       - transcendence
     entrypoint: ["make", "wasm"]
 
+  nginx:
+    image: nginx
+    container_name: nginx-c
+    restart: on-failure
+    ports:
+      - 8080:80
+      - 8443:443
+    env_file:
+      - .env
+    volumes:
+      - ./nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./certs:/etc/nginx/certs
+    networks:
+      - transcendence
+    depends_on:
+      - emscripten
 
 secrets:
   db_password:
