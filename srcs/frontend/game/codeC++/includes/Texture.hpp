@@ -6,6 +6,7 @@
 class Texture
 {
 private:
+
 	SDL_Texture	*_texture;
 	int			_imageWidth;
 	int			_imageHeight;
@@ -18,11 +19,10 @@ public:
 	void		render(void);
 	void		renderRect(int x, int y, SDL_Rect *rect);	//render the texture on screen
 	bool		loadImage(std::string &path);				//create the texture based on an image
+
 	int			getW(void);
 	int			getH(void);
 	SDL_Texture	*getTexture(void);
-
 };
-
 
 #endif

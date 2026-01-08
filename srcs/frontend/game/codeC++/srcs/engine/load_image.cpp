@@ -18,45 +18,6 @@ SDL_Texture *loadTexture(std::string path, Engine &sdl) {
 	return (texture);
 }
 
-
-
-bool loadMedia(SDL_Texture **keyTexture, Engine &sdl) {
-
-    bool ret = true;
-
-    keyTexture[KEY_PRESS_SURFACE_DEFAULT] = loadTexture("../images/test.bmp", sdl);
-    if (!keyTexture[KEY_PRESS_SURFACE_DEFAULT])
-    {
-        std::cerr << "default mdr" << std::endl;
-        ret = false;
-    }
-    keyTexture[KEY_PRESS_SURFACE_UP] = loadTexture("../images/up.bmp", sdl);
-    if (!keyTexture[KEY_PRESS_SURFACE_UP])
-    {
-        std::cerr << "up mdr" << std::endl;
-        ret = false;
-    }
-    keyTexture[KEY_PRESS_SURFACE_LEFT] = loadTexture("../images/left.bmp", sdl);
-    if (!keyTexture[KEY_PRESS_SURFACE_LEFT])
-    {
-        std::cerr << "left mdr" << std::endl;
-        ret = false;
-    }
-    keyTexture[KEY_PRESS_SURFACE_RIGHT] = loadTexture("../images/right.bmp", sdl);
-    if (!keyTexture[KEY_PRESS_SURFACE_RIGHT])
-    {
-        std::cerr << "right mdr" << std::endl;
-        ret = false;
-    }
-    keyTexture[KEY_PRESS_SURFACE_DOWN] = loadTexture("../images/down.bmp", sdl);
-    if (!keyTexture[KEY_PRESS_SURFACE_DOWN])
-    {
-        std::cerr << "down mdr" << std::endl;
-        ret = false;
-    }
-    return (ret);
-}
-
 //Load the "path" image into a surface, do not care about image size and will erased border if too big.
 //return : NULL if surface creation or image opening fail
 // SDL_Surface *loadSurface(std::string path, Engine &sdl) {

@@ -5,32 +5,31 @@
 # include <SDL2/SDL.h>
 # include <memory>
 # include <vector>
+# include <map>
 # include <fstream>
+# include <exception>
 # include "Key.hpp"
 # include "Engine.hpp"
 # include "Texture.hpp"
+# include "Assets.hpp"
 
 # define SCREEN_WIDTH 800
 # define SCREEN_HEIGHT 600
 
 class Engine;
 
-enum KeyPressSurfaces {
-	KEY_PRESS_SURFACE_DEFAULT,
-	KEY_PRESS_SURFACE_UP,
-	KEY_PRESS_SURFACE_DOWN,
-	KEY_PRESS_SURFACE_LEFT,
-	KEY_PRESS_SURFACE_RIGHT,
-	KEY_PRESS_SURFACE_TOTAL
-};
-
 extern Engine gSdl;
 
 int	init_sdl(Engine &gSdl);
-int init_surfaces(SDL_Texture **keySurfaces, Engine &sdl);
-// int mainloop(Engine &sdl, SDL_Texture **keySurfaces);
 int mainloop(Engine &sdl);
 SDL_Texture *loadTexture(std::string path, Engine &sdl);
-bool loadMedia(SDL_Texture **keySurfaces, Engine &sdl);
+
+void	key_down(void);
+void	key_up(void);
+void	key_action(void);
+
+void	print_map(void);
+void	manage_wall(int x, int y);
+int		check_tile(int x, int y);
 
 #endif
