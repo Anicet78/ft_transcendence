@@ -6,3 +6,12 @@ docker/secrets
 
 # Certificate
 docker/certs
+
+# Node
+node_modules/
+
+# Build
+dist/
+
+# Logs
+npm-debug.log*
