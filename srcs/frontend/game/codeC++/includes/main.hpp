@@ -14,5 +14,9 @@
 # include <dirent.h>
 # include <exception>
 # include <fstream>
+# include <cmath>
+# include <queue>
+# include <unordered_map>
+# include <algorithm>
 
 #endif

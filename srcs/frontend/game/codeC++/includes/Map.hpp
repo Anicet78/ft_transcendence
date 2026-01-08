@@ -9,6 +9,8 @@ class chainedMap
 	private:
 		std::shared_ptr<Room>	_room;
 		int						_path;
+		int						_x;
+		int						_y;
 
 	public:
 		chainedMap(void);
@@ -23,6 +25,10 @@ class chainedMap
 		std::shared_ptr<Room> getRoom(void) const;
 		void setPath(int flag);
 		int	getPath() const;
+		int getX() const;
+		int getY() const;
+		void setX(int nb);
+		void setY(int nb);
 };
 
 using quadList = std::shared_ptr<chainedMap>;
@@ -37,6 +43,12 @@ class Map
 	
 	private:
 		quadList chooseRoom(std::string mapName);
+		int checkObs(quadList &node);
+		void preparePathMap(void);
+		void fillPrimaryPath(void);
+		void fillOtherRooms(void);
+		int heuristic(const quadList &a, const quadList &b) const;
+		std::vector<quadList> astar(const quadList &start, const quadList &goal);
 
 	public:
 		Map(void);
