@@ -8,13 +8,16 @@ OBJ_DIR		= ./objs/
 CXXFLAGS += -I$(HEADERS)
 
 SRCS		=	main.cpp \
-				engine/sdl_loop.cpp \
-				engine/load_image.cpp \
 				engine/Engine.cpp \
 				engine/Texture.cpp \
 				engine/Key.cpp \
-				mapMain.cpp Room.cpp Map.cpp \
-				engine/Assets.cpp
+				engine/Assets.cpp \
+				engine/sdl_loop.cpp \
+				engine/load_image.cpp \
+				engine/init_sdl.cpp \
+				engine/key_action.cpp \
+				engine/map_printer.cpp \
+				mapMain.cpp Room.cpp Map.cpp
 
 OBJS		= $(patsubst %.cpp, $(OBJ_DIR)%.o, $(SRCS))
 DEPS		= $(OBJS:.o=.d)

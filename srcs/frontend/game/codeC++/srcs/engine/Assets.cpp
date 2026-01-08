@@ -15,10 +15,11 @@ Assets::~Assets(void) {
 }
 
 void Assets::importAssets(std::string path, int tile_size) {
+
+	//we firs need to load the image into a surface
 	SDL_Surface *image = SDL_LoadBMP(path.c_str());
 	if (!image)
 	{
-		// std::cerr << "Image " << path << " load failed ! " << "SDL Error: " << SDL_GetError() << std::endl;
 		std::string error = "Error in image conversion to surface : ";
 		error += SDL_GetError();
 		throw std::runtime_error(error);
@@ -28,7 +29,6 @@ void Assets::importAssets(std::string path, int tile_size) {
 	_texture = SDL_CreateTextureFromSurface(gSdl.renderer, image);
 	if (!_texture)
 	{
-		// std::cerr << "Texture " << path << " conversion failed ! " << "SDL Error: " << SDL_GetError() << std::endl;
 		std::string error = "Error in surface conversion to texture : ";
 		error += SDL_GetError();
 		throw std::runtime_error(error);
@@ -41,6 +41,7 @@ void Assets::importAssets(std::string path, int tile_size) {
 	//dont need surface anymore after conversion
 	SDL_FreeSurface(image);
 
+	//define every tile asset position and stock it in _assets
 	int y = 0;
 	int i = 0;
 	while (y * tile_size < _imgH)
@@ -75,13 +76,15 @@ void		Assets::render(int x, int y, int assetIndex, int scale) {
 		std::cerr << "Invalid scale" << std::endl;
 		return ;
 	}
+
 	SDL_Rect	renderRect = {x, y, _imgW, _imgH};
-	SDL_Rect *rect = &_assets[assetIndex];
+	SDL_Rect	*rect = &_assets[assetIndex];
+
 	if (rect != NULL)
 	{
 		renderRect.w = rect->w * scale;
 		renderRect.h = rect->h * scale;
 	}
-	SDL_RenderCopy(gSdl.renderer, _texture, rect, &renderRect);
 
+	SDL_RenderCopy(gSdl.renderer, _texture, rect, &renderRect);
 }

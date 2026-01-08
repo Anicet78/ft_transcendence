@@ -17,7 +17,7 @@ int main(void) {
 		std::cerr << e.what() << '\n';
 		return (0);
 	}
-	gSdl.room = *Room::getFloor0()["coridoor"];
+	gSdl.room = *Room::getFloor0()["cross"];
 	std::cout << gSdl.room << std::endl;
 	mainloop(gSdl);
 	return (0);

@@ -1,103 +1,5 @@
 #include"game_sdl.hpp"
 
-int	init_sdl(Engine &gSdl)
-{
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		std::cerr << "SDL_Init error: " << SDL_GetError() << std::endl;
-		return (0);
-	}
-
-	gSdl.window = SDL_CreateWindow("Ma fenetre SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 800, SDL_WINDOW_SHOWN);
-	if (!gSdl.window) {
-		std::cerr << "Window error: " << SDL_GetError() << std::endl;
-		SDL_Quit();
-		return (0);
-	}
-	gSdl.renderer = SDL_CreateRenderer(gSdl.window, -1, SDL_RENDERER_ACCELERATED);
-	if (!gSdl.renderer)
-		std::cerr << "render/20 : " << SDL_GetError() << std::endl;
-	return (1);
-}
-
-void	key_down(void)
-{
-	switch(gSdl.event.key.keysym.sym)
-	{
-		case SDLK_w:
-			gSdl.key.w_key = 1;
-			break;
-		case SDLK_a:
-			gSdl.key.a_key = 1;
-			break;
-		case SDLK_s:
-			gSdl.key.s_key = 1;
-			break;
-		case SDLK_d:
-			gSdl.key.d_key = 1;
-			break;
-		case SDLK_SPACE:
-			gSdl.key.space = 1;
-			break;
-	}
-}
-
-void	key_up(void)
-{
-	switch(gSdl.event.key.keysym.sym)
-	{
-		case SDLK_w:
-			gSdl.key.w_key = 0;
-			break;
-		case SDLK_a:
-			gSdl.key.a_key = 0;
-			break;
-		case SDLK_s:
-			gSdl.key.s_key = 0;
-			break;
-		case SDLK_d:
-			gSdl.key.d_key = 0;
-			break;
-		case SDLK_SPACE:
-			gSdl.key.space = 0;
-			break;
-	}
-}
-
-void	key_action(void) {
-	Key	*key = &gSdl.key;
-
-	if (key->w_key)
-		Assets::render(0, 0, 5, 1);
-	if (key->a_key)
-		Assets::render(0, 0, 1, 1);
-	if (key->s_key)
-		Assets::render(0, 0, 10, 1);
-	if (key->d_key)
-		Assets::render(0, 0, 15, 1);
-	Assets::FLOOR;
-}
-
-void	manage_wall(int x, int y) {
-	int	tile_s = gSdl.getTileSize();
-}
-
-void	print_map(void) {
-	int	tile_s = gSdl.getTileSize();
-	int h = gSdl.room.getRoomPlan().size();
-	for (int y = 0; y < h; y++)
-	{
-		int w = gSdl.room.getRoomPlan()[y].size();
-		for (int x = 0; x < w; x++)
-		{
-			char c = gSdl.room.getRoomPlan()[y][x];
-			if (c == '1')
-				Assets::render(x * tile_s * 2, y * tile_s * 2, Assets::WALL, 2);
-			else if (c == '0')
-				Assets::render(x * tile_s * 2, y * tile_s * 2, Assets::FLOOR, 2);
-		}
-	}
-}
-
 void	game_loop(void) {
 	print_map();
 	// key_action();
@@ -126,7 +28,7 @@ int mainloop(Engine &sdl)
 			}
 		}
 		SDL_RenderPresent(sdl.renderer);
-		std::cout << frame++ << std::endl;
+		// std::cout << frame++ << std::endl;
 	}
 	return 0;
 }
