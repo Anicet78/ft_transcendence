@@ -1,4 +1,14 @@
 services:
+  emscripten:
+    image: emscripten/emsdk
+    container_name: emscripten-c
+    volumes:
+      - ../srcs/game:/src
+      - ../srcs/frontend/game:/build
+    networks:
+      - transcendence
+    entrypoint: ["make", "wasm"]
+
   db:
     image: postgres
     container_name: postgre-c
@@ -28,6 +38,8 @@ services:
       - ./certs:/etc/nginx/certs
     networks:
       - transcendence
+    depends_on:
+      - emscripten
 
   pgadmin:
     image: dpage/pgadmin4
