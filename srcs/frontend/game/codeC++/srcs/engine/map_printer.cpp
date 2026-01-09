@@ -93,9 +93,11 @@ void	manage_wall(int x, int y) {
 }
 
 //map printer
-void	print_map(void) {
+void	print_map(Player &player)
+{
 
 	int	tile_s = gSdl.getMapTileSize() * 2;
+	gSdl.room = player.getRoom();
 	int h = gSdl.room.getRoomPlan().size();
 
 	for (int y = 0; y < h; y++)

@@ -1,6 +1,19 @@
 #include"Player.hpp"
 
-Player::Player(int uid, std::string name, int x, int y, quadList &node) : _uid(uid), _name(name), _x(x), _y(y), _hp(3), _atk(1), _def(0), _node(node) {
+Player::Player(int uid, std::string name, quadList &node) : _uid(uid), _name(name), _hp(3), _atk(1), _def(0), _node(node)
+{
+	_x = 0, _y = 0;
+	int i = 0;
+	for (auto &line : _node->getRoom()->getRoomPlan())
+	{
+		size_t pos = line.find('P');
+		if (pos != std::string::npos)
+		{
+			_x = pos + 0.5, _y = i + 0.5;
+			break ;
+		}
+		i++;
+	}
 	return ;
 }
 
@@ -37,7 +50,23 @@ int		Player::getDef(void) const {
 	return (_def);
 }
 
+Room	Player::getRoom(void) const
+{
+	return *this->_node->getRoom().get();
+}
+
+quadList Player::getNode() const
+{
+	return this->_node;
+}
+
 //set player value
+
+void Player::setNode(const quadList &node)
+{
+	this->_node = node;
+}
+
 void	Player::setPos(float x, float y) {
 	_x = x;
 	_y = y;

@@ -18,18 +18,19 @@
 # define SCREEN_HEIGHT 600
 
 class Engine;
+class Player;
 
 extern Engine gSdl;
 
 int	init_sdl(Engine &gSdl);
-int mainloop(Engine &sdl);
+int mainloop(Engine &sdl, Map &floor0);
 SDL_Texture *loadTexture(std::string path, Engine &sdl);
 
 void	key_down(void);
 void	key_up(void);
 void	key_action(void);
 
-void	print_map(void);
+void	print_map(Player &player);
 void	manage_wall(int x, int y);
 int		check_tile(int x, int y);
 

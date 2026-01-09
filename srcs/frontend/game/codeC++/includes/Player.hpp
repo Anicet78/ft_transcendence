@@ -26,12 +26,14 @@ private:
 	int			_def;
 
 public:
-	Player(int uid, std::string name, int x, int y, quadList &node);
+	Player(int uid, std::string name, quadList &node);
 	~Player();
 
 //getter
 	int			getUid(void) const;
 	std::string	getName(void) const;
+	Room		getRoom() const;
+	quadList	getNode() const;
 
 	float		getX(void) const;
 	float		getY(void) const;
@@ -41,6 +43,7 @@ public:
 	int			getDef(void) const;
 
 //setter
+	void	setNode(const quadList &node);
 	void	setPos(float x, float y);
 	void	setHp(int hp);
 	void	setAtk(int atk);
