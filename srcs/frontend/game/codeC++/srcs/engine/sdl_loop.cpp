@@ -1,10 +1,11 @@
 #include"game_sdl.hpp"
 
-void	print_player(void) {
+void	print_player(Player &player) {
 	static int idle = 0;
+	int	tile_s = gSdl.getMapTileSize() * 2;
 	if (idle >= 6)
 		idle = 0;
-	PlayerAssets::rendPlayerWalk(0, 1 * gSdl.getMapTileSize() * 2, 1 * gSdl.getMapTileSize() * 2, idle, 2);
+	PlayerAssets::rendPlayerWalk(0, player.getX() * tile_s, player.getY() * tile_s, idle, 2);
 	idle++;
 }
 
@@ -72,7 +73,7 @@ void	game_loop(Player &player)
 	updatePlayerPosition(player);
 	//std::cout << "player pos :" << player.getX() << ", " << player.getY() << std::endl;
 	print_map(player);
-	print_player();
+	print_player(player);
 	// key_action();
 }
 
@@ -106,7 +107,7 @@ int mainloop(Engine &sdl, Map &floor0)
 		}
 		SDL_RenderPresent(sdl.renderer);
 		SDL_RenderClear(gSdl.renderer);
-		SDL_Delay(32);
+		SDL_Delay(16);
 		// std::cout << frame++ << std::endl;
 	}
 	return 0;
