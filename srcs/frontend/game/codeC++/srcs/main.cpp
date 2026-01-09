@@ -2,7 +2,10 @@
 
 Engine gSdl;
 
-int main(void) {
+int main(void)
+{
+	Map floor0(10, 10);
+	srand(time(0));
 	if (!init_sdl(gSdl)) {
 		std::cerr << "Error in sdl init" << std::endl;
 		return (1);
@@ -12,14 +15,14 @@ int main(void) {
 		Assets::importAssets("assets/sprite/assets.bmp", 16);
 		PlayerAssets::importPlayersAssets(100);
 		Room::importRooms();
+		floor0.fillMap();
 	}
 	catch(const std::exception& e)
 	{
 		std::cerr << e.what() << '\n';
 		return (0);
 	}
-	gSdl.room = *Room::getFloor0()["cross"];
-	std::cout << gSdl.room << std::endl;
-	mainloop(gSdl);
+	printMap(floor0);
+	mainloop(gSdl, floor0);
 	return (0);
 }

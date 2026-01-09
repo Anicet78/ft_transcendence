@@ -36,19 +36,19 @@ using quadList = std::shared_ptr<chainedMap>;
 class Map
 {
 	private:
-		int _width;
-		int _height;
-		quadList _head;
-		std::vector<quadList> _nodes;
+		int						_width;
+		int						_height;
+		quadList				_head;
+		std::vector<quadList>	_nodes;
 	
 	private:
-		quadList chooseRoom(std::string mapName);
-		int checkObs(quadList &node);
-		void preparePathMap(void);
-		void fillPrimaryPath(void);
-		void fillOtherRooms(void);
-		int heuristic(const quadList &a, const quadList &b) const;
-		std::vector<quadList> astar(const quadList &start, const quadList &goal);
+		quadList				chooseRoom(std::string mapName);
+		int						checkObs(quadList &node);
+		void					preparePathMap(void);
+		void					fillPrimaryPath(void);
+		void					fillOtherRooms(void);
+		int						heuristic(const quadList &a, const quadList &b) const;
+		std::vector<quadList>	astar(const quadList &start, const quadList &goal);
 
 	public:
 		Map(void);
@@ -56,11 +56,11 @@ class Map
 		~Map(void);
 	
 	public:
-		quadList &getHead(void);
-		std::vector<quadList> getNodes() const;
-		void fillMap(void);
+		quadList				&getHead(void);
+		std::vector<quadList>	getNodes() const;
+		void					fillMap(void);
 };
 
-
+void printMap(Map &floor0);
 
 #endif
