@@ -18,29 +18,33 @@ void updateRoom(Player &player)
 
 	if (plan[y][x] == 'E')
 	{
-		if (exitsLoc[2][0] == static_cast<int>(x) && exitsLoc[2][1] == static_cast<int>(y) && !player.getNode()->south.expired())
+		if (exitsLoc[2][0] == static_cast<int>(x) && exitsLoc[2][1] == static_cast<int>(y)
+			&& !player.getNode()->south.expired())
 		{
 			player.setNode(player.getNode()->south.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
-			player.setPos(exitsLoc[0][0], exitsLoc[0][1] + 1);
+			player.setPos(exitsLoc[0][0] + 0.5, exitsLoc[0][1] + 1);
 		}
-		else if (exitsLoc[0][0] == static_cast<int>(x) && exitsLoc[0][1] == static_cast<int>(y) && !player.getNode()->north.expired())
+		else if (exitsLoc[0][0] == static_cast<int>(x) && exitsLoc[0][1] == static_cast<int>(y)
+			&& !player.getNode()->north.expired())
 		{
 			player.setNode(player.getNode()->north.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
-			player.setPos(exitsLoc[2][0], exitsLoc[2][1] - 1);
+			player.setPos(exitsLoc[2][0] + 0.5, exitsLoc[2][1] - 0.1);
 		}
-		else if (exitsLoc[1][0] == static_cast<int>(x) && exitsLoc[1][1] == static_cast<int>(y) && !player.getNode()->east.expired())
+		else if (exitsLoc[1][0] == static_cast<int>(x) && exitsLoc[1][1] == static_cast<int>(y)
+			&& !player.getNode()->east.expired())
 		{
 			player.setNode(player.getNode()->east.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
-			player.setPos(exitsLoc[3][0] + 1, exitsLoc[3][1]);
+			player.setPos(exitsLoc[3][0] + 1, exitsLoc[3][1] + 0.5);
 		}
-		else if (exitsLoc[3][0] == static_cast<int>(x) && exitsLoc[3][1] == static_cast<int>(y) && !player.getNode()->west.expired())
+		else if (exitsLoc[3][0] == static_cast<int>(x) && exitsLoc[3][1] == static_cast<int>(y)
+			&& !player.getNode()->west.expired())
 		{
 			player.setNode(player.getNode()->west.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
-			player.setPos(exitsLoc[1][0] - 1, exitsLoc[1][1]);
+			player.setPos(exitsLoc[1][0] - 0.1, exitsLoc[1][1] + 0.5);
 		}
 	}
 }
