@@ -41,7 +41,7 @@ services:
     volumes:
       - ../srcs/backend:/app
     working_dir: /app
-    entrypoint: ["sh", "-c", "npm install && npm run dev"]
+    entrypoint: ["sh", "-c", "npm install && sleep infinity"]
     networks:
       - transcendence
     depends_on:
