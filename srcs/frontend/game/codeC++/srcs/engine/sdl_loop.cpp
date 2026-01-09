@@ -5,7 +5,7 @@ void	print_player(Player &player) {
 	int	tile_s = gSdl.getMapTileSize() * 2;
 	if (idle >= 6)
 		idle = 0;
-	PlayerAssets::rendPlayerWalk(0, player.getX() * tile_s, player.getY() * tile_s, idle, 2);
+	PlayerAssets::rendPlayerWalk(0, (player.getX() - 0.5) * tile_s, (player.getY() - 0.5) * tile_s, idle, 2);
 	idle++;
 }
 
