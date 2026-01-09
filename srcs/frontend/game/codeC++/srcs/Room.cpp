@@ -15,6 +15,7 @@ Room &Room::operator=(Room const &rhs)
 	this->_width = rhs._width;
 	this->_exits = rhs._exits;
 	this->_roomPlan = rhs._roomPlan;
+	this->_exitsLoc = rhs._exitsLoc;
 	return *this;
 }
 
@@ -25,11 +26,12 @@ Room::Room(void)
 	this->_width = 10;
 	this->_height = 10;
 	this->_exits = {0, 0, 0, 0};
+	this->_exitsLoc.fill({-1, -1});
 	this->_name = "Empty";
 }
 
 Room::Room(Room const &rhs): _width(rhs._width), _height(rhs._height),
-				_exits(rhs._exits), _name(rhs._name), _roomPlan(rhs._roomPlan)
+				_exits(rhs._exits), _exitsLoc(rhs._exitsLoc), _name(rhs._name), _roomPlan(rhs._roomPlan)
 {}
 
 Room::~Room()
@@ -60,6 +62,11 @@ std::vector<std::string> Room::getRoomPlan() const
 std::array<bool, 4> Room::getExits() const
 {
 	return this->_exits;
+}
+
+std::array<std::array<int, 2>, 4> Room::getExitsLoc() const
+{
+	return this->_exitsLoc;
 }
 
 void Room::updateSize()
@@ -102,19 +109,31 @@ void Room::identifyExits()
         {
             // West
             if (pos + 1 < line.size() && line[pos + 1] == '0')
+			{
                 _exits[3] = 1;
+				_exitsLoc[3] = {static_cast<int>(pos), static_cast<int>(i)};
+			}
 
             // East
             else if (pos > 0 && line[pos - 1] == '0')
+			{
                 _exits[1] = 1;
+				_exitsLoc[1] = {static_cast<int>(pos), static_cast<int>(i)};
+			}
 
             // North
             else if (i + 1 < _roomPlan.size() && _roomPlan[i + 1][pos] == '0')
+			{
                 _exits[0] = 1;
+				_exitsLoc[0] = {static_cast<int>(pos), static_cast<int>(i)};
+			}
 
             // South
             else if (i > 0 && _roomPlan[i - 1][pos] == '0')
+			{
                 _exits[2] = 1;
+				_exitsLoc[2] = {static_cast<int>(pos), static_cast<int>(i)};
+			}
             ++pos;
         }
     }
