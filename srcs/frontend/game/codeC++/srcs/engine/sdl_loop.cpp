@@ -1,7 +1,11 @@
 #include"game_sdl.hpp"
 
 void	print_player(void) {
-	
+	static int idle = 0;
+	if (idle >= 6)
+		idle = 0;
+	PlayerAssets::rendPlayerWalk(0, 1 * gSdl.getMapTileSize() * 2, 1 * gSdl.getMapTileSize() * 2, idle, 2);
+	idle++;
 }
 
 void updateRoom(Player &player)
@@ -68,7 +72,7 @@ void	game_loop(Player &player)
 	updatePlayerPosition(player);
 	//std::cout << "player pos :" << player.getX() << ", " << player.getY() << std::endl;
 	print_map(player);
-	// print_player();
+	print_player();
 	// key_action();
 }
 
@@ -96,9 +100,7 @@ int mainloop(Engine &sdl, Map &floor0)
 			if (sdl.event.type == SDL_QUIT)
 				running = false;
 			else if (sdl.event.type == SDL_KEYDOWN)
-			{
 				key_down();
-			}
 			else if (sdl.event.type == SDL_KEYUP)
 				key_up();
 		}

@@ -20,7 +20,7 @@ public:
 
 	// static SDL_Rect	*getAssets(int index);
 
-	static void		rendMap(int x, int y, int index, int scale);
+	static void		rendMap(int x, int y, int index, float scale);
 	
 	enum AssetIndex {
 

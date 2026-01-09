@@ -19,3 +19,12 @@ void	Engine::setMapTileSize(int tile_size) {
 int		Engine::getMapTileSize(void) {
 	return (_tile_size);
 }
+
+void	Engine::setPlayerSize(int size) {
+	_player_size = size;
+	return ;
+}
+
+int		Engine::getPlayerSize(void) {
+	return (_player_size);
+}

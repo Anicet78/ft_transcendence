@@ -13,6 +13,7 @@
 # include "Texture.hpp"
 # include "Assets.hpp"
 # include "Player.hpp"
+# include "PlayerAssets.hpp"
 
 # define SCREEN_WIDTH 800
 # define SCREEN_HEIGHT 600

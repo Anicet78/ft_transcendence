@@ -66,7 +66,7 @@ void Assets::importAssets(std::string path, int tile_size) {
 
 // render the asset at index "assetIndex" scaled by "scale" at the position x, y
 // scale is supposed to be > 0
-void		Assets::rendMap(int x, int y, int assetIndex, int scale) {
+void		Assets::rendMap(int x, int y, int assetIndex, float scale) {
 
 	if (assetIndex < 0)
 	{

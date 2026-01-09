@@ -8,6 +8,7 @@ class Engine
 {
 private:
 	int	_tile_size;
+	int	_player_size;
 public:
 	SDL_Window		*window;
 	SDL_Renderer	*renderer;
@@ -19,6 +20,9 @@ public:
 	~Engine();
 	void	setMapTileSize(int tile_size);
 	int		getMapTileSize(void);
+
+	void	setPlayerSize(int tile_size);
+	int		getPlayerSize(void);
 };
 
 
