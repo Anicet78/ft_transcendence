@@ -1,7 +1,12 @@
 #include"game_sdl.hpp"
 
+void	print_player(void) {
+	
+}
+
 void	game_loop(void) {
 	print_map();
+	// print_player();
 	// key_action();
 }
 

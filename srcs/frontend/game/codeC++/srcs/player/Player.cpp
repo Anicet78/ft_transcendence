@@ -1,6 +1,6 @@
 #include"Player.hpp"
 
-Player::Player(int uid, std::string name, int x, int y) : _uid(uid), _name(name), _x(x), _y(y), _hp(3), _atk(1), _def(0) {
+Player::Player(int uid, std::string name, int x, int y, quadList &node) : _uid(uid), _name(name), _x(x), _y(y), _hp(3), _atk(1), _def(0), _node(node) {
 	return ;
 }
 

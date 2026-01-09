@@ -2,6 +2,7 @@
 # define PLAYER_HPP
 
 #include"game_sdl.hpp"
+#include"Map.hpp"
 
 class Player
 {
@@ -9,11 +10,15 @@ private:
 
 //player info
 	int			_uid;
+	int			_numPlayer;	//joueur 1 ou joueur 2 etc
 	std::string	_name;
 
 //player pos
 	float		_x;
 	float		_y;
+
+//pos in map
+	quadList	&_node;
 
 //player stat
 	int			_hp;
@@ -21,7 +26,7 @@ private:
 	int			_def;
 
 public:
-	Player(int uid, std::string name, int x, int y);
+	Player(int uid, std::string name, int x, int y, quadList &node);
 	~Player();
 
 //getter
