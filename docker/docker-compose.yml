@@ -30,6 +30,23 @@ services:
     depends_on:
       - db
 
+  node-dev:
+    image: node:25.2.1-alpine3.22
+    container_name: node-dev-c
+    restart: on-failure
+    env_file:
+      - .env
+    secrets:
+      - db_password
+    volumes:
+      - ../srcs/backend:/app
+    working_dir: /app
+    entrypoint: ["sh", "-c", "npm install && sleep infinity"]
+    networks:
+      - transcendence
+    depends_on:
+      - db
+
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin-c
