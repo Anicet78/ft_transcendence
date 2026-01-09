@@ -68,11 +68,13 @@ void Assets::importAssets(std::string path, int tile_size) {
 // scale is supposed to be > 0
 void		Assets::rendMap(int x, int y, int assetIndex, int scale) {
 
-	if (assetIndex < 0) {
+	if (assetIndex < 0)
+	{
 		std::cerr << "Invalid index" << std::endl;
 		return ;
 	}
-	if (scale <= 0) {
+	if (scale <= 0)
+	{
 		std::cerr << "Invalid scale" << std::endl;
 		return ;
 	}
