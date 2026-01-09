@@ -20,6 +20,7 @@ SRCS		=	main.cpp \
 				engine/init_sdl.cpp \
 				engine/key_action.cpp \
 				engine/map_printer.cpp \
+				player/Player.cpp \
 				mapMain.cpp Room.cpp Map.cpp aStar.cpp mapGen/mapGen.cpp
 
 EMSRCS		= $(patsubst %, $(SRC_DIR)%, $(SRCS))
