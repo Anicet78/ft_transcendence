@@ -155,10 +155,10 @@ static void selectRoom(quadList &node, std::vector<Room> &candidates, std::array
 				}
 				else if (sum == 4 && required && !roomExit)
 				{
-					if (i == 0 && node->north.lock()->getRoom()
-						|| i == 1 && node->east.lock()->getRoom()
-						|| i == 2 && node->south.lock()->getRoom()
-						|| i == 3 && node->west.lock()->getRoom())
+					if ((i == 0 && node->north.lock()->getRoom())
+						|| (i == 1 && node->east.lock()->getRoom())
+						|| (i == 2 && node->south.lock()->getRoom())
+						|| (i == 3 && node->west.lock()->getRoom()))
 					{
 						flag = 1;
 						break ;

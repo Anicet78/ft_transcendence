@@ -5,7 +5,14 @@ void	print_player(Player &player) {
 	int	tile_s = gSdl.getMapTileSize() * 2;
 	if (idle >= 6)
 		idle = 0;
-	PlayerAssets::rendPlayerWalk(0, (player.getX() - 0.5) * tile_s, (player.getY() - 0.5) * tile_s, idle, 2);
+
+	const float px = player.getX();
+    const float py = player.getY();
+
+    const float x = (px - 0.5f) * tile_s;
+    const float y = (py - 0.5f) * tile_s;
+
+    PlayerAssets::rendPlayerWalk(0, x, y, idle, 2);
 	idle++;
 }
 
@@ -94,14 +101,14 @@ void	game_loop(Player &player)
 	updatePlayerPosition(player);
 	//std::cout << "player pos :" << player.getX() << ", " << player.getY() << std::endl;
 	print_map(player);
-	print_player(player);
+	//print_player(player);
 	// key_action();
 }
 
 int mainloop(Engine &sdl, Map &floor0)
 {
 	bool	running = true;
-	long	frame = 0;
+	// long	frame = 0;
 
 	auto nodes = floor0.getNodes();
 	quadList start;

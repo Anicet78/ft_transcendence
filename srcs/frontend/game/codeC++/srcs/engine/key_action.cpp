@@ -59,5 +59,5 @@ void	key_action(void) {
 		Assets::rendMap(0, 0, 10, 1);
 	if (key->d_key)
 		Assets::rendMap(0, 0, 15, 1);
-	Assets::FLOOR;
+	// Assets::FLOOR;
 }

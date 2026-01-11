@@ -84,7 +84,7 @@ void	manage_border(int x, int y) {
 //manage the wall print
 void	manage_wall(int x, int y) {
 
-	int	tile_s = gSdl.getMapTileSize() * 2;
+	// int	tile_s = gSdl.getMapTileSize() * 2;
 
 	if (check_border(x, y)) {
 		manage_border(x, y);
@@ -97,21 +97,54 @@ void	print_map(Player &player)
 {
 
 	int	tile_s = gSdl.getMapTileSize() * 2;
+	int mapMaxTile = 800 / tile_s;
 	gSdl.room = player.getRoom();
 	int h = gSdl.room.getRoomPlan().size();
-
-	for (int y = 0; y < h; y++)
+	int minY = player.getY() - 12;
+	int maxY = player.getY() + 13;
+	if (minY < 0)
 	{
-		int w = gSdl.room.getRoomPlan()[y].size();
-		for (int x = 0; x < w; x++)
+		minY = 0;
+		maxY = 24;
+	}
+	if (maxY > h)
+	{
+		maxY = h;
+		minY = h - 25;
+		if (minY < 0)
+				minY = 0;
+	}
+	int w0 = gSdl.room.getRoomPlan()[player.getY()].size();
+	int minX = player.getX() - 12;
+	int maxX;
+	if (minX < 0)
+	{
+		minX = 0;
+		maxX = 25;
+	}
+	else
+		maxX = player.getX() + 13;
+	if (maxX > w0)
+	{
+		maxX = w0;
+		minX = w0 - 25;
+		if (minX < 0)
+			minX = 0;
+	}
+	for (int y = 0, ry = minY; y < mapMaxTile && ry < maxY; y++, ry++)
+	{
+		//int w = gSdl.room.getRoomPlan()[ry].size();
+		for (int x = 0, rx = minX; x < mapMaxTile && rx < maxX; x++, rx++)
 		{
-			char c = gSdl.room.getRoomPlan()[y][x];
+			char c = gSdl.room.getRoomPlan()[ry][rx];
 			if (c == '1')
 				manage_wall(x, y);
 			else if (c == '0')
 				Assets::rendMap(x * tile_s, y * tile_s, Assets::FLOOR, 2);
 			else if (c == 'E')
 				Assets::rendMap(x * tile_s, y * tile_s, Assets::DOOR_FRONT, 2);
+			if (rx == (int)player.getX() && ry == (int)player.getY())
+				PlayerAssets::rendPlayerWalk(0, x * tile_s, y * tile_s, 0, 2);
 		}
 	}
 }

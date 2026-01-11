@@ -1,5 +1,6 @@
-CXX			= c++
-CXXFLAGS	= -Wall -Werror -Wextra -w -lSDL2 -Iincludes -std=c++20 -g
+CXX      = c++
+CXXFLAGS = -Wall -Werror -Wextra -std=c++20 -g
+LDFLAGS  = $(shell sdl2-config --libs)
 
 EMSCRIPTEN	= em++
 EMFLAGS		= -O3 -s WASM=1 -s USE_SDL=2 -lembind $(CXXFLAGS)
@@ -35,7 +36,7 @@ EMNAME		= /build/game.js
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME) $(LDFLAGS)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@mkdir -p $(dir $@)
