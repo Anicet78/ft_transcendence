@@ -8,6 +8,10 @@ SDL_Texture				*PlayerAssets::_playerWalkText;
 SDL_Texture				*PlayerAssets::_playerAttackText;
 SDL_Texture				*PlayerAssets::_playerIdleText;
 
+SDL_Texture				*PlayerAssets::mapRenderTexture = nullptr;
+int						PlayerAssets::lastRenderWidth = 0;
+int						PlayerAssets::lastRenderHeight = 0;
+
 int						PlayerAssets::_walkImgW;
 int						PlayerAssets::_walkImgH;
 
@@ -168,7 +172,9 @@ void	PlayerAssets::importPlayersAssets(int tile_size) {
 
 
 
-void	PlayerAssets::rendPlayerWalk(int playerNum, int x, int y, int assetIndex, float scale) {
+void	PlayerAssets::rendPlayerWalk(int playerNum, int x, int y, int assetIndex, float scale)
+{
+	(void)playerNum;
 	if (assetIndex < 0) {
 		std::cerr << "Invalid index" << std::endl;
 		return ;
@@ -190,7 +196,9 @@ void	PlayerAssets::rendPlayerWalk(int playerNum, int x, int y, int assetIndex, f
 	SDL_RenderCopy(gSdl.renderer, _playerWalkText, rect, &renderRect);
 }
 
-void	PlayerAssets::rendPlayerAttack(int playerNum, int x, int y, int assetIndex, float scale) {
+void	PlayerAssets::rendPlayerAttack(int playerNum, int x, int y, int assetIndex, float scale)
+{
+	(void)playerNum;
 	if (assetIndex < 0) {
 		std::cerr << "Invalid index" << std::endl;
 		return ;
@@ -212,12 +220,16 @@ void	PlayerAssets::rendPlayerAttack(int playerNum, int x, int y, int assetIndex,
 	SDL_RenderCopy(gSdl.renderer, _playerAttackText, rect, &renderRect);
 }
 
-void	PlayerAssets::rendPlayerIdle(int playerNum, int x, int y, int assetIndex, float scale) {
-	if (assetIndex < 0) {
+void	PlayerAssets::rendPlayerIdle(int playerNum, int x, int y, int assetIndex, float scale)
+{
+	(void)playerNum;
+	if (assetIndex < 0)
+	{
 		std::cerr << "Invalid index" << std::endl;
 		return ;
 	}
-	if (scale <= 0) {
+	if (scale <= 0) 
+	{
 		std::cerr << "Invalid scale" << std::endl;
 		return ;
 	}
