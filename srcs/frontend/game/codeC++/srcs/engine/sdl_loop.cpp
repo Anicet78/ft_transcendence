@@ -1,16 +1,14 @@
-#include"game_sdl.hpp"
+#include "game_sdl.hpp"
 
-void	print_player(Player &player) {
+void	print_player(int px, int py)
+{
 	static int idle = 0;
 	int	tile_s = gSdl.getMapTileSize() * 2;
 	if (idle >= 6)
 		idle = 0;
 
-	const float px = player.getX();
-    const float py = player.getY();
-
-    const float x = (px - 0.5f) * tile_s;
-    const float y = (py - 0.5f) * tile_s;
+    const float x = px - (0.5f * tile_s);
+    const float y = py - (0.5f * tile_s);
 
     PlayerAssets::rendPlayerWalk(0, x, y, idle, 2);
 	idle++;
@@ -100,7 +98,7 @@ void	game_loop(Player &player)
 	updateRoom(player);
 	updatePlayerPosition(player);
 	//std::cout << "player pos :" << player.getX() << ", " << player.getY() << std::endl;
-	print_map(player);
+	PlayerAssets::print_map(player);
 	//print_player(player);
 	// key_action();
 }
@@ -122,7 +120,8 @@ int mainloop(Engine &sdl, Map &floor0)
 	}
 		
 	Player player(505, "betaTester", start);
-	while (running) {
+	while (running)
+	{
 		game_loop(player);
 		while (SDL_PollEvent(&sdl.event))
 		{

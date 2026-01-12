@@ -8,6 +8,10 @@ SDL_Texture				*PlayerAssets::_playerWalkText;
 SDL_Texture				*PlayerAssets::_playerAttackText;
 SDL_Texture				*PlayerAssets::_playerIdleText;
 
+SDL_Texture				*PlayerAssets::mapRenderTexture = nullptr;
+int						PlayerAssets::lastRenderWidth = 0;
+int						PlayerAssets::lastRenderHeight = 0;
+
 int						PlayerAssets::_walkImgW;
 int						PlayerAssets::_walkImgH;
 
@@ -219,11 +223,13 @@ void	PlayerAssets::rendPlayerAttack(int playerNum, int x, int y, int assetIndex,
 void	PlayerAssets::rendPlayerIdle(int playerNum, int x, int y, int assetIndex, float scale)
 {
 	(void)playerNum;
-	if (assetIndex < 0) {
+	if (assetIndex < 0)
+	{
 		std::cerr << "Invalid index" << std::endl;
 		return ;
 	}
-	if (scale <= 0) {
+	if (scale <= 0) 
+	{
 		std::cerr << "Invalid scale" << std::endl;
 		return ;
 	}
