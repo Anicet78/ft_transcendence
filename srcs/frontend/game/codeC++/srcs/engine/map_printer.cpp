@@ -39,56 +39,56 @@ int	check_border(int x, int y) {
 void	manage_border(float x, float y, float rx, float ry)
 {
 	// check for top left wall corner
-	if (check_tile(rx + 1, ry + 1) && !check_tile(rx, ry + 1) && !check_tile(rx + 1, ry)) {
+	if (check_tile(rx + 1, ry + 1) && !check_tile(rx, ry + 1) && !check_tile(rx + 1, ry) && !check_valid_tile(rx - 1, ry))
 		Assets::rendMap(x, y, Assets::WALL_UP_LEFT_CORNER, 2);
-	}
 
 	// check for top right wall corner
-	else if (check_tile(rx - 1, ry + 1) && !check_tile(rx, ry + 1) && !check_tile(rx - 1, ry)) {
+	else if (check_tile(rx - 1, ry + 1) && !check_tile(rx, ry + 1) && !check_tile(rx - 1, ry) && !check_valid_tile(rx + 1, ry))
 		Assets::rendMap(x, y, Assets::WALL_UP_RIGHT_CORNER, 2);
-	}
 
 	//check for down left wall corner 
-	else if (check_tile(rx + 1, ry - 1) && !check_tile(rx, ry - 1) && !check_tile(rx + 1, ry)) {
+	else if (check_tile(rx + 1, ry - 1) && !check_tile(rx, ry - 1) && !check_tile(rx + 1, ry) && !check_valid_tile(rx - 1, ry))
 		Assets::rendMap(x, y, Assets::WALL_DOWN_LEFT_CORNER, 2);
-	}
 
 	//check for down right wall corner
-	else if (check_tile(rx - 1, ry - 1) && !check_tile(rx, ry - 1) && !check_tile(rx - 1, ry)) { 
+	else if (check_tile(rx - 1, ry - 1) && !check_tile(rx, ry - 1) && !check_tile(rx - 1, ry) && !check_valid_tile(rx + 1, ry))
 		Assets::rendMap(x, y, Assets::WALL_DOWN_RIGHT_CORNER, 2);
-	}
 
 	// check if the wall is on the left
-	else if (check_tile(rx + 1, ry)) {
+	else if (check_tile(rx + 1, ry))
 		Assets::rendMap(x, y, Assets::WALL_LEFT, 2);
-	}
 
 	//check if the wall is on the right
-	else if (check_tile(rx - 1, ry)) {
+	else if (check_tile(rx - 1, ry))
 		Assets::rendMap(x, y, Assets::WALL_RIGHT, 2);
-	}
-
-	//check if the wall is on the top
-	else if (check_tile(rx, ry + 1)) {
-		Assets::rendMap(x, y, Assets::WALL, 2);
-	}
 
 	//check if the wall is on the bottom
-	else if (check_tile(rx, ry - 1)) {
+	else if (!check_valid_tile(rx , ry + 1) || !check_valid_tile(rx + 1 , ry + 1) || !check_valid_tile(rx - 1 , ry + 1))
 		Assets::rendMap(x, y, Assets::WALL_DOWN, 2);
-	}
+
+	//check if the wall is on the top
+	else if (!check_valid_tile(rx , ry - 1) || !check_valid_tile(rx + 1 , ry - 1) || !check_valid_tile(rx - 1 , ry - 1))
+		Assets::rendMap(x, y, Assets::WALL, 2);
+}
+
+void manage_inside(float x, float y, float rx, float ry)
+{
+	(void)rx, (void)ry;
+	Assets::rendMap(x, y, 114, 2);
+	//Assets::rendMap(x, y, 91, 2);
 }
 
 //manage the wall print
 void	manage_wall(float x, float y, float rx, float ry)
 {
 
-	// int	tile_s = gSdl.getMapTileSize() * 2;
 
-	if (check_border(rx, ry)) {
+	if (check_border(rx, ry))
+	{
 		manage_border(x, y, rx, ry);
 		return ;
 	}
+	manage_inside(x, y, rx, ry);
 }
 
 
@@ -148,32 +148,6 @@ void	PlayerAssets::print_map(Player &player)
 		numTilesX++;
 	if (offsetY > 0.01f)
 		numTilesY++;
-	if (mapRenderTexture == nullptr || lastRenderWidth != 800
-		|| lastRenderHeight != 800)
-	{
-        
-        if (mapRenderTexture != nullptr)
-            SDL_DestroyTexture(mapRenderTexture);
-            
-        mapRenderTexture = SDL_CreateTexture(
-            gSdl.renderer,
-            SDL_PIXELFORMAT_RGBA8888,
-            SDL_TEXTUREACCESS_TARGET,
-            800,
-            800
-        );
-        SDL_SetTextureBlendMode(mapRenderTexture, SDL_BLENDMODE_BLEND);
-        
-        lastRenderWidth = 800;
-        lastRenderHeight = 800;
-    }
-    
-    // Définir la texture comme target de rendu
-    SDL_SetRenderTarget(gSdl.renderer, mapRenderTexture);
-    
-    // Effacer la texture
-    SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 0);
-    SDL_RenderClear(gSdl.renderer);
 
 	for (int ty = 0; ty < numTilesY && (scrollMinY + ty) < maxY; ty++)
     {
@@ -201,9 +175,5 @@ void	PlayerAssets::print_map(Player &player)
         }
     }
     
-    //PlayerAssets::rendPlayerWalk(0, playerScreenX - 0.5 * tile_s, playerScreenY - 0.5 * tile_s, 0, 2);
 	print_player(playerScreenX, playerScreenY);
-	SDL_SetRenderTarget(gSdl.renderer, nullptr);
-    
-    SDL_RenderCopy(gSdl.renderer, mapRenderTexture, nullptr, nullptr);
 }

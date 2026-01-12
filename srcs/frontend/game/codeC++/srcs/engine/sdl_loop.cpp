@@ -114,7 +114,7 @@ void	game_loop(Player &player)
 	//long upplayertime = time_in_us();
 	updatePlayerPosition(player);
 	//std::cout << "player pos :" << player.getX() << ", " << player.getY() << std::endl;
-  PlayerAssets::print_map(player);
+	PlayerAssets::print_map(player);
 	//print_player(player);
 // 	long endupplayertime = time_in_us();
 // 	std::cout << "Time in update player : " << endupplayertime - upplayertime << " us"<< std::endl;
