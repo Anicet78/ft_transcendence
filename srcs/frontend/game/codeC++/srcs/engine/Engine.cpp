@@ -1,6 +1,6 @@
 #include"Engine.hpp"
 
-Engine::Engine(void) : window(NULL), renderer(NULL), _tile_size(0) {
+Engine::Engine(void) :  _tile_size(0), window(NULL), renderer(NULL) {
 	return ;
 }
 

@@ -1,7 +1,9 @@
 #ifndef PLAYERASSETS_HPP
 # define PLAYERASSETS_HPP
 
-#include"game_sdl.hpp"
+# include"game_sdl.hpp"
+
+class Player;
 
 class PlayerAssets
 {
@@ -28,6 +30,10 @@ private:
 	static SDL_Texture	*_playerWalkText;
 	static SDL_Texture	*_playerAttackText;
 	static SDL_Texture	*_playerIdleText;
+	
+	static SDL_Texture* mapRenderTexture;
+	static int lastRenderWidth;
+	static int lastRenderHeight;
 
 	static int						_walkImgW;
 	static int						_walkImgH;
@@ -55,6 +61,8 @@ public:
 	static void	rendPlayerWalk(int playerNum, int x, int y, int index, float scale);
 	static void	rendPlayerAttack(int playerNum, int x, int y, int index, float scale);
 	static void	rendPlayerIdle(int playerNum, int x, int y, int index, float scale);
+
+	static void	print_map(Player &player);
 };
 
 
