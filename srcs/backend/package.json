@@ -19,6 +19,8 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/jwt": "^10.0.0",
     "fastify": "^5.6.2"
   }
 }
