@@ -8,7 +8,7 @@ docker/secrets
 docker/certs
 
 # Node
-node_modules/
+srcs/backend/node_modules
 
 # Build
 dist/

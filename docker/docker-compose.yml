@@ -25,13 +25,15 @@ services:
       - .env
     secrets:
       - db_password
+    entrypoint: ["/app/db_entrypoint.sh"]
+    command: ["npm", "start"]
     networks:
       - transcendence
     depends_on:
       - db
 
   node-dev:
-    image: node:25.2.1-alpine3.22
+    image: node:25.2.1
     container_name: node-dev-c
     restart: on-failure
     env_file:
@@ -41,7 +43,9 @@ services:
     volumes:
       - ../srcs/backend:/app
     working_dir: /app
-    entrypoint: ["sh", "-c", "npm install && sleep infinity"]
+    entrypoint: ["/app/db_entrypoint.sh"]
+    command: ["sh", "-c", "npm install && npx prisma generate && sleep infinity"]
+    #entrypoint: ["sh", "-c", "npm install && npx prisma generate && sleep infinity"]
     networks:
       - transcendence
     depends_on:
