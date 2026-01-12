@@ -38,6 +38,8 @@ private:
 	static int						_idleImgW;
 	static int						_idleImgH;
 
+	static int			_last_dir;
+
 	PlayerAssets(void);
 	~PlayerAssets();
 
@@ -48,6 +50,7 @@ private:
 public:
 
 	static void	importPlayersAssets(int tile_size);
+	static void	updateLastDir(void);
 
 	static void	rendPlayerWalk(int playerNum, int x, int y, int index, float scale);
 	static void	rendPlayerAttack(int playerNum, int x, int y, int index, float scale);

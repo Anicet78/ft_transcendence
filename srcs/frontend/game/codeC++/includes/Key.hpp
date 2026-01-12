@@ -18,6 +18,9 @@ public:
 	bool	space;
 	bool	shift;
 
+	bool	walking(void);
+	bool	attacking(void);
+
 	Key(void);
 	~Key(void);
 };

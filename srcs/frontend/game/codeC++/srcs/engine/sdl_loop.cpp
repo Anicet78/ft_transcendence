@@ -11,12 +11,38 @@ long	time_in_us(void)
 }
 
 void	print_player(Player &player) {
-	static int idle = 0;
-	int	tile_s = gSdl.getMapTileSize() * 2;
-	if (idle >= 6)
-		idle = 0;
-	PlayerAssets::rendPlayerWalk(0, (player.getX() - 0.5) * tile_s, (player.getY() - 0.5) * tile_s, idle, 2);
-	idle++;
+
+	static int	frame = 0;
+	static int	prev_state = PLAYER_IDLE;
+	int			tile_s = gSdl.getMapTileSize() * 2;
+
+	PlayerAssets::updateLastDir();
+	if (frame >= 24)
+		frame = 0;
+
+	if (gSdl.key.attacking() == true)
+	{
+		if (prev_state != PLAYER_ATTACKING)
+			frame = 0;
+		prev_state = PLAYER_ATTACKING;
+		PlayerAssets::rendPlayerAttack(0, (player.getX() - 0.5) * tile_s, (player.getY() - 0.5) * tile_s, frame / 4, 2);
+	}
+	else if (gSdl.key.walking() == true)
+	{
+		if (prev_state != PLAYER_WALKING)
+			frame = 0;
+		prev_state = PLAYER_WALKING;
+		PlayerAssets::rendPlayerWalk(0, (player.getX() - 0.5) * tile_s, (player.getY() - 0.5) * tile_s, frame / 4, 2);
+	}
+	else
+	{
+		if (prev_state != PLAYER_IDLE)
+			frame = 0;
+		prev_state = PLAYER_IDLE;
+		PlayerAssets::rendPlayerIdle(0, (player.getX() - 0.5) * tile_s, (player.getY() - 0.5) * tile_s, frame / 4, 2);
+	}
+
+	frame++;
 }
 
 void updateRoom(Player &player)
@@ -96,27 +122,27 @@ void	updatePlayerPosition(Player &player)
 
 void	game_loop(Player &player)
 {
-	long uproomtime = time_in_us();
+	// long uproomtime = time_in_us();
 	updateRoom(player);
-	long enduproomtime = time_in_us();
-	std::cout << std::endl;
-	std::cout << "Time in update room : " << enduproomtime - uproomtime << " us"<< std::endl;
+	// long enduproomtime = time_in_us();
+	// std::cout << std::endl;
+	// std::cout << "Time in update room : " << enduproomtime - uproomtime << " us"<< std::endl;
 
-	long upplayertime = time_in_us();
+	// long upplayertime = time_in_us();
 	updatePlayerPosition(player);
 	//std::cout << "player pos :" << player.getX() << ", " << player.getY() << std::endl;
-	long endupplayertime = time_in_us();
-	std::cout << "Time in update player : " << endupplayertime - upplayertime << " us"<< std::endl;
+	// long endupplayertime = time_in_us();
+	// std::cout << "Time in update player : " << endupplayertime - upplayertime << " us"<< std::endl;
 
-	long printmaptime = time_in_us();
+	// long printmaptime = time_in_us();
 	print_map(player);
-	long endprintmaptime = time_in_us();
-	std::cout << "Time in print map : " << endprintmaptime - printmaptime << " us"<< std::endl;
+	// long endprintmaptime = time_in_us();
+	// std::cout << "Time in print map : " << endprintmaptime - printmaptime << " us"<< std::endl;
 
-	long printplayertime = time_in_us();
+	// long printplayertime = time_in_us();
 	print_player(player);
-	long endprintplayertime = time_in_us();
-	std::cout << "Time in print player : " << endprintplayertime - printplayertime << " us"<< std::endl;
+	// long endprintplayertime = time_in_us();
+	// std::cout << "Time in print player : " << endprintplayertime - printplayertime << " us"<< std::endl;
 	// key_action();
 
 

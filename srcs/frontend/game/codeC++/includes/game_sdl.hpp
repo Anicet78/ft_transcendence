@@ -16,10 +16,18 @@
 # include "PlayerAssets.hpp"
 
 # define SCREEN_WIDTH 800
-# define SCREEN_HEIGHT 600
+# define SCREEN_HEIGHT 800
 
 class Engine;
 class Player;
+
+enum state
+{
+	PLAYER_IDLE,
+	PLAYER_WALKING,
+	PLAYER_ATTACKING
+};
+
 
 extern Engine gSdl;
 
