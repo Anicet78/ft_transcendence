@@ -62,7 +62,7 @@ public:
 	static void	rendPlayerAttack(int playerNum, int x, int y, int index, float scale);
 	static void	rendPlayerIdle(int playerNum, int x, int y, int index, float scale);
 
-	static void	print_map(Player &player);
+	// static void	print_map(Player &player);
 };
 
 

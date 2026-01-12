@@ -45,6 +45,7 @@ class Room
 	public:
 		int	getWidth() const;
 		int getHeight() const;
+		int	getRoomMaxW() const;
 		std::array<std::array<int, 2>, 4> getExitsLoc() const;
 		std::array<bool, 4> getExits() const;
 		std::string getName() const;

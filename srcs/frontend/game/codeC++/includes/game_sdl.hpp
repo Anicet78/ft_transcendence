@@ -39,8 +39,9 @@ void	key_down(void);
 void	key_up(void);
 void	key_action(void);
 
-void	manage_wall(float x, float y);
+// void	manage_wall(float x, float y);
 int		check_tile(int x, int y);
 void	print_player(float px, float py);
+void	print_map(Player &player);
 
 #endif
