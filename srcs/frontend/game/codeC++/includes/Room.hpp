@@ -13,6 +13,8 @@ class Room
 		int _height;
 		//_exits[0] = North, _exits[1] = East, _exits[2] = South, _exits[3] = West
 		std::array<bool, 4> _exits;
+		//localisations of the exits
+		std::array<std::array<int, 2>, 4> _exitsLoc;
 		//Name of the room
 		std::string _name;
 		//Plan of the room
@@ -43,6 +45,7 @@ class Room
 	public:
 		int	getWidth() const;
 		int getHeight() const;
+		std::array<std::array<int, 2>, 4> getExitsLoc() const;
 		std::array<bool, 4> getExits() const;
 		std::string getName() const;
 		std::vector<std::string> getRoomPlan() const;
