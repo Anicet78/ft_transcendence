@@ -6,6 +6,10 @@ DOCKER_COMPOSE = docker compose -f $(COMPOSE_PATH) -p $(NAME)
 CERT_PATH = ./docker/certs
 DOMAIN = localhost
 
+SECRET_PATH = docker/secrets
+SECRET_NAMES = db_password.txt jwt_secret.txt pgadmin_password.txt
+SECRETS = $(patsubst %, $(SECRET_PATH)/%, $(SECRET_NAMES))
+
 INFO = @printf '\033[1;35m⮑ %s\033[0m\n'
 
 all: build cert up
@@ -23,7 +27,13 @@ cert:
 		-subj "/CN=$(DOMAIN)"
 	$(INFO) "Certificate created."
 
-up:
+$(SECRET_PATH)/jwt_secret.txt:
+	@node -e "console.log(require('crypto').randomBytes(32).toString('hex'))" | cat > $@
+
+$(SECRET_PATH)/%.txt:
+	@echo -n "passwd" > $@
+
+up: $(SECRETS)
 	$(INFO) "Starting containers..."
 	@$(DOCKER_COMPOSE) up -d
 	$(INFO) "Containers started."
