@@ -1,4 +1,14 @@
 #include"game_sdl.hpp"
+#include<ctime>
+#include<sys/time.h>
+
+long	time_in_us(void)
+{
+	struct timeval	start;
+
+	gettimeofday(&start, NULL);
+	return (start.tv_usec);
+}
 
 void	print_player(Player &player) {
 	static int idle = 0;
@@ -86,12 +96,30 @@ void	updatePlayerPosition(Player &player)
 
 void	game_loop(Player &player)
 {
+	long uproomtime = time_in_us();
 	updateRoom(player);
+	long enduproomtime = time_in_us();
+	std::cout << std::endl;
+	std::cout << "Time in update room : " << enduproomtime - uproomtime << " us"<< std::endl;
+
+	long upplayertime = time_in_us();
 	updatePlayerPosition(player);
 	//std::cout << "player pos :" << player.getX() << ", " << player.getY() << std::endl;
+	long endupplayertime = time_in_us();
+	std::cout << "Time in update player : " << endupplayertime - upplayertime << " us"<< std::endl;
+
+	long printmaptime = time_in_us();
 	print_map(player);
+	long endprintmaptime = time_in_us();
+	std::cout << "Time in print map : " << endprintmaptime - printmaptime << " us"<< std::endl;
+
+	long printplayertime = time_in_us();
 	print_player(player);
+	long endprintplayertime = time_in_us();
+	std::cout << "Time in print player : " << endprintplayertime - printplayertime << " us"<< std::endl;
 	// key_action();
+
+
 }
 
 int mainloop(Engine &sdl, Map &floor0)
