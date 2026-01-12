@@ -1,5 +1,6 @@
 CXX      = c++
 CXXFLAGS = -Wall -Werror -Wextra -std=c++20 -g
+CXXFLAGS2 = -Wall -Werror -Wextra -std=c++20 -g
 LDFLAGS  = $(shell sdl2-config --libs)
 
 EMSCRIPTEN	= em++
@@ -28,7 +29,6 @@ SRCS		=	main.cpp \
 EMSRCS		= $(patsubst %, $(SRC_DIR)%, $(SRCS))
 
 OBJS		= $(patsubst %.cpp, $(OBJ_DIR)%.o, $(SRCS))
-DEPS		= $(OBJS:.o=.d)
 
 NAME		= game
 EMNAME		= /build/game.js
@@ -53,6 +53,4 @@ fclean: clean
 
 re: fclean all
 
--include $(DEPS)
-
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re 
