@@ -25,7 +25,10 @@ services:
       - .env
     secrets:
       - db_password
-    entrypoint: ["/app/db_entrypoint.sh"]
+      - database_url
+    environment:
+      - DATABASE_URL=/run/secrets/database_url
+    entrypoint: ["/app/prisma_entrypoint.sh"]
     command: ["npm", "start"]
     networks:
       - transcendence
@@ -40,11 +43,14 @@ services:
       - .env
     secrets:
       - db_password
+      - database_url
+    # environment:
+    #   - DATABASE_URL=/run/secrets/database_url
     volumes:
       - ../srcs/backend:/app
     working_dir: /app
-    entrypoint: ["/app/db_entrypoint.sh"]
-    command: ["sh", "-c", "npm install && npx prisma generate && sleep infinity"]
+    entrypoint: ["/app/prisma_entrypoint.sh"]
+    command: ["sh", "-c", "npm install && sleep infinity"]
     #entrypoint: ["sh", "-c", "npm install && npx prisma generate && sleep infinity"]
     networks:
       - transcendence
@@ -100,6 +106,8 @@ secrets:
     file: ./secrets/db_password.txt
   pgadmin_password:
     file: ./secrets/pgadmin_password.txt
+  database_url:
+    file: ./secrets/database_url.txt
 
 volumes:
   postgres-v:
