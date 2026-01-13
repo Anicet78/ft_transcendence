@@ -177,7 +177,7 @@ void	PlayerAssets::importPlayersAssets(int tile_size) {
 	_last_dir = 0;
 }
 
-
+//x : 41, y : 39
 
 
 
@@ -263,4 +263,13 @@ void	PlayerAssets::rendPlayerIdle(int playerNum, int x, int y, int assetIndex, f
 		SDL_RenderCopy(gSdl.renderer, _playerIdleText, rect, &renderRect);
 	else
 		SDL_RenderCopyEx(gSdl.renderer, _playerIdleText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
+}
+
+SDL_Texture	*PlayerAssets::getIdleText(void)
+{
+	return (_playerIdleText);
+}
+SDL_Rect	*PlayerAssets::getIdleRect(int index)
+{
+	return (&_playerIdle[index]);
 }

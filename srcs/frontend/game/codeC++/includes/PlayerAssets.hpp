@@ -61,6 +61,10 @@ public:
 	static void	rendPlayerWalk(int playerNum, int x, int y, int index, float scale);
 	static void	rendPlayerAttack(int playerNum, int x, int y, int index, float scale);
 	static void	rendPlayerIdle(int playerNum, int x, int y, int index, float scale);
+	// static void	rendPlayerIdle(int playerNum, int x, int y, int index, int tile_s, float scale);
+
+	static SDL_Texture	*getIdleText(void);
+	static SDL_Rect		*getIdleRect(int index);
 
 	// static void	print_map(Player &player);
 };

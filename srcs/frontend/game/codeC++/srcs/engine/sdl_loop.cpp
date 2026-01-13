@@ -13,39 +13,51 @@ long	time_in_us(void)
 void	print_player(Player &player) {
 
 	static int	frame = 0;
-	static int	prev_state = PLAYER_IDLE;
-	int			tile_s = gSdl.getMapTileSize() * 2;
+	// static int	prev_state = PLAYER_IDLE;
+	int			tile_s = gSdl.getMapTileSize() * 8;
 	// const float x = player.getX() - (0.5f * tile_s);
 	// const float y = player.getY() - (0.5f * tile_s);
 
-	const float x = (player.getX() - 0.5f) * tile_s;
-	const float y = (player.getY() - 0.5f) * tile_s;
+	int x = player.getX() * tile_s;
+	int y = player.getY() * tile_s;
+	std::cout << "player x : " << x << " player y : " << y << std::endl;
 	PlayerAssets::updateLastDir();
 	if (frame >= 24)
 		frame = 0;
 
-	if (gSdl.key.attacking() == true)
-	{
-		if (prev_state != PLAYER_ATTACKING)
-			frame = 0;
-		prev_state = PLAYER_ATTACKING;
-		PlayerAssets::rendPlayerAttack(0, x, y, frame / 4, 2);
-	}
-	else if (gSdl.key.walking() == true)
-	{
-		if (prev_state != PLAYER_WALKING)
-			frame = 0;
-		prev_state = PLAYER_WALKING;
-		PlayerAssets::rendPlayerWalk(0, x, y, frame / 4, 2);
-	}
-	else
-	{
-		if (prev_state != PLAYER_IDLE)
-			frame = 0;
-		prev_state = PLAYER_IDLE;
-		PlayerAssets::rendPlayerIdle(0, x, y, frame / 4, 2);
-	}
+	SDL_Texture	*text = PlayerAssets::getIdleText();
+	SDL_Rect *src = PlayerAssets::getIdleRect(frame / 4);
+	SDL_Rect dest = {
+		x,
+		y,
+		100,
+		100
+	};
 
+	SDL_RenderSetScale(gSdl.renderer, 8, 8);
+	SDL_RenderCopy(gSdl.renderer, text, src, &dest);
+	// PlayerAssets::rendPlayerIdle(0, x, y, frame / 4, 2.5);ad
+	// if (gSdl.key.attacking() == true)
+	// {
+	// 	if (prev_state != PLAYER_ATTACKING)
+	// 		frame = 0;
+	// 	prev_state = PLAYER_ATTACKING;
+	// 	PlayerAssets::rendPlayerAttack(0, x, y, frame / 4, 2.5);
+	// }
+	// else if (gSdl.key.walking() == true)
+	// {
+	// 	if (prev_state != PLAYER_WALKING)
+	// 		frame = 0;
+	// 	prev_state = PLAYER_WALKING;
+	// 	PlayerAssets::rendPlayerWalk(0, x, y, frame / 4, 2.5);
+	// }
+	// else
+	// {
+	// 	if (prev_state != PLAYER_IDLE)
+	// 		frame = 0;
+	// 	prev_state = PLAYER_IDLE;
+	// 	PlayerAssets::rendPlayerIdle(0, x, y, frame / 4, 2.5);
+	// }
 	frame++;
 }
 
@@ -131,10 +143,10 @@ void	updatePlayerPosition(Player &player)
 
 void	game_loop(Player &player)
 {
-	updateRoom(player);
+	// updateRoom(player);
 	updatePlayerPosition(player);
 	print_map(player);
-	print_player(player);
+	// print_player(player);
 }
 
 int mainloop(Engine &sdl, Map &floor0)

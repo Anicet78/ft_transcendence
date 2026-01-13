@@ -37,45 +37,45 @@ int	check_border(int x, int y) {
 
 void	manage_border(int x, int y)
 {
-	int	tile_s = gSdl.getMapTileSize() * 2;
+	int	tile_s = gSdl.getMapTileSize();
 	// check for top left wall corner
 	if (check_tile(x + 1, y + 1) && !check_tile(x, y + 1) && !check_tile(x + 1, y)) {
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_UP_LEFT_CORNER, 2);
+		Assets::rendMap(x, y, Assets::WALL_UP_LEFT_CORNER, tile_s);
 	}
 
 	// check for top right wall corner
 	else if (check_tile(x - 1, y + 1) && !check_tile(x, y + 1) && !check_tile(x - 1, y)) {
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_UP_RIGHT_CORNER, 2);
+		Assets::rendMap(x, y, Assets::WALL_UP_RIGHT_CORNER, tile_s);
 	}
 
 	//check for down left wall corner 
 	else if (check_tile(x + 1, y - 1) && !check_tile(x, y - 1) && !check_tile(x + 1, y)) {
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_DOWN_LEFT_CORNER, 2);
+		Assets::rendMap(x, y, Assets::WALL_DOWN_LEFT_CORNER, tile_s);
 	}
 
 	//check for down right wall corner
 	else if (check_tile(x - 1, y - 1) && !check_tile(x, y - 1) && !check_tile(x - 1, y)) { 
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_DOWN_RIGHT_CORNER, 2);
+		Assets::rendMap(x, y, Assets::WALL_DOWN_RIGHT_CORNER, tile_s);
 	}
 
 	// check if the wall is on the left
 	else if (check_tile(x + 1, y)) {
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_LEFT, 2);
+		Assets::rendMap(x, y, Assets::WALL_LEFT, tile_s);
 	}
 
 	//check if the wall is on the right
 	else if (check_tile(x - 1, y)) {
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_RIGHT, 2);
+		Assets::rendMap(x, y, Assets::WALL_RIGHT, tile_s);
 	}
 
 	//check if the wall is on the top
 	else if (check_tile(x, y + 1)) {
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL, 2);
+		Assets::rendMap(x, y, Assets::WALL, tile_s);
 	}
 
 	//check if the wall is on the bottom
 	else if (check_tile(x, y - 1)) {
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_DOWN, 2);
+		Assets::rendMap(x, y, Assets::WALL_DOWN, tile_s);
 	}
 }
 
@@ -91,20 +91,25 @@ void	manage_wall(int x, int y)
 void	print_map(Player &player) {
 	static int	mapX = -1;
 	static int	mapY = -1;
-	quadList	node = player.getNode();
-	int	tile_s = gSdl.getMapTileSize() * 2;
 
+	quadList	node = player.getNode();
+	int	tile_s = gSdl.getMapTileSize();
+	int			scale = 8;
+
+	std::cout << tile_s << std::endl;
 	if (mapX != node->getX() || mapY != node->getY())
 	{
 		mapX = node->getX();
 		mapY = node->getY();
 		gSdl.room = player.getRoom();
+
 		if (gSdl.texture == NULL)
-			gSdl.texture = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 800, 800);
+			gSdl.texture = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888,
+				SDL_TEXTUREACCESS_TARGET, 100 * 16, 100 * 16);
 
 		SDL_SetRenderTarget(gSdl.renderer, gSdl.texture);
 		SDL_RenderClear(gSdl.renderer);
-
+		SDL_RenderSetScale(gSdl.renderer, scale, scale);
 		int h = player.getRoom().getRoomPlan().size();
 		for (int y = 0; y < h; y++)
 		{
@@ -115,14 +120,27 @@ void	print_map(Player &player) {
 				if (c == '1')
 					manage_wall(x, y);
 				else if (c == '0')
-					Assets::rendMap(x * tile_s, y * tile_s, Assets::FLOOR, 2);
+					Assets::rendMap(x, y, Assets::FLOOR, tile_s);
 				else if (c == 'E')
-					Assets::rendMap(x * tile_s, y * tile_s, Assets::DOOR_FRONT, 2);
+					Assets::rendMap(x, y, Assets::DOOR_FRONT, tile_s);
 			}
 		}
 		SDL_SetRenderTarget(gSdl.renderer, NULL);
 	}
 	SDL_RenderCopy(gSdl.renderer, gSdl.texture, NULL, NULL);
+
+	// PRINT DU JOUEUR :
+
+	float x = (player.getX() - 0.5f) * tile_s;
+	float y = (player.getY() - 0.5f) * tile_s;
+
+	SDL_Rect dest = {
+		static_cast<int>(x),
+		static_cast<int>(y),
+		PlayerAssets::getIdleRect(0)->w,
+		PlayerAssets::getIdleRect(0)->h
+	};
+	SDL_RenderCopy(gSdl.renderer, PlayerAssets::getIdleText(), PlayerAssets::getIdleRect(0), &dest);
 }
 
 //manage the tile print on the border

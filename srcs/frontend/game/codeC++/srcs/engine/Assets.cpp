@@ -59,35 +59,63 @@ void Assets::importAssets(std::string path, int tile_size) {
 	gSdl.setMapTileSize(tile_size);
 }
 
-// SDL_Rect	*Assets::getAssets(int index) {
-// 	return (&_mapAssets[index]);
-// }
+SDL_Rect	*Assets::getAssets(int index) {
+	return (&_mapAssets[index]);
+}
 
 
 // render the asset at index "assetIndex" scaled by "scale" at the position x, y
 // scale is supposed to be > 0
-void		Assets::rendMap(int x, int y, int assetIndex, float scale) {
+// void		Assets::rendMap(int x, int y, int assetIndex, float scale) {
+
+// 	if (assetIndex < 0)
+// 	{
+// 		std::cerr << "Invalid index" << std::endl;
+// 		return ;
+// 	}
+// 	if (scale <= 0)
+// 	{
+// 		std::cerr << "Invalid scale" << std::endl;
+// 		return ;
+// 	}
+
+// 	SDL_Rect	renderRect = {x, y, _MapImgW, _MapImgH};
+// 	SDL_Rect	*rect = &_mapAssets[assetIndex];
+
+// 	if (rect != NULL)
+// 	{
+// 		renderRect.w = rect->w * scale;
+// 		renderRect.h = rect->h * scale;
+// 	}
+
+// 	SDL_RenderCopy(gSdl.renderer, _MapTexture, rect, &renderRect);
+// }
+
+void		Assets::rendMap(int x, int y, int assetIndex, int tile_size) {
 
 	if (assetIndex < 0)
 	{
 		std::cerr << "Invalid index" << std::endl;
 		return ;
 	}
-	if (scale <= 0)
+	if (tile_size <= 0)
 	{
-		std::cerr << "Invalid scale" << std::endl;
+		std::cerr << "Invalid tile size" << std::endl;
 		return ;
 	}
 
-	SDL_Rect	renderRect = {x, y, _MapImgW, _MapImgH};
+	SDL_Rect	renderRect = {
+		x * tile_size,
+		y * tile_size,
+		tile_size,
+		tile_size
+	};
 	SDL_Rect	*rect = &_mapAssets[assetIndex];
 
-	if (rect != NULL)
-	{
-		renderRect.w = rect->w * scale;
-		renderRect.h = rect->h * scale;
-	}
-
 	SDL_RenderCopy(gSdl.renderer, _MapTexture, rect, &renderRect);
+}
+
+SDL_Texture	*Assets::getText(void) {
+	return (_MapTexture);
 }
 

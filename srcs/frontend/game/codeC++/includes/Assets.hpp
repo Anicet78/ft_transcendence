@@ -18,10 +18,13 @@ public:
 
 	static void		importAssets(std::string path, int tile_size);
 
-	// static SDL_Rect	*getAssets(int index);
+	static SDL_Rect	*getAssets(int index);
 
-	static void		rendMap(int x, int y, int index, float scale);
+	// static void		rendMap(int x, int y, int index, float scale);
+	static void		rendMap(int x, int y, int index, int tile_size);
 	
+	static SDL_Texture	*getText(void);
+
 	enum AssetIndex {
 
 		WALL = 41,
