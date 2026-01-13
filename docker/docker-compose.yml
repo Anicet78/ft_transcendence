@@ -31,13 +31,14 @@ services:
       - db
 
   node-dev:
-    image: node:25.2.1-alpine3.22
+    image: node:25.2.1
     container_name: node-dev-c
     restart: on-failure
     env_file:
       - .env
     secrets:
       - db_password
+      - jwt_secret
     volumes:
       - ../srcs/backend:/app
     working_dir: /app
@@ -94,6 +95,8 @@ services:
 secrets:
   db_password:
     file: ./secrets/db_password.txt
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
   pgadmin_password:
     file: ./secrets/pgadmin_password.txt
 
