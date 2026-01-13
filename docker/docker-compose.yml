@@ -25,7 +25,10 @@ services:
       - .env
     secrets:
       - db_password
-    entrypoint: ["/app/db_entrypoint.sh"]
+      - database_url
+    environment:
+      - DATABASE_URL=/run/secrets/database_url
+    entrypoint: ["/app/prisma_entrypoint.sh"]
     command: ["npm", "start"]
     networks:
       - transcendence
@@ -102,6 +105,8 @@ secrets:
     file: ./secrets/jwt_secret.txt
   pgadmin_password:
     file: ./secrets/pgadmin_password.txt
+  database_url:
+    file: ./secrets/database_url.txt
 
 volumes:
   postgres-v:
