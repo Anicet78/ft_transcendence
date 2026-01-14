@@ -10,17 +10,25 @@ export async function postLoginController(
 ) {
 	const {email, password} = request.body;
 
-	const user: User = {id: "1", email: email, username: "test", passwordHash: await hashPassword("password")}; // Get the id by searching the email in the db
+	// Get the id by searching the email in the db, this is just for testing purpose
+	const user: User = {
+		id: "1",
+		firstname: "Anicet",
+		lastname: "Maxime Nina",
+		username: "Tom Julie",
+		email: email,
+		passwordHash: await hashPassword("password")
+	};
 
 	try {
 		if (!await verifyPassword(user.passwordHash, password))
-			reply.code(401).send("invalid password")
+			return reply.code(401).send("invalid password");
 	} catch (err) {
 		request.log.error(err);
-		reply.code(500).send("Password verification error");
+		return reply.code(500).send("password verification error");
 	}
 
 	const response: LoginResponseType = {token: createAccessToken({userId: user.id, email: user.email}), user: user};
 
-	reply.status(200).send(response);
+	return reply.status(200).send(response);
 }
