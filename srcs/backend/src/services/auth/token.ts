@@ -6,7 +6,7 @@ const JWT_SECRET = fs.readFileSync("/run/secrets/jwt_secret", "utf8").trim();
 
 let fastify: FastifyInstance | null = null;
 
-export async function initAuth(fastifyInstance: any) {
+export async function initAuth(fastifyInstance: FastifyInstance) {
 	await fastifyInstance.register(fastifyJwt, {
 		secret: JWT_SECRET,
 		sign: { expiresIn: "15m" }
