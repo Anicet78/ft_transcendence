@@ -26,6 +26,7 @@ fastify.post("/login", {
 		response: {
 			200: LoginResponseSchema,
 			400: Type.String(),
+			401: Type.String(),
 			500: Type.String()
 		}
 	}

@@ -12,8 +12,6 @@ export async function postLoginController(
 
 	const user: User = {id: "1", email: email, username: "test", passwordHash: await hashPassword("password")}; // Get the id by searching the email in the db
 
-	console.log(password);
-
 	try {
 		if (!await verifyPassword(user.passwordHash, password))
 			reply.code(401).send("invalid password")
