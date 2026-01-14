@@ -88,9 +88,57 @@ void	manage_wall(int x, int y)
 	}
 }
 
+float	cameraX(Player const &player, int const tile_size) {
+	float idealMinX = player.getX() - 12;
+	float idealMaxX = player.getX() + 13;
+	int roomW = player.getRoom().getRoomPlan()[0].size();
+
+	if (idealMinX < 0)
+	{
+		idealMinX = 0;
+		idealMaxX = std::min(25, roomW);
+	}
+	else if (idealMaxX > roomW)
+	{
+		idealMaxX = roomW;
+		idealMinX = std::max(0, roomW - 25);
+	}
+
+	if (idealMinX > idealMaxX)
+		idealMinX = idealMaxX;
+
+	if (roomW * tile_size <= SCREEN_WIDTH)
+		idealMinX = 0;
+	return (idealMinX);
+}
+
+float	cameraY(Player const &player, int const tile_size) {
+	float idealMinY = player.getY() - 12;
+	float idealMaxY = player.getY() + 13;
+	int roomH = player.getRoom().getRoomPlan().size();
+	if (idealMinY < 0)
+	{
+		idealMinY = 0;
+		idealMaxY = std::min(25, roomH);
+	}
+	else if (idealMaxY > roomH)
+	{
+		idealMaxY = roomH;
+		idealMinY = std::max(0, roomH - 25);
+	}
+
+	if (idealMinY > idealMaxY)
+		idealMinY = idealMaxY;
+
+	if (roomH * tile_size <= SCREEN_HEIGHT)
+		idealMinY = 0;
+	return (idealMinY);
+}
+
 void	print_map(Player &player) {
 	static int	mapX = -1;
 	static int	mapY = -1;
+
 	quadList	node = player.getNode();
 	int	tile_s = gSdl.getMapTileSize() * 2;
 
@@ -100,7 +148,7 @@ void	print_map(Player &player) {
 		mapY = node->getY();
 		gSdl.room = player.getRoom();
 		if (gSdl.texture == NULL)
-			gSdl.texture = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 800, 800);
+			gSdl.texture = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 800 * 16, 800 * 16);
 
 		SDL_SetRenderTarget(gSdl.renderer, gSdl.texture);
 		SDL_RenderClear(gSdl.renderer);
@@ -122,177 +170,18 @@ void	print_map(Player &player) {
 		}
 		SDL_SetRenderTarget(gSdl.renderer, NULL);
 	}
-	SDL_RenderCopy(gSdl.renderer, gSdl.texture, NULL, NULL);
+
+	float	camX = cameraX(player, tile_s);
+	float	camY = cameraY(player, tile_s);
+	SDL_Rect camera = {
+		static_cast<int>(camX * tile_s),
+		static_cast<int>(camY * tile_s),
+		SCREEN_WIDTH,
+		SCREEN_HEIGHT
+	};
+
+	SDL_RenderCopy(gSdl.renderer, gSdl.texture, &camera, NULL);
+	float playerScreenX = (player.getX() - camX) * tile_s;
+    float playerScreenY = (player.getY() - camY) * tile_s;
+	print_player(playerScreenX, playerScreenY);
 }
-
-//manage the tile print on the border
-// void	manage_border(float x, float y, float rx, float ry)
-// {
-// 	// check for top left wall corner
-// 	if (check_tile(rx + 1, ry + 1) && !check_tile(rx, ry + 1) && !check_tile(rx + 1, ry)) {
-// 		Assets::rendMap(x, y, Assets::WALL_UP_LEFT_CORNER, 2);
-// 	}
-
-// 	// check for top right wall corner
-// 	else if (check_tile(rx - 1, ry + 1) && !check_tile(rx, ry + 1) && !check_tile(rx - 1, ry)) {
-// 		Assets::rendMap(x, y, Assets::WALL_UP_RIGHT_CORNER, 2);
-// 	}
-
-// 	//check for down left wall corner 
-// 	else if (check_tile(rx + 1, ry - 1) && !check_tile(rx, ry - 1) && !check_tile(rx + 1, ry)) {
-// 		Assets::rendMap(x, y, Assets::WALL_DOWN_LEFT_CORNER, 2);
-// 	}
-
-// 	//check for down right wall corner
-// 	else if (check_tile(rx - 1, ry - 1) && !check_tile(rx, ry - 1) && !check_tile(rx - 1, ry)) { 
-// 		Assets::rendMap(x, y, Assets::WALL_DOWN_RIGHT_CORNER, 2);
-// 	}
-
-// 	// check if the wall is on the left
-// 	else if (check_tile(rx + 1, ry)) {
-// 		Assets::rendMap(x, y, Assets::WALL_LEFT, 2);
-// 	}
-
-// 	//check if the wall is on the right
-// 	else if (check_tile(rx - 1, ry)) {
-// 		Assets::rendMap(x, y, Assets::WALL_RIGHT, 2);
-// 	}
-
-// 	//check if the wall is on the top
-// 	else if (check_tile(rx, ry + 1)) {
-// 		Assets::rendMap(x, y, Assets::WALL, 2);
-// 	}
-
-// 	//check if the wall is on the bottom
-// 	else if (check_tile(rx, ry - 1)) {
-// 		Assets::rendMap(x, y, Assets::WALL_DOWN, 2);
-// 	}
-// }
-
-// //manage the wall print
-// void	manage_wall(float x, float y, float rx, float ry)
-// {
-
-// 	// int	tile_s = gSdl.getMapTileSize() * 2;
-
-// 	if (check_border(rx, ry)) {
-// 		manage_border(x, y, rx, ry);
-// 		return ;
-// 	}
-// }
-
-// void	PlayerAssets::print_map(Player &player)
-// {
-
-// 	float tile_s = gSdl.getMapTileSize() * 2;
-//     int mapMaxTile = 800 / tile_s;
-//     gSdl.room = player.getRoom();
-//     float h = gSdl.room.getRoomPlan().size();
-//     float w = gSdl.room.getRoomPlan()[0].size();
-    
-//     float playerX = player.getX();
-//     float playerY = player.getY();
-//     int numTilesY = mapMaxTile;
-// 	int numTilesX = mapMaxTile;
-//     float idealMinX = playerX - 12;
-//     float idealMaxX = playerX + 13;
-//     float idealMinY = playerY - 12;
-//     float idealMaxY = playerY + 13;
-    
-//     float minX = idealMinX;
-//     float maxX = idealMaxX;
-//     float minY = idealMinY;
-//     float maxY = idealMaxY;
-    
-//     if (idealMinX < 0)
-// 	{
-//         minX = 0;
-//         maxX = std::min(25.0f, w);
-//     }
-// 	else if (idealMaxX > w)
-// 	{
-//         maxX = w;
-//         minX = std::max(0.0f, w - 25);
-//     }
-    
-//     if (idealMinY < 0)
-// 	{
-//         minY = 0;
-//         maxY = std::min(25.0f, h);
-//     }
-// 	else if (idealMaxY > h)
-// 	{
-//         maxY = h;
-//         minY = std::max(0.0f, h - 25);
-//     }	
-    
-//     float playerScreenX = (playerX - minX) * tile_s;
-//     float playerScreenY = (playerY - minY) * tile_s;
-    
-//     float scrollMinX = (int)minX;
-//     float scrollMinY = (int)minY;
-//     float offsetX = (minX - scrollMinX) * tile_s;
-//     float offsetY = (minY - scrollMinY) * tile_s;
-// 	if (offsetX > 0.01f)
-// 		numTilesX++;
-// 	if (offsetY > 0.01f)
-// 		numTilesY++;
-// 	if (mapRenderTexture == nullptr || lastRenderWidth != 800
-// 		|| lastRenderHeight != 800)
-// 	{
-        
-//         if (mapRenderTexture != nullptr)
-//             SDL_DestroyTexture(mapRenderTexture);
-            
-//         mapRenderTexture = SDL_CreateTexture(
-//             gSdl.renderer,
-//             SDL_PIXELFORMAT_RGBA8888,
-//             SDL_TEXTUREACCESS_TARGET,
-//             800,
-//             800
-//         );
-//         SDL_SetTextureBlendMode(mapRenderTexture, SDL_BLENDMODE_BLEND);
-        
-//         lastRenderWidth = 800;
-//         lastRenderHeight = 800;
-//     }
-    
-//     // Définir la texture comme target de rendu
-//     SDL_SetRenderTarget(gSdl.renderer, mapRenderTexture);
-    
-//     // Effacer la texture
-//     SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 0);
-//     SDL_RenderClear(gSdl.renderer);
-
-// 	for (int ty = 0; ty < numTilesY && (scrollMinY + ty) < maxY; ty++)
-//     {
-//         int ry = scrollMinY + ty;
-//         if (ry < 0 || ry >= h)
-// 			continue;
-        
-//         for (int tx = 0; tx < numTilesX && (scrollMinX + tx) < maxX; tx++)
-//         {
-//             int rx = scrollMinX + tx;
-//             if (rx < 0 || rx >= w)
-// 				continue;
-            
-//             char c = gSdl.room.getRoomPlan()[ry][rx];
-            
-//             float renderX = tx * tile_s - offsetX;
-//             float renderY = ty * tile_s - offsetY;
-            
-//             if (c == '1')
-//                 manage_wall(renderX, renderY, rx, ry);
-//             else if (c == '0')
-//                 Assets::rendMap(renderX, renderY, Assets::FLOOR, 2);
-//             else if (c == 'E')
-//                 Assets::rendMap(renderX, renderY, Assets::DOOR_FRONT, 2);
-//         }
-//     }
-    
-//     //PlayerAssets::rendPlayerWalk(0, playerScreenX - 0.5 * tile_s, playerScreenY - 0.5 * tile_s, 0, 2);
-// 	print_player(playerScreenX, playerScreenY);
-// 	SDL_SetRenderTarget(gSdl.renderer, nullptr);
-    
-//     SDL_RenderCopy(gSdl.renderer, mapRenderTexture, nullptr, nullptr);
-// }

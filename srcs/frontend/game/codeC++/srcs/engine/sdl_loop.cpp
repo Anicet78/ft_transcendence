@@ -10,16 +10,14 @@ long	time_in_us(void)
 	return (start.tv_usec);
 }
 
-void	print_player(Player &player) {
+void	print_player(float px, float py) {
 
 	static int	frame = 0;
 	static int	prev_state = PLAYER_IDLE;
 	int			tile_s = gSdl.getMapTileSize() * 2;
-	// const float x = player.getX() - (0.5f * tile_s);
-	// const float y = player.getY() - (0.5f * tile_s);
 
-	const float x = (player.getX() - 0.5f) * tile_s;
-	const float y = (player.getY() - 0.5f) * tile_s;
+	const float x = px - (0.5f * tile_s);
+	const float y = py - (0.5f * tile_s);
 	PlayerAssets::updateLastDir();
 	if (frame >= 24)
 		frame = 0;
@@ -134,7 +132,6 @@ void	game_loop(Player &player)
 	updateRoom(player);
 	updatePlayerPosition(player);
 	print_map(player);
-	print_player(player);
 }
 
 int mainloop(Engine &sdl, Map &floor0)
@@ -151,7 +148,7 @@ int mainloop(Engine &sdl, Map &floor0)
 			break ;
 		}
 	}
-		
+
 	Player player(505, "betaTester", start);
 	while (running)
 	{
