@@ -1,8 +1,8 @@
-#include <iostream>
-#include "../uWebSockets/src/App.h"
+#include "Server.hpp"
 
 int main()
 {
-	std::cout << "hello world\n";
-	return 0;
+    Server serv;
+
+    serv.run();
 }
