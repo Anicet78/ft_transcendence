@@ -10,29 +10,53 @@ long	time_in_us(void)
 	return (start.tv_usec);
 }
 
-void	print_player(int px, int py)
-{
-	static int idle = 0;
-	int	tile_s = gSdl.getMapTileSize() * 2;
-	if (idle >= 6)
-		idle = 0;
+void	print_player(float px, float py) {
 
-    const float x = px - (0.5f * tile_s);
-    const float y = py - (0.5f * tile_s);
+	static int	frame = 0;
+	static int	prev_state = PLAYER_IDLE;
+	int			tile_s = gSdl.getMapTileSize() * 2;
 
-    PlayerAssets::rendPlayerWalk(0, x, y, idle, 2);
-	idle++;
+	const float x = px - (0.5f * tile_s);
+	const float y = py - (0.5f * tile_s);
+	PlayerAssets::updateLastDir();
+	if (frame >= 24)
+		frame = 0;
+
+	if (gSdl.key.attacking() == true)
+	{
+		if (prev_state != PLAYER_ATTACKING)
+			frame = 0;
+		prev_state = PLAYER_ATTACKING;
+		PlayerAssets::rendPlayerAttack(0, x, y, frame / 4, 2);
+	}
+	else if (gSdl.key.walking() == true)
+	{
+		if (prev_state != PLAYER_WALKING)
+			frame = 0;
+		prev_state = PLAYER_WALKING;
+		PlayerAssets::rendPlayerWalk(0, x, y, frame / 4, 2);
+	}
+	else
+	{
+		if (prev_state != PLAYER_IDLE)
+			frame = 0;
+		prev_state = PLAYER_IDLE;
+		PlayerAssets::rendPlayerIdle(0, x, y, frame / 4, 2);
+	}
+
+	frame++;
 }
 
 void updateRoom(Player &player)
 {
 	Room room = player.getRoom();
 	auto plan = room.getRoomPlan();
-	auto exitsLoc = room.getExitsLoc();
 	float x = player.getX(), y = player.getY();
 
 	if (plan[y][x] == 'E')
 	{
+		auto exitsLoc = room.getExitsLoc();
+
 		if (exitsLoc[2][0] == static_cast<int>(x) && exitsLoc[2][1] == static_cast<int>(y)
 			&& !player.getNode()->south.expired())
 		{
@@ -105,38 +129,14 @@ void	updatePlayerPosition(Player &player)
 
 void	game_loop(Player &player)
 {
-	//long uproomtime = time_in_us();
 	updateRoom(player);
-	//long enduproomtime = time_in_us();
-	//std::cout << std::endl;
-	//std::cout << "Time in update room : " << enduproomtime - uproomtime << " us"<< std::endl;
-
-	//long upplayertime = time_in_us();
 	updatePlayerPosition(player);
-	//std::cout << "player pos :" << player.getX() << ", " << player.getY() << std::endl;
-	PlayerAssets::print_map(player);
-	//print_player(player);
-// 	long endupplayertime = time_in_us();
-// 	std::cout << "Time in update player : " << endupplayertime - upplayertime << " us"<< std::endl;
-
-// 	long printmaptime = time_in_us();
-// 	print_map(player);
-// 	long endprintmaptime = time_in_us();
-// 	std::cout << "Time in print map : " << endprintmaptime - printmaptime << " us"<< std::endl;
-
-// 	long printplayertime = time_in_us();
-// 	print_player(player);
-// 	long endprintplayertime = time_in_us();
-// 	std::cout << "Time in print player : " << endprintplayertime - printplayertime << " us"<< std::endl;
-	// key_action();
-
-
+	print_map(player);
 }
 
 int mainloop(Engine &sdl, Map &floor0)
 {
 	bool	running = true;
-	// long	frame = 0;
 
 	auto nodes = floor0.getNodes();
 	quadList start;
@@ -148,7 +148,7 @@ int mainloop(Engine &sdl, Map &floor0)
 			break ;
 		}
 	}
-		
+
 	Player player(505, "betaTester", start);
 	while (running)
 	{
@@ -165,7 +165,6 @@ int mainloop(Engine &sdl, Map &floor0)
 		SDL_RenderPresent(sdl.renderer);
 		SDL_RenderClear(gSdl.renderer);
 		SDL_Delay(16);
-		// std::cout << frame++ << std::endl;
 	}
 	return 0;
 }

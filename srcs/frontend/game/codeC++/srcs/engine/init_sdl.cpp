@@ -9,7 +9,7 @@ int	init_sdl(Engine &gSdl)
 	}
 
 	//need a pointer on the window we'll create
-	gSdl.window = SDL_CreateWindow("Ma fenetre SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 800, SDL_WINDOW_SHOWN);
+	gSdl.window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	if (!gSdl.window) {
 		std::cerr << "Window error: " << SDL_GetError() << std::endl;
 		SDL_Quit();

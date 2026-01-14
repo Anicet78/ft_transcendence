@@ -13,6 +13,7 @@ public:
 	SDL_Window		*window;
 	SDL_Renderer	*renderer;
 	SDL_Event		event;
+	SDL_Texture		*texture;
 	Key				key;
 	Room			room;
 

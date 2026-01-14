@@ -49,6 +49,18 @@ int Room::getHeight() const
 	return this->_height;
 }
 
+int	Room::getRoomMaxW() const
+{
+	int	siz = getRoomPlan().size();
+	int	max = 0;
+	for (int y = 0; y < siz; y++)
+	{
+		if ((int)getRoomPlan()[y].size() > max)
+			max = siz;
+	}
+	return (max);
+}
+
 std::string Room::getName() const
 {
 	return this->_name;
