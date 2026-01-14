@@ -1,9 +1,10 @@
+import type { FastifyInstance } from "fastify";
 import fastifyJwt from "@fastify/jwt";
 import fs from "fs";
 
 const JWT_SECRET = fs.readFileSync("/run/secrets/jwt_secret", "utf8").trim();
 
-let fastify: any = null;
+let fastify: FastifyInstance | null = null;
 
 export async function initAuth(fastifyInstance: any) {
 	await fastifyInstance.register(fastifyJwt, {
@@ -13,12 +14,27 @@ export async function initAuth(fastifyInstance: any) {
 	fastify = fastifyInstance;
 }
 
-export function createAccessToken(payload: {userId: string, email: string}): string {
-	if (!fastify) throw new Error("Auth not initialized (call initAuth)");
+export type JWTPayload = {
+	userId: string;
+	email: string;
+};
+
+/**
+ * Create and return the token for a user.
+ * @param {{userId: number, email: string}} payload User payload
+ * @returns {string} JWT token
+ */
+export function createAccessToken(payload: JWTPayload): string {
+	if (!fastify) throw new Error("Auth not initialized");
 	return fastify.jwt.sign(payload);
 }
 
-export function verifyAccessToken(token: string): {userId: string, email: string} {
-	if (!fastify) throw new Error("Auth not initialized (call initAuth)");
+/**
+ * Check if the token is valid and hasn't expired.
+ * @param {string} token JWT token
+ * @returns {{userId: number, email: string}} User payload
+ */
+export function verifyAccessToken(token: string): JWTPayload {
+	if (!fastify) throw new Error("Auth not initialized");
 	return fastify.jwt.verify(token);
 }
