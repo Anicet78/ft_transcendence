@@ -41,17 +41,16 @@ CREATE TABLE user_role (
 	CONSTRAINT fk_role_receiver
 		FOREIGN KEY (attributed_to)
 		REFERENCES app_user(app_user_id),
-		-- ON DELETE CASCADE,
 
 	CONSTRAINT fk_role_giver
 		FOREIGN KEY (attributed_by)
 		REFERENCES app_user(app_user_id),
-		-- ON DELETE CASCADE,
 
 	CHECK ("role" IN ('guest', 'user', 'app_admin', 'banned_user'))
 );
 
 CREATE TABLE friendship (
+	friendship_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	sender_id UUID,
 	receiver_id UUID,
 	"status" VARCHAR(10) NOT NULL DEFAULT 'waiting',
@@ -59,18 +58,16 @@ CREATE TABLE friendship (
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	deleted_at TIMESTAMP,
 
-	CONSTRAINT friendship_id
-		PRIMARY KEY (sender_id, receiver_id),
+	-- CONSTRAINT friendship_id
+	-- 	PRIMARY KEY (sender_id, receiver_id),
 
 	CONSTRAINT fk_friendship_sender
 		FOREIGN KEY (sender_id)
 		REFERENCES app_user(app_user_id),
-		-- ON DELETE CASCADE,
 
 	CONSTRAINT fk_friendship_receiver
 		FOREIGN KEY (receiver_id)
 		REFERENCES app_user(app_user_id),
-		-- ON DELETE CASCADE,
 
 	CONSTRAINT chk_friendship_not_self
 		CHECK (sender_id <> receiver_id),
@@ -79,7 +76,7 @@ CREATE TABLE friendship (
 );
 
 CREATE TABLE game_profile (
-	game_profile_id UUID PRIMARY KEY,
+	game_profile_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	deleted_at TIMESTAMP,
@@ -114,6 +111,7 @@ CREATE TABLE game_session (
 );
 
 CREATE TABLE game_result (
+	game_result_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	game_id UUID,
 	player_id UUID,
 
@@ -126,13 +124,12 @@ CREATE TABLE game_result (
 	gained_xp INT NOT NULL DEFAULT 0,
 	is_winner BOOLEAN NOT NULL DEFAULT false,
 
-	CONSTRAINT game_result_pk
-		PRIMARY KEY (game_id, player_id),
+	-- CONSTRAINT game_result_pk
+	-- 	PRIMARY KEY (game_id, player_id),
 
 	CONSTRAINT fk_game_result_match
 		FOREIGN KEY (game_id)
 		REFERENCES game_session(session_id),
-		-- ON DELETE CASCADE,
 
 	CONSTRAINT fk_game_result_user
 		FOREIGN KEY (player_id)
@@ -155,6 +152,7 @@ CREATE TABLE chat (
 );
 
 CREATE TABLE chat_member (
+	chat_member_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	chat_id UUID,
 	user_id UUID,
 
@@ -165,20 +163,18 @@ CREATE TABLE chat_member (
 	joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	left_at TIMESTAMP,
 
-	CONSTRAINT chat_member_id
-		PRIMARY KEY (chat_id, user_id),
+	-- CONSTRAINT chat_member_id
+	-- 	PRIMARY KEY (chat_id, user_id),
 
 	FOREIGN KEY (chat_id)
 		REFERENCES chat(chat_id),
-		-- ON DELETE CASCADE,
 
 	FOREIGN KEY (user_id)
 		REFERENCES app_user(app_user_id)
-		-- ON DELETE CASCADE
 );
 
 CREATE TABLE private_chat (
-	private_chat_id UUID PRIMARY KEY,
+	private_chat_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	user1_id UUID,
 	user2_id UUID,
 
@@ -196,6 +192,7 @@ CREATE TABLE private_chat (
 CREATE TYPE chat_role_type AS ENUM ('owner', 'admin', 'moderator', 'read_only');
 
 CREATE TABLE chat_role (
+	chat_role_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	chat_id UUID,
 	user_id UUID,
 	"role" chat_role_type NOT NULL,
@@ -205,16 +202,14 @@ CREATE TABLE chat_role (
 	modified_at TIMESTAMP,
 	deleted_at TIMESTAMP,
 
-	CONSTRAINT chat_role_id
-		PRIMARY KEY (chat_id, user_id, "role"),
+	-- CONSTRAINT chat_role_id
+	-- 	PRIMARY KEY (chat_id, user_id, "role"),
 
 	FOREIGN KEY (user_id)
 		REFERENCES app_user(app_user_id),
-		-- ON DELETE CASCADE,
 
 	FOREIGN KEY (chat_id)
 		REFERENCES chat(chat_id),
-		-- ON DELETE CASCADE,
 
 	FOREIGN KEY (attributed_by)
 		REFERENCES app_user(app_user_id)
@@ -237,17 +232,16 @@ CREATE TABLE chat_message (
 
 	FOREIGN KEY (chat_id)
 		REFERENCES chat(chat_id),
-		-- ON DELETE CASCADE,
 
 	FOREIGN KEY (user_id)
 		REFERENCES app_user(app_user_id),
-		-- ON DELETE SET NULL,
 
 	FOREIGN KEY (moderated_by)
 		REFERENCES app_user(app_user_id)
 );
 
 CREATE TABLE chat_ban (
+	chat_ban_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	chat_id UUID,
 	user_id UUID,
 
@@ -258,15 +252,13 @@ CREATE TABLE chat_ban (
 	updated_at TIMESTAMP,
 	deleted_at TIMESTAMP,
 
-	PRIMARY KEY (chat_id, user_id),
+	-- PRIMARY KEY (chat_id, user_id),
 
 	FOREIGN KEY (chat_id)
 		REFERENCES chat(chat_id),
-		-- ON DELETE CASCADE,
 
 	FOREIGN KEY (user_id)
 		REFERENCES app_user(app_user_id),
-		-- ON DELETE CASCADE,
 
 	FOREIGN KEY (banned_by)
 		REFERENCES app_user(app_user_id)

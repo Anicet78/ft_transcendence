@@ -53,9 +53,92 @@ model chat {
   chat_role    chat_role[]
 }
 
+model chat_member {
+  chat_member_id String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  chat_id        String?   @db.Uuid
+  user_id        String?   @db.Uuid
+  created_at     DateTime? @default(now()) @db.Timestamp(6)
+  updated_at     DateTime? @default(now()) @db.Timestamp(6)
+  deleted_at     DateTime? @db.Timestamp(6)
+  joined_at      DateTime? @default(now()) @db.Timestamp(6)
+  left_at        DateTime? @db.Timestamp(6)
+  chat           chat?     @relation(fields: [chat_id], references: [chat_id], onDelete: NoAction, onUpdate: NoAction)
+  app_user       app_user? @relation(fields: [user_id], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model friendship {
+  friendship_id                             String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  sender_id                                 String?   @db.Uuid
+  receiver_id                               String?   @db.Uuid
+  status                                    String    @default("waiting") @db.VarChar(10)
+  created_at                                DateTime? @default(now()) @db.Timestamp(6)
+  updated_at                                DateTime? @default(now()) @db.Timestamp(6)
+  deleted_at                                DateTime? @db.Timestamp(6)
+  app_user_friendship_receiver_idToapp_user app_user? @relation("friendship_receiver_idToapp_user", fields: [receiver_id], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_friendship_receiver")
+  app_user_friendship_sender_idToapp_user   app_user? @relation("friendship_sender_idToapp_user", fields: [sender_id], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_friendship_sender")
+}
+
+model game_profile {
+  game_profile_id       String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at            DateTime? @default(now()) @db.Timestamp(6)
+  updated_at            DateTime? @default(now()) @db.Timestamp(6)
+  deleted_at            DateTime? @db.Timestamp(6)
+  total_games           Int?      @default(0)
+  total_wins            Int?      @default(0)
+  total_loses           Int?      @default(0)
+  total_ennemies_killed Int?      @default(0)
+  total_xp              Int?      @default(0)
+  level                 Int?      @default(0)
+  best_time             Int?
+  app_user              app_user  @relation(fields: [game_profile_id], references: [app_user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_game_profile_user")
+}
+
+model game_result {
+  game_result_id  String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  game_id         String?       @db.Uuid
+  player_id       String?       @db.Uuid
+  created_at      DateTime?     @default(now()) @db.Timestamp(6)
+  updated_at      DateTime?     @default(now()) @db.Timestamp(6)
+  deleted_at      DateTime?     @db.Timestamp(6)
+  completion_time Int?
+  ennemies_killed Int           @default(0)
+  gained_xp       Int           @default(0)
+  is_winner       Boolean       @default(false)
+  game_session    game_session? @relation(fields: [game_id], references: [session_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_result_match")
+  app_user        app_user?     @relation(fields: [player_id], references: [app_user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_game_result_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model game_session {
+  session_id  String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at  DateTime?     @default(now()) @db.Timestamp(6)
+  updated_at  DateTime?     @default(now()) @db.Timestamp(6)
+  deleted_at  DateTime?     @db.Timestamp(6)
+  map_name    String        @db.VarChar(100)
+  started_at  DateTime      @default(now()) @db.Timestamp(6)
+  ended_at    DateTime?     @db.Timestamp(6)
+  status      String        @default("finished") @db.VarChar(20)
+  game_result game_result[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_role {
+  user_role_id                               String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  attributed_to                              String?   @db.Uuid
+  attributed_by                              String?   @db.Uuid
+  role                                       String    @default("guest") @db.VarChar(20)
+  created_at                                 DateTime? @default(now()) @db.Timestamp(6)
+  updated_at                                 DateTime? @default(now()) @db.Timestamp(6)
+  deleted_at                                 DateTime? @db.Timestamp(6)
+  app_user_user_role_attributed_byToapp_user app_user? @relation("user_role_attributed_byToapp_user", fields: [attributed_by], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role_giver")
+  app_user_user_role_attributed_toToapp_user app_user? @relation("user_role_attributed_toToapp_user", fields: [attributed_to], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role_receiver")
+}
+
 model chat_ban {
-  chat_id                               String    @db.Uuid
-  user_id                               String    @db.Uuid
+  chat_ban_id                           String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  chat_id                               String?   @db.Uuid
+  user_id                               String?   @db.Uuid
   banned_by                             String?   @db.Uuid
   banned_at                             DateTime? @default(now()) @db.Timestamp(6)
   reason                                String?
@@ -63,24 +146,8 @@ model chat_ban {
   updated_at                            DateTime? @db.Timestamp(6)
   deleted_at                            DateTime? @db.Timestamp(6)
   app_user_chat_ban_banned_byToapp_user app_user? @relation("chat_ban_banned_byToapp_user", fields: [banned_by], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction)
-  chat                                  chat      @relation(fields: [chat_id], references: [chat_id], onDelete: NoAction, onUpdate: NoAction)
-  app_user_chat_ban_user_idToapp_user   app_user  @relation("chat_ban_user_idToapp_user", fields: [user_id], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@id([chat_id, user_id])
-}
-
-model chat_member {
-  chat_id    String    @db.Uuid
-  user_id    String    @db.Uuid
-  created_at DateTime? @default(now()) @db.Timestamp(6)
-  updated_at DateTime? @default(now()) @db.Timestamp(6)
-  deleted_at DateTime? @db.Timestamp(6)
-  joined_at  DateTime? @default(now()) @db.Timestamp(6)
-  left_at    DateTime? @db.Timestamp(6)
-  chat       chat      @relation(fields: [chat_id], references: [chat_id], onDelete: NoAction, onUpdate: NoAction)
-  app_user   app_user  @relation(fields: [user_id], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@id([chat_id, user_id], map: "chat_member_id")
+  chat                                  chat?     @relation(fields: [chat_id], references: [chat_id], onDelete: NoAction, onUpdate: NoAction)
+  app_user_chat_ban_user_idToapp_user   app_user? @relation("chat_ban_user_idToapp_user", fields: [user_id], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model chat_message {
@@ -99,80 +166,21 @@ model chat_message {
 }
 
 model chat_role {
-  chat_id                                    String         @db.Uuid
-  user_id                                    String         @db.Uuid
+  chat_role_id                               String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  chat_id                                    String?        @db.Uuid
+  user_id                                    String?        @db.Uuid
   role                                       chat_role_type
   attributed_by                              String?        @db.Uuid
   attributed_at                              DateTime?      @default(now()) @db.Timestamp(6)
   modified_at                                DateTime?      @db.Timestamp(6)
   deleted_at                                 DateTime?      @db.Timestamp(6)
   app_user_chat_role_attributed_byToapp_user app_user?      @relation("chat_role_attributed_byToapp_user", fields: [attributed_by], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction)
-  chat                                       chat           @relation(fields: [chat_id], references: [chat_id], onDelete: NoAction, onUpdate: NoAction)
-  app_user_chat_role_user_idToapp_user       app_user       @relation("chat_role_user_idToapp_user", fields: [user_id], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@id([chat_id, user_id, role], map: "chat_role_id")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model friendship {
-  sender_id                                 String    @db.Uuid
-  receiver_id                               String    @db.Uuid
-  status                                    String    @default("waiting") @db.VarChar(10)
-  created_at                                DateTime? @default(now()) @db.Timestamp(6)
-  updated_at                                DateTime? @default(now()) @db.Timestamp(6)
-  deleted_at                                DateTime? @db.Timestamp(6)
-  app_user_friendship_receiver_idToapp_user app_user  @relation("friendship_receiver_idToapp_user", fields: [receiver_id], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_friendship_receiver")
-  app_user_friendship_sender_idToapp_user   app_user  @relation("friendship_sender_idToapp_user", fields: [sender_id], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_friendship_sender")
-
-  @@id([sender_id, receiver_id], map: "friendship_id")
-}
-
-model game_profile {
-  game_profile_id       String    @id @db.Uuid
-  created_at            DateTime? @default(now()) @db.Timestamp(6)
-  updated_at            DateTime? @default(now()) @db.Timestamp(6)
-  deleted_at            DateTime? @db.Timestamp(6)
-  total_games           Int?      @default(0)
-  total_wins            Int?      @default(0)
-  total_loses           Int?      @default(0)
-  total_ennemies_killed Int?      @default(0)
-  total_xp              Int?      @default(0)
-  level                 Int?      @default(0)
-  best_time             Int?
-  app_user              app_user  @relation(fields: [game_profile_id], references: [app_user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_game_profile_user")
-}
-
-model game_result {
-  game_id         String       @db.Uuid
-  player_id       String       @db.Uuid
-  created_at      DateTime?    @default(now()) @db.Timestamp(6)
-  updated_at      DateTime?    @default(now()) @db.Timestamp(6)
-  deleted_at      DateTime?    @db.Timestamp(6)
-  completion_time Int?
-  ennemies_killed Int          @default(0)
-  gained_xp       Int          @default(0)
-  is_winner       Boolean      @default(false)
-  game_session    game_session @relation(fields: [game_id], references: [session_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_result_match")
-  app_user        app_user     @relation(fields: [player_id], references: [app_user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_game_result_user")
-
-  @@id([game_id, player_id], map: "game_result_pk")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model game_session {
-  session_id  String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  created_at  DateTime?     @default(now()) @db.Timestamp(6)
-  updated_at  DateTime?     @default(now()) @db.Timestamp(6)
-  deleted_at  DateTime?     @db.Timestamp(6)
-  map_name    String        @db.VarChar(100)
-  started_at  DateTime      @default(now()) @db.Timestamp(6)
-  ended_at    DateTime?     @db.Timestamp(6)
-  status      String        @default("finished") @db.VarChar(20)
-  game_result game_result[]
+  chat                                       chat?          @relation(fields: [chat_id], references: [chat_id], onDelete: NoAction, onUpdate: NoAction)
+  app_user_chat_role_user_idToapp_user       app_user?      @relation("chat_role_user_idToapp_user", fields: [user_id], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model private_chat {
-  private_chat_id                          String    @id @db.Uuid
+  private_chat_id                          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   user1_id                                 String?   @db.Uuid
   user2_id                                 String?   @db.Uuid
   created_at                               DateTime? @default(now()) @db.Timestamp(6)
@@ -180,19 +188,6 @@ model private_chat {
   deleted_at                               DateTime? @db.Timestamp(6)
   app_user_private_chat_user1_idToapp_user app_user? @relation("private_chat_user1_idToapp_user", fields: [user1_id], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction)
   app_user_private_chat_user2_idToapp_user app_user? @relation("private_chat_user2_idToapp_user", fields: [user2_id], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model user_role {
-  user_role_id                               String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  attributed_to                              String?   @db.Uuid
-  attributed_by                              String?   @db.Uuid
-  role                                       String    @default("guest") @db.VarChar(20)
-  created_at                                 DateTime? @default(now()) @db.Timestamp(6)
-  updated_at                                 DateTime? @default(now()) @db.Timestamp(6)
-  deleted_at                                 DateTime? @db.Timestamp(6)
-  app_user_user_role_attributed_byToapp_user app_user? @relation("user_role_attributed_byToapp_user", fields: [attributed_by], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role_giver")
-  app_user_user_role_attributed_toToapp_user app_user? @relation("user_role_attributed_toToapp_user", fields: [attributed_to], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role_receiver")
 }
 
 enum chat_role_type {
