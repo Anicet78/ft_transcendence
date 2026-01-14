@@ -21,6 +21,9 @@ void	key_down(void)
 		case SDLK_SPACE:
 			gSdl.key.space = 1;
 			break;
+		case SDLK_e:
+			gSdl.key.e_key = 1;
+			break;
 	}
 }
 
@@ -43,6 +46,8 @@ void	key_up(void)
 			break;
 		case SDLK_SPACE:
 			gSdl.key.space = 0;
+		case SDLK_e:
+			gSdl.key.e_key = 1;
 			break;
 	}
 }
@@ -52,12 +57,12 @@ void	key_action(void) {
 	Key	*key = &gSdl.key;
 
 	if (key->w_key)
-		Assets::rendMap(0, 0, 5, 1);
+		;
 	if (key->a_key)
-		Assets::rendMap(0, 0, 1, 1);
+		;
 	if (key->s_key)
-		Assets::rendMap(0, 0, 10, 1);
+		;
 	if (key->d_key)
-		Assets::rendMap(0, 0, 15, 1);
+		;
 	// Assets::FLOOR;
 }

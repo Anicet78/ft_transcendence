@@ -1,6 +1,5 @@
 #ifndef GAME_SDL_HPP
 # define GAME_SDL_HPP
-
 # include <iostream>
 # include <SDL2/SDL.h>
 # include <memory>
@@ -8,6 +7,8 @@
 # include <map>
 # include <fstream>
 # include <exception>
+
+# include "SDLTimer.hpp"
 # include "Key.hpp"
 # include "Engine.hpp"
 # include "Texture.hpp"
@@ -18,6 +19,9 @@
 # define SCREEN_WIDTH 800
 # define SCREEN_HEIGHT 800
 
+# define MAX_FPS 60
+
+class SDLTimer;
 class Engine;
 class Player;
 

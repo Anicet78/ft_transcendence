@@ -134,6 +134,14 @@ void	game_loop(Player &player)
 	print_map(player);
 }
 
+void	fps(Uint32 frame) {
+	float 	fps = frame / (gSdl.timer.getTicks() / 1000.f);
+	if (fps > 2000000)
+		fps = 0;
+	std::cout << fps << std::endl;
+	return ;
+}
+
 int mainloop(Engine &sdl, Map &floor0)
 {
 	bool	running = true;
@@ -150,8 +158,13 @@ int mainloop(Engine &sdl, Map &floor0)
 	}
 
 	Player player(505, "betaTester", start);
+	SDLTimer	cap;
+
+	Uint32 frame = 0;
+	int	ticksPerFrame = 1000 / MAX_FPS;
 	while (running)
 	{
+		cap.startTimer();
 		game_loop(player);
 		while (SDL_PollEvent(&sdl.event))
 		{
@@ -162,9 +175,13 @@ int mainloop(Engine &sdl, Map &floor0)
 			else if (sdl.event.type == SDL_KEYUP)
 				key_up();
 		}
+		fps(frame);
 		SDL_RenderPresent(sdl.renderer);
 		SDL_RenderClear(gSdl.renderer);
-		SDL_Delay(16);
+		frame++;
+		int frameTicks = cap.getTicks();
+		if (frameTicks < ticksPerFrame)
+			SDL_Delay(ticksPerFrame - frameTicks);
 	}
 	return 0;
 }
