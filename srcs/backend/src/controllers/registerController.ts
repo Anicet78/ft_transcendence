@@ -8,7 +8,7 @@ export async function postRegisterController(
 	request: FastifyRequest<{ Body: RegisterType }>,
 	reply: FastifyReply
 ) {
-	const {firstname, lastname, username, email, password} = request.body;
+	const { firstname, lastname, username, email, password } = request.body;
 
 	//	if (user already exists in db):
 	//		return reply.code(409).send("already exist");
@@ -23,7 +23,7 @@ export async function postRegisterController(
 	}
 
 	const user: User = {
-		id: "1",
+		id: "",
 		firstname: firstname,
 		lastname: lastname,
 		username: username,
@@ -31,10 +31,14 @@ export async function postRegisterController(
 		passwordHash: hash
 	};
 
-	//	if (!add user to db(user))
+	//	try {
+	//		create user on db (user); -> write the correct id inside the User
+	//	}
+	//	catch (err) {
 	//		return reply.code(500).send("database issue");
+	//	}
 
-	const response: RegisterResponseType = {token: createAccessToken({userId: user.id, email: user.email}), user: user};
+	const response: RegisterResponseType = {token: createAccessToken({ userId: user.id, email: user.email}), user: user };
 
 	return reply.status(200).send(response);
 }
