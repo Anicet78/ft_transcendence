@@ -21,6 +21,8 @@ int						PlayerAssets::_atkImgH;
 int						PlayerAssets::_idleImgW;
 int						PlayerAssets::_idleImgH;
 
+int						PlayerAssets::_last_dir;
+
 PlayerAssets::PlayerAssets(void) {
 	return ;
 }
@@ -30,6 +32,13 @@ PlayerAssets::~PlayerAssets(void) {
 	SDL_DestroyTexture(_playerWalkText);
 	SDL_DestroyTexture(_playerIdleText);
 	return ;
+}
+
+void	PlayerAssets::updateLastDir(void) {
+	if (gSdl.key.d_key)
+		_last_dir = 0;
+	else if (gSdl.key.a_key)
+		_last_dir = 1;
 }
 
 
@@ -165,6 +174,7 @@ void	PlayerAssets::importPlayersAssets(int tile_size) {
 	importPlayersAttackAssets(tile_size);
 	importPlayersIdleAssets(tile_size);
 	gSdl.setPlayerSize(tile_size);
+	_last_dir = 0;
 }
 
 
@@ -193,7 +203,10 @@ void	PlayerAssets::rendPlayerWalk(int playerNum, int x, int y, int assetIndex, f
 		renderRect.h = rect->h * scale;
 	}
 
-	SDL_RenderCopy(gSdl.renderer, _playerWalkText, rect, &renderRect);
+	if (!_last_dir)
+		SDL_RenderCopy(gSdl.renderer, _playerWalkText, rect, &renderRect);
+	else
+		SDL_RenderCopyEx(gSdl.renderer, _playerWalkText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
 }
 
 void	PlayerAssets::rendPlayerAttack(int playerNum, int x, int y, int assetIndex, float scale)
@@ -217,7 +230,10 @@ void	PlayerAssets::rendPlayerAttack(int playerNum, int x, int y, int assetIndex,
 		renderRect.h = rect->h * scale;
 	}
 
-	SDL_RenderCopy(gSdl.renderer, _playerAttackText, rect, &renderRect);
+	if (!_last_dir)
+		SDL_RenderCopy(gSdl.renderer, _playerAttackText, rect, &renderRect);
+	else
+		SDL_RenderCopyEx(gSdl.renderer, _playerAttackText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
 }
 
 void	PlayerAssets::rendPlayerIdle(int playerNum, int x, int y, int assetIndex, float scale)
@@ -243,5 +259,8 @@ void	PlayerAssets::rendPlayerIdle(int playerNum, int x, int y, int assetIndex, f
 		renderRect.h = rect->h * scale;
 	}
 
-	SDL_RenderCopy(gSdl.renderer, _playerIdleText, rect, &renderRect);
+	if (!_last_dir)
+		SDL_RenderCopy(gSdl.renderer, _playerIdleText, rect, &renderRect);
+	else
+		SDL_RenderCopyEx(gSdl.renderer, _playerIdleText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
 }

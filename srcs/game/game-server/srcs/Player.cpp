@@ -1,6 +1,6 @@
 #include"Player.hpp"
 
-Player::Player(int uid, std::string name, quadList &node) : _uid(uid), _name(name), _x(0), _y(0), _node(node), _hp(3), _atk(1), _def(0)
+Player::Player(int uid, std::string name, quadList &node) : _uid(uid), _name(name), _groupSize(1), _x(0), _y(0), _node(node), _hp(3), _atk(1), _def(0)
 {
 	int i = 0;
 	for (auto &line : _node->getRoom()->getRoomPlan())

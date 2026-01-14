@@ -1,10 +1,11 @@
 #include"Engine.hpp"
 
-Engine::Engine(void) :  _tile_size(0), window(NULL), renderer(NULL) {
+Engine::Engine(void) :  _tile_size(0), window(NULL), renderer(NULL), texture(NULL) {
 	return ;
 }
 
 Engine::~Engine(void) {
+	SDL_DestroyTexture(texture);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
