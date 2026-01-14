@@ -2,21 +2,15 @@
 
 # define SESSION_HPP
 
-# include <iostream>
-# include <string>
-# include <vector>
-# include <array>
-# include <map>
-# include <sstream>
-# include <exception>
-# include <queue>
+# include "Player.hpp"
 
 class Session
 {
 	private:
-		int							_numPlayer;
-		std::vector<std::string>	_spectators;
-		std::vector<std::string>	_players;
+		int							_maxNumPlayer;
+		std::vector<std::string>	_spectators;//maybe spectator class later
+		std::vector<Player>			_players;
+		std::vector<Map>			_map;
 		bool						_running;
 
 
@@ -26,8 +20,10 @@ class Session
 		~Session();
 	
 	public:
-		bool	addPlayer(std::string &newPlayer);
-		bool	removePlayer(std::string &rmPlayer);
+		bool	addPlayer(Player &newPlayer);
+		bool	removePlayer(Player &rmPlayer);
+		int		getMaxNumPlayer() const;
+		int		getNumPlayers() const;
 };
 
 

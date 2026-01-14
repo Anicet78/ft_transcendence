@@ -1,6 +1,6 @@
 #include"Player.hpp"
 
-Player::Player(int uid, std::string name, quadList &node) : _uid(uid), _name(name), _x(0), _y(0), _node(node), _hp(3), _atk(1), _def(0)
+Player::Player(int uid, std::string name, quadList &node) : _uid(uid), _name(name), _groupSize(1), _x(0), _y(0), _node(node), _hp(3), _atk(1), _def(0)
 {
 	int i = 0;
 	for (auto &line : _node->getRoom()->getRoomPlan())
@@ -21,31 +21,38 @@ Player::~Player(void) {
 }
 
 //get player value
-int	Player::getUid(void) const {
+int	Player::getUid(void) const
+{
 	return (_uid);
 }
 
-std::string	Player::getName(void) const {
+std::string	Player::getName(void) const
+{
 	return (_name);
 }
 
-float	Player::getX(void) const {
+float	Player::getX(void) const
+{
 	return (_x);
 }
 
-float	Player::getY(void) const {
+float	Player::getY(void) const
+{
 	return (_y);
 }
 
-int		Player::getHp(void) const {
+int		Player::getHp(void) const
+{
 	return (_hp);
 }
 
-int		Player::getAtk(void) const {
+int		Player::getAtk(void) const
+{
 	return (_atk);
 }
 
-int		Player::getDef(void) const {
+int		Player::getDef(void) const
+{
 	return (_def);
 }
 
@@ -66,23 +73,27 @@ void Player::setNode(const quadList &node)
 	this->_node = node;
 }
 
-void	Player::setPos(float x, float y) {
+void	Player::setPos(float x, float y)
+{
 	_x = x;
 	_y = y;
 	return ;
 }
 
-void	Player::setHp(int hp) {
+void	Player::setHp(int hp)
+{
 	_hp = hp;
 	return ;
 }
 
-void	Player::setAtk(int atk) {
+void	Player::setAtk(int atk)
+{
 	_atk = atk;
 	return ;
 }
 
-void	Player::setDef(int def) {
+void	Player::setDef(int def)
+{
 	_def = def;
 	return ;
 }

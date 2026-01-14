@@ -56,5 +56,4 @@ public:
 	void		heal(int amount);
 };
 
-
 #endif

@@ -9,14 +9,26 @@ Server::~Server(void)
 
 //-----------------------------------------------------------------
 
-void	Server::addPlayerOnQueue(std::string &player)
+void	Server::addPlayerOnQueue(Player &player)
 {
-	this->_matchMakingQueue.push(player);
+	this->_matchMakingQueue.push_back(player);
+}
+
+static Session &chooseSession(std::vector<Session> &sessions, std::list<Player> &matchQueue)
+{
+    for (Session &s : sessions)
+    {
+
+    }
 }
 
 void    Server::manageQueue()
 {
-    
+   while (_matchMakingQueue.size())
+   {
+        auto &player = _matchMakingQueue.begin()
+   }
+   
 }
 
 void	Server::run(void)
