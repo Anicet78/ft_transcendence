@@ -6,6 +6,9 @@ WORKDIR /app
 COPY ./prisma_entrypoint.sh /usr/local/bin/prisma_entrypoint.sh
 RUN chmod +x /usr/local/bin/prisma_entrypoint.sh
 
+COPY ./prisma_wrapper.sh /usr/local/bin/prisma_wrapper
+RUN chmod +x /usr/local/bin/prisma_wrapper
+
 COPY ./package*.json ./
 RUN npm install
 
