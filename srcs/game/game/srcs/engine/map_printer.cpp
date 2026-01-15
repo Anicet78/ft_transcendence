@@ -135,6 +135,21 @@ float	cameraY(Player const &player, int const tile_size) {
 	return (idealMinY);
 }
 
+// void	print_mob(std::map<int, Mob> &mobs, int camX, int camY, int tile_size) {
+// 	static int	frame = 0;
+	
+// 	if (frame >= 24)
+// 		frame = 0;
+// 	for (auto i : mobs)
+// 	{
+// 		Mob	&mob = i.second;
+// 		float x = ((mob.getX() - camX) * tile_size) - (0.5f * tile_size);
+// 		float y = ((mob.getY() - camY) * tile_size) - (0.5f * tile_size);
+// 		mob.rendMobIdle(x, y, frame / 4, 2);
+// 	}
+// 	frame++; 
+// }
+
 void	print_map(Player &player) {
 	static int	mapX = -1;
 	static int	mapY = -1;
@@ -162,7 +177,7 @@ void	print_map(Player &player) {
 				char c = player.getRoom().getRoomPlan()[y][x];
 				if (c == '1')
 					manage_wall(x, y);
-				else if (c == '0')
+				else if (c == '0' || c == 'M')
 					Assets::rendMap(x * tile_s, y * tile_s, Assets::FLOOR, 2);
 				else if (c == 'E')
 					Assets::rendMap(x * tile_s, y * tile_s, Assets::DOOR_FRONT, 2);
@@ -183,5 +198,6 @@ void	print_map(Player &player) {
 	SDL_RenderCopy(gSdl.renderer, gSdl.texture, &camera, NULL);
 	float playerScreenX = (player.getX() - camX) * tile_s;
     float playerScreenY = (player.getY() - camY) * tile_s;
+	// print_mob(player.getRoom().getMobs(), camX, camY, tile_s);
 	print_player(playerScreenX, playerScreenY);
 }

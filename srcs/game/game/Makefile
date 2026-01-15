@@ -1,6 +1,5 @@
 CXX      = c++
 CXXFLAGS = -Wall -Werror -Wextra -std=c++20 -g
-CXXFLAGS2 = -Wall -Werror -Wextra -std=c++20 -g
 LDFLAGS  = $(shell sdl2-config --libs)
 
 EMSCRIPTEN	= em++
@@ -25,6 +24,7 @@ SRCS		=	main.cpp \
 				engine/SDLTimer.cpp \
 				player/Player.cpp \
 				player/PlayerAssets.cpp \
+				engine/Mob.cpp \
 				mapGen/mapMain.cpp Room.cpp Map.cpp aStar.cpp mapGen/mapGen.cpp
 
 EMSRCS		= $(patsubst %, $(SRC_DIR)%, $(SRCS))

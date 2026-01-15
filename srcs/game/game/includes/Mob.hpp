@@ -37,7 +37,7 @@ private:
 
 public:
 
-	Mob(void);
+	Mob(float x, float y, int hp);
 	~Mob();
 
 	static void	importMobsAssets(int tile_size);

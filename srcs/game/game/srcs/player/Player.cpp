@@ -13,6 +13,7 @@ Player::Player(int uid, std::string name, quadList &node) : _uid(uid), _name(nam
 		}
 		i++;
 	}
+	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
 	return ;
 }
 
@@ -66,6 +67,10 @@ quadList Player::getNode() const
 	return this->_node;
 }
 
+SDL_FRect	&Player::getWallHitBox(void) {
+	return (_wallHitBox);
+}
+
 //set player value
 
 void Player::setNode(const quadList &node)
@@ -96,4 +101,76 @@ void	Player::setDef(int def)
 {
 	_def = def;
 	return ;
+}
+
+void	Player::setWallHitBox(void) {
+	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
+	return ;
+}
+
+bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect const &rect, int const flag) {
+	if (gSdl.key.w_key && flag == 0)
+	{
+		float y = rect.y - 0.1;
+		if (plan[y][rect.x] == '1' || plan[y][rect.x + rect.h] == '1')
+			return (true);
+	}
+	if (gSdl.key.a_key && flag == 1)
+	{
+		float x = rect.x - 0.1;
+		if (plan[rect.y][x] == '1' || plan[rect.y + rect.h][x] == '1')
+			return (true);
+	}
+	if (gSdl.key.s_key && flag == 2)
+	{
+		float y = rect.y + 0.1;
+		if (plan[y + rect.h][rect.x] == '1' || plan[y + rect.h][rect.x + rect.w] == '1')
+			return (true);
+	}
+	if (gSdl.key.d_key && flag == 3)
+	{
+		float x = rect.x + 0.1;
+		if (plan[rect.y][x + rect.h] == '1' || plan[rect.y + rect.h][x + rect.w] == '1')
+			return (true);
+	}
+	return (false);
+}
+
+void	Player::move(void) {
+	Room room = this->getRoom();
+	float x = this->getX(), y = this->getY();
+	auto plan = room.getRoomPlan();
+
+	if (gSdl.key.w_key)
+	{
+		y -= 0.1;
+		if (y >= 0 && !checkWallHitBox(plan, _wallHitBox, 0))
+			this->setPos(x, y);
+		else
+			y += 0.1;
+	}
+	if (gSdl.key.a_key)
+	{
+		x -= 0.1;
+		if (x >= 0 && !checkWallHitBox(plan, _wallHitBox, 1))
+			this->setPos(x, y);
+		else
+			x += 0.1;
+	}
+	if (gSdl.key.s_key)
+	{
+		y += 0.1;
+		if (y < room.getHeight() && !checkWallHitBox(plan, _wallHitBox, 2))
+			this->setPos(x, y);
+		else
+			y -= 0.1;
+	}
+	if (gSdl.key.d_key)
+	{
+		x += 0.1;
+		if (x < room.getWidth() && !checkWallHitBox(plan, _wallHitBox, 3))
+			this->setPos(x, y);
+		else
+			x -= 0.1;
+	}
 }

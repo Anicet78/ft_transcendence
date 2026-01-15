@@ -14,6 +14,7 @@ int main(void)
 	{
 		Assets::importAssets("assets/sprite/assets.bmp", 16);
 		PlayerAssets::importPlayersAssets(100);
+		// Mob::importMobsAssets(100);
 		Room::importRooms();
 		floor0.fillMap();
 	}

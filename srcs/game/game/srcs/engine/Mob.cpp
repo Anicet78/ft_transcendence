@@ -17,8 +17,8 @@ int						Mob::_atkImgH;
 int						Mob::_idleImgW;
 int						Mob::_idleImgH;
 
-Mob::Mob(void) {
-
+Mob::Mob(float x, float y, int hp) : _x(x), _y(y), _hp(hp) {
+	return ;
 }
 
 Mob::~Mob(void) {

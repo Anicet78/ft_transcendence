@@ -52,6 +52,7 @@ void updateRoom(Player &player)
 	Room room = player.getRoom();
 	auto plan = room.getRoomPlan();
 	float x = player.getX(), y = player.getY();
+	bool	roomChanged = false;
 
 	if (plan[y][x] == 'E')
 	{
@@ -63,6 +64,7 @@ void updateRoom(Player &player)
 			player.setNode(player.getNode()->south.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[0][0] + 0.5, exitsLoc[0][1] + 1);
+			roomChanged = true;
 		}
 		else if (exitsLoc[0][0] == static_cast<int>(x) && exitsLoc[0][1] == static_cast<int>(y)
 			&& !player.getNode()->north.expired())
@@ -70,6 +72,7 @@ void updateRoom(Player &player)
 			player.setNode(player.getNode()->north.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[2][0] + 0.5, exitsLoc[2][1] - 0.1);
+			roomChanged = true;
 		}
 		else if (exitsLoc[1][0] == static_cast<int>(x) && exitsLoc[1][1] == static_cast<int>(y)
 			&& !player.getNode()->east.expired())
@@ -77,6 +80,7 @@ void updateRoom(Player &player)
 			player.setNode(player.getNode()->east.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[3][0] + 1, exitsLoc[3][1] + 0.5);
+			roomChanged = true;
 		}
 		else if (exitsLoc[3][0] == static_cast<int>(x) && exitsLoc[3][1] == static_cast<int>(y)
 			&& !player.getNode()->west.expired())
@@ -84,53 +88,26 @@ void updateRoom(Player &player)
 			player.setNode(player.getNode()->west.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[1][0] - 0.1, exitsLoc[1][1] + 0.5);
+			roomChanged = true;
 		}
+
+		if (roomChanged == true)
+			// room.destroyMobs();
+			// player.getRoom().createMobs();
+			;
 	}
 }
 
-void	updatePlayerPosition(Player &player)
-{
-	Room room = player.getRoom();
-	float x = player.getX(), y = player.getY();
-	auto plan = room.getRoomPlan();
-	if (gSdl.key.w_key)
-	{
-		y -= 0.1;
-		if (y >= 0 && plan[y][x] != '1')
-			player.setPos(x, y);
-		else
-			y += 0.1;
-	}
-	if (gSdl.key.a_key)
-	{
-		x -= 0.1;
-		if (x >= 0 && plan[y][x] != '1')
-			player.setPos(x, y);
-		else
-			x += 0.1;
-	}
-	if (gSdl.key.s_key)
-	{
-		y += 0.1;
-		if (y < room.getHeight() && plan[y][x] != '1')
-			player.setPos(x, y);
-		else
-			y -= 0.1;
-	}
-	if (gSdl.key.d_key)
-	{
-		x += 0.1;
-		if (x < room.getWidth() && plan[y][x] != '1')
-			player.setPos(x, y);
-		else
-			x -= 0.1;
-	}
+void	player_action(Player &player) {
+	player.setWallHitBox();
+	if (gSdl.key.walking())
+		player.move();
 }
 
 void	game_loop(Player &player)
 {
 	updateRoom(player);
-	updatePlayerPosition(player);
+	player_action(player);
 	print_map(player);
 }
 
@@ -165,7 +142,6 @@ int mainloop(Engine &sdl, Map &floor0)
 	while (running)
 	{
 		cap.startTimer();
-		game_loop(player);
 		while (SDL_PollEvent(&sdl.event))
 		{
 			if (sdl.event.type == SDL_QUIT)
@@ -175,6 +151,7 @@ int mainloop(Engine &sdl, Map &floor0)
 			else if (sdl.event.type == SDL_KEYUP)
 				key_up();
 		}
+		game_loop(player);
 		fps(frame);
 		SDL_RenderPresent(sdl.renderer);
 		SDL_RenderClear(gSdl.renderer);

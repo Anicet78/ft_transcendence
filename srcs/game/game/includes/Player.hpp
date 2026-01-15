@@ -25,6 +25,10 @@ private:
 	int			_atk;
 	int			_def;
 
+//hitbox
+	SDL_FRect	_wallHitBox;
+	SDL_FRect	_hitBox;
+
 public:
 	Player(int uid, std::string name, quadList &node);
 	~Player();
@@ -41,6 +45,7 @@ public:
 	int			getHp(void) const;
 	int			getAtk(void) const;
 	int			getDef(void) const;
+	SDL_FRect	&getWallHitBox(void);
 
 //setter
 	void	setNode(const quadList &node);
@@ -48,6 +53,7 @@ public:
 	void	setHp(int hp);
 	void	setAtk(int atk);
 	void	setDef(int def);
+	void	setWallHitBox(void);
 
 //action
 	void		move(void);

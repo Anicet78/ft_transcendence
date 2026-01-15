@@ -1,7 +1,6 @@
 #ifndef ROOM_HPP
 
 # define ROOM_HPP
-
 # include "main.hpp"
 
 class Room
@@ -29,6 +28,10 @@ class Room
 		static std::map<std::string, std::shared_ptr<Room>> _RoomsF3;
 		//Map containing all of the rooms of the floor 4
 		static std::map<std::string, std::shared_ptr<Room>> _RoomsF4;
+
+		//MOB RELATED
+		// std::map<int, Mob>	_mobs;
+		// std::vector<int>	_mobsId;
 	
 	private:
 		static void importMap(std::string mapName);
@@ -55,6 +58,12 @@ class Room
 		void	turnMapLeft(void);
 		void	turnMapRight(void);
 		void	turnMapUpDown(void);
+
+		//MOB RELATED
+		// std::map<int, Mob>	&getMobs(void);
+		// void	createMobs(void);
+		// void	destroyMobs(void);
+		// void	killMob(int id);
 };
 
 std::ostream &operator<<(std::ostream &o, Room const &obj);
