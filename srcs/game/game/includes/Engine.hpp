@@ -1,9 +1,7 @@
 #ifndef ENGINE_HPP
 # define ENGINE_HPP
 
-#include"game_sdl.hpp"
-#include"Map.hpp"
-#include"SDLTimer.hpp"
+# include"SDLTimer.hpp"
 
 class Engine
 {
@@ -17,7 +15,6 @@ public:
 	SDL_Texture		*texture;
 	SDLTimer		timer;
 	Key				key;
-	Room			room;
 
 	Engine();
 	~Engine();
@@ -28,5 +25,6 @@ public:
 	int		getPlayerSize(void);
 };
 
+extern Engine gSdl;
 
 #endif

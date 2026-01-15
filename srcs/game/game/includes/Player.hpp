@@ -1,8 +1,7 @@
 #ifndef PLAYER_HPP
 # define PLAYER_HPP
 
-#include"game_sdl.hpp"
-#include"Map.hpp"
+# include "Map.hpp"
 
 class Player
 {
@@ -37,6 +36,7 @@ public:
 	int			getUid(void) const;
 	std::string	getName(void) const;
 	Room		getRoom() const;
+	Room		&getRoomRef(void);
 	quadList	getNode() const;
 
 	float		getX(void) const;

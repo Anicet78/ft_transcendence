@@ -1,8 +1,7 @@
 #ifndef KEY_HPP
 # define KEY_HPP
 
-# include <iostream>
-# include <SDL2/SDL.h>
+#include "main.hpp"
 
 class Key
 {

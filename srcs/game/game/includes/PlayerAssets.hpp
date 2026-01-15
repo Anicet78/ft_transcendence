@@ -1,27 +1,13 @@
 #ifndef PLAYERASSETS_HPP
 # define PLAYERASSETS_HPP
 
-# include"game_sdl.hpp"
+# include"Assets.hpp"
 
 class Player;
 
 class PlayerAssets
 {
 private:
-
-//-----------------------A FAIRE A TERME-----------------------
-	// static std::vector<std::map<int, SDL_Rect> >		_playersWalk;
-	// static std::vector<std::map<int, SDL_Rect> >		_playersAttack;
-
-	// static std::vector<std::unique_ptr<SDL_Texture> >	_playerWalkText;
-	// static std::vector<std::unique_ptr<SDL_Texture> >	_playerAttackText;
-
-	// static std::vector<int>								_walkImgW;
-	// static std::vector<int>								_walkImgH;
-
-	// static std::vector<int>								_atkImgW;
-	// static std::vector<int>								_atkImgH;
-//---------------------------------------------------------------
 
 	static std::map<int, SDL_Rect>	_playerWalk;
 	static std::map<int, SDL_Rect>	_playerAttack;

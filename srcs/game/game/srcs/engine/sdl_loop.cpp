@@ -1,14 +1,4 @@
-#include "game_sdl.hpp"
-#include<ctime>
-#include<sys/time.h>
-
-long	time_in_us(void)
-{
-	struct timeval	start;
-
-	gettimeofday(&start, NULL);
-	return (start.tv_usec);
-}
+#include "heads.hpp"
 
 void	print_player(float px, float py) {
 
@@ -91,10 +81,11 @@ void updateRoom(Player &player)
 			roomChanged = true;
 		}
 
-		if (roomChanged == true)
-			// room.destroyMobs();
-			// player.getRoom().createMobs();
-			;
+		// if (roomChanged == true)
+		// {
+		// 	room.destroyMobs();
+		// 	player.getRoom().createMobs();
+		// }
 	}
 }
 
@@ -152,7 +143,7 @@ int mainloop(Engine &sdl, Map &floor0)
 				key_up();
 		}
 		game_loop(player);
-		fps(frame);
+		// fps(frame);
 		SDL_RenderPresent(sdl.renderer);
 		SDL_RenderClear(gSdl.renderer);
 		frame++;

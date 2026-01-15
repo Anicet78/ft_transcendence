@@ -1,4 +1,4 @@
-#include"game_sdl.hpp"
+#include"heads.hpp"
 
 
 //swicth the key value to 1 on event

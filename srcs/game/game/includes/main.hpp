@@ -2,6 +2,7 @@
 
 # define MAIN_HPP
 
+# include <SDL2/SDL.h>
 # include <iostream>
 # include <array>
 # include <string>
@@ -18,5 +19,10 @@
 # include <queue>
 # include <unordered_map>
 # include <algorithm>
+
+# define SCREEN_WIDTH 800
+# define SCREEN_HEIGHT 800
+# define MAX_FPS 60
+
 
 #endif

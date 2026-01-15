@@ -1,4 +1,4 @@
-#include"game_sdl.hpp"
+#include"heads.hpp"
 
 Engine gSdl;
 

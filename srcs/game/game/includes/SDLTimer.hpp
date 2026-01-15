@@ -1,8 +1,7 @@
 #ifndef SDLTIMER_HPP
 # define SDLTIMER_HPP
 
-# include <iostream>
-# include <SDL2/SDL.h>
+#include "Key.hpp"
 
 class SDLTimer
 {

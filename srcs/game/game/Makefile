@@ -13,7 +13,6 @@ CXXFLAGS += -I$(HEADERS)
 
 SRCS		=	main.cpp \
 				engine/Engine.cpp \
-				engine/Texture.cpp \
 				engine/Key.cpp \
 				engine/Assets.cpp \
 				engine/sdl_loop.cpp \

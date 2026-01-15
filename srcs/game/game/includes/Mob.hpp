@@ -1,7 +1,7 @@
 #ifndef MOB_HPP
 # define MOB_HPP
 
-#include"game_sdl.hpp"
+#include"PlayerAssets.hpp"
 
 class Mob
 {

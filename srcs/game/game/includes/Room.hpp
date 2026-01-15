@@ -1,7 +1,8 @@
 #ifndef ROOM_HPP
 
 # define ROOM_HPP
-# include "main.hpp"
+
+# include "Mob.hpp"
 
 class Room
 {
