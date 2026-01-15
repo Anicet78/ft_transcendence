@@ -9,6 +9,7 @@ docker/certs
 
 # Node
 node_modules/
+srcs/backend/.env
 
 # Build
 dist/
