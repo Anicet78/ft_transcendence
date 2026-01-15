@@ -14,6 +14,7 @@ export type RegisterType = Static<typeof RegisterSchema>;
 export const RegisterResponseSchema = Type.Object({
 	token: Type.String(),
 	user: Type.Object({
+		id: Type.String(),
 		email: Type.String()
 	})
 });

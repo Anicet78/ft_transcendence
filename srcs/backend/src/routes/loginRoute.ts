@@ -11,6 +11,7 @@ export type LoginType = Static<typeof LoginSchema>;
 export const LoginResponseSchema = Type.Object({
 	token: Type.String(),
 	user: Type.Object({
+		id: Type.String(),
 		email: Type.String()
 	})
 });
