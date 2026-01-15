@@ -16,10 +16,10 @@
   "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^9.39.2",
-    "@types/argon2": "^0.15.4",
     "@types/node": "^25.0.3",
     "eslint": "^9.39.2",
     "globals": "^17.0.0",
+    "prisma": "^5.22.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.53.0"
@@ -28,8 +28,10 @@
     "@fastify/cookie": "^11.0.2",
     "@fastify/jwt": "^10.0.0",
     "@fastify/type-provider-typebox": "^6.1.0",
+    "@prisma/client": "^5.22.0",
     "argon2": "^0.44.0",
     "fastify": "^5.6.2",
-    "typebox": "^1.0.77"
+    "typebox": "^1.0.77",
+    "typescript": "^5.9.3"
   }
 }
