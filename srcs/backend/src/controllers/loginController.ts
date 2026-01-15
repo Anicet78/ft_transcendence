@@ -2,7 +2,6 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import type { User } from "../models/userModel.js";
 import type { LoginResponseType, LoginType } from "../routes/loginRoute.js";
 import { hashPassword, verifyPassword } from "../services/auth/password.js";
-import { createAccessToken } from "../services/auth/token.js";
 
 export async function postLoginController(
 	request: FastifyRequest<{ Body: LoginType }>,
@@ -28,7 +27,7 @@ export async function postLoginController(
 		return reply.code(500).send("password verification error");
 	}
 
-	const response: LoginResponseType = {token: createAccessToken({userId: user.id, email: user.email}), user: user};
+	const response: LoginResponseType = {token: await reply.jwtSign({id: user.id, email: user.email}), user: user};
 
 	return reply.status(200).send(response);
 }

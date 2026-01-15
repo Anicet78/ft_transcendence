@@ -2,7 +2,6 @@ import { type FastifyReply, type FastifyRequest } from "fastify";
 import type { User } from "../models/userModel.js";
 import type { RegisterResponseType, RegisterType } from "../routes/registerRoute.js";
 import { hashPassword } from "../services/auth/password.js";
-import { createAccessToken } from "../services/auth/token.js";
 
 export async function postRegisterController(
 	request: FastifyRequest<{ Body: RegisterType }>,
@@ -38,7 +37,7 @@ export async function postRegisterController(
 	//		return reply.code(500).send("database issue");
 	//	}
 
-	const response: RegisterResponseType = {token: createAccessToken({ userId: user.id, email: user.email}), user: user };
+	const response: RegisterResponseType = {token: await reply.jwtSign({ id: user.id, email: user.email}), user: user };
 
 	return reply.status(200).send(response);
 }
