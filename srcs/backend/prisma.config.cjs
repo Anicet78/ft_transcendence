@@ -11,5 +11,4 @@ module.exports = {
   migrations: {
     path: "./prisma/migrations",
   },
-
 };
