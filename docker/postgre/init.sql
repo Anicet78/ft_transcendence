@@ -1,6 +1,30 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "citext"; --case insensitive text
 
+-- Function: set_updated_at
+-- Sets NEW.updated_at to current timestamp on UPDATE
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+	NEW.updated_at = CURRENT_TIMESTAMP;
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function: normalize_mail_address
+-- Lowercases mail_address on INSERT or UPDATE
+CREATE OR REPLACE FUNCTION normalize_mail_address()
+RETURNS TRIGGER AS $$
+BEGIN
+	IF NEW.mail_address IS NOT NULL THEN
+		NEW.mail_address = lower(NEW.mail_address);
+	END IF;
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
 CREATE TABLE app_user (
 	app_user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	first_name TEXT NOT NULL,
@@ -14,10 +38,10 @@ CREATE TABLE app_user (
 	"availability" BOOLEAN NOT NULL DEFAULT false,
 	region TEXT,
 
-	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	deleted_at TIMESTAMP,
-	last_connected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	deleted_at timestamptz,
+	last_connected_at timestamptz DEFAULT CURRENT_TIMESTAMP,
 
 	CHECK (trim(first_name) <> ''),
 	CHECK (trim(last_name) <> ''),
@@ -32,9 +56,9 @@ CREATE TABLE user_role (
 
 	"role" VARCHAR(20) NOT NULL DEFAULT 'guest',
 
-	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	deleted_at TIMESTAMP,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	deleted_at timestamptz,
 
 	CONSTRAINT fk_role_receiver
 		FOREIGN KEY (attributed_to)
@@ -52,9 +76,9 @@ CREATE TABLE friendship (
 	sender_id UUID,
 	receiver_id UUID,
 	"status" VARCHAR(10) NOT NULL DEFAULT 'waiting',
-	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	deleted_at TIMESTAMP,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	deleted_at timestamptz,
 
 	-- CONSTRAINT friendship_id
 	-- 	PRIMARY KEY (sender_id, receiver_id),
@@ -76,9 +100,9 @@ CREATE TABLE friendship (
 CREATE TABLE game_profile (
 	game_profile_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	user_id UUID UNIQUE,
-	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	deleted_at TIMESTAMP,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	deleted_at timestamptz,
 	total_games INT DEFAULT 0,
 	total_wins INT DEFAULT 0,
 	total_loses INT DEFAULT 0,
@@ -99,13 +123,13 @@ CREATE TABLE game_profile (
 
 CREATE TABLE game_session (
 	session_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	deleted_at TIMESTAMP,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	deleted_at timestamptz,
 	map_name VARCHAR(100) NOT NULL,
 
-	started_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	ended_at TIMESTAMP,
+	started_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	ended_at timestamptz,
 
 	"status" VARCHAR(20) NOT NULL DEFAULT 'finished',
 
@@ -118,9 +142,9 @@ CREATE TABLE game_result (
 	game_id UUID,
 	player_id UUID,
 
-	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	deleted_at TIMESTAMP,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	deleted_at timestamptz,
 
 	completion_time INT, -- minutes ? seconds ?
 	ennemies_killed INT NOT NULL DEFAULT 0,
@@ -143,9 +167,9 @@ CREATE TABLE game_result (
 CREATE TABLE chat (
 	chat_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 
-	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	deleted_at TIMESTAMP,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	deleted_at timestamptz,
 
 	chat_type VARCHAR(20) NOT NULL DEFAULT 'private',
 	chat_name VARCHAR(255) NOT NULL,
@@ -159,12 +183,12 @@ CREATE TABLE chat_member (
 	chat_id UUID,
 	user_id UUID,
 
-	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	deleted_at TIMESTAMP,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	deleted_at timestamptz,
 
-	joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	left_at TIMESTAMP,
+	joined_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	left_at timestamptz,
 
 	-- CONSTRAINT chat_member_id
 	-- 	PRIMARY KEY (chat_id, user_id),
@@ -181,9 +205,9 @@ CREATE TABLE private_chat (
 	user1_id UUID,
 	user2_id UUID,
 
-	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	deleted_at TIMESTAMP,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	deleted_at timestamptz,
 
 	FOREIGN KEY (user1_id)
 		REFERENCES app_user(app_user_id),
@@ -201,9 +225,9 @@ CREATE TABLE chat_role (
 	"role" chat_role_type NOT NULL,
 
 	attributed_by UUID,
-	attributed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	modified_at TIMESTAMP,
-	deleted_at TIMESTAMP,
+	attributed_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	modified_at timestamptz,
+	deleted_at timestamptz,
 
 	-- CONSTRAINT chat_role_id
 	-- 	PRIMARY KEY (chat_id, user_id, "role"),
@@ -228,9 +252,9 @@ CREATE TABLE chat_message (
 	content TEXT NOT NULL,
 	"status" message_status NOT NULL DEFAULT 'posted',
 
-	posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	edited_at TIMESTAMP,
-	deleted_at TIMESTAMP,
+	posted_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	edited_at timestamptz,
+	deleted_at timestamptz,
 	moderated_by UUID,
 
 	FOREIGN KEY (chat_id)
@@ -249,11 +273,11 @@ CREATE TABLE chat_ban (
 	user_id UUID,
 
 	banned_by UUID,
-	banned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	banned_at timestamptz DEFAULT CURRENT_TIMESTAMP,
 	reason TEXT,
-	expires_at TIMESTAMP,
-	updated_at TIMESTAMP,
-	deleted_at TIMESTAMP,
+	expires_at timestamptz,
+	updated_at timestamptz,
+	deleted_at timestamptz,
 
 	-- PRIMARY KEY (chat_id, user_id),
 
@@ -267,8 +291,7 @@ CREATE TABLE chat_ban (
 		REFERENCES app_user(app_user_id)
 );
 
-
--- CREATE FUNCTION trigger_set_updated_at()
+-- CREATE OR REPLACE FUNCTION trigger_set_updated_at()
 -- RETURNS TRIGGER AS $$
 -- BEGIN
 --   NEW.updated_at = CURRENT_TIMESTAMP;
