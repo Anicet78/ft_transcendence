@@ -9,7 +9,7 @@ export async function postRegisterController(
 	request: FastifyRequest<{ Body: RegisterType }>,
 	reply: FastifyReply
 ) {
-	const { firstname, lastname, username, email, password } = request.body;
+	const { firstname, lastname, username, region, email, password } = request.body;
 
 	let dbUser: AppUser | null = null;
 
@@ -37,6 +37,7 @@ export async function postRegisterController(
 		firstname: firstname,
 		lastname: lastname,
 		username: username,
+		region: region,
 		email: email,
 		region: "", //need to check, added to compile
 		passwordHash: hash
@@ -45,6 +46,8 @@ export async function postRegisterController(
 	try {
 		const dbUser: AppUser = await UserService.createUser(user);
 		user.id = dbUser.appUserId;
+		if (dbUser.availability == false)
+			await UserService.setAvailabality(user.id, true);
 	}
 	catch (err) {
 		request.log.error(err);

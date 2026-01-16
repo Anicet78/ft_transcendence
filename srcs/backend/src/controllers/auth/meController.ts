@@ -12,6 +12,8 @@ export async function getMeController(
 
 	try {
 		user = await UserService.getUserById(request.user.id);
+		if (user?.availability == false)
+			await UserService.setAvailabality(request.user.id, true);
 	} catch (err) {
 		request.log.error(err);
 		return reply.code(500).send({ error: "Database issue" });
