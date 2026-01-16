@@ -1,6 +1,7 @@
-import { postRegisterController } from "../controllers/registerController.js";
+import { postRegisterController } from "../../controllers/auth/registerController.js";
 import Type, { type Static } from "typebox";
 import type { FastifyInstance } from "fastify";
+import { AppErrorSchema } from "../../schema/errorSchema.js";
 
 export const RegisterSchema = Type.Object({
 	firstname: Type.String({ minLength: 1 }),
@@ -27,9 +28,9 @@ fastify.post("/register", {
 		body: RegisterSchema,
 		response: {
 			200: RegisterResponseSchema,
-			400: Type.String(),
-			409: Type.String(),
-			500: Type.String()
+			400: AppErrorSchema,
+			409: AppErrorSchema,
+			500: AppErrorSchema
 		}
 	}
 }, postRegisterController);

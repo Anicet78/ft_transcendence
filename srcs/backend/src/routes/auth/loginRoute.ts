@@ -1,6 +1,7 @@
-import { postLoginController } from "../controllers/loginController.js";
+import { postLoginController } from "../../controllers/auth/loginController.js";
 import Type, { type Static } from "typebox";
 import type { FastifyInstance } from "fastify";
+import { AppErrorSchema } from "../../schema/errorSchema.js";
 
 export const LoginSchema = Type.Object({
 	email: Type.String({ format: 'email', minLength: 3, maxLength: 80 }),
@@ -24,9 +25,9 @@ fastify.post("/login", {
 		body: LoginSchema,
 		response: {
 			200: LoginResponseSchema,
-			400: Type.String(),
-			401: Type.String(),
-			500: Type.String()
+			400: AppErrorSchema,
+			401: AppErrorSchema,
+			500: AppErrorSchema
 		}
 	}
 }, postLoginController);
