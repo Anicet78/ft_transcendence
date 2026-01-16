@@ -2,11 +2,13 @@ import { postRegisterController } from "../../controllers/auth/registerControlle
 import Type, { type Static } from "typebox";
 import type { FastifyInstance } from "fastify";
 import { AppErrorSchema } from "../../schema/errorSchema.js";
+import { RegionSchema } from "../../schema/userSchema.js";
 
 export const RegisterSchema = Type.Object({
 	firstname: Type.String({ minLength: 1 }),
 	lastname: Type.String({ minLength: 1 }),
 	username: Type.String({ minLength: 2, maxLength: 20 }),
+	region: RegionSchema,
 	email: Type.String({ format: 'email', minLength: 3, maxLength: 80 }),
 	password: Type.String({ minLength: 8 })
 });

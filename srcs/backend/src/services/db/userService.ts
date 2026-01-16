@@ -1,5 +1,5 @@
 import type { AppUser } from "@prisma/client";
-import prisma from "./prisma.js";
+import { prisma } from "./prisma.js";
 import type { User } from "../../schema/userSchema.js";
 
 export const UserService = {
@@ -21,6 +21,16 @@ export const UserService = {
 				username: user.username,
 				mail: user.email,
 				passwordHash: user.passwordHash
+			}
+		});
+	},
+	async setAvailabality(userId: string, availabality: boolean): Promise<AppUser> {
+		return prisma.appUser.update({
+			data: {
+				availability: availabality
+			},
+			where: {
+				appUserId: userId
 			}
 		});
 	}

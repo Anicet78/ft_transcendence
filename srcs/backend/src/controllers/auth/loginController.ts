@@ -15,6 +15,8 @@ export async function postLoginController(
 
 	try {
 		dbUser = await UserService.getUserByMail(email);
+		if (dbUser?.availability == false)
+			await UserService.setAvailabality(dbUser.appUserId, true);
 	} catch (err) {
 		request.log.error(err);
 		return reply.code(500).send({ error: "Database issue" });
