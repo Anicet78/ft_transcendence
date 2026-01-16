@@ -257,33 +257,23 @@ void Room::importRooms()
 	// 	std::cout << *room.second.get() << std::endl;
 }
 
-// std::map<int, Mob>	&Room::getMobs(void) {
-// 	return (_mobs);
-// }
+void	Room::setEvent(void) {
+	if (!_event && (rand() % 100) < 30)
+	{
+		std::string	name(getName());
+		if (name != "start" && name != "stairs")
+			_event = std::make_shared<MobRush>(this->_roomPlan);
+	}
+	return ;
+}
 
-// void	Room::createMobs(void) {
-// 	int	id = 0;
-// 	int	maxY = _roomPlan.size();
-// 	for (int y = 0; y < maxY; y++)
-// 	{
-// 		int maxX = _roomPlan[y].size();
-// 		for (int x = 0; x < maxX; x++)
-// 		{
-// 			if (_roomPlan[y][x] == 'M')
-// 			{
-// 				_mobs.emplace(id, Mob(x + 0.5, y + 0.5, 3));
-// 				_mobsId.push_back(id);
-// 			}
-// 		}
-// 	}
-// 	return ;
-// }
+std::string const	&ARoomEvent::getType(void) const {
+	return (this->_type);
+}
 
-// void	Room::destroyMobs(void) {
-// 	for (auto i : _mobsId)
-// 		_mobs.erase(i);
-// 	return ;
-// }
+std::shared_ptr<ARoomEvent>	Room::getRoomEvent(void) const {
+	return (_event);
+}
 
 std::ostream &operator<<(std::ostream &o, Room const &obj)
 {

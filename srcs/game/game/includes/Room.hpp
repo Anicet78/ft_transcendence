@@ -4,6 +4,44 @@
 
 # include "Mob.hpp"
 
+//class for event management in room
+class ARoomEvent
+{
+protected:
+	std::string _type;
+public:
+	virtual ~ARoomEvent() {};
+	virtual	void	createEvent(void) = 0;
+	virtual bool	isCleared(void) = 0;
+	virtual bool	isStarted(void) = 0;
+	virtual void	checkCleared(void) = 0;
+	std::string	const	&getType(void) const;
+};
+
+//make the room event a mob rush, player need to kill every mob in the room to clear it
+class MobRush : public ARoomEvent
+{
+private:
+	std::vector<std::string>	&_roomPlan;
+	std::map<int, Mob>			_mobs;
+	std::vector<int>			_mobsId;
+
+	bool	_started;
+	bool	_cleared;
+
+	void	createEvent(void);
+public:
+	MobRush(std::vector<std::string> &roomPlan);
+	~MobRush();
+
+	bool	isCleared(void);
+	bool	isStarted(void);
+	void	destroyEvent(void);
+	void	checkCleared(void);
+
+	std::map<int, Mob>	&getMobs(void);
+};
+
 class Room
 {
 	private:
@@ -30,10 +68,8 @@ class Room
 		//Map containing all of the rooms of the floor 4
 		static std::map<std::string, std::shared_ptr<Room>> _RoomsF4;
 
-		//MOB RELATED
-		// std::map<int, Mob>	_mobs;
-		// std::vector<int>	_mobsId;
-	
+		std::shared_ptr<ARoomEvent>	_event;
+
 	private:
 		static void importMap(std::string mapName);
 		void		identifyExits(void);
@@ -59,12 +95,8 @@ class Room
 		void	turnMapLeft(void);
 		void	turnMapRight(void);
 		void	turnMapUpDown(void);
-
-		//MOB RELATED
-		// std::map<int, Mob>	&getMobs(void);
-		// void	createMobs(void);
-		// void	destroyMobs(void);
-		// void	killMob(int id);
+		void	setEvent(void);
+		std::shared_ptr<ARoomEvent>	getRoomEvent(void) const;
 };
 
 std::ostream &operator<<(std::ostream &o, Room const &obj);

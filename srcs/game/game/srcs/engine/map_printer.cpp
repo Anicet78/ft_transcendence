@@ -7,7 +7,8 @@ int	check_tile(int x, int y, Player &player) {
 	int w = player.getRoom().getRoomPlan()[y].size();
 	if (x < 0 || x >= w)
 		return (0);
-	if (player.getRoom().getRoomPlan()[y][x] == '0')
+	char c = player.getRoom().getRoomPlan()[y][x];
+	if (c == '0' || c == 'M')
 		return (1);
 	return (0);
 }
@@ -135,20 +136,31 @@ float	cameraY(Player const &player, int const tile_size) {
 	return (idealMinY);
 }
 
-// void	print_mob(std::map<int, Mob> &mobs, int camX, int camY, int tile_size) {
-// 	static int	frame = 0;
+void	print_mob(std::map<int, Mob> &mobs, int camX, int camY, int tile_size) {
+	static int	frame = 0;
 	
-// 	if (frame >= 24)
-// 		frame = 0;
-// 	for (auto i : mobs)
-// 	{
-// 		Mob	&mob = i.second;
-// 		float x = ((mob.getX() - camX) * tile_size) - (0.5f * tile_size);
-// 		float y = ((mob.getY() - camY) * tile_size) - (0.5f * tile_size);
-// 		mob.rendMobIdle(x, y, frame / 4, 2);
-// 	}
-// 	frame++; 
-// }
+	if (frame >= 24)
+		frame = 0;
+	std::cout << mobs.size() << std::endl;
+	for (auto i : mobs)
+	{
+		Mob	&mob = i.second;
+		float x = ((mob.getX() - camX) * tile_size) - (0.5f * tile_size);
+		float y = ((mob.getY() - camY) * tile_size) - (0.5f * tile_size);
+		mob.rendMobIdle(x, y, frame / 4, 2);
+	}
+	frame++; 
+}
+
+void	print_event(std::shared_ptr<ARoomEvent> event, int camX, int camY, int tile_size)
+{
+	std::string	const &type = event->getType();
+	if (event && type == "MobRush")
+	{
+		MobRush	&rush = dynamic_cast<MobRush &>(*event);
+		print_mob(rush.getMobs(), camX, camY, tile_size);
+	}
+}
 
 void	print_map(Player &player) {
 	static int	mapX = -1;
@@ -197,6 +209,6 @@ void	print_map(Player &player) {
 	SDL_RenderCopy(gSdl.renderer, gSdl.texture, &camera, NULL);
 	float playerScreenX = (player.getX() - camX) * tile_s;
     float playerScreenY = (player.getY() - camY) * tile_s;
-	// print_mob(player.getRoom().getMobs(), camX, camY, tile_s);
+	print_event(player.getRoom().getRoomEvent(), camX, camY, tile_s);
 	print_player(playerScreenX, playerScreenY);
 }

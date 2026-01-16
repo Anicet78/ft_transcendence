@@ -80,12 +80,6 @@ void updateRoom(Player &player)
 			player.setPos(exitsLoc[1][0] - 0.1, exitsLoc[1][1] + 0.5);
 			roomChanged = true;
 		}
-
-		// if (roomChanged == true)
-		// {
-		// 	room.destroyMobs();
-		// 	player.getRoom().createMobs();
-		// }
 	}
 }
 
@@ -143,7 +137,7 @@ int mainloop(Engine &sdl, Map &floor0)
 				key_up();
 		}
 		game_loop(player);
-		// fps(frame);
+		fps(frame);
 		SDL_RenderPresent(sdl.renderer);
 		SDL_RenderClear(gSdl.renderer);
 		frame++;

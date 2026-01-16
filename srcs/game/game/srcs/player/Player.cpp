@@ -57,7 +57,7 @@ int		Player::getDef(void) const
 	return (_def);
 }
 
-Room	Player::getRoom(void) const
+Room	&Player::getRoom(void) const
 {
 	return *this->_node->getRoom().get();
 }
@@ -137,7 +137,7 @@ bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect const &rect
 }
 
 void	Player::move(void) {
-	Room room = this->getRoom();
+	Room &room = this->getRoom();
 	float x = this->getX(), y = this->getY();
 	auto plan = room.getRoomPlan();
 

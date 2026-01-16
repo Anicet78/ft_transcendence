@@ -24,6 +24,7 @@ SRCS		=	main.cpp \
 				player/Player.cpp \
 				player/PlayerAssets.cpp \
 				engine/Mob.cpp \
+				engine/RoomEvent.cpp \
 				mapGen/mapMain.cpp Room.cpp Map.cpp aStar.cpp mapGen/mapGen.cpp
 
 EMSRCS		= $(patsubst %, $(SRC_DIR)%, $(SRCS))

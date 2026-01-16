@@ -1,7 +1,7 @@
 #ifndef PLAYER_HPP
 # define PLAYER_HPP
 
-# include "Map.hpp"
+#include "Map.hpp"
 
 class Player
 {
@@ -35,8 +35,7 @@ public:
 //getter
 	int			getUid(void) const;
 	std::string	getName(void) const;
-	Room		getRoom() const;
-	Room		&getRoomRef(void);
+	Room		&getRoom() const;
 	quadList	getNode() const;
 
 	float		getX(void) const;
