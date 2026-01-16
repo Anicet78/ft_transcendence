@@ -10,14 +10,14 @@ datasource db {
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model app_user {
   app_user_id                                      String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  first_name                                       String         @db.VarChar(255)
-  last_name                                        String         @db.VarChar(255)
-  username                                         String         @unique @db.VarChar(15)
-  mail_address                                     String         @unique @db.VarChar(255)
+  first_name                                       String
+  last_name                                        String
+  username                                         String         @unique @db.VarChar(20)
+  mail_address                                     String         @unique @db.Citext
   password_hash                                    String
   avatar_url                                       String?
   availability                                     Boolean        @default(false)
-  region                                           String?        @db.VarChar(50)
+  region                                           String?
   created_at                                       DateTime?      @default(now()) @db.Timestamp(6)
   updated_at                                       DateTime?      @default(now()) @db.Timestamp(6)
   deleted_at                                       DateTime?      @db.Timestamp(6)
@@ -81,6 +81,7 @@ model friendship {
 
 model game_profile {
   game_profile_id       String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id               String?   @unique @db.Uuid
   created_at            DateTime? @default(now()) @db.Timestamp(6)
   updated_at            DateTime? @default(now()) @db.Timestamp(6)
   deleted_at            DateTime? @db.Timestamp(6)
@@ -91,7 +92,7 @@ model game_profile {
   total_xp              Int?      @default(0)
   level                 Int?      @default(0)
   best_time             Int?
-  app_user              app_user  @relation(fields: [game_profile_id], references: [app_user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_game_profile_user")
+  app_user              app_user? @relation(fields: [user_id], references: [app_user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_profile_user_id")
 }
 
 model game_result {

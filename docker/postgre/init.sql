@@ -1,19 +1,18 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "citext";
+CREATE EXTENSION IF NOT EXISTS "citext"; --case insensitive text
 
 CREATE TABLE app_user (
 	app_user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-	first_name VARCHAR(255) NOT NULL,
-	last_name VARCHAR(255) NOT NULL,
-	username VARCHAR(15) UNIQUE NOT NULL,
-	mail_address VARCHAR(255) UNIQUE NOT NULL,
+	first_name TEXT NOT NULL,
+	last_name TEXT NOT NULL,
+	username VARCHAR(20) UNIQUE NOT NULL,
+	mail_address CITEXT UNIQUE NOT NULL,
 	password_hash TEXT NOT NULL,
 	-- avatar --img
 	avatar_url TEXT,
 
 	"availability" BOOLEAN NOT NULL DEFAULT false,
-	-- "role" VARCHAR(20) NOT NULL DEFAULT 'guest',
-	region VARCHAR(50),
+	region TEXT,
 
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -24,7 +23,6 @@ CREATE TABLE app_user (
 	CHECK (trim(last_name) <> ''),
 	CHECK (trim(username) <> ''),
 	CHECK (trim(mail_address) <> '')
-	-- CHECK ("role" IN ('guest', 'user', 'app_admin', 'banned_user'))
 );
 
 CREATE TABLE user_role (
@@ -77,6 +75,7 @@ CREATE TABLE friendship (
 
 CREATE TABLE game_profile (
 	game_profile_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+	user_id UUID UNIQUE,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	deleted_at TIMESTAMP,
@@ -88,10 +87,14 @@ CREATE TABLE game_profile (
 	"level" INT DEFAULT 0,
 	best_time INT, --minutes ? seconds ?
 
-	CONSTRAINT fk_game_profile_user
-		FOREIGN KEY (game_profile_id)
+	CONSTRAINT fk_game_profile_user_id
+		FOREIGN KEY (user_id)
 		REFERENCES app_user(app_user_id)
-		ON DELETE CASCADE
+
+	-- CONSTRAINT fk_game_profile_user
+	-- 	FOREIGN KEY (game_profile_id)
+	-- 	REFERENCES app_user(app_user_id)
+	-- 	ON DELETE CASCADE
 );
 
 CREATE TABLE game_session (
@@ -263,3 +266,22 @@ CREATE TABLE chat_ban (
 	FOREIGN KEY (banned_by)
 		REFERENCES app_user(app_user_id)
 );
+
+
+-- CREATE FUNCTION trigger_set_updated_at()
+-- RETURNS TRIGGER AS $$
+-- BEGIN
+--   NEW.updated_at = CURRENT_TIMESTAMP;
+--   RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
+
+-- -- attach to tables you want auto-updated
+-- CREATE TRIGGER trg_app_user_updated_at
+-- BEFORE UPDATE ON app_user
+-- FOR EACH ROW EXECUTE FUNCTION trigger_set_updated_at();
+
+-- CREATE TRIGGER trg_game_profile_updated_at
+-- BEFORE UPDATE ON game_profile
+-- FOR EACH ROW EXECUTE FUNCTION trigger_set_updated_at();
+
