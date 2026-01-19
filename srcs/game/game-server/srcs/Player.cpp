@@ -1,29 +1,27 @@
 #include"Player.hpp"
 
-Player::Player(int uid, std::string name, quadList &node) : _uid(uid), _name(name), _groupSize(1), _x(0), _y(0), _node(node), _hp(3), _atk(1), _def(0)
-{
-	int i = 0;
-	for (auto &line : _node->getRoom()->getRoomPlan())
-	{
-		size_t pos = line.find('P');
-		if (pos != std::string::npos)
-		{
-			_x = pos + 0.5, _y = i + 0.5;
-			break ;
-		}
-		i++;
-	}
-	return ;
-}
+Player::Player(std::string uid, int partySize, std::string partyName, std::string name, uWS::WebSocket<false, true, PerSocketData> *ws)
+				: _uid(uid), _partySize(partySize),  _partyName(partyName), _name(name), _inQueue(true), _inSession(false),
+					_ws(ws), _x(0), _y(0), _hp(3), _atk(1), _def(0)
+{}
 
-Player::~Player(void) {
-	return ;
-}
+Player::~Player(void)
+{}
 
 //get player value
-int	Player::getUid(void) const
+std::string	Player::getUid(void) const
 {
 	return (_uid);
+}
+
+std::string	Player::getPartyName(void) const
+{
+	return (_partyName);
+}
+
+int Player::getGroupSize() const
+{
+	return _partySize;
 }
 
 std::string	Player::getName(void) const
@@ -61,6 +59,21 @@ Room	Player::getRoom(void) const
 	return *this->_node->getRoom().get();
 }
 
+bool Player::isInQueue(void) const
+{
+	return this->_inQueue;
+}
+
+bool Player::isInSession(void) const
+{
+	return this->_inSession;
+}
+
+uWS::WebSocket<false, true, PerSocketData> *Player::getWs() const
+{
+	return this->_ws;
+}
+
 quadList Player::getNode() const
 {
 	return this->_node;
@@ -96,4 +109,14 @@ void	Player::setDef(int def)
 {
 	_def = def;
 	return ;
+}
+
+void	Player::setInQueue(bool flag)
+{
+	this->_inQueue = flag;
+}
+
+void	Player::setInSession(bool flag)
+{
+	this->_inSession = flag;
 }

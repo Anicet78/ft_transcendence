@@ -16,8 +16,13 @@ chainedMap::~chainedMap(void)
 
 void chainedMap::addRoom(const Room &room)
 {
-	this->_room = std::make_shared<Room>(room);
-
+	if (this->_room)
+	{
+		this->_room.reset();
+		*this->_room = room;
+	}
+	else
+		this->_room = std::make_shared<Room>(room);
 	auto exits = this->_room->getExits();
 
 	if (!exits[0] && !this->north.expired())
@@ -147,6 +152,11 @@ Map::~Map(void)
 {}
 
 //Member Functions--------------------------------------------------------
+
+void	Map::setWaitingRoom()
+{
+	this->_nodes[0]->addRoom(Room::getWatingRoom());
+}
 
 quadList &Map::getHead()
 {

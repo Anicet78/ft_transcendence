@@ -1,33 +1,41 @@
 # include "Session.hpp"
 
-Session::Session(void): _maxNumPlayer(5), _running(0)
+Session::Session(void): _maxNumPlayer(5), _running(0), _ended(0)
 {
 	(void)_running;
+	_maps.emplace_back(1, 1);
+	_maps.back().setWaitingRoom();
+	_maps.emplace_back(10, 10);
+	_maps.back().fillMap();
+	printMap(_maps[1]);
 }
 
-Session::Session(int numPLayer): _maxNumPlayer(numPLayer), _running(0)
-{}
+Session::Session(int numPLayer): _maxNumPlayer(numPLayer), _running(0), _ended(0)
+{
+	(void)_ended;
+
+}
 
 Session::~Session(void)
 {}
 
 //-----------------------------------------------------------------
 
-bool	Session::addPlayer(Player &newPlayer)
+void	Session::addParty(Party &newParty)
 {
-	if (this->_players.size() < static_cast<size_t>(this->_maxNumPlayer))
+	for (std::shared_ptr<Player> &player : newParty.getPlayers())
 	{
-		this->_players.push_back(newPlayer);
-		return 1;
+		this->_players.push_back(player);
+		player->getWs()->send("{\"action\": \"waiting\"}");
+        player->getWs()->send("You have been added to a session !", uWS::OpCode::TEXT);
 	}
-	return 0;
 }
 
-bool	Session::removePlayer(Player &rmPlayer)
+bool	Session::removePlayer(std::shared_ptr<Player> rmPlayer)
 {
 	for (size_t i = 0; i < this->_players.size(); i++)
 	{
-		if (this->_players[i].getUid() == rmPlayer.getUid())
+		if (this->_players[i]->getUid() == rmPlayer->getUid())
 		{
 			this->_players.erase(this->_players.begin() + i);
 			return 1;
@@ -41,7 +49,30 @@ int Session::getMaxNumPlayer() const
 	return this->_maxNumPlayer;
 }
 
+int Session::getPlaceLeft() const
+{
+	return this->_maxNumPlayer - this->_players.size();
+}
+
 int Session::getNumPlayers() const
 {
 	return this->_players.size();
+}
+
+bool Session::hasEnded() const
+{
+	return this->_ended;
+}
+
+bool Session::isRunning() const
+{
+	return this->_running;
+}
+
+bool Session::isPlayerInSession(std::string &uid) const
+{
+	for (auto &player : _players)
+		if (player->getUid() == uid)
+			return true;
+	return false;
 }

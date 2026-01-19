@@ -5,6 +5,7 @@ std::map<std::string, std::shared_ptr<Room>> Room::_RoomsF1;
 std::map<std::string, std::shared_ptr<Room>> Room::_RoomsF2;
 std::map<std::string, std::shared_ptr<Room>> Room::_RoomsF3;
 std::map<std::string, std::shared_ptr<Room>> Room::_RoomsF4;
+std::map<std::string, std::shared_ptr<Room>> Room::_WatingRooms;
 
 Room &Room::operator=(Room const &rhs)
 {
@@ -208,10 +209,10 @@ static int verifFile(std::string str, std::string ext)
 	return strExt == ext;
 }
 
-void Room::importMap(std::string mapName)
+void Room::importMap(std::string &fullPath, std::string mapName, std::map<std::string, std::shared_ptr<Room>> &set)
 {
 	auto room = std::make_shared<Room>();
-	std::ifstream file("./assets/rooms/floor0/" + mapName);
+	std::ifstream file(fullPath + mapName);
 	if (!file.is_open())
 		throw std::runtime_error("Impossible d'ouvrir le fichier\n");
 
@@ -233,26 +234,34 @@ void Room::importMap(std::string mapName)
 	room->_height = maxHeight;
 	room->_name = mapName;
 	room->identifyExits();
-	_RoomsF0.emplace(mapName, room);
+	set.emplace(mapName, room);
 }
 
-void Room::importRooms()
+void	Room::importFloor(std::string fullPath, std::map<std::string, std::shared_ptr<Room>> &set)
 {
 	DIR				*dir;
 	struct dirent	*entry;
 
-	dir = opendir("./assets/rooms/floor0");
+	dir = opendir(fullPath.c_str());
+	std::cout << fullPath << std::endl;
 	if (dir == NULL)
 		throw std::runtime_error("Error : function oppendir failed");
 	entry = readdir(dir);
 	while (entry)
 	{
 		if (verifFile(entry->d_name, ".map"))
-			Room::importMap(entry->d_name);
+			Room::importMap(fullPath, entry->d_name, set);
 		entry = readdir(dir);
 	}
 	closedir(dir);
+}
 
+void Room::importRooms()
+{
+	std::string path("./assets/rooms/");
+	
+	Room::importFloor(path + "watingRooms/", _WatingRooms);
+	Room::importFloor(path + "floor0/", _RoomsF0);
 	// for (auto &room : _RoomsF0)
 	// 	std::cout << *room.second.get() << std::endl;
 }

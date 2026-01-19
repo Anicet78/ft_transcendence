@@ -17,22 +17,23 @@ void Server::parseJson(std::map<std::string, std::string> &res, std::string msg)
             continue ;
         size_t pos1, pos2;
         if ((pos1 = buffer.find('\"')) == std::string::npos)
-            throw std::runtime_error("Json imput invalid syntax");
+            throw std::runtime_error(std::string("Json input invalid syntax near \"") + buffer[0] + '\"');
         if ((pos2 = buffer.find("\":")) == std::string::npos)
-            throw std::runtime_error("Json imput invalid syntax");
+            throw std::runtime_error(std::string("Json input invalid syntax near \"") + buffer[pos1 + 1] + '\"');
         pos1++;
         std::string key = buffer.substr(pos1, pos2 - pos1);
         std::string value;
         pos1 = pos2 + 2;
         if ((pos1 = buffer.find('\"', pos1)) == std::string::npos)
         {
+            pos1 = pos2 + 2;
             if (isdigit(buffer[pos1]))
                 value = buffer.substr(pos1);
             else
-                throw std::runtime_error("Json imput invalid syntax");
+                throw std::runtime_error(std::string("Json input invalid syntax near \"") + key + buffer[pos1] + '\"');
         }
         else if ((pos2 = buffer.find('\"', pos1 + 1)) == std::string::npos)
-            throw std::runtime_error("Json imput invalid syntax");
+            throw std::runtime_error(std::string("Json input invalid syntax near \"") + key + buffer[pos1] + buffer[pos1 + 1] + '\"');
         else
         {
             pos1++;
@@ -43,7 +44,7 @@ void Server::parseJson(std::map<std::string, std::string> &res, std::string msg)
     
 }
 
-void Server::executeJson(PerSocketData *data)
+void Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSocketData> *ws)
 {
     std::map<std::string, std::string> &req = data->jsonMsg;
     
@@ -53,6 +54,8 @@ void Server::executeJson(PerSocketData *data)
         data->playerId = req["player_id"];
         data->group = req["group_id"];
         data->groupSize = std::atoi(req["group_size"].c_str());
-        this->addPlayerOnQueue(data->pseudo);
+        ws->send("You have been added in the queue !", uWS::OpCode::TEXT);
+        this->_players.emplace_back(std::make_shared<Player>(data->playerId, data->groupSize, data->group, data->pseudo, ws));
+        this->addPlayerOnQueue(_players.back());
     }
 }

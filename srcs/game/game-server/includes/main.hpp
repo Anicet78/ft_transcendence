@@ -2,6 +2,7 @@
 
 # define MAIN_HPP
 
+# include "../uWebSockets/src/App.h"
 # include <iostream>
 # include <array>
 # include <string>

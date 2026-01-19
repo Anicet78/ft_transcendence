@@ -4,22 +4,36 @@
 
 # include "Map.hpp"
 
+typedef struct PerSocketData
+{
+    std::string							playerId;
+    std::string							pseudo;
+    std::string							room; //room is designing an appartenance at a game room, with all of the other players of the session
+	std::string							group; //group is is for the group with you launch the game (before matchmaking)
+	int									groupSize;//size of the group
+    std::map<std::string, std::string>	jsonMsg;
+} PerSocketData;
+
 class Player
 {
 	private:
-		int			_uid;
+		std::string	_uid;
 		int			_numPlayer;
-		int			_groupSize;//size of the group
-		std::string _group; //group is is for the group with you launch the game (before matchmaking)
+		int			_partySize;//size of the group
+		std::string	_partyName; //party is for the group with you launch the game with (before matchmaking)
 		std::string	_name;
-		std::string _room; //room is designing an appartenance at a game room, with all of the other players of the session
+		std::string	_groupName; //party is designing an appartenance at a game room, with all of the other players of the session
+		bool		_inQueue;
+		bool		_inSession;
+		uWS::WebSocket<false, true, PerSocketData> *_ws;
+		
 
 	//player pos
 		float		_x;
 		float		_y;
 
 	//pos in map
-		quadList	&_node;
+		quadList	_node;
 
 	//player stat
 		int			_hp;
@@ -27,14 +41,20 @@ class Player
 		int			_def;
 
 	public:
-		Player(int uid, std::string name, quadList &node);
+		Player(std::string uid, int partySize, std::string partyName, std::string name,
+				uWS::WebSocket<false, true, PerSocketData> *ws);
 		~Player();
 
 	//getter
-		int			getUid(void) const;
+		std::string	getUid(void) const;
 		std::string	getName(void) const;
-		Room		getRoom() const;
-		quadList	getNode() const;
+		Room		getRoom(void) const;
+		quadList	getNode(void) const;
+		int			getGroupSize() const;
+		std::string	getPartyName(void) const;
+		bool		isInQueue(void)	const;
+		bool		isInSession(void) const;
+		uWS::WebSocket<false, true, PerSocketData> *getWs(void) const;
 
 		float		getX(void) const;
 		float		getY(void) const;
@@ -44,11 +64,13 @@ class Player
 		int			getDef(void) const;
 
 	//setter
-		void	setNode(const quadList &node);
-		void	setPos(float x, float y);
-		void	setHp(int hp);
-		void	setAtk(int atk);
-		void	setDef(int def);
+		void		setNode(const quadList &node);
+		void		setPos(float x, float y);
+		void		setHp(int hp);
+		void		setAtk(int atk);
+		void		setDef(int def);
+		void		setInQueue(bool flag);
+		void		setInSession(bool flag);
 
 	//action
 		void		move(void);

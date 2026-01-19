@@ -1,0 +1,66 @@
+CXX      = c++
+CXXFLAGS = -Wall -Werror -Wextra -std=c++20
+LDFLAGS  = $(shell sdl2-config --libs)
+
+EMSCRIPTEN	= emcc
+EMFLAGS =	-s WASM=1 -s USE_SDL=2 -lembind \
+			-s EXPORTED_FUNCTIONS='["_main"]' \
+			-s EXPORTED_RUNTIME_METHODS='["callMain"]' \
+			-s NO_EXIT_RUNTIME=1 \
+			$(CXXFLAGS) -O3
+
+
+
+HEADERS		= ./includes/
+SRC_DIR		= ./srcs/
+OBJ_DIR		= ./objs/
+
+CXXFLAGS += -I$(HEADERS)
+
+SRCS		=	main.cpp \
+				engine/Engine.cpp \
+				engine/Key.cpp \
+				engine/Assets.cpp \
+				engine/sdl_loop.cpp \
+				engine/load_image.cpp \
+				engine/init_sdl.cpp \
+				engine/key_action.cpp \
+				engine/map_printer.cpp \
+				player/Player.cpp \
+				player/PlayerAssets.cpp \
+				mapGen/mapMain.cpp Room.cpp Map.cpp mapGen/aStar.cpp mapGen/mapGen.cpp Game.cpp
+
+EMSRCS		= $(patsubst %, $(SRC_DIR)%, $(SRCS))
+
+OBJS		= $(patsubst %.cpp, $(OBJ_DIR)%.o, $(SRCS))
+
+NAME		= game
+EMNAME		= ./build/game.js
+
+all: $(NAME)
+
+$(NAME): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME) $(LDFLAGS)
+
+$(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+wasm:
+	mkdir -p build
+	$(EMSCRIPTEN) $(EMSRCS) $(EMFLAGS) --preload-file assets -o $(EMNAME)
+
+clean:
+	rm -rf $(OBJ_DIR)
+
+wfclean:
+	rm ./build/game.js
+	rm ./build/game.wasm
+	rm ./build/game.data
+
+fclean: clean
+	rm -rf $(NAME)
+
+re: fclean wfclean all
+
+.PHONY: all clean fclean re wfclean
