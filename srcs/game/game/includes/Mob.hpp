@@ -35,6 +35,8 @@ private:
 
 	int		_last_dir;
 
+	// HitBox	_box;
+
 public:
 
 	Mob(float x, float y, int hp);
@@ -46,6 +48,7 @@ public:
 	float	getY(void);
 	int		getHp(void);
 	int		getLastDir(void);
+	// HitBox	&getBox(void);
 
 	void	setPos(float x, float y);
 	void	setHp(int hp);

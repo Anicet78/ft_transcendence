@@ -1,6 +1,6 @@
 #include"Player.hpp"
 
-Player::Player(int uid, std::string name, quadList &node) : _uid(uid), _name(name), _x(0), _y(0), _node(node), _hp(3), _atk(1), _def(0)
+Player::Player(int uid, std::string name, quadList &node) : _uid(uid), _name(name), _x(0), _y(0), _node(node), _hp(3), _atk(1), _def(0), _box(_x, _y, _screenX, _screenY, 0),  _camera(_x, _y)
 {
 	int i = 0;
 	for (auto &line : _node->getRoom()->getRoomPlan())
@@ -14,6 +14,7 @@ Player::Player(int uid, std::string name, quadList &node) : _uid(uid), _name(nam
 		i++;
 	}
 	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
+	_box.updateHitBox(0);
 	return ;
 }
 
@@ -21,7 +22,8 @@ Player::~Player(void) {
 	return ;
 }
 
-//get player value
+//-----------------------------getter-----------------------------
+
 int	Player::getUid(void) const
 {
 	return (_uid);
@@ -40,6 +42,14 @@ float	Player::getX(void) const
 float	Player::getY(void) const
 {
 	return (_y);
+}
+
+float	Player::getScreenX(void) const {
+	return (_screenX);
+}
+
+float	Player::getScreenY(void) const {
+	return (_screenY);
 }
 
 int		Player::getHp(void) const
@@ -71,7 +81,17 @@ SDL_FRect	&Player::getWallHitBox(void) {
 	return (_wallHitBox);
 }
 
-//set player value
+HitBox	&Player::getBox(void) {
+	return (_box);
+}
+
+Camera	&Player::getCamera(void) {
+	return (_camera);
+}
+
+//----------------------------------------------------------------
+
+//-----------------------------setter-----------------------------
 
 void Player::setNode(const quadList &node)
 {
@@ -108,6 +128,10 @@ void	Player::setWallHitBox(void) {
 	return ;
 }
 
+//----------------------------------------------------------------
+
+//-----------------------------action-----------------------------
+
 bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect const &rect, int const flag) {
 	if (gSdl.key.w_key && flag == 0)
 	{
@@ -136,11 +160,12 @@ bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect const &rect
 	return (false);
 }
 
-void	Player::move(void) {
+void	Player::move(float timeStep) {
 	Room &room = this->getRoom();
 	float x = this->getX(), y = this->getY();
 	auto plan = room.getRoomPlan();
 
+	(void)timeStep;
 	if (gSdl.key.w_key)
 	{
 		y -= 0.1;
@@ -173,4 +198,12 @@ void	Player::move(void) {
 		else
 			x -= 0.1;
 	}
+}
+
+//----------------------------------------------------------------
+
+void	Player::updateScreenPos(int tile_s) {
+	_screenX = (_x - _camera.getCamX()) * tile_s;
+	_screenY = (_y - _camera.getCamY()) * tile_s;
+	return ;
 }

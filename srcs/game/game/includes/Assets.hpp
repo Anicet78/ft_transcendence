@@ -1,7 +1,7 @@
 #ifndef ASSETS_HPP
 # define ASSETS_HPP
 
-# include "Engine.hpp"
+# include "HitBox.hpp"
 
 class Assets
 {

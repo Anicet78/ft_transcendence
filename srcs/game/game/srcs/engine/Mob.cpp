@@ -18,6 +18,7 @@ int						Mob::_idleImgW;
 int						Mob::_idleImgH;
 
 Mob::Mob(float x, float y, int hp) : _x(x), _y(y), _hp(hp) {
+	// _box.updateHitBox(_last_dir);
 	return ;
 }
 
@@ -181,6 +182,10 @@ int		Mob::getHp(void) {
 int		Mob::getLastDir(void) {
 	return (_last_dir);
 }
+
+// HitBox	&Mob::getBox(void) {
+// 	return (_box);
+// }
 
 void	Mob::rendMobWalk(int x, int y, int assetIndex, float scale) {
 	if (assetIndex < 0) {

@@ -148,6 +148,7 @@ void	print_mob(std::map<int, Mob> &mobs, int camX, int camY, int tile_size) {
 		float x = ((mob.getX() - camX) * tile_size) - (0.5f * tile_size);
 		float y = ((mob.getY() - camY) * tile_size) - (0.5f * tile_size);
 		mob.rendMobIdle(x, y, frame / 4, 2);
+		// mob.getBox().printHitBox();
 	}
 	frame++; 
 }
@@ -197,18 +198,14 @@ void	print_map(Player &player) {
 		SDL_SetRenderTarget(gSdl.renderer, NULL);
 	}
 
-	float	camX = cameraX(player, tile_s);
-	float	camY = cameraY(player, tile_s);
-	SDL_Rect camera = {
-		static_cast<int>(camX * tile_s),
-		static_cast<int>(camY * tile_s),
-		SCREEN_WIDTH,
-		SCREEN_HEIGHT
-	};
+	int roomH = player.getRoom().getRoomPlan().size();
+	int roomW = player.getRoom().getRoomPlan()[0].size();
+	Camera	&camera = player.getCamera();
+	camera.updateCamera(tile_s, roomW, roomH);
+	player.updateScreenPos(tile_s);
 
-	SDL_RenderCopy(gSdl.renderer, gSdl.texture, &camera, NULL);
-	float playerScreenX = (player.getX() - camX) * tile_s;
-    float playerScreenY = (player.getY() - camY) * tile_s;
-	print_event(player.getRoom().getRoomEvent(), camX, camY, tile_s);
-	print_player(playerScreenX, playerScreenY);
+	SDL_RenderCopy(gSdl.renderer, gSdl.texture, &camera.getCamera(), NULL);
+	print_event(player.getRoom().getRoomEvent(), camera.getCamX(), camera.getCamY(), tile_s);
+	print_player(player.getScreenX(), player.getScreenY());
+	player.getBox().printHitBox();
 }

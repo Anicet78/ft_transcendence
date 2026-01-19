@@ -83,16 +83,19 @@ void updateRoom(Player &player)
 	}
 }
 
-void	player_action(Player &player) {
+void	player_action(Player &player, SDLTimer &cap) {
+	float	timeStep = cap.getTicks() / 1000.f;
 	player.setWallHitBox();
 	if (gSdl.key.walking())
-		player.move();
+		player.move(timeStep);
+	player.getBox().updateHitBox(0);
+
 }
 
-void	game_loop(Player &player)
+void	game_loop(Player &player, SDLTimer &cap)
 {
 	updateRoom(player);
-	player_action(player);
+	player_action(player, cap);
 	print_map(player);
 }
 
@@ -136,7 +139,7 @@ int mainloop(Engine &sdl, Map &floor0)
 			else if (sdl.event.type == SDL_KEYUP)
 				key_up();
 		}
-		game_loop(player);
+		game_loop(player, cap);
 		fps(frame);
 		SDL_RenderPresent(sdl.renderer);
 		SDL_RenderClear(gSdl.renderer);
