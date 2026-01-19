@@ -4,6 +4,7 @@ import type { RegisterResponseType, RegisterType } from "../../routes/auth/regis
 import { hashPassword } from "../../services/auth/password.js";
 import { UserService } from "../../services/db/userService.js";
 import type { AppUser } from "@prisma/client";
+import { RoomService } from "../../services/rooms/roomService.js";
 
 export async function postRegisterController(
 	request: FastifyRequest<{ Body: RegisterType }>,
@@ -46,7 +47,7 @@ export async function postRegisterController(
 	try {
 		const dbUser: AppUser = await UserService.createUser(user);
 		user.id = dbUser.appUserId;
-		if (dbUser.availability == false)
+		if (dbUser.availability === false)
 			await UserService.setAvailabality(user.id, true);
 	}
 	catch (err) {
@@ -54,7 +55,10 @@ export async function postRegisterController(
 		return reply.code(500).send({ error: "Database issue" });
 	}
 
-	const response: RegisterResponseType = {token: await reply.jwtSign({ id: user.id, email: user.email }), user: user };
+	const token = await reply.jwtSign({ id: user.id, email: user.email });
+	const room = RoomService.create(user.id);
+
+	const response: RegisterResponseType = {token: token, user: user, roomId: room.roomId };
 
 	return reply.status(200).send(response);
 }

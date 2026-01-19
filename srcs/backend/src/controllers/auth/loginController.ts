@@ -4,6 +4,7 @@ import type { LoginResponseType, LoginType } from "../../routes/auth/loginRoute.
 import { verifyPassword } from "../../services/auth/password.js";
 import type { AppUser } from "@prisma/client";
 import { UserService } from "../../services/db/userService.js";
+import { RoomService } from "../../services/rooms/roomService.js";
 
 export async function postLoginController(
 	request: FastifyRequest<{ Body: LoginType }>,
@@ -15,7 +16,7 @@ export async function postLoginController(
 
 	try {
 		dbUser = await UserService.getUserByMail(email);
-		if (dbUser?.availability == false)
+		if (dbUser?.availability === false)
 			await UserService.setAvailabality(dbUser.appUserId, true);
 	} catch (err) {
 		request.log.error(err);
@@ -43,7 +44,10 @@ export async function postLoginController(
 		passwordHash: dbUser.passwordHash
 	};
 
-	const response: LoginResponseType = {token: await reply.jwtSign({ id: user.id, email: user.email }), user: user};
+	const token = await reply.jwtSign({ id: user.id, email: user.email });
+	const room = RoomService.create(user.id);
+
+	const response: LoginResponseType = {token: token, user: user, roomId: room.roomId };
 
 	return reply.status(200).send(response);
 }
