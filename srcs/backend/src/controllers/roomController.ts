@@ -3,6 +3,23 @@ import { RoomService } from "../services/rooms/roomService.js";
 import type { Room } from "../schema/roomSchema.js";
 import type { RoomBodyType, RoomParamsType } from "../routes/roomRoute.js";
 
+export async function getRoomController(
+	request: FastifyRequest<{ Params: RoomParamsType }>,
+	reply: FastifyReply
+) {
+	try {
+		const response: Room = RoomService.get(request.params.id, request.user.id);
+		return reply.status(200).send(response);
+	} catch(err) {
+		request.log.error(err);
+		if (err === "Room not found")
+			return reply.code(404).send({ error: err });
+		else if (err === "Not in room")
+			return reply.code(403).send({ error: err });
+		return reply.code(500).send({ error: "An error has occured" });
+	}
+}
+
 export async function newRoomController(
 	request: FastifyRequest,
 	reply: FastifyReply
@@ -21,7 +38,7 @@ export async function joinRoomController(
 	RoomService.leave(request.user.id);
 
 	try {
-		const response: Room =  RoomService.join(request.params.id, request.user.id);
+		const response: Room = RoomService.join(request.params.id, request.user.id);
 		return reply.status(200).send(response);
 	} catch (err) {
 		request.log.error(err);
