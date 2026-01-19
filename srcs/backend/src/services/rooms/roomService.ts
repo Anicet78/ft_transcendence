@@ -20,6 +20,15 @@ export const RoomService = {
 		return newRoom;
 	},
 
+	find(userId: string): Room | null {
+		for (const room of rooms.values()) {
+			if (room.playersId.includes(userId)) {
+				return room;
+			}
+		}
+		return null;
+	},
+
 	findAll(): Array<Room> {
 		return Array.from(rooms.values());
 	},

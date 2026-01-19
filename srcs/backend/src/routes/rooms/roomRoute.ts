@@ -1,8 +1,8 @@
 import type { FastifyInstance } from "fastify";
 import Type, { type Static } from "typebox";
-import { AppErrorSchema } from "../schema/errorSchema.js";
-import { getRoomController, hostRoomController, joinRoomController, newRoomController } from "../controllers/roomController.js";
-import { RoomSchema } from "../schema/roomSchema.js";
+import { AppErrorSchema } from "../../schema/errorSchema.js";
+import { getRoomController, hostRoomController, joinRoomController, kickRoomController, newRoomController } from "../../controllers/rooms/roomController.js";
+import { RoomSchema } from "../../schema/roomSchema.js";
 
 export const RoomParamsSchema = Type.Object({
 	id: Type.String()
@@ -17,11 +17,13 @@ export type RoomBodyType = Static<typeof RoomBodySchema>;
 
 export async function roomRoutes(fastify: FastifyInstance) {
 
-fastify.get("/", {
+fastify.get("/:id", {
 	schema: {
 		params: RoomParamsSchema,
 		response: {
 			200: RoomSchema,
+			403: AppErrorSchema,
+			404: AppErrorSchema,
 			500: AppErrorSchema
 		}
 	}
@@ -54,9 +56,24 @@ fastify.patch("/host", {
 		response: {
 			200: RoomSchema,
 			400: AppErrorSchema,
+			403: AppErrorSchema,
+			404: AppErrorSchema,
 			500: AppErrorSchema
 		}
 	}
 }, hostRoomController);
+
+fastify.patch("/kick", {
+	schema: {
+		body: RoomBodySchema,
+		response: {
+			200: RoomSchema,
+			400: AppErrorSchema,
+			403: AppErrorSchema,
+			404: AppErrorSchema,
+			500: AppErrorSchema
+		}
+	}
+}, kickRoomController);
 
 };
