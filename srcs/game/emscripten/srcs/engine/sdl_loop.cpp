@@ -90,46 +90,38 @@ void updateRoom(Player &player)
 
 void	updatePlayerPosition(Player &player)
 {
-	Room room = player.getRoom();
-	float x = player.getX(), y = player.getY();
-	auto plan = room.getRoomPlan();
+	(void)player;
+	std::string msg0, msg1, msg2, msg3;
 	if (gSdl.key.w_key)
-	{
-		y -= 0.1;
-		if (y >= 0 && plan[y][x] != '1')
-			player.setPos(x, y);
-		else
-			y += 0.1;
-	}
+		msg0 = "true";
 	if (gSdl.key.a_key)
-	{
-		x -= 0.1;
-		if (x >= 0 && plan[y][x] != '1')
-			player.setPos(x, y);
-		else
-			x += 0.1;
-	}
+		msg1 = "true";
 	if (gSdl.key.s_key)
-	{
-		y += 0.1;
-		if (y < room.getHeight() && plan[y][x] != '1')
-			player.setPos(x, y);
-		else
-			y -= 0.1;
-	}
+		msg2 = "true";
 	if (gSdl.key.d_key)
+		msg3 = "true";
+	if (!msg0.empty() || !msg1.empty() || !msg2.empty() || !msg3.empty())
 	{
-		x += 0.1;
-		if (x < room.getWidth() && plan[y][x] != '1')
-			player.setPos(x, y);
-		else
-			x -= 0.1;
+		EM_ASM_({
+			onCppMessage({
+				action: "player_move",
+				w_key: UTF8ToString($0),
+				a_key: UTF8ToString($1),
+				s_key: UTF8ToString($2),
+				d_key: UTF8ToString($3),
+			});
+		}, msg0.c_str(), msg1.c_str(), msg2.c_str(), msg3.c_str());
+
 	}
 }
 
-void	game_loop(Player &player)
+
+void	game_loop(Game &game)
 {
-	updateRoom(player);
-	updatePlayerPosition(player);
-	print_map(player);
+	//updateRoom(player);
+	#ifdef __EMSCRIPTEN__
+
+	updatePlayerPosition(game.getPlayer());
+	#endif
+	print_map(game.getPlayer(), game.getOtherPlayers());
 }

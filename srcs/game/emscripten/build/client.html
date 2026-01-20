@@ -68,7 +68,6 @@
                 {
                     data = await data.text();
                 }
-
                 try
                 {
                     const json = JSON.parse(data);
@@ -80,23 +79,6 @@
                     log('📥 Reçu (non-JSON) : ' + data);
                 }
             };
-
-            // Module.onRuntimeInitialized = () =>
-            // {
-            //     // const r = Module.add(0, 3);
-            //     // console.log("Résultat :", r);
-            //     // const info = {"name":"maxime", "age":22};
-            //     // Module.testIncrement(info);
-            //     // console.log("age = ", info.age);
-            //     // const msg = Module.getMessage();
-            //     // console.log("action =", msg.action);
-
-            //     function onCppMessage(obj)
-            //     {
-            //         console.log("Message reçu :", obj);
-            //     }
-
-            // };
 
             socket.onclose = () => {
                 log('❌ Déconnecté du serveur');
@@ -114,7 +96,10 @@
         disconnectBtn.onclick = () =>
         {
             if (socket)
+            {
                 socket.close();
+                socket = null;
+            }
         };
     </script>
     <script src="game.js"></script>

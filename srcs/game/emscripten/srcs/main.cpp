@@ -29,28 +29,45 @@ Map floor0(1, 1);
 	}
 #endif
 
-void updatePlayerState(Game &game)
+void updatePlayerState(Game &game, val &msg)
 {
-	Player player = game.getPlayer();
+	Player &player = game.getPlayer();
 	int nbPlayers = msg["player_num"].as<int>();
-	player.setPos(msg["player_x"].as<int>(), msg["player_y"].as<int>());
+	player.setPos(msg["player_x"].as<float>(), msg["player_y"].as<float>());
 	player.setHp(msg["player_health"].as<int>());
 	player.setAnim(msg["player_anim"].as<int>());
-	nbPlayers--;
-	for (size_t i = 0; i < nbPlayers; i++)
+	if (msg.hasOwnProperty("player_exit"))
+		updateRoom(player);
+	if (nbPlayers == 1)
+		game.clearOtherPlayers();
+	for (int i = 1; i < nbPlayers; i++)
 	{
 		std::string key = "player" + std::to_string(i);
-		std::string uid = msg[key + "_id"].as<int>();
+		if (!msg.hasOwnProperty(std::string(key + "_id").c_str()))
+			continue; // évite undefined → std::string
+		std::string uid = msg[key + "_id"].as<std::string>();
 		if (!game.isInOtherPlayers(uid))
 		{
-			std::string name = msg[key + "_name"].as<int>();
-			Player nPlayer(uid, name);
-			game.addOtherPlayer(nPlayer);
+			if (msg.hasOwnProperty(std::string(key + "_name").c_str()))
+			{
+				std::string name = msg[key + "_name"].as<std::string>();
+				Player oplayer = Player(uid, name);
+				game.addOtherPlayer(oplayer);
+			}
 		}
-		Player oPlayer = game.getOtherPlayer(uid);
-		oPlayer.setPos(msg[key + "_x"].as<int>(), msg[key + "_y"].as<int>());
-		oPlayer.setHp(msg[key + "_health"].as<int>());
-		oPlayer.setAnim(msg[key + "_anim"].as<int>());
+		if (msg.hasOwnProperty(std::string(key + "_leave").c_str()))
+		{
+			game.suppOtherPlayer(uid);
+			continue;
+		}
+		Player &oPlayer = game.getOtherPlayer(uid);
+
+		if (msg.hasOwnProperty(std::string(key + "_x").c_str()))
+			oPlayer.setPos(msg[key + "_x"].as<float>(), msg[key + "_y"].as<float>());
+		if (msg.hasOwnProperty(std::string(key + "_health").c_str()))
+			oPlayer.setHp(msg[key + "_health"].as<int>());
+		if (msg.hasOwnProperty(std::string(key + "_anim").c_str()))
+			oPlayer.setAnim(msg[key + "_anim"].as<int>());
 	}
 }
 
@@ -72,7 +89,8 @@ void parseJson(bool &init, Game &game)
 		game.getPlayer().setNode(map.getNodes()[0]);
 	}
 	else if (msg["action"].as<std::string>() == "player_state")
-		updatePlayerState(game);
+		updatePlayerState(game, msg);
+	msgJson = val::object();
 }
 
 void mainloopE(void)
@@ -84,7 +102,7 @@ void mainloopE(void)
 	parseJson(init, game);
 	if (!init)
 		return ;
-	game_loop(game.getPlayer());
+	game_loop(game);
 	while (SDL_PollEvent(&gSdl.event))
 	{
 		if (gSdl.event.type == SDL_KEYDOWN && gSdl.event.key.keysym.sym == SDLK_ESCAPE)
@@ -114,7 +132,7 @@ void mainloop(void)
 		player.setNode(nodes[0]);
 	while (running)
 	{
-		game_loop(player);
+		//game_loop(player);
 		while (SDL_PollEvent(&gSdl.event))
 		{
 			if (gSdl.event.type == SDL_QUIT)

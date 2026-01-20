@@ -40,16 +40,20 @@ std::vector<Player> Game::getOtherPlayers() const
 
 Player &Game::getOtherPlayer(std::string &uid)
 {
-	Player rplayer("", "");
 	for (auto &player : _otherPlayers)
 	{
 		if (player.getUid() == uid)
 		{
-			rplayer = player;
+			return player;
 			break ;
 		}
 	}
-	return rplayer;
+	return _otherPlayers[0];
+}
+
+void Game::clearOtherPlayers()
+{
+	this->_otherPlayers.clear();
 }
 
 void Game::addOtherPlayer(Player &player)

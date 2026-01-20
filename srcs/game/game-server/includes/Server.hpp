@@ -13,7 +13,7 @@ class Server
 
 	private:
 		void	parseJson(std::map<std::string, std::string> &res, std::string msg);
-		void	executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSocketData> *ws);
+		int		executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSocketData> *ws);
 		void	addPlayerOnQueue(std::shared_ptr<Player> player);
 		void	manageQueue(void);
 		void	removePlayer(std::string &uid);

@@ -25,6 +25,7 @@ void	Session::addParty(Party &newParty)
 {
 	for (std::shared_ptr<Player> &player : newParty.getPlayers())
 	{
+		player->setNode(this->_maps[0].getNodes()[0]);
 		this->_players.push_back(player);
 		player->getWs()->send("{\"action\": \"waiting\"}");
         player->getWs()->send("You have been added to a session !", uWS::OpCode::TEXT);
@@ -42,6 +43,24 @@ bool	Session::removePlayer(std::shared_ptr<Player> rmPlayer)
 		}
 	}
 	return 0;
+}
+
+std::vector<std::shared_ptr<Player>> Session::getPlayers() const
+{
+	return this->_players;
+}
+
+std::shared_ptr<Player> &Session::getPlayer(std::string &uid)
+{
+	for (auto &player : _players)
+	{
+		if (player->getUid() == uid)
+		{
+			return player;
+			break ;
+		}
+	}
+	return _players[0];
 }
 
 int Session::getMaxNumPlayer() const

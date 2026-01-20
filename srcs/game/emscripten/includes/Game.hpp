@@ -24,6 +24,7 @@ class Game
 		Player				&getOtherPlayer(std::string &uid);
 		void				addMap(Map &map);
 		void				setPlayer(Player &player);
+		void				clearOtherPlayers();
 		bool				isInOtherPlayers(std::string &uid) const;
 		void				addOtherPlayer(Player &player);
 		void				suppOtherPlayer(std::string &uid);
@@ -46,14 +47,14 @@ extern Map		floor0;
 
 
 int	init_sdl(Engine &gSdl);
-void	game_loop(Player &player);
+void	game_loop(Game &game);
 SDL_Texture *loadTexture(std::string path, Engine &sdl);
 
 void	key_down(void);
 void	key_up(void);
 void	key_action(void);
-
+void	updateRoom(Player &player);
 void	print_player(float px, float py);
-void	print_map(Player &player);
+void	print_map(Player &player, std::vector<Player> otherPlayers);
 
 #endif

@@ -25,6 +25,7 @@ class Player
 		std::string	_groupName; //party is designing an appartenance at a game room, with all of the other players of the session
 		bool		_inQueue;
 		bool		_inSession;
+		char		_exit;
 		uWS::WebSocket<false, true, PerSocketData> *_ws;
 		
 
@@ -50,6 +51,7 @@ class Player
 		std::string	getName(void) const;
 		Room		getRoom(void) const;
 		quadList	getNode(void) const;
+		char		getExit(void) const;
 		int			getGroupSize() const;
 		std::string	getPartyName(void) const;
 		bool		isInQueue(void)	const;
@@ -64,6 +66,7 @@ class Player
 		int			getDef(void) const;
 
 	//setter
+		void		setExit(char c);
 		void		setNode(const quadList &node);
 		void		setPos(float x, float y);
 		void		setHp(int hp);

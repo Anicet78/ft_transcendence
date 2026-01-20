@@ -22,14 +22,16 @@ class Session
 		~Session();
 	
 	public:
-		void	addParty(Party &newParty);
-		bool	removePlayer(std::shared_ptr<Player> rmPlayer);
-		bool	isPlayerInSession(std::string &uid) const;
-		int		getMaxNumPlayer() const;
-		int		getPlaceLeft() const;
-		int		getNumPlayers() const;
-		bool	isRunning() const;
-		bool	hasEnded() const;
+		void									addParty(Party &newParty);
+		bool									removePlayer(std::shared_ptr<Player> rmPlayer);
+		bool									isPlayerInSession(std::string &uid) const;
+		std::shared_ptr<Player>					&getPlayer(std::string &uid);
+		std::vector<std::shared_ptr<Player>>	getPlayers(void) const;
+		int										getMaxNumPlayer(void) const;
+		int										getPlaceLeft(void) const;
+		int										getNumPlayers(void) const;
+		bool									isRunning(void) const;
+		bool									hasEnded(void) const;
 };
 
 

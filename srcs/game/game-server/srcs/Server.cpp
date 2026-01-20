@@ -116,7 +116,7 @@ void    Server::manageQueue()
 
 void    Server::removePlayer(std::string &uid)
 {
-    for (auto it = _players.begin(); it != _players.end();)
+    for (auto it = _players.begin(); it != _players.end(); it++)
     {
         if (*it && it->get()->getUid() == uid)
         {
@@ -168,8 +168,8 @@ void	Server::run(void)
                 try
                 {
                     parseJson(data->jsonMsg, std::string(msg));
-                    executeJson(data, ws);
-                    this->manageQueue();
+                    if (!executeJson(data, ws))
+                        this->manageQueue();
                 }
                 catch(const std::exception& e)
                 {
