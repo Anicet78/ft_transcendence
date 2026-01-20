@@ -29,14 +29,14 @@ CREATE TABLE app_user (
 	app_user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	first_name TEXT NOT NULL,
 	last_name TEXT NOT NULL,
-	username VARCHAR(20) UNIQUE NOT NULL,
+	username TEXT UNIQUE NOT NULL,
 	mail_address CITEXT UNIQUE NOT NULL,
 	password_hash TEXT NOT NULL,
 	-- avatar --img
 	avatar_url TEXT,
 
 	"availability" BOOLEAN NOT NULL DEFAULT false,
-	region TEXT,
+	region TEXT NOT NULL,
 
 	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
 	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,

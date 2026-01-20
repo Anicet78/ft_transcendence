@@ -11,12 +11,12 @@ model AppUser {
   appUserId           String        @id @default(dbgenerated("uuid_generate_v4()")) @map("app_user_id") @db.Uuid
   firstName           String        @map("first_name")
   lastName            String        @map("last_name")
-  username            String        @unique @db.VarChar(20)
+  username            String        @unique
   mail                String        @unique @map("mail_address") @db.Citext
   passwordHash        String        @map("password_hash")
   avatarUrl           String?       @map("avatar_url")
   availability        Boolean       @default(false)
-  region              String?
+  region              String
   createdAt           DateTime?     @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt           DateTime?     @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt           DateTime?     @map("deleted_at") @db.Timestamptz(6)

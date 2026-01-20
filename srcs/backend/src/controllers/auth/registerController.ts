@@ -38,6 +38,7 @@ export async function postRegisterController(
 		lastname: lastname,
 		username: username,
 		email: email,
+		region: "", //need to check, added to compile
 		passwordHash: hash
 	};
 
