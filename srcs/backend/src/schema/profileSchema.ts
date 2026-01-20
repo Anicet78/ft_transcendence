@@ -1,5 +1,6 @@
 import { prisma } from '../services/db/db.js';
 
+// Access authenticated user's to its own profile
 export async function getProfile(userId: string) {
   return prisma.appUser.findUnique({
     where: { appUserId: userId },
@@ -31,6 +32,32 @@ export async function getProfile(userId: string) {
   });
 }
 
+// Retrieve another user's public profile
+export async function getPublicProfile(userId: string) {
+  return prisma.appUser.findUnique({
+    where: { appUserId: userId },
+    select: {
+      username: true,
+      avatarUrl: true,
+      availability: true,
+      region: true,
+      createdAt: true,
+      gameProfile: {
+        select: {
+          totalGames: true,
+          totalWins: true,
+          totalLoses: true,
+          totalEnemiesKilled: true,
+          totalXp: true,
+          level: true,
+          bestTime: true,
+        }
+      }
+    }
+  });
+}
+
+// Update user's own profile
 export async function updateProfile(userId: string, data: Record<string, unknown>) {
   return prisma.appUser.update({
     where: { appUserId: userId },

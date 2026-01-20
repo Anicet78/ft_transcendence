@@ -8,6 +8,10 @@ async function profileRoutes(fastify: FastifyInstance) {
     handler: profileController.getProfile
   });
 
+  fastify.get('/profile/:id', {
+    handler: profileController.getPublicProfile
+  });
+
   fastify.patch('/profile', {
     preHandler: [fastify.authenticate],
     handler: profileController.updateProfile
@@ -20,4 +24,3 @@ async function profileRoutes(fastify: FastifyInstance) {
 }
 
 export default profileRoutes;
- 

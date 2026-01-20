@@ -1,5 +1,6 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import * as profileSchema from '../../schema/profileSchema.js';
+import { Prisma } from '@prisma/client';
 
 export async function getProfile(req: FastifyRequest, reply: FastifyReply) {
   try {
@@ -10,6 +11,23 @@ export async function getProfile(req: FastifyRequest, reply: FastifyReply) {
 
     return reply.send(profile);
 
+  } catch (err) {
+    req.log.error(err);
+    return reply.status(500).send({ error: 'Internal server error' });
+  }
+}
+
+export async function getPublicProfile(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+  try {
+    const userId = req.params.id;
+
+    const profile = await profileSchema.getPublicProfile(userId);
+    if (!profile) {
+      return reply.status(404).send({ error: 'User not found' });
+    }
+
+    return reply.send(profile);
+  
   } catch (err) {
     req.log.error(err);
     return reply.status(500).send({ error: 'Internal server error' });
@@ -37,9 +55,11 @@ export async function updateProfile(req: FastifyRequest, reply: FastifyReply) {
 
   } catch (err) {
     req.log.error(err);
-    // if (err.code === 'P2002') {
-    //   return reply.status(409).send({ error: 'Username or email already exists' });
-    // }//Prisma error, unique constraint violation (username or email already taken)
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2002') {
+      return reply.status(409).send({ error: 'Username or email already exists' });
+      }//Prisma error, unique constraint violation (username or email already taken)
+    }
     return reply.status(500).send({ error: 'Internal server error' });
   }
 }
