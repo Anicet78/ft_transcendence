@@ -1,3 +1,4 @@
+import { AppError } from "../../schema/errorSchema.js";
 import type { Room } from "../../schema/roomSchema.js";
 
 const rooms = new Map<string, Room>();
@@ -36,10 +37,15 @@ export const RoomService = {
 	join(roomId: string, userId: string): Room {
 		const room = rooms.get(roomId);
 		if (!room)
-			throw new Error('Room not found');
+			throw new AppError('Room not found', 404);
+
+		if (room.playersId.includes(userId))
+			throw new AppError('Already in room', 409);
 
 		if (room.playersId.length >= 8)
-			throw new Error('Room full');
+			throw new AppError('Room full', 409);
+
+		this.leave(userId);
 
 		room.playersId.push(userId);
 		return room;
@@ -60,14 +66,14 @@ export const RoomService = {
 
 	get(roomId: string, userId: string): Room {
 		if (!rooms.has(roomId))
-			throw new Error('Room not found');
+			throw new AppError('Room not found', 404);
 
 		const room: Room | undefined = rooms.get(roomId);
 		if (!room)
-			throw new Error('Room not found');
+			throw new AppError('Room not found', 404);
 
 		if (!room.playersId.includes(userId))
-			throw new Error('Not in the room');
+			throw new AppError('Not in the room', 403);
 
 		return room;
 	}

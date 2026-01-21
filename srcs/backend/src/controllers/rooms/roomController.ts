@@ -2,6 +2,7 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { RoomService } from "../../services/rooms/roomService.js";
 import type { Room } from "../../schema/roomSchema.js";
 import type { RoomBodyType, RoomParamsType } from "../../routes/rooms/roomRoute.js";
+import { AppError } from "../../schema/errorSchema.js";
 
 export async function getRoomController(
 	request: FastifyRequest<{ Params: RoomParamsType }>,
@@ -12,11 +13,9 @@ export async function getRoomController(
 		return reply.status(200).send(response);
 	} catch(err) {
 		request.log.error(err);
-		if (err == "Room not found")
-			return reply.code(404).send({ error: err });
-		else if (err == "Not in room")
-			return reply.code(403).send({ error: err });
-		return reply.code(500).send({ error: "An error has occured" });
+		if (err instanceof AppError)
+			return reply.code(err.statusCode).send({ error: err.message });
+		return reply.code(500).send({ error: "Internal Server Error" });
 	}
 }
 
@@ -35,18 +34,14 @@ export async function joinRoomController(
 	request: FastifyRequest<{ Params: RoomParamsType }>,
 	reply: FastifyReply
 ) {
-	RoomService.leave(request.user.id);
-
 	try {
 		const response: Room = RoomService.join(request.params.id, request.user.id);
 		return reply.status(200).send(response);
 	} catch (err) {
 		request.log.error(err);
-		if (err == "Room not found")
-			return reply.code(404).send({ error: err });
-		else if (err == "Room full")
-			return reply.code(409).send({ error: err });
-		return reply.code(500).send({ error: "An error has occured" });
+		if (err instanceof AppError)
+			return reply.code(err.statusCode).send({ error: err.message });
+		return reply.code(500).send({ error: "Internal Server Error" });
 	}
 }
 
@@ -54,17 +49,18 @@ export async function hostRoomController(
 	request: FastifyRequest<{ Body: RoomBodyType }>,
 	reply: FastifyReply
 ) {
+	if (request.body.userId === request.user.id)
+		return reply.code(400).send({ error: "Cannot kick yourself" });
+
 	let room: Room;
 
 	try {
 		room = RoomService.get(request.body.roomId, request.user.id);
 	} catch(err) {
 		request.log.error(err);
-		if (err == "Room not found")
-			return reply.code(404).send({ error: err });
-		else if (err == "Not in room")
-			return reply.code(403).send({ error: err });
-		return reply.code(500).send({ error: "An error has occured" });
+		if (err instanceof AppError)
+			return reply.code(err.statusCode).send({ error: err.message });
+		return reply.code(500).send({ error: "Internal Server Error" });
 	}
 
 	if (request.user.id !== room.hostId)
@@ -81,17 +77,18 @@ export async function kickRoomController(
 	request: FastifyRequest<{ Body: RoomBodyType }>,
 	reply: FastifyReply
 ) {
+	if (request.body.userId === request.user.id)
+		return reply.code(400).send({ error: "Cannot kick yourself" });
+
 	let room: Room;
 
 	try {
 		room = RoomService.get(request.body.roomId, request.user.id);
 	} catch(err) {
 		request.log.error(err);
-		if (err == "Room not found")
-			return reply.code(404).send({ error: err });
-		else if (err == "Not in room")
-			return reply.code(403).send({ error: err });
-		return reply.code(500).send({ error: "An error has occured" });
+		if (err instanceof AppError)
+			return reply.code(err.statusCode).send({ error: err.message });
+		return reply.code(500).send({ error: "Internal Server Error" });
 	}
 
 	if (request.user.id !== room.hostId)
