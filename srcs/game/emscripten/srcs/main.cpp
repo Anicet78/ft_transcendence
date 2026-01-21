@@ -68,6 +68,8 @@ void updatePlayerState(Game &game, val &msg)
 			oPlayer.setHp(msg[key + "_health"].as<int>());
 		if (msg.hasOwnProperty(std::string(key + "_anim").c_str()))
 			oPlayer.setAnim(msg[key + "_anim"].as<int>());
+		if (msg.hasOwnProperty(std::string(key + "_dir").c_str()))
+			oPlayer.setDir(msg[key + "_dir"].as<int>());
 	}
 }
 

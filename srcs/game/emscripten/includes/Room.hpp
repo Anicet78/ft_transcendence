@@ -2,7 +2,7 @@
 
 # define ROOM_HPP
 
-# include "Mob.hpp"
+# include "PlayerAssets.hpp"
 
 class Room
 {

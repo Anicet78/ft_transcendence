@@ -36,6 +36,10 @@ class Player
 	//pos in map
 		quadList	_node;
 
+	//anim
+		int			_anim;
+		int			_last_dir;
+
 	//player stat
 		int			_hp;
 		int			_atk;
@@ -53,6 +57,7 @@ class Player
 		quadList	getNode(void) const;
 		char		getExit(void) const;
 		int			getGroupSize() const;
+		int			getAnim(void) const;
 		std::string	getPartyName(void) const;
 		bool		isInQueue(void)	const;
 		bool		isInSession(void) const;
@@ -64,6 +69,7 @@ class Player
 		int			getHp(void) const;
 		int			getAtk(void) const;
 		int			getDef(void) const;
+		int			getLastDir(void) const;
 
 	//setter
 		void		setExit(char c);
@@ -74,6 +80,8 @@ class Player
 		void		setDef(int def);
 		void		setInQueue(bool flag);
 		void		setInSession(bool flag);
+		void		setAnim(int anim);
+		void		setLastDir(int dir);
 
 	//action
 		void		move(void);

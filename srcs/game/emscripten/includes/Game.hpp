@@ -20,7 +20,7 @@ class Game
 	public:
 		std::vector<Map>	getMaps() const;
 		Player				&getPlayer();
-		std::vector<Player> getOtherPlayers() const;
+		std::vector<Player> &getOtherPlayers();
 		Player				&getOtherPlayer(std::string &uid);
 		void				addMap(Map &map);
 		void				setPlayer(Player &player);
@@ -28,13 +28,6 @@ class Game
 		bool				isInOtherPlayers(std::string &uid) const;
 		void				addOtherPlayer(Player &player);
 		void				suppOtherPlayer(std::string &uid);
-};
-
-enum state
-{
-	PLAYER_IDLE,
-	PLAYER_WALKING,
-	PLAYER_ATTACKING
 };
 
 
@@ -54,7 +47,6 @@ void	key_down(void);
 void	key_up(void);
 void	key_action(void);
 void	updateRoom(Player &player);
-void	print_player(float px, float py);
-void	print_map(Player &player, std::vector<Player> otherPlayers);
+void	print_map(Player &player, std::vector<Player> &otherPlayers);
 
 #endif

@@ -33,7 +33,7 @@ Player &Game::getPlayer()
 	return this->_player;
 }
 
-std::vector<Player> Game::getOtherPlayers() const
+std::vector<Player> &Game::getOtherPlayers()
 {
 	return this->_otherPlayers;
 }

@@ -25,6 +25,7 @@ class Session
 		void									addParty(Party &newParty);
 		bool									removePlayer(std::shared_ptr<Player> rmPlayer);
 		bool									isPlayerInSession(std::string &uid) const;
+		void									sendToAll(Player &sender);
 		std::shared_ptr<Player>					&getPlayer(std::string &uid);
 		std::vector<std::shared_ptr<Player>>	getPlayers(void) const;
 		int										getMaxNumPlayer(void) const;
@@ -34,5 +35,6 @@ class Session
 		bool									hasEnded(void) const;
 };
 
+void	sendPlayerState(Player &player, Session &session, std::string uid_leave);
 
 # endif

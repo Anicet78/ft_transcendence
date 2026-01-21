@@ -81,6 +81,17 @@ void updatePlayerPos(Player &player, std::map<std::string, std::string> &req)
 		else
 			x -= 0.1;
 	}
+    if (!req["last_dir"].empty())
+		player.setLastDir(std::atoi(req["last_dir"].c_str()));
+    if (!req["anim"].empty())
+    {
+        if (req["anim"] == "idling")
+            player.setAnim(0);
+        else if (req["anim"] == "walking")
+            player.setAnim(1);
+        else if (req["anim"] == "attacking")
+            player.setAnim(2);
+    }
 }
 
 void updateRoom(Player &player)
@@ -130,12 +141,12 @@ void updateRoom(Player &player)
 	}
 }
 
-void sendPlayerState(Player &player, Session &session)
+void sendPlayerState(Player &player, Session &session, std::string uid_leave)
 {
     std::string msg =   "{ \"action\" : \"player_state\", \"player_x\" : " + std::to_string(player.getX()) + ", "
                         + "\"player_y\" : " + std::to_string(player.getY()) + ", "
                         + "\"player_health\" : " + std::to_string(player.getHp()) + ", "
-                        + "\"player_anim\" : 0, "
+                        + "\"player_anim\" : " + std::to_string(player.getAnim()) + ", "
                         + "\"player_exit\" : \"" + player.getExit() + "\"";
     player.setExit(' ');
     int sumPlayer = 1;
@@ -150,8 +161,11 @@ void sendPlayerState(Player &player, Session &session)
                     + "\"player" + std::to_string(sumPlayer) + "_id\" : \"" + oplayer->getUid() + "\", "
                     + "\"player" + std::to_string(sumPlayer) + "_name\" : \"" + oplayer->getName() + "\", "
                     + "\"player" + std::to_string(sumPlayer) + "_health\" : " + std::to_string(oplayer->getHp()) + ", "
-                    + "\"player" + std::to_string(sumPlayer) + "_anim\" : 0, "
+                    + "\"player" + std::to_string(sumPlayer) + "_anim\" : " + std::to_string(oplayer->getAnim()) + ", "
+                    + "\"player" + std::to_string(sumPlayer) + "_dir\" : " + std::to_string(oplayer->getLastDir()) + ", "
                     + "\"player" + std::to_string(sumPlayer) + "_exit\" : \"" + oplayer->getExit() + "\"";
+            if (!uid_leave.empty() && uid_leave == oplayer->getUid())
+                msg += + ", \"player" + std::to_string(sumPlayer) + "_leave\" : \"true\"";
             oplayer->setExit(' ');
             sumPlayer++;
         }
@@ -185,13 +199,13 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
                 std::shared_ptr<Player> player = session.getPlayer(ws->getUserData()->playerId);
                 updatePlayerPos(*player, req);
                 updateRoom(*player);
-                sendPlayerState(*player, session);
+                sendPlayerState(*player, session, "");
                 for (auto &oplayer : session.getPlayers())
                 {
                     if (oplayer->getUid() == player->getUid())
                         continue ;
                     if (oplayer->getNode() == player->getNode())
-                        sendPlayerState(*oplayer, session);
+                        sendPlayerState(*oplayer, session, "");
                 }
                 break;
             }

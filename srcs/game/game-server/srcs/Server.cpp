@@ -141,6 +141,7 @@ void    Server::removePlayer(std::string &uid)
                 {
                     if (session.isPlayerInSession(uid))
                     {
+                        session.sendToAll(*(*it).get());
                         session.removePlayer(*it);
                         break ;
                     }
@@ -183,10 +184,6 @@ void	Server::run(void)
                 auto *data = (PerSocketData *)ws->getUserData();
                 this->removePlayer(data->playerId);
                 std::cout << "Client déconnecté\n";
-                // std::cout << this->_players.size() << '|' << std::endl;
-                // std::cout << this->_matchMakingQueue.size() << '|' << std::endl;
-                // if (_sessions.size())
-                //     std::cout << this->_sessions[0].getNumPlayers() << '|' << std::endl;
             }
         })
         .listen(3000, [](auto *token)

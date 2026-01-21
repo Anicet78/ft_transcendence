@@ -131,7 +131,7 @@ float	cameraY(Player const &player, int const tile_size) {
 	return (idealMinY);
 }
 
-void	print_map(Player &player, std::vector<Player> otherPlayers)
+void	print_map(Player &player, std::vector<Player> &otherPlayers)
 {
 	static int	mapX = -1;
 	static int	mapY = -1;
@@ -179,7 +179,7 @@ void	print_map(Player &player, std::vector<Player> otherPlayers)
 	SDL_RenderCopy(gSdl.renderer, gSdl.texture, &camera, NULL);
 	float playerScreenX = (player.getX() - camX) * tile_s;
     float playerScreenY = (player.getY() - camY) * tile_s;
-	print_player(playerScreenX, playerScreenY);
+	player.printPlayer(playerScreenX, playerScreenY);
 	if (otherPlayers.size())
 	{
 		for (Player &op : otherPlayers)
@@ -194,7 +194,7 @@ void	print_map(Player &player, std::vector<Player> otherPlayers)
 			};
 			playerScreenX = (op.getX() - camX) * tile_s;
 			playerScreenY = (op.getY() - camY) * tile_s;
-			print_player(playerScreenX, playerScreenY);
+			op.printPlayer(playerScreenX, playerScreenY);
 		}
 	}
 }

@@ -9,8 +9,6 @@ SDL_Texture				*PlayerAssets::_playerAttackText;
 SDL_Texture				*PlayerAssets::_playerIdleText;
 
 SDL_Texture				*PlayerAssets::mapRenderTexture = nullptr;
-int						PlayerAssets::lastRenderWidth = 0;
-int						PlayerAssets::lastRenderHeight = 0;
 
 int						PlayerAssets::_walkImgW;
 int						PlayerAssets::_walkImgH;
@@ -21,11 +19,8 @@ int						PlayerAssets::_atkImgH;
 int						PlayerAssets::_idleImgW;
 int						PlayerAssets::_idleImgH;
 
-int						PlayerAssets::_last_dir;
-
-PlayerAssets::PlayerAssets(void) {
-	return ;
-}
+PlayerAssets::PlayerAssets(void)
+{}
 
 PlayerAssets::~PlayerAssets(void) {
 	SDL_DestroyTexture(_playerAttackText);
@@ -34,16 +29,10 @@ PlayerAssets::~PlayerAssets(void) {
 	return ;
 }
 
-void	PlayerAssets::updateLastDir(void) {
-	if (gSdl.key.d_key)
-		_last_dir = 0;
-	else if (gSdl.key.a_key)
-		_last_dir = 1;
-}
 
-
-void	PlayerAssets::importPlayersWalkAssets(int tile_size) {
-		SDL_Surface *image = SDL_LoadBMP("assets/sprite/Soldier-Walk.bmp");
+void	PlayerAssets::importPlayersWalkAssets(int tile_size)
+{
+	SDL_Surface *image = SDL_LoadBMP("assets/sprite/Soldier-Walk.bmp");
 	if (!image)
 	{
 		std::string error = "Error in image conversion to surface : ";
@@ -169,12 +158,12 @@ void	PlayerAssets::importPlayersIdleAssets(int tile_size) {
 	_playerIdleText = text;
 }
 
-void	PlayerAssets::importPlayersAssets(int tile_size) {
+void	PlayerAssets::importPlayersAssets(int tile_size)
+{
 	importPlayersWalkAssets(tile_size);
 	importPlayersAttackAssets(tile_size);
 	importPlayersIdleAssets(tile_size);
 	gSdl.setPlayerSize(tile_size);
-	_last_dir = 0;
 }
 
 
@@ -182,14 +171,16 @@ void	PlayerAssets::importPlayersAssets(int tile_size) {
 
 
 
-void	PlayerAssets::rendPlayerWalk(int playerNum, int x, int y, int assetIndex, float scale)
+void	PlayerAssets::rendPlayerWalk(int playerNum, int x, int y, int assetIndex, float scale, int player_dir)
 {
 	(void)playerNum;
-	if (assetIndex < 0) {
+	if (assetIndex < 0)
+	{
 		std::cerr << "Invalid index" << std::endl;
 		return ;
 	}
-	if (scale <= 0) {
+	if (scale <= 0)
+	{
 		std::cerr << "Invalid scale" << std::endl;
 		return ;
 	}
@@ -203,20 +194,22 @@ void	PlayerAssets::rendPlayerWalk(int playerNum, int x, int y, int assetIndex, f
 		renderRect.h = rect->h * scale;
 	}
 
-	if (!_last_dir)
+	if (!player_dir)
 		SDL_RenderCopy(gSdl.renderer, _playerWalkText, rect, &renderRect);
 	else
 		SDL_RenderCopyEx(gSdl.renderer, _playerWalkText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
 }
 
-void	PlayerAssets::rendPlayerAttack(int playerNum, int x, int y, int assetIndex, float scale)
+void	PlayerAssets::rendPlayerAttack(int playerNum, int x, int y, int assetIndex, float scale, int player_dir)
 {
 	(void)playerNum;
-	if (assetIndex < 0) {
+	if (assetIndex < 0)
+	{
 		std::cerr << "Invalid index" << std::endl;
 		return ;
 	}
-	if (scale <= 0) {
+	if (scale <= 0)
+	{
 		std::cerr << "Invalid scale" << std::endl;
 		return ;
 	}
@@ -230,13 +223,13 @@ void	PlayerAssets::rendPlayerAttack(int playerNum, int x, int y, int assetIndex,
 		renderRect.h = rect->h * scale;
 	}
 
-	if (!_last_dir)
+	if (!player_dir)
 		SDL_RenderCopy(gSdl.renderer, _playerAttackText, rect, &renderRect);
 	else
 		SDL_RenderCopyEx(gSdl.renderer, _playerAttackText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
 }
 
-void	PlayerAssets::rendPlayerIdle(int playerNum, int x, int y, int assetIndex, float scale)
+void	PlayerAssets::rendPlayerIdle(int playerNum, int x, int y, int assetIndex, float scale, int player_dir)
 {
 	(void)playerNum;
 	if (assetIndex < 0)
@@ -259,7 +252,7 @@ void	PlayerAssets::rendPlayerIdle(int playerNum, int x, int y, int assetIndex, f
 		renderRect.h = rect->h * scale;
 	}
 
-	if (!_last_dir)
+	if (!player_dir)
 		SDL_RenderCopy(gSdl.renderer, _playerIdleText, rect, &renderRect);
 	else
 		SDL_RenderCopyEx(gSdl.renderer, _playerIdleText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);

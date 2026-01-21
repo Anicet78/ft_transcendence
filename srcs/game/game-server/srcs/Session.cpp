@@ -21,6 +21,16 @@ Session::~Session(void)
 
 //-----------------------------------------------------------------
 
+void	Session::sendToAll(Player &sender)
+{
+	for (auto &player : _players)
+	{
+		if (sender.getUid() == player->getUid())
+			continue ;
+		sendPlayerState(*player, *this, sender.getUid());
+	}
+}
+
 void	Session::addParty(Party &newParty)
 {
 	for (std::shared_ptr<Player> &player : newParty.getPlayers())

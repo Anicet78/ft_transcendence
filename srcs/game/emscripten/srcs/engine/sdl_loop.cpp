@@ -10,43 +10,6 @@ long	time_in_us(void)
 	return (start.tv_usec);
 }
 
-void	print_player(float px, float py) {
-
-	static int	frame = 0;
-	static int	prev_state = PLAYER_IDLE;
-	int			tile_s = gSdl.getMapTileSize() * 2;
-
-	const float x = px - (0.5f * tile_s);
-	const float y = py - (0.5f * tile_s);
-	PlayerAssets::updateLastDir();
-	if (frame >= 24)
-		frame = 0;
-
-	if (gSdl.key.attacking() == true)
-	{
-		if (prev_state != PLAYER_ATTACKING)
-			frame = 0;
-		prev_state = PLAYER_ATTACKING;
-		PlayerAssets::rendPlayerAttack(0, x, y, frame / 4, 2);
-	}
-	else if (gSdl.key.walking() == true)
-	{
-		if (prev_state != PLAYER_WALKING)
-			frame = 0;
-		prev_state = PLAYER_WALKING;
-		PlayerAssets::rendPlayerWalk(0, x, y, frame / 4, 2);
-	}
-	else
-	{
-		if (prev_state != PLAYER_IDLE)
-			frame = 0;
-		prev_state = PLAYER_IDLE;
-		PlayerAssets::rendPlayerIdle(0, x, y, frame / 4, 2);
-	}
-
-	frame++;
-}
-
 void updateRoom(Player &player)
 {
 	Room room = player.getRoom();
@@ -90,17 +53,23 @@ void updateRoom(Player &player)
 
 void	updatePlayerPosition(Player &player)
 {
-	(void)player;
-	std::string msg0, msg1, msg2, msg3;
+	static int isIdling = 1;
+	std::string w_key, a_key, s_key, d_key, anim = "idling", lastDir;
 	if (gSdl.key.w_key)
-		msg0 = "true";
+		w_key = "true";
 	if (gSdl.key.a_key)
-		msg1 = "true";
+		a_key = "true";
 	if (gSdl.key.s_key)
-		msg2 = "true";
+		s_key = "true";
 	if (gSdl.key.d_key)
-		msg3 = "true";
-	if (!msg0.empty() || !msg1.empty() || !msg2.empty() || !msg3.empty())
+		d_key = "true";
+	if (gSdl.key.space)
+		anim = "attacking";
+	else if (gSdl.key.w_key || gSdl.key.a_key || gSdl.key.s_key || gSdl.key.d_key)
+		anim = "walking";
+	player.updateLastDir();
+	lastDir = std::to_string(player.getLastDir());
+	if (!w_key.empty() || !a_key.empty() || !s_key.empty() || !d_key.empty() || anim != "idling")
 	{
 		EM_ASM_({
 			onCppMessage({
@@ -109,9 +78,26 @@ void	updatePlayerPosition(Player &player)
 				a_key: UTF8ToString($1),
 				s_key: UTF8ToString($2),
 				d_key: UTF8ToString($3),
+				anim: UTF8ToString($4),
+				last_dir: UTF8ToString($5)
 			});
-		}, msg0.c_str(), msg1.c_str(), msg2.c_str(), msg3.c_str());
-
+		}, w_key.c_str(), a_key.c_str(), s_key.c_str(), d_key.c_str(), anim.c_str(), lastDir.c_str());
+		isIdling = 0;
+	}
+	else if (!isIdling)
+	{
+		isIdling = 1;
+		EM_ASM_({
+			onCppMessage({
+				action: "player_move",
+				w_key: UTF8ToString($0),
+				a_key: UTF8ToString($1),
+				s_key: UTF8ToString($2),
+				d_key: UTF8ToString($3),
+				anim: UTF8ToString($4),
+				last_dir: UTF8ToString($5)
+			});
+		}, w_key.c_str(), a_key.c_str(), s_key.c_str(), d_key.c_str(), anim.c_str(), lastDir.c_str());
 	}
 }
 

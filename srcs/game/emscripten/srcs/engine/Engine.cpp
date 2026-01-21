@@ -21,7 +21,8 @@ int		Engine::getMapTileSize(void) {
 	return (_tile_size);
 }
 
-void	Engine::setPlayerSize(int size) {
+void	Engine::setPlayerSize(int size)
+{
 	_player_size = size;
 	return ;
 }
