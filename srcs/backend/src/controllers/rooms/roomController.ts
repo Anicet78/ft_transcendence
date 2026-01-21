@@ -101,3 +101,27 @@ export async function kickRoomController(
 	room = RoomService.create(request.body.userId);
 	return reply.status(200).send(room);
 }
+
+export async function verifyRoomController(
+	request: FastifyRequest<{ Body: Room }>,
+	reply: FastifyReply
+) {
+	let room: Room;
+
+	try {
+		room = RoomService.get(request.body.roomId, request.user.id);
+	} catch(err) {
+		request.log.error(err);
+		if (err instanceof AppError)
+			return reply.code(err.statusCode).send({ error: err.message });
+		return reply.code(500).send({ error: "Internal Server Error" });
+	}
+
+	const equals = request.body.hostId === room.hostId && request.body.playersId.length === room.playersId.length &&
+		[...request.body.playersId].sort().join(',') === [...room.playersId].sort().join(',');
+
+	if (!equals)
+		return reply.code(409).send({ error: "Room data mismatch" });
+
+	return reply.status(200).send(room);
+}

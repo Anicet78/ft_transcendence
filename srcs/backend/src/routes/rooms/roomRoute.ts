@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import Type, { type Static } from "typebox";
 import { AppErrorSchema } from "../../schema/errorSchema.js";
-import { getRoomController, hostRoomController, joinRoomController, kickRoomController, newRoomController } from "../../controllers/rooms/roomController.js";
+import { getRoomController, hostRoomController, joinRoomController, kickRoomController, newRoomController, verifyRoomController } from "../../controllers/rooms/roomController.js";
 import { RoomSchema } from "../../schema/roomSchema.js";
 
 export const RoomParamsSchema = Type.Object({
@@ -75,5 +75,19 @@ fastify.patch("/kick", {
 		}
 	}
 }, kickRoomController);
+
+fastify.patch("/verify", {
+	schema: {
+		body: RoomSchema,
+		response: {
+			200: RoomSchema,
+			400: AppErrorSchema,
+			403: AppErrorSchema,
+			404: AppErrorSchema,
+			409: AppErrorSchema,
+			500: AppErrorSchema
+		}
+	}
+}, verifyRoomController);
 
 };
