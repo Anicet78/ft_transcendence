@@ -3,7 +3,7 @@ import type { User } from "../../schema/userSchema.js";
 import type { RegisterResponseType, RegisterType } from "../../routes/auth/registerRoute.js";
 import { hashPassword } from "../../services/auth/password.js";
 import { UserService } from "../../services/db/userService.js";
-import type { AppUser } from "@prisma/client";
+import { Prisma, type AppUser } from "@prisma/client";
 import { RoomService } from "../../services/rooms/roomService.js";
 
 export async function postRegisterController(
@@ -49,9 +49,13 @@ export async function postRegisterController(
 		user.id = dbUser.appUserId;
 		if (dbUser.availability === false)
 			await UserService.setAvailabality(user.id, true);
-	}
-	catch (err) {
+	} catch (err) {
 		request.log.error(err);
+		if (err instanceof Prisma.PrismaClientKnownRequestError) {
+			if (err.code === 'P2002') {
+				return reply.code(409).send({ error: "Already taken", field: err.meta?.target });
+			}
+		}
 		return reply.code(500).send({ error: "Database issue" });
 	}
 
