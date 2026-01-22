@@ -1,102 +1,54 @@
-import { prisma } from '../services/db/db.js';
+import Type, { type Static } from 'typebox';
 
-// Access authenticated user's to its own profile
-export async function getProfile(userId: string) {
-  return prisma.appUser.findUnique({
-    where: { appUserId: userId },
-    select: {
-      appUserId: true,
-      firstName: true,
-      lastName: true,
-      username: true,
-      mail: true,
-      avatarUrl: true,
-      availability: true,
-      region: true,
-      createdAt: true,
-      updatedAt: true,
-      lastConnectedAt: true,
-      // I included game profile, we can separate the process if wanted
-      gameProfile: {
-        select: {
-          totalGames: true,
-          totalWins: true,
-          totalLoses: true,
-          totalEnemiesKilled: true,
-          totalXp: true,
-          level: true,
-          bestTime: true,
-        }
-      }
-    }
-  });
-}
+export const GameProfileSchema = Type.Object({
+  totalGames: Type.Number(),
+  totalWins: Type.Number(),
+  totalLoses: Type.Number(),
+  totalEnemiesKilled: Type.Number(),
+  totalXp: Type.Number(),
+  level: Type.Number(),
+  bestTime: Type.Number()
+});
+export type GameProfile = Static<typeof GameProfileSchema>;
 
-// Retrieve another user's public profile
-export async function getPublicProfile(userId: string) {
-  return prisma.appUser.findUnique({
-    where: { appUserId: userId },
-    select: {
-      username: true,
-      avatarUrl: true,
-      availability: true,
-      region: true,
-      createdAt: true,
-      gameProfile: {
-        select: {
-          totalGames: true,
-          totalWins: true,
-          totalLoses: true,
-          totalEnemiesKilled: true,
-          totalXp: true,
-          level: true,
-          bestTime: true,
-        }
-      }
-    }
-  });
-}
 
-// Update user's own profile
-export async function updateProfile(userId: string, data: Record<string, unknown>) {
-  return prisma.appUser.update({
-    where: { appUserId: userId },
-    data: {
-      ...data,
-      updatedAt: new Date()
-    },
-    select: {
-      appUserId: true,
-      firstName: true,
-      lastName: true,
-      username: true,
-      mail: true,
-      avatarUrl: true,
-      availability: true,
-      region: true,
-      updatedAt: true
-    }
-  });
-}
 
-// Soft-delete the user: anonymize but keep rows for FK integrity
-export async function softDeleteProfile(userId: string) {
-  // Generate anonymized values
-  const anonymizedUsername = `deleted_${userId}`;
-  const anonymizedEmail = `deleted_${userId}@example.com`;
+export const UpdateProfileBodySchema = Type.Object({
+  firstName: Type.Optional(Type.String()),
+  lastName: Type.Optional(Type.String()),
+  username: Type.Optional(Type.String()),
+  avatarUrl: Type.Optional(Type.String()),
+  region: Type.Optional(Type.String()),
+  availability: Type.Optional(Type.Boolean())
+});
+export type UpdateProfileBody = Static<typeof UpdateProfileBodySchema>; 
 
-  return prisma.appUser.update({
-    where: { appUserId: userId },
-    data: {
-      username: anonymizedUsername,
-      mail: anonymizedEmail,
-      firstName: 'Deleted',
-      lastName: 'Deleted',
-      avatarUrl: null,
-      region: 'Deleted',
-      availability: false,
-      deletedAt: new Date(),
-      updatedAt: new Date(),
-    }
-  });
-}
+
+
+export const ProfileResponseSchema = Type.Object({
+  appUserId: Type.String(),
+  firstName: Type.String(),
+  lastName: Type.String(),
+  username: Type.String(),
+  mail: Type.String(),
+  avatarUrl: Type.Union([Type.String(), Type.Null()]),
+  availability: Type.Boolean(),
+  region: Type.String(),
+  createdAt: Type.String(),
+  updatedAt: Type.String(),
+  lastConnectedAt: Type.String(),
+  gameProfile: GameProfileSchema
+});
+export type ProfileResponse = Static<typeof ProfileResponseSchema>;
+
+
+
+export const PublicProfileResponseSchema = Type.Object({
+  username: Type.String(),
+  avatarUrl: Type.Union([Type.String(), Type.Null()]),
+  availability: Type.Boolean(),
+  region: Type.String(),
+  createdAt: Type.String(),
+  gameProfile: GameProfileSchema
+});
+export type PublicProfileResponse = Static<typeof PublicProfileResponseSchema>;
