@@ -19,6 +19,8 @@ class Room
 		std::string _name;
 		//Plan of the room
 		std::vector<std::string> _roomPlan;
+		//Wating Room maps
+		static std::map<std::string, std::shared_ptr<Room>> _WatingRooms;
 		//Map containing all of the rooms of the floor 0
 		static std::map<std::string, std::shared_ptr<Room>> _RoomsF0;
 		//Map containing all of the rooms of the floor 1
@@ -31,7 +33,8 @@ class Room
 		static std::map<std::string, std::shared_ptr<Room>> _RoomsF4;
 	
 	private:
-		static void importMap(std::string mapName);
+		static void importMap(std::string &fullPath, std::string mapName, std::map<std::string, std::shared_ptr<Room>> &set);
+		static void importFloor(std::string fullPath, std::map<std::string, std::shared_ptr<Room>> &set);
 		void		identifyExits(void);
 		void		updateSize(void);
 

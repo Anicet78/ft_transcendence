@@ -1,5 +1,6 @@
 #ifndef GAME_SDL_HPP
 # define GAME_SDL_HPP
+
 # include <iostream>
 # include <SDL2/SDL.h>
 # include <memory>
