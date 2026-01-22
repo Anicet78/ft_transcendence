@@ -31,6 +31,8 @@ class Party
 		bool									isPartyFull() const;
 		bool									isPlayerInParty(std::string &uid) const;
 		void									setPlayerSession();
+		std::vector<Player>	_party;
+		int					_partyNumber;
 };
 
 #endif

@@ -3,6 +3,7 @@
 
 #include"game_sdl.hpp"
 #include"Map.hpp"
+#include"SDLTimer.hpp"
 
 class Engine
 {
@@ -14,6 +15,7 @@ public:
 	SDL_Renderer	*renderer;
 	SDL_Event		event;
 	SDL_Texture		*texture;
+	SDLTimer		timer;
 	Key				key;
 	Room			room;
 

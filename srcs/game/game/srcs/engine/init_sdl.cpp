@@ -20,5 +20,9 @@ int	init_sdl(Engine &gSdl)
 	gSdl.renderer = SDL_CreateRenderer(gSdl.window, -1, SDL_RENDERER_ACCELERATED);
 	if (!gSdl.renderer)
 		std::cerr << "render/20 : " << SDL_GetError() << std::endl;
+
+	//start a global timer from the begining
+	if (!gSdl.timer.getStarted())
+		gSdl.timer.startTimer();
 	return (1);
 }

@@ -3,9 +3,6 @@
 
 # include <iostream>
 # include <SDL2/SDL.h>
-# include <memory>
-# include <vector>
-# include <fstream>
 
 class Key
 {

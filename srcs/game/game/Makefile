@@ -22,6 +22,7 @@ SRCS		=	main.cpp \
 				engine/init_sdl.cpp \
 				engine/key_action.cpp \
 				engine/map_printer.cpp \
+				engine/SDLTimer.cpp \
 				player/Player.cpp \
 				player/PlayerAssets.cpp \
 				mapGen/mapMain.cpp Room.cpp Map.cpp aStar.cpp mapGen/mapGen.cpp
