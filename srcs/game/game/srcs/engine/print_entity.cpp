@@ -42,17 +42,28 @@ void	print_mob(std::map<int, std::unique_ptr<Mob>> &mobs, float camX, float camY
 
 	if (frame >= 24)
 		frame = 0;
-	for (auto &i : mobs)
+	std::cout << mobs.size() << std::endl;
+	for (auto it = mobs.begin(); it != mobs.end(); )
 	{
-		Mob	&mob = *i.second;
+		Mob	&mob = *it->second;
 		float x = ((mob.getX() - camX) * tile_size) - (0.5f * tile_size);
 		float y = ((mob.getY() - camY) * tile_size) - (0.5f * tile_size);
 		mob.updateScreenPos(camX, camY, tile_size);
 		mob.getBox().updateHitBox();
 		mob.rendMobIdle(x, y, frame / 4, 2);
-		if (mob.getBox().isDmgHit(player.getBox().getAtkHitBox()) && gSdl.key.attacking())
-			std::cout << "-------------------Mob #" << i.first << std::endl << "hit" << std::endl;
 		mob.getBox().printHitBox();
+		if (mob.getBox().isDmgHit(player.getBox().getAtkHitBox()) && gSdl.key.attacking())
+		{
+			std::cout << "-------------------Mob #" << it->first << std::endl << "hit" << std::endl;
+			mob.setHp(mob.getHp() - 1);
+		}
+		if (mob.getHp() <= 0)
+		{
+			// it->second.reset();
+			it = mobs.erase(it);
+		}
+		else
+			it++;
 	}
 	frame++;
 }

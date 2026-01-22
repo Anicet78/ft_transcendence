@@ -112,7 +112,7 @@ int mainloop(Engine &sdl, Map &floor0)
 				key_up();
 		}
 		game_loop(player, cap);
-		fps(frame);
+		// fps(frame);
 		SDL_RenderPresent(sdl.renderer);
 		SDL_RenderClear(gSdl.renderer);
 		frame++;

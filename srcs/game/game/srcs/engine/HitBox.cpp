@@ -1,10 +1,7 @@
 #include<HitBox.hpp>
 
-HitBox::HitBox(float &x, float &y, float &screenX, float &screenY, int &last_dir) : _atkActive(false), _x(x), _y(y), _screenX(screenX), _screenY(screenY), _last_dir(last_dir) {
+HitBox::HitBox(float &x, float &y, float &screenX, float &screenY, int &last_dir) : _wallHitBox({0, 0, 0, 0}), _atkHitBox({0, 0, 0, 0}), _hurtBox({0, 0, 0, 0}), _atkActive(false), _x(x), _y(y), _screenX(screenX), _screenY(screenY), _last_dir(last_dir) {
 	_tile_s = gSdl.getMapTileSize() * 2;
-	_wallHitBox = {0, 0, 0, 0};
-	_atkHitBox = {0, 0, 0, 0};
-	_hurtBox = {0, 0, 0, 0};
 	return ;
 }
 
@@ -26,6 +23,7 @@ SDL_FRect	&HitBox::getDmgHitBox(void) {
 
 void	HitBox::updateHitBox() {
 
+	(void)_last_dir;
 	//update wallHitBox :
 
 	_wallHitBox.x = _x - 0.3f;
@@ -38,7 +36,7 @@ void	HitBox::updateHitBox() {
 	float	hitW = 0.8f * _tile_s;
 
 
-	//update atkhitbox
+	// update atkhitbox
 
 	if (_last_dir == 0)
 	{
@@ -48,7 +46,7 @@ void	HitBox::updateHitBox() {
 		_atkHitBox.h = 1.3f * _tile_s;
 
 	}
-	else if (_last_dir == 1)
+	else
 	{
 		_atkHitBox.x = hitX - _tile_s;
 		_atkHitBox.y = hitY;
@@ -113,9 +111,12 @@ void	HitBox::printHitBox(void) {
 	// SDL_FRect wall = {_wallHitBox.x * _tile_s, _wallHitBox.y * _tile_s, _wallHitBox.w * _tile_s, _wallHitBox.h * _tile_s};
 	// SDL_RenderDrawRectF(gSdl.renderer, &wall);
 
-	SDL_SetRenderDrawColor(gSdl.renderer, 0x00, 0x00, 0xFF, 0xFF);
-	SDL_RenderDrawRectF(gSdl.renderer, &_atkHitBox);
-
 	SDL_SetRenderDrawColor(gSdl.renderer, 0xFF, 0x00, 0x00, 0xFF);
 	SDL_RenderDrawRectF(gSdl.renderer, &_hurtBox);
+
+	if (_atkHitBox.x && _atkHitBox.y && _atkHitBox.w && _atkHitBox.h)
+	{
+		SDL_SetRenderDrawColor(gSdl.renderer, 0x00, 0x00, 0xFF, 0xFF);
+		SDL_RenderDrawRectF(gSdl.renderer, &_atkHitBox);
+	}
 }
