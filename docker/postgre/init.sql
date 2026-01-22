@@ -94,7 +94,7 @@ CREATE TABLE friendship (
 	CONSTRAINT chk_friendship_not_self
 		CHECK (sender_id <> receiver_id),
 	
-	CHECK ("status" IN ('waiting', 'accepted', 'rejected', 'deleted'))
+	CHECK ("status" IN ('waiting', 'accepted', 'rejected', 'cancelled', 'deleted'))
 );
 
 CREATE TABLE game_profile (
