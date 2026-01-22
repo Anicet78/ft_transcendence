@@ -197,6 +197,8 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
             if (session.isPlayerInSession(ws->getUserData()->playerId))
             {
                 std::shared_ptr<Player> player = session.getPlayer(ws->getUserData()->playerId);
+                if (req["action"] == "connected")
+                    player->setConnexion(1);
                 if (req["action"] == "player_move")
                 {
                     updatePlayerPos(*player, req);
@@ -207,7 +209,7 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
                 {
                     if (oplayer->getUid() == player->getUid())
                         continue ;
-                    if (oplayer->getNode() == player->getNode())
+                    if (oplayer->getNode() == player->getNode() && oplayer->isConnected())
                         sendPlayerState(*oplayer, session, "");
                 }
                 break;
