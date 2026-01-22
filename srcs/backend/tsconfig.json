@@ -39,6 +39,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "include": ["src/**/*", "src/routes/profile/profileRoute.ts", "../../controller.ts"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "prisma", "dist", "prisma.config.cjs"]
 }

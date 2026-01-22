@@ -1,101 +1,63 @@
-import { prisma } from '../services/db/db.js';
+import Type, { type Static } from 'typebox';
 
-export async function getFriends(userId: string) {
-  return prisma.friendship.findMany({
-    where: {
-      status: 'accepted',
-      OR: [
-        { senderId: userId },
-        { receiverId: userId }
-      ]
-    },
-    select: {
-      friendshipId: true,
-      status: true,
-      createdAt: true,
-      sender: {
-        select: {
-          appUserId: true,
-          username: true,
-          avatarUrl: true,
-          availability: true
-        }
-      },
-      receiver: {
-        select: {
-          appUserId: true,
-          username: true,
-          avatarUrl: true,
-          availability: true
-        }
-      }
-    }
-  });
-}
+// Shared user preview schema
+export const UserPreviewSchema = Type.Object({
+  appUserId: Type.String(),
+  username: Type.String(),
+  avatarUrl: Type.Union([Type.String(), Type.Null()]),
+  availability: Type.Optional(Type.Boolean()) // optional because requests don't include it
+});
+export type UserPreview = Static<typeof UserPreviewSchema>;
 
-export async function getRequests(userId: string) {
-  return prisma.friendship.findMany({
-    where: {
-      status: 'waiting',
-      OR: [
-        { senderId: userId },
-        { receiverId: userId }
-      ]
-    },
-    select: {
-      friendshipId: true,
-      status: true,
-      createdAt: true,
-      sender: {
-        select: {
-          appUserId: true,
-          username: true,
-          avatarUrl: true
-        }
-      },
-      receiver: {
-        select: {
-          appUserId: true,
-          username: true,
-          avatarUrl: true
-        }
-      }
-    }
-  });
-}
+// GET /friends response
+export const FriendshipSchema = Type.Object({
+  friendshipId: Type.String(),
+  status: Type.String(),
+  createdAt: Type.String(),
+  sender: UserPreviewSchema,
+  receiver: UserPreviewSchema
+});
+export type Friendship = Static<typeof FriendshipSchema>;
 
-export async function sendRequest(senderId: string, receiverId: string) {
-  return prisma.friendship.create({
-    data: {
-      senderId,
-      receiverId,
-      status: 'waiting'
-    }
-  });
-}
+export const FriendsListResponseSchema = Type.Array(FriendshipSchema);
+export type FriendsListResponse = Static<typeof FriendsListResponseSchema>;
 
-export async function updateRequest(userId: string, otherId: string, action: 'accept' | 'reject') {
-  return prisma.friendship.updateMany({
-    where: {
-      status: 'waiting',
-      receiverId: userId,
-      senderId: otherId
-    },
-    data: {
-      status: action === 'accept' ? 'accepted' : 'rejected',
-      updatedAt: new Date()
-    }
-  });
-}
+// GET /friends/requests response
+export const FriendRequestSchema = Type.Object({
+  friendshipId: Type.String(),
+  status: Type.String(),
+  createdAt: Type.String(),
+  sender: UserPreviewSchema,
+  receiver: UserPreviewSchema
+});
+export type FriendRequest = Static<typeof FriendRequestSchema>;
 
-export async function removeFriend(userId: string, otherId: string) {
-  return prisma.friendship.deleteMany({
-    where: {
-      status: 'accepted',
-      OR: [
-        { senderId: userId, receiverId: otherId },
-        { senderId: otherId, receiverId: userId }
-      ]
-    }
-  });
-}
+export const FriendRequestsListSchema = Type.Array(FriendRequestSchema);
+export type FriendRequestsList = Static<typeof FriendRequestsListSchema>;
+
+// POST /friends/:id
+export const SendRequestParamsSchema = Type.Object({
+  id: Type.String({ format: 'uuid' })
+});
+export type SendRequestParams = Static<typeof SendRequestParamsSchema>;
+
+// PATCH /friends/:id
+export const UpdateRequestParamsSchema = Type.Object({
+  id: Type.String({ format: 'uuid' })
+});
+export type UpdateRequestParams = Static<typeof UpdateRequestParamsSchema>;
+
+export const UpdateRequestBodySchema = Type.Object({
+  action: Type.Union([
+    Type.Literal('accept'),
+    Type.Literal('reject'),
+    Type.Literal('cancel')
+  ])
+});
+export type UpdateRequestBody = Static<typeof UpdateRequestBodySchema>;
+
+// DELETE /friends/:id
+export const RemoveFriendParamsSchema = Type.Object({
+  id: Type.String({ format: 'uuid' })
+});
+export type RemoveFriendParams = Static<typeof RemoveFriendParamsSchema>;
