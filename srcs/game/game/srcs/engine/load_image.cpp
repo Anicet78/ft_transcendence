@@ -1,4 +1,4 @@
-#include"game_sdl.hpp"
+#include"heads.hpp"
 
 SDL_Texture *loadTexture(std::string path, Engine &sdl) {
 

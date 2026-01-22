@@ -1,7 +1,7 @@
 #ifndef ASSETS_HPP
 # define ASSETS_HPP
 
-# include <game_sdl.hpp>
+# include "HitBox.hpp"
 
 class Assets
 {

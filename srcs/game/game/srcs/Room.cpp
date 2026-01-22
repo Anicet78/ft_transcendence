@@ -266,6 +266,24 @@ void Room::importRooms()
 	// 	std::cout << *room.second.get() << std::endl;
 }
 
+void	Room::setEvent(void) {
+	if (!_event && (rand() % 100) < 60)
+	{
+		std::string	name(getName());
+		if (name != "start" && name != "stairs")
+			_event = std::make_shared<MobRush>(this->_roomPlan);
+	}
+	return ;
+}
+
+std::string const	&ARoomEvent::getType(void) const {
+	return (this->_type);
+}
+
+std::shared_ptr<ARoomEvent>	Room::getRoomEvent(void) const {
+	return (_event);
+}
+
 std::ostream &operator<<(std::ostream &o, Room const &obj)
 {
 	o << "Room name: " << obj.getName() << std::endl;

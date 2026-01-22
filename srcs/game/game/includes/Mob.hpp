@@ -1,7 +1,7 @@
 #ifndef MOB_HPP
 # define MOB_HPP
 
-#include"game_sdl.hpp"
+#include"PlayerAssets.hpp"
 
 class Mob
 {
@@ -31,21 +31,31 @@ private:
 	float	_x;
 	float	_y;
 
+	float	_screenX;
+	float	_screenY;
+
 	int		_hp;
 
 	int		_last_dir;
 
+	HitBox	_box;
+
 public:
 
-	Mob(void);
+	Mob(float x, float y, int hp);
 	~Mob();
 
 	static void	importMobsAssets(int tile_size);
 
 	float	getX(void);
 	float	getY(void);
+	float	getScreenX(void);
+	float	getScreenY(void);
 	int		getHp(void);
 	int		getLastDir(void);
+	HitBox	&getBox(void);
+	void	updateScreenPos(float camX, float camY, int tile_s);
+
 
 	void	setPos(float x, float y);
 	void	setHp(int hp);
