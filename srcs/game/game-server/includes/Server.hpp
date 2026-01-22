@@ -4,27 +4,21 @@
 
 # include "Session.hpp"
 
-typedef struct PerSocketData
-{
-    std::string playerId;
-    std::string pseudo;
-    std::string room; //room is designing an appartenance at a game room, with all of the other players of the session
-	std::string group; //group is is for the group with you launch the game (before matchmaking)
-	int			groupSize;//size of the group
-    std::map<std::string, std::string> jsonMsg;
-} PerSocketData;
-
 class Server
 {
 	private:
-		std::vector<Session> _sessions;
-		std::list<Player> _matchMakingQueue;
+		std::vector<Session>					_sessions;
+		std::list<Party>						_matchMakingQueue;
+		std::vector<std::shared_ptr<Player>>	_players;
 
 	private:
 		void	parseJson(std::map<std::string, std::string> &res, std::string msg);
-		void	executeJson(PerSocketData *data);
-		void	addPlayerOnQueue(Player &player);
+		int		executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSocketData> *ws);
+		void	addPlayerOnQueue(std::shared_ptr<Player> player);
 		void	manageQueue(void);
+		void	removePlayer(std::string &uid);
+		Player	&getPlayer(std::string &uid);
+
 
 	public:
 		Server(void);
@@ -34,5 +28,6 @@ class Server
 		void	run();
 
 };
+
 
 #endif
