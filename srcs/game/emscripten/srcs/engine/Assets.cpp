@@ -24,7 +24,6 @@ void Assets::importAssets(std::string path, int tile_size) {
 		error += SDL_GetError();
 		throw std::runtime_error(error);
 	}
-
 	//convert it into texture
 	_MapTexture = SDL_CreateTextureFromSurface(gSdl.renderer, image);
 	if (!_MapTexture)
@@ -34,7 +33,6 @@ void Assets::importAssets(std::string path, int tile_size) {
 		throw std::runtime_error(error);
 		return ;
 	}
-
 	_MapImgW = image->w;
 	_MapImgH = image->h;
 

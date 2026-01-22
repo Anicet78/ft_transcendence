@@ -264,7 +264,7 @@ Room Room::getWatingRoom()
 
 void Room::importRooms()
 {
-	std::string path("./assets/rooms/");
+	std::string path("../assets/rooms/");
 	
 	Room::importFloor(path + "waitingRooms/", _WatingRooms);
 	Room::importFloor(path + "floor0/", _RoomsF0);

@@ -38,6 +38,10 @@ void	Session::addParty(Party &newParty)
 		player->setNode(this->_maps[0].getNodes()[0]);
 		this->_players.push_back(player);
 		player->getWs()->send("{\"action\": \"waiting\"}");
+		//std::cout << "avant\n";
+		//usleep(300000);
+		//std::cout << "apres\n";
+		//sendPlayerState(*player, *this, "");
         player->getWs()->send("You have been added to a session !", uWS::OpCode::TEXT);
 	}
 }

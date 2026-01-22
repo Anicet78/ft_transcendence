@@ -48,7 +48,7 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 
 wasm:
 	mkdir -p build
-	$(EMSCRIPTEN) $(EMSRCS) $(EMFLAGS) --preload-file assets -o $(EMNAME)
+	$(EMSCRIPTEN) $(EMSRCS) $(EMFLAGS) --preload-file ../assets -o $(EMNAME)
 
 clean:
 	rm -rf $(OBJ_DIR)

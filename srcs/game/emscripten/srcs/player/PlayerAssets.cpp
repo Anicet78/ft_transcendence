@@ -32,14 +32,13 @@ PlayerAssets::~PlayerAssets(void) {
 
 void	PlayerAssets::importPlayersWalkAssets(int tile_size)
 {
-	SDL_Surface *image = SDL_LoadBMP("assets/sprite/Soldier-Walk.bmp");
+	SDL_Surface *image = SDL_LoadBMP("../assets/sprite/Soldier-Walk.bmp");
 	if (!image)
 	{
 		std::string error = "Error in image conversion to surface : ";
 		error += SDL_GetError();
 		throw std::runtime_error(error);
 	}
-
 	//convert it into texture
 	SDL_Texture	*text = SDL_CreateTextureFromSurface(gSdl.renderer, image);
 	if (!text)
@@ -48,7 +47,6 @@ void	PlayerAssets::importPlayersWalkAssets(int tile_size)
 		error += SDL_GetError();
 		throw std::runtime_error(error);
 	}
-
 	_walkImgW = image->w;
 	_walkImgH = image->h;
 	//dont need surface anymore after conversion
@@ -75,7 +73,7 @@ void	PlayerAssets::importPlayersWalkAssets(int tile_size)
 
 
 void	PlayerAssets::importPlayersAttackAssets(int tile_size) {
-		SDL_Surface *image = SDL_LoadBMP("assets/sprite/Soldier-Attack01.bmp");
+		SDL_Surface *image = SDL_LoadBMP("../assets/sprite/Soldier-Attack01.bmp");
 	if (!image)
 	{
 		std::string error = "Error in image conversion to surface : ";
@@ -117,7 +115,7 @@ void	PlayerAssets::importPlayersAttackAssets(int tile_size) {
 }
 
 void	PlayerAssets::importPlayersIdleAssets(int tile_size) {
-		SDL_Surface *image = SDL_LoadBMP("assets/sprite/Soldier-Idle.bmp");
+		SDL_Surface *image = SDL_LoadBMP("../assets/sprite/Soldier-Idle.bmp");
 	if (!image)
 	{
 		std::string error = "Error in image conversion to surface : ";

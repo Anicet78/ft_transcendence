@@ -184,14 +184,6 @@ void	print_map(Player &player, std::vector<Player> &otherPlayers)
 	{
 		for (Player &op : otherPlayers)
 		{
-			camX = cameraX(op, tile_s);
-			camY = cameraY(op, tile_s);
-			camera = {
-				static_cast<int>(camX * tile_s),
-				static_cast<int>(camY * tile_s),
-				SCREEN_WIDTH,
-				SCREEN_HEIGHT
-			};
 			playerScreenX = (op.getX() - camX) * tile_s;
 			playerScreenY = (op.getY() - camY) * tile_s;
 			op.printPlayer(playerScreenX, playerScreenY);

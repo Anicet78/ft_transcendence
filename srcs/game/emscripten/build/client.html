@@ -36,11 +36,16 @@
 
         function log(text)
         {
+            if (logDiv.childElementCount > 50) {
+                logDiv.removeChild(logDiv.firstChild);
+            }
+
             const p = document.createElement('p');
             p.textContent = text;
             logDiv.appendChild(p);
             logDiv.scrollTop = logDiv.scrollHeight;
         }
+
 
 		function onCppMessage(obj)
 		{

@@ -81,7 +81,10 @@ void parseJson(bool &init, Game &game)
 	val msg = msgJson;
 
 	if (!msg.hasOwnProperty("action"))
-		return ;
+	{
+		msgJson = val::undefined();
+		return;
+	}
 	if (msg["action"].as<std::string>() == "waiting")
 	{
 		init = true;
@@ -92,7 +95,7 @@ void parseJson(bool &init, Game &game)
 	}
 	else if (msg["action"].as<std::string>() == "player_state")
 		updatePlayerState(game, msg);
-	msgJson = val::object();
+	msgJson = val::undefined();
 }
 
 void mainloopE(void)
@@ -104,6 +107,7 @@ void mainloopE(void)
 	parseJson(init, game);
 	if (!init)
 		return ;
+	std::cout << "oplayer size = " << game.getOtherPlayers().size() << std::endl;
 	game_loop(game);
 	while (SDL_PollEvent(&gSdl.event))
 	{
@@ -160,7 +164,7 @@ int main(void)
 	}
 	try
 	{
-		Assets::importAssets("assets/sprite/assets.bmp", 16);
+		Assets::importAssets("../assets/sprite/assets.bmp", 16);
 		PlayerAssets::importPlayersAssets(100);
 		Room::importRooms();
 		//floor0.setWaitingRoom();
