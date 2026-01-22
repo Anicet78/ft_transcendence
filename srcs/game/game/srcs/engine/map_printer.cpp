@@ -89,80 +89,6 @@ void	manage_wall(int x, int y, Player &player)
 	}
 }
 
-float	cameraX(Player const &player, int const tile_size) {
-	float idealMinX = player.getX() - 12;
-	float idealMaxX = player.getX() + 13;
-	int roomW = player.getRoom().getRoomPlan()[0].size();
-
-	if (idealMinX < 0)
-	{
-		idealMinX = 0;
-		idealMaxX = std::min(25, roomW);
-	}
-	else if (idealMaxX > roomW)
-	{
-		idealMaxX = roomW;
-		idealMinX = std::max(0, roomW - 25);
-	}
-
-	if (idealMinX > idealMaxX)
-		idealMinX = idealMaxX;
-
-	if (roomW * tile_size <= SCREEN_WIDTH)
-		idealMinX = 0;
-	return (idealMinX);
-}
-
-float	cameraY(Player const &player, int const tile_size) {
-	float idealMinY = player.getY() - 12;
-	float idealMaxY = player.getY() + 13;
-	int roomH = player.getRoom().getRoomPlan().size();
-	if (idealMinY < 0)
-	{
-		idealMinY = 0;
-		idealMaxY = std::min(25, roomH);
-	}
-	else if (idealMaxY > roomH)
-	{
-		idealMaxY = roomH;
-		idealMinY = std::max(0, roomH - 25);
-	}
-
-	if (idealMinY > idealMaxY)
-		idealMinY = idealMaxY;
-
-	if (roomH * tile_size <= SCREEN_HEIGHT)
-		idealMinY = 0;
-	return (idealMinY);
-}
-
-void	print_mob(std::map<int, Mob> &mobs, int camX, int camY, int tile_size) {
-	static int	frame = 0;
-	
-	if (frame >= 24)
-		frame = 0;
-	std::cout << mobs.size() << std::endl;
-	for (auto i : mobs)
-	{
-		Mob	&mob = i.second;
-		float x = ((mob.getX() - camX) * tile_size) - (0.5f * tile_size);
-		float y = ((mob.getY() - camY) * tile_size) - (0.5f * tile_size);
-		mob.rendMobIdle(x, y, frame / 4, 2);
-		// mob.getBox().printHitBox();
-	}
-	frame++; 
-}
-
-void	print_event(std::shared_ptr<ARoomEvent> event, int camX, int camY, int tile_size)
-{
-	std::string	const &type = event->getType();
-	if (event && type == "MobRush")
-	{
-		MobRush	&rush = dynamic_cast<MobRush &>(*event);
-		print_mob(rush.getMobs(), camX, camY, tile_size);
-	}
-}
-
 void	print_map(Player &player) {
 	static int	mapX = -1;
 	static int	mapY = -1;
@@ -205,7 +131,4 @@ void	print_map(Player &player) {
 	player.updateScreenPos(tile_s);
 
 	SDL_RenderCopy(gSdl.renderer, gSdl.texture, &camera.getCamera(), NULL);
-	print_event(player.getRoom().getRoomEvent(), camera.getCamX(), camera.getCamY(), tile_s);
-	print_player(player.getScreenX(), player.getScreenY());
-	player.getBox().printHitBox();
 }

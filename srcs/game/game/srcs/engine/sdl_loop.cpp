@@ -1,42 +1,5 @@
 #include "heads.hpp"
 
-void	print_player(float px, float py) {
-
-	static int	frame = 0;
-	static int	prev_state = PLAYER_IDLE;
-	int			tile_s = gSdl.getMapTileSize() * 2;
-
-	const float x = px - (0.5f * tile_s);
-	const float y = py - (0.5f * tile_s);
-	PlayerAssets::updateLastDir();
-	if (frame >= 24)
-		frame = 0;
-
-	if (gSdl.key.attacking() == true)
-	{
-		if (prev_state != PLAYER_ATTACKING)
-			frame = 0;
-		prev_state = PLAYER_ATTACKING;
-		PlayerAssets::rendPlayerAttack(0, x, y, frame / 4, 2);
-	}
-	else if (gSdl.key.walking() == true)
-	{
-		if (prev_state != PLAYER_WALKING)
-			frame = 0;
-		prev_state = PLAYER_WALKING;
-		PlayerAssets::rendPlayerWalk(0, x, y, frame / 4, 2);
-	}
-	else
-	{
-		if (prev_state != PLAYER_IDLE)
-			frame = 0;
-		prev_state = PLAYER_IDLE;
-		PlayerAssets::rendPlayerIdle(0, x, y, frame / 4, 2);
-	}
-
-	frame++;
-}
-
 void updateRoom(Player &player)
 {
 	Room room = player.getRoom();
@@ -88,15 +51,24 @@ void	player_action(Player &player, SDLTimer &cap) {
 	player.setWallHitBox();
 	if (gSdl.key.walking())
 		player.move(timeStep);
-	player.getBox().updateHitBox(0);
+	player.getBox().updateHitBox();
 
 }
 
 void	game_loop(Player &player, SDLTimer &cap)
 {
+	int tile_s = gSdl.getMapTileSize() * 2;
 	updateRoom(player);
+
 	player_action(player, cap);
+
 	print_map(player);
+
+	print_event(player.getRoom().getRoomEvent(), player.getCamera().getCamX(), player.getCamera().getCamY(), tile_s, player);
+
+	print_player(player.getScreenX(), player.getScreenY());
+
+	player.getBox().printHitBox();
 }
 
 void	fps(Uint32 frame) {

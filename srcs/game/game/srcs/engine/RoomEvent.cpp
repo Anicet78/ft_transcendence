@@ -19,9 +19,9 @@ void	MobRush::createEvent(void) {
 		int maxX = _roomPlan[y].size();
 		for (int x = 0; x < maxX; x++)
 		{
-			if ( _roomPlan[y][x] == '0' && (rand() % 100) < 2)
+			if (_roomPlan[y][x] == '0' && (rand() % 100) < 2)
 			{
-				_mobs.emplace(id, Mob(x + 0.5, y + 0.5, 3));
+				_mobs.emplace(id, std::make_unique<Mob>(x + 0.5f, y + 0.5f, 3));
 				_mobsId.push_back(id);
 				id++;
 			}
@@ -49,6 +49,6 @@ bool	MobRush::isCleared(void) {
 	return (_cleared);
 }
 
-std::map<int, Mob>	&MobRush::getMobs(void) {
+std::map<int, std::unique_ptr<Mob> >	&MobRush::getMobs(void) {
 	return (_mobs);
 }

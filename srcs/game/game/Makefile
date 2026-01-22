@@ -26,6 +26,7 @@ SRCS		=	main.cpp \
 				engine/Mob.cpp \
 				engine/RoomEvent.cpp \
 				engine/HitBox.cpp \
+				engine/print_entity.cpp \
 				player/Camera.cpp \
 				mapGen/mapMain.cpp Room.cpp Map.cpp aStar.cpp mapGen/mapGen.cpp
 

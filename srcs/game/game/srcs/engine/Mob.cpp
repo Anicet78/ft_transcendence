@@ -17,8 +17,7 @@ int						Mob::_atkImgH;
 int						Mob::_idleImgW;
 int						Mob::_idleImgH;
 
-Mob::Mob(float x, float y, int hp) : _x(x), _y(y), _hp(hp) {
-	// _box.updateHitBox(_last_dir);
+Mob::Mob(float x, float y, int hp) : _x(x), _y(y), _screenX(0), _screenY(0), _hp(hp), _last_dir(0), _box(_x, _y, _screenX, _screenY, _last_dir) {
 	return ;
 }
 
@@ -183,9 +182,25 @@ int		Mob::getLastDir(void) {
 	return (_last_dir);
 }
 
-// HitBox	&Mob::getBox(void) {
-// 	return (_box);
-// }
+HitBox	&Mob::getBox(void) {
+	return (_box);
+}
+
+float	Mob::getScreenX(void) {
+	return (_screenX);
+}
+
+float	Mob::getScreenY(void) {
+	return (_screenY);
+}
+
+void	Mob::updateScreenPos(float camX, float camY, int tile_s) {
+	(void)tile_s;
+	// std::cout << "posX : " << (_x - camX) * tile_s << " " << "posY : " << (_y - camY) * tile_s << std::endl;
+	_screenX = (_x - camX) * tile_s;
+	_screenY = (_y - camY) * tile_s;
+	return ;
+}
 
 void	Mob::rendMobWalk(int x, int y, int assetIndex, float scale) {
 	if (assetIndex < 0) {

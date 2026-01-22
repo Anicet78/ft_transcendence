@@ -22,9 +22,9 @@ public:
 class MobRush : public ARoomEvent
 {
 private:
-	std::vector<std::string>	&_roomPlan;
-	std::map<int, Mob>			_mobs;
-	std::vector<int>			_mobsId;
+	std::vector<std::string>			&_roomPlan;
+	std::map<int, std::unique_ptr<Mob>>	_mobs;
+	std::vector<int>					_mobsId;
 
 	bool	_started;
 	bool	_cleared;
@@ -39,7 +39,7 @@ public:
 	void	destroyEvent(void);
 	void	checkCleared(void);
 
-	std::map<int, Mob>	&getMobs(void);
+	std::map<int, std::unique_ptr<Mob>>	&getMobs(void);
 };
 
 class Room

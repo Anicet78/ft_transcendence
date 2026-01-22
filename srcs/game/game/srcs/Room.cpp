@@ -258,7 +258,7 @@ void Room::importRooms()
 }
 
 void	Room::setEvent(void) {
-	if (!_event && (rand() % 100) < 30)
+	if (!_event && (rand() % 100) < 60)
 	{
 		std::string	name(getName());
 		if (name != "start" && name != "stairs")

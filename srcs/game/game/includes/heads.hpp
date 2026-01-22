@@ -20,5 +20,6 @@ void	key_action(void);
 
 void	print_player(float px, float py);
 void	print_map(Player &player);
+void	print_event(std::shared_ptr<ARoomEvent> event, float camX, float camY, int tile_size, Player &player);
 
 #endif

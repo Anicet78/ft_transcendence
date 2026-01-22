@@ -31,11 +31,14 @@ private:
 	float	_x;
 	float	_y;
 
+	float	_screenX;
+	float	_screenY;
+
 	int		_hp;
 
 	int		_last_dir;
 
-	// HitBox	_box;
+	HitBox	_box;
 
 public:
 
@@ -46,9 +49,13 @@ public:
 
 	float	getX(void);
 	float	getY(void);
+	float	getScreenX(void);
+	float	getScreenY(void);
 	int		getHp(void);
 	int		getLastDir(void);
-	// HitBox	&getBox(void);
+	HitBox	&getBox(void);
+	void	updateScreenPos(float camX, float camY, int tile_s);
+
 
 	void	setPos(float x, float y);
 	void	setHp(int hp);

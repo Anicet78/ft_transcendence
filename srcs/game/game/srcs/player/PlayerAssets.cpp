@@ -178,7 +178,9 @@ void	PlayerAssets::importPlayersAssets(int tile_size) {
 }
 
 
-
+int	&PlayerAssets::getLastDir(void) {
+	return (_last_dir);
+}
 
 
 
