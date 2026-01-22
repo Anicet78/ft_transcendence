@@ -153,6 +153,14 @@ void    Server::removePlayer(std::string &uid)
     }
 }
 
+Player  &Server::getPlayer(std::string &uid)
+{
+    for (auto &player : this->_players)
+        if (player->getUid() == uid)
+            return *player;
+    return *this->_players[0];
+}
+
 void	Server::run(void)
 {
 	uWS::App()

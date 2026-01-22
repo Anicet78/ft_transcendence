@@ -17,6 +17,7 @@ class Server
 		void	addPlayerOnQueue(std::shared_ptr<Player> player);
 		void	manageQueue(void);
 		void	removePlayer(std::string &uid);
+		Player	&getPlayer(std::string &uid);
 
 
 	public:

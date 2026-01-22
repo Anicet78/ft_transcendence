@@ -25,6 +25,7 @@ class Player
 		std::string	_groupName; //party is designing an appartenance at a game room, with all of the other players of the session
 		bool		_inQueue;
 		bool		_inSession;
+		bool		_connected;
 		char		_exit;
 		uWS::WebSocket<false, true, PerSocketData> *_ws;
 		
@@ -61,6 +62,7 @@ class Player
 		std::string	getPartyName(void) const;
 		bool		isInQueue(void)	const;
 		bool		isInSession(void) const;
+		bool		isConnected(void) const;
 		uWS::WebSocket<false, true, PerSocketData> *getWs(void) const;
 
 		float		getX(void) const;
@@ -72,6 +74,7 @@ class Player
 		int			getLastDir(void) const;
 
 	//setter
+		void		setConnexion(bool c);
 		void		setExit(char c);
 		void		setNode(const quadList &node);
 		void		setPos(float x, float y);

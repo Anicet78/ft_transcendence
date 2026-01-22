@@ -190,15 +190,18 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
         data->jsonMsg.clear();
         return 0;
     }
-    else if (req["action"] == "player_move")
+    else if (req["action"] == "player_move" || req["action"] == "connected")
     {
         for (Session &session : _sessions)
         {
             if (session.isPlayerInSession(ws->getUserData()->playerId))
             {
                 std::shared_ptr<Player> player = session.getPlayer(ws->getUserData()->playerId);
-                updatePlayerPos(*player, req);
-                updateRoom(*player);
+                if (req["action"] == "player_move")
+                {
+                    updatePlayerPos(*player, req);
+                    updateRoom(*player);
+                }
                 sendPlayerState(*player, session, "");
                 for (auto &oplayer : session.getPlayers())
                 {

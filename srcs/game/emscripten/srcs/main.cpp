@@ -92,6 +92,7 @@ void parseJson(bool &init, Game &game)
 		map.setWaitingRoom();
 		game.addMap(map);
 		game.getPlayer().setNode(map.getNodes()[0]);
+		EM_ASM_({onCppMessage({action: "connected"});});
 	}
 	else if (msg["action"].as<std::string>() == "player_state")
 		updatePlayerState(game, msg);
@@ -107,7 +108,6 @@ void mainloopE(void)
 	parseJson(init, game);
 	if (!init)
 		return ;
-	std::cout << "oplayer size = " << game.getOtherPlayers().size() << std::endl;
 	game_loop(game);
 	while (SDL_PollEvent(&gSdl.event))
 	{
