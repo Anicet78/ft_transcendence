@@ -2,11 +2,15 @@
 
 void updateRoom(Player &player)
 {
-	Room room = player.getRoom();
+	Room &room = player.getRoom();
 	auto plan = room.getRoomPlan();
 	float x = player.getX(), y = player.getY();
 	bool	roomChanged = false;
 
+	if (room.getRoomEvent().get() && room.getRoomEvent()->isCleared() == false)
+	{
+		return ;
+	}
 	if (plan[y][x] == 'E')
 	{
 		auto exitsLoc = room.getExitsLoc();
@@ -51,6 +55,11 @@ void	player_action(Player &player, SDLTimer &cap) {
 	player.setWallHitBox();
 	if (gSdl.key.walking())
 		player.move(timeStep);
+	if (gSdl.key.attacking() && player.checkAtkState() == false)
+	{
+		std::cout << "je commence a attaquer" << std::endl;
+		player.startAtk();
+	}
 	player.getBox().updateHitBox();
 
 }
@@ -64,9 +73,9 @@ void	game_loop(Player &player, SDLTimer &cap)
 
 	print_map(player);
 
-	print_event(player.getRoom().getRoomEvent(), player.getCamera().getCamX(), player.getCamera().getCamY(), tile_s, player);
+	room_event(player.getRoom().getRoomEvent(), player.getCamera().getCamX(), player.getCamera().getCamY(), tile_s, player);
 
-	print_player(player.getScreenX(), player.getScreenY());
+	print_player(player.getScreenX(), player.getScreenY(), player);
 
 	player.getBox().printHitBox();
 }

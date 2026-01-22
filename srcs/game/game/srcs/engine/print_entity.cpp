@@ -1,6 +1,6 @@
 #include "heads.hpp"
 
-void	print_player(float px, float py) {
+void	print_player(float px, float py, Player &player) {
 
 	static int	frame = 0;
 	static int	prev_state = PLAYER_IDLE;
@@ -8,16 +8,21 @@ void	print_player(float px, float py) {
 
 	const float x = px - (0.5f * tile_s);
 	const float y = py - (0.5f * tile_s);
-	PlayerAssets::updateLastDir();
+	// PlayerAssets::updateLastDir();
 	if (frame >= 24)
 		frame = 0;
 
-	if (gSdl.key.attacking() == true)
+	if (player.checkAtkState() == false)
+		PlayerAssets::updateLastDir();
+
+	if (player.checkAtkState() == true)
 	{
 		if (prev_state != PLAYER_ATTACKING)
 			frame = 0;
 		prev_state = PLAYER_ATTACKING;
 		PlayerAssets::rendPlayerAttack(0, x, y, frame / 4, 2);
+		if (frame == 23)
+			player.endAtk();
 	}
 	else if (gSdl.key.walking() == true)
 	{
@@ -37,43 +42,54 @@ void	print_player(float px, float py) {
 	frame++;
 }
 
-void	print_mob(std::map<int, std::unique_ptr<Mob>> &mobs, float camX, float camY, int tile_size, Player &player) {
-	static int	frame = 0;
+void	update_mob(Mob &mob, float camX, float camY, int tile_size) {
 
-	if (frame >= 24)
-		frame = 0;
-	std::cout << mobs.size() << std::endl;
-	for (auto it = mobs.begin(); it != mobs.end(); )
-	{
-		Mob	&mob = *it->second;
-		float x = ((mob.getX() - camX) * tile_size) - (0.5f * tile_size);
-		float y = ((mob.getY() - camY) * tile_size) - (0.5f * tile_size);
-		mob.updateScreenPos(camX, camY, tile_size);
-		mob.getBox().updateHitBox();
-		mob.rendMobIdle(x, y, frame / 4, 2);
-		mob.getBox().printHitBox();
-		if (mob.getBox().isDmgHit(player.getBox().getAtkHitBox()) && gSdl.key.attacking())
-		{
-			std::cout << "-------------------Mob #" << it->first << std::endl << "hit" << std::endl;
-			mob.setHp(mob.getHp() - 1);
-		}
-		if (mob.getHp() <= 0)
-		{
-			// it->second.reset();
-			it = mobs.erase(it);
-		}
-		else
-			it++;
-	}
-	frame++;
+	mob.updateScreenPos(camX, camY, tile_size);
+	mob.getBox().updateHitBox();		
+	mob.printMob(camX, camY, tile_size);
+	mob.getBox().printHitBox();
 }
 
-void	print_event(std::shared_ptr<ARoomEvent> event, float camX, float camY, int tile_size, Player &player)
+int		mob_interaction(Mob &mob, int mobId, Player &player) {
+	if (mob.checkInvinsibleFrame() == true && mob.getFrame() == 23)
+	{
+		std::cout << "eheh" << std::endl;
+		mob.endInvinsibleFrame();
+	}
+	if (player.checkAtkState() == true && mob.checkInvinsibleFrame() == false && mob.getBox().isDmgHit(player.getBox().getAtkHitBox()))
+	{
+		std::cout << "-------------------Mob #" << mobId << std::endl << "hit" << std::endl;
+		mob.setHp(mob.getHp() - 1);
+		mob.startInvinsibleFrame();
+		
+	}
+	if (mob.getHp() <= 0)
+		return (1);
+	return (0);
+}
+
+void	room_event(std::shared_ptr<ARoomEvent> event, float camX, float camY, int tile_size, Player &player)
 {
 	std::string	const &type = event->getType();
 	if (event && type == "MobRush")
 	{
 		MobRush	&rush = dynamic_cast<MobRush &>(*event);
-		print_mob(rush.getMobs(), camX, camY, tile_size, player);
+		std::map<int, std::unique_ptr<Mob>> &mobs = rush.getMobs();
+		rush.checkCleared();
+		if (mobs.size() > 0)
+		{
+			for (auto it = mobs.begin(); it != mobs.end();)
+			{
+				int flag = mob_interaction(*it->second, it->first, player);
+
+				if (!flag)
+					update_mob(*it->second, camX, camY, tile_size);
+					
+				if (flag)
+					it = mobs.erase(it);
+				else
+					it++;
+			}
+		}
 	}
 }

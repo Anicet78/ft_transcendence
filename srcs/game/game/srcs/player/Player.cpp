@@ -1,6 +1,7 @@
 #include"Player.hpp"
 
-Player::Player(int uid, std::string name, quadList &node) : _uid(uid), _name(name), _x(0), _y(0), _screenX(0), _screenY(0), _node(node), _hp(3), _atk(1), _def(0), _box(_x, _y, _screenX, _screenY, PlayerAssets::getLastDir()),  _camera(_x, _y)
+Player::Player(int uid, std::string name, quadList &node)
+	: _uid(uid), _name(name), _x(0), _y(0), _screenX(0), _screenY(0), _node(node), _hp(3), _atk(1), _def(0), _atkState(false), _box(_x, _y, _screenX, _screenY, PlayerAssets::getLastDir()),  _camera(_x, _y)
 {
 	int i = 0;
 	for (auto &line : _node->getRoom()->getRoomPlan())
@@ -132,30 +133,66 @@ void	Player::setWallHitBox(void) {
 
 //-----------------------------action-----------------------------
 
-bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect const &rect, int const flag) {
+bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect const &rect, int const flag, Player &player) {
 	if (gSdl.key.w_key && flag == 0)
 	{
 		float y = rect.y - 0.1;
 		if (plan[y][rect.x] == '1' || plan[y][rect.x + rect.h] == '1')
 			return (true);
+
+		//if the event in the room is not cleared, player cant go on 'E' tiles
+		std::weak_ptr<ARoomEvent> event = player.getRoom().getRoomEvent();
+
+		if (!event.expired() && event.lock()->isCleared() == false)
+		{
+			if (plan[y][rect.x] == 'E' || plan[y][rect.x + rect.h] == 'E')
+				return (true);
+		}
 	}
 	if (gSdl.key.a_key && flag == 1)
 	{
 		float x = rect.x - 0.1;
 		if (plan[rect.y][x] == '1' || plan[rect.y + rect.h][x] == '1')
 			return (true);
+
+		//if the event in the room is not cleared, player cant go on 'E' tiles
+		std::weak_ptr<ARoomEvent> event = player.getRoom().getRoomEvent();
+
+		if (!event.expired() && event.lock()->isCleared() == false)
+		{
+			if (plan[rect.y][x] == 'E' || plan[rect.y + rect.h][x] == 'E')
+				return (true);
+		}
 	}
 	if (gSdl.key.s_key && flag == 2)
 	{
 		float y = rect.y + 0.1;
 		if (plan[y + rect.h][rect.x] == '1' || plan[y + rect.h][rect.x + rect.w] == '1')
 			return (true);
+		
+		//if the event in the room is not cleared, player cant go on 'E' tiles
+		std::weak_ptr<ARoomEvent> event = player.getRoom().getRoomEvent();
+
+		if (!event.expired() && event.lock()->isCleared() == false)
+		{
+			if (plan[y + rect.h][rect.x] == 'E' || plan[y + rect.h][rect.x + rect.w] == 'E')
+				return (true);
+		}
 	}
 	if (gSdl.key.d_key && flag == 3)
 	{
 		float x = rect.x + 0.1;
 		if (plan[rect.y][x + rect.h] == '1' || plan[rect.y + rect.h][x + rect.w] == '1')
 			return (true);
+		
+		//if the event in the room is not cleared, player cant go on 'E' tiles
+		std::weak_ptr<ARoomEvent> event = player.getRoom().getRoomEvent();
+
+		if (!event.expired() && event.lock()->isCleared() == false)
+		{
+			if (plan[rect.y][x + rect.h] == 'E' || plan[rect.y + rect.h][x + rect.w] == 'E')
+				return (true);
+		}
 	}
 	return (false);
 }
@@ -169,7 +206,7 @@ void	Player::move(float timeStep) {
 	if (gSdl.key.w_key)
 	{
 		y -= 0.1;
-		if (y >= 0 && !checkWallHitBox(plan, _wallHitBox, 0))
+		if (y >= 0 && !checkWallHitBox(plan, _wallHitBox, 0, *this))
 			this->setPos(x, y);
 		else
 			y += 0.1;
@@ -177,7 +214,7 @@ void	Player::move(float timeStep) {
 	if (gSdl.key.a_key)
 	{
 		x -= 0.1;
-		if (x >= 0 && !checkWallHitBox(plan, _wallHitBox, 1))
+		if (x >= 0 && !checkWallHitBox(plan, _wallHitBox, 1, *this))
 			this->setPos(x, y);
 		else
 			x += 0.1;
@@ -185,7 +222,7 @@ void	Player::move(float timeStep) {
 	if (gSdl.key.s_key)
 	{
 		y += 0.1;
-		if (y < room.getHeight() && !checkWallHitBox(plan, _wallHitBox, 2))
+		if (y < room.getHeight() && !checkWallHitBox(plan, _wallHitBox, 2, *this))
 			this->setPos(x, y);
 		else
 			y -= 0.1;
@@ -193,11 +230,26 @@ void	Player::move(float timeStep) {
 	if (gSdl.key.d_key)
 	{
 		x += 0.1;
-		if (x < room.getWidth() && !checkWallHitBox(plan, _wallHitBox, 3))
+		if (x < room.getWidth() && !checkWallHitBox(plan, _wallHitBox, 3, *this))
 			this->setPos(x, y);
 		else
 			x -= 0.1;
 	}
+}
+
+
+// define if the is atcually attackimg or not
+
+void	Player::startAtk(void) {
+	this->_atkState = true;
+}
+
+void	Player::endAtk(void) {
+	this->_atkState = false;
+}
+
+bool	Player::checkAtkState(void) const {
+	return (_atkState);
 }
 
 //----------------------------------------------------------------

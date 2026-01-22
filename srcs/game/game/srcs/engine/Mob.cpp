@@ -17,13 +17,15 @@ int						Mob::_atkImgH;
 int						Mob::_idleImgW;
 int						Mob::_idleImgH;
 
-Mob::Mob(float x, float y, int hp) : _x(x), _y(y), _screenX(0), _screenY(0), _hp(hp), _last_dir(0), _box(_x, _y, _screenX, _screenY, _last_dir) {
+Mob::Mob(float x, float y, int hp) : _x(x), _y(y), _screenX(0), _screenY(0), _hp(hp), _last_dir(0), _frame(0), _isInvinsible(false), _box(_x, _y, _screenX, _screenY, _last_dir) {
 	return ;
 }
 
 Mob::~Mob(void) {
 
 }
+
+//------------------------assets importation related---------------------
 
 void	Mob::importMobsWalkAssets(int tile_size) {
 		SDL_Surface *image = SDL_LoadBMP("assets/sprite/Orc-Walk.bmp");
@@ -155,6 +157,10 @@ void	Mob::importMobsAssets(int tile_size) {
 	return ;
 }
 
+//-----------------------------------------------------------------------
+
+//----------------------------setter-------------------------------------
+
 void	Mob::setPos(float x, float y) {
 	_x = x;
 	_y = y;
@@ -166,19 +172,19 @@ void	Mob::setHp(int hp) {
 	return ;
 }
 
-float	Mob::getX(void) {
+float	Mob::getX(void) const {
 	return (_x);
 }
 
-float	Mob::getY(void) {
+float	Mob::getY(void) const {
 	return (_y);
 }
 
-int		Mob::getHp(void) {
+int		Mob::getHp(void) const {
 	return (_hp);
 }
 
-int		Mob::getLastDir(void) {
+int		Mob::getLastDir(void) const {
 	return (_last_dir);
 }
 
@@ -186,19 +192,51 @@ HitBox	&Mob::getBox(void) {
 	return (_box);
 }
 
-float	Mob::getScreenX(void) {
+float	Mob::getScreenX(void) const {
 	return (_screenX);
 }
 
-float	Mob::getScreenY(void) {
+float	Mob::getScreenY(void) const {
 	return (_screenY);
 }
 
+int		Mob::getFrame(void) const {
+	return (_frame);
+}
+
+//-----------------------------------------------------------------------
+
 void	Mob::updateScreenPos(float camX, float camY, int tile_s) {
-	(void)tile_s;
-	// std::cout << "posX : " << (_x - camX) * tile_s << " " << "posY : " << (_y - camY) * tile_s << std::endl;
 	_screenX = (_x - camX) * tile_s;
 	_screenY = (_y - camY) * tile_s;
+	return ;
+}
+
+void	Mob::startInvinsibleFrame(void) {
+	this->_isInvinsible = true;
+	this->_frame = -1;
+}
+
+void	Mob::endInvinsibleFrame(void) {
+	this->_isInvinsible = false;
+	this->_frame = 0;
+}
+
+bool	Mob::checkInvinsibleFrame(void) {
+	return (this->_isInvinsible);
+}
+
+//-------------printer and render----------------------------------------
+
+void	Mob::printMob(float camX, float camY, int tile_size) {
+
+	if (this->_frame >= 24)
+		this->_frame = 0;
+
+	float x = ((this->_x - camX) * tile_size) - (0.5f * tile_size);
+	float y = ((this->_y - camY) * tile_size) - (0.5f * tile_size);
+	this->rendMobIdle(x, y, this->_frame / 4, 2);
+	this->_frame++;
 	return ;
 }
 
@@ -276,3 +314,5 @@ void	Mob::rendMobAttack(int x, int y, int assetIndex, float scale) {
 	else
 		SDL_RenderCopyEx(gSdl.renderer, _mobAttackText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
 }
+
+//-----------------------------------------------------------------------
