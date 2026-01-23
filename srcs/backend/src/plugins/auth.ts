@@ -13,7 +13,7 @@ export default fp(async (fastify) => {
 
 	await fastify.register(fastifyJwt, {
 		secret: JWT_SECRET,
-		sign: { expiresIn: "15m" }
+		sign: { expiresIn: "7d" }
 	});
 
 	fastify.decorate("authenticate", async (request: FastifyRequest, reply: FastifyReply) => {
