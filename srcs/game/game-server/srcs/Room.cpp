@@ -26,12 +26,13 @@ Room::Room(void)
 {
 	this->_width = 10;
 	this->_height = 10;
+	this->_rotated = 0;
 	this->_exits = {0, 0, 0, 0};
 	this->_exitsLoc.fill({-1, -1});
 	this->_name = "Empty";
 }
 
-Room::Room(Room const &rhs): _width(rhs._width), _height(rhs._height),
+Room::Room(Room const &rhs): _width(rhs._width), _height(rhs._height), _rotated(rhs._rotated),
 				_exits(rhs._exits), _exitsLoc(rhs._exitsLoc), _name(rhs._name), _roomPlan(rhs._roomPlan)
 {}
 
@@ -50,6 +51,11 @@ int Room::getHeight() const
 	return this->_height;
 }
 
+int Room::getRotated(void) const
+{
+	return this->_rotated;
+}
+
 std::string Room::getName() const
 {
 	return this->_name;
@@ -63,6 +69,11 @@ std::vector<std::string> Room::getRoomPlan() const
 std::array<bool, 4> Room::getExits() const
 {
 	return this->_exits;
+}
+
+void	Room::incrementRotate(void)
+{
+	this->_rotated++;
 }
 
 std::array<std::array<int, 2>, 4> Room::getExitsLoc() const
@@ -91,11 +102,20 @@ void Room::randomizeRoom()
 	this->_exits = {0, 0, 0, 0};
 	int num = rand() % 4;
 	if (num == 1)
+	{
 		this->turnMapLeft();
+		this->_rotated = 1;
+	}
 	else if (num == 2)
+	{
 		this->turnMapRight();
+		this->_rotated = 3;
+	}
 	else if (num == 3)
+	{
 		this->turnMapUpDown();
+		this->_rotated = 2;
+	}
 }
 
 void Room::identifyExits()

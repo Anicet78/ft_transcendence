@@ -57,8 +57,9 @@ class Map
 	
 	public:
 		quadList				&getHead(void);
-		std::vector<quadList>	getNodes() const;
+		std::vector<quadList>	&getNodes();
 		void					fillMap(void);
+		void					setRoomInNode(std::string &roomName, int x, int y, int rot, int roomSet);
 		void					setWaitingRoom();
 };
 

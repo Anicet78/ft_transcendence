@@ -14,6 +14,10 @@ class Session
 		Map										_watingRoom;
 		bool									_running;
 		bool									_ended;
+		std::string								_mapInfos;
+
+	private:
+		std::string								sendMaps(void);
 
 
 	public:
@@ -22,6 +26,7 @@ class Session
 		~Session();
 	
 	public:
+		void									launch();
 		void									addParty(Party &newParty);
 		bool									removePlayer(std::shared_ptr<Player> rmPlayer);
 		bool									isPlayerInSession(std::string &uid) const;
@@ -32,6 +37,7 @@ class Session
 		int										getPlaceLeft(void) const;
 		int										getNumPlayers(void) const;
 		bool									isRunning(void) const;
+		bool									doesAllPlayersConnected() const;
 		bool									hasEnded(void) const;
 };
 

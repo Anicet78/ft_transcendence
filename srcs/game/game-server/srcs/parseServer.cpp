@@ -108,6 +108,7 @@ void updateRoom(Player &player)
 			&& !player.getNode()->south.expired())
 		{
             player.setExit('S');
+            player.setPrevNode(player.getNode());
 			player.setNode(player.getNode()->south.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[0][0] + 0.5, exitsLoc[0][1] + 1);
@@ -116,6 +117,7 @@ void updateRoom(Player &player)
 			&& !player.getNode()->north.expired())
 		{
             player.setExit('N');
+            player.setPrevNode(player.getNode());
 			player.setNode(player.getNode()->north.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[2][0] + 0.5, exitsLoc[2][1] - 0.1);
@@ -124,6 +126,7 @@ void updateRoom(Player &player)
 			&& !player.getNode()->east.expired())
 		{
             player.setExit('E');
+            player.setPrevNode(player.getNode());
 			player.setNode(player.getNode()->east.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[3][0] + 1, exitsLoc[3][1] + 0.5);
@@ -132,13 +135,17 @@ void updateRoom(Player &player)
 			&& !player.getNode()->west.expired())
 		{
             player.setExit('W');
+            player.setPrevNode(player.getNode());
 			player.setNode(player.getNode()->west.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[1][0] - 0.1, exitsLoc[1][1] + 0.5);
 		}
-        else
-            player.setExit(0);
 	}
+    else if (player.getExit() > 32)
+    {
+        player.setExit(' ');
+    }
+    
 }
 
 void sendPlayerState(Player &player, Session &session, std::string uid_leave)
@@ -148,13 +155,13 @@ void sendPlayerState(Player &player, Session &session, std::string uid_leave)
                         + "\"player_health\" : " + std::to_string(player.getHp()) + ", "
                         + "\"player_anim\" : " + std::to_string(player.getAnim()) + ", "
                         + "\"player_exit\" : \"" + player.getExit() + "\"";
-    player.setExit(' ');
+    
     int sumPlayer = 1;
     for (auto &oplayer : session.getPlayers())
     {
         if (oplayer->getUid() == player.getUid())
             continue ;
-        if (oplayer->getNode() == player.getNode())
+        if (oplayer->getNode() == player.getNode() || (oplayer->getPrevNode() == player.getNode() && oplayer->getExit() > 32))
         {
             msg += ", \"player" + std::to_string(sumPlayer) + "_x\" : " + std::to_string(oplayer->getX()) + ", "
                     + "\"player" + std::to_string(sumPlayer) + "_y\" : " + std::to_string(oplayer->getY()) + ", "
@@ -164,9 +171,8 @@ void sendPlayerState(Player &player, Session &session, std::string uid_leave)
                     + "\"player" + std::to_string(sumPlayer) + "_anim\" : " + std::to_string(oplayer->getAnim()) + ", "
                     + "\"player" + std::to_string(sumPlayer) + "_dir\" : " + std::to_string(oplayer->getLastDir()) + ", "
                     + "\"player" + std::to_string(sumPlayer) + "_exit\" : \"" + oplayer->getExit() + "\"";
-            if (!uid_leave.empty() && uid_leave == oplayer->getUid())
-                msg += + ", \"player" + std::to_string(sumPlayer) + "_leave\" : \"true\"";
-            oplayer->setExit(' ');
+            if ((!uid_leave.empty() && uid_leave == oplayer->getUid()) || oplayer->getExit() > 32)
+                msg += ", \"player" + std::to_string(sumPlayer) + "_leave\" : \"true\"";
             sumPlayer++;
         }
     }
@@ -190,7 +196,7 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
         data->jsonMsg.clear();
         return 0;
     }
-    else if (req["action"] == "player_move" || req["action"] == "connected")
+    else if (req["action"] == "player_move" || req["action"] == "connected" || req["action"] == "launched")
     {
         for (Session &session : _sessions)
         {
@@ -199,6 +205,8 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
                 std::shared_ptr<Player> player = session.getPlayer(ws->getUserData()->playerId);
                 if (req["action"] == "connected")
                     player->setConnexion(1);
+                if (req["action"] == "launched")
+                    player->setLaunched(1);
                 if (req["action"] == "player_move")
                 {
                     updatePlayerPos(*player, req);
@@ -209,9 +217,13 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
                 {
                     if (oplayer->getUid() == player->getUid())
                         continue ;
-                    if (oplayer->getNode() == player->getNode() && oplayer->isConnected())
+                    if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isConnected() && !session.isRunning())
+                        sendPlayerState(*oplayer, session, "");
+                    else if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isLaunched())
                         sendPlayerState(*oplayer, session, "");
                 }
+                if (!session.getPlaceLeft() && session.doesAllPlayersConnected() && !session.isRunning())
+                    session.launch();
                 break;
             }
         }

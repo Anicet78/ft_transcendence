@@ -25,6 +25,7 @@ class Player
 		std::string	_groupName; //party is designing an appartenance at a game room, with all of the other players of the session
 		bool		_inQueue;
 		bool		_inSession;
+		bool		_launched;
 		bool		_connected;
 		char		_exit;
 		uWS::WebSocket<false, true, PerSocketData> *_ws;
@@ -36,6 +37,7 @@ class Player
 
 	//pos in map
 		quadList	_node;
+		quadList	_prev_node;
 
 	//anim
 		int			_anim;
@@ -56,12 +58,14 @@ class Player
 		std::string	getName(void) const;
 		Room		getRoom(void) const;
 		quadList	getNode(void) const;
+		quadList	getPrevNode(void) const;
 		char		getExit(void) const;
 		int			getGroupSize() const;
 		int			getAnim(void) const;
 		std::string	getPartyName(void) const;
 		bool		isInQueue(void)	const;
 		bool		isInSession(void) const;
+		bool		isLaunched(void) const;
 		bool		isConnected(void) const;
 		uWS::WebSocket<false, true, PerSocketData> *getWs(void) const;
 
@@ -75,8 +79,10 @@ class Player
 
 	//setter
 		void		setConnexion(bool c);
+		void		setLaunched(bool flag);
 		void		setExit(char c);
 		void		setNode(const quadList &node);
+		void		setPrevNode(const quadList &node);
 		void		setPos(float x, float y);
 		void		setHp(int hp);
 		void		setAtk(int atk);

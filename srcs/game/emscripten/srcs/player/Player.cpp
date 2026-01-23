@@ -75,7 +75,7 @@ void	Player::updateLastDir(void)
 
 void Player::setNode(const quadList &node)
 {
-	if (!this->_node)
+	if (this->_node->getRoom()->getName() == "waiting" || this->_node->getRoom()->getName() == "start")
 	{
 		this->_node = node;
 		int i = 0;
