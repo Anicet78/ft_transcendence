@@ -12,7 +12,6 @@ export const GameProfileSchema = Type.Object({
 export type GameProfile = Static<typeof GameProfileSchema>;
 
 
-
 export const UpdateProfileBodySchema = Type.Object({
   firstName: Type.Optional(Type.String()),
   lastName: Type.Optional(Type.String()),
@@ -24,7 +23,6 @@ export const UpdateProfileBodySchema = Type.Object({
 export type UpdateProfileBody = Static<typeof UpdateProfileBodySchema>; 
 
 
-
 export const ProfileResponseSchema = Type.Object({
   appUserId: Type.String(),
   firstName: Type.String(),
@@ -34,13 +32,12 @@ export const ProfileResponseSchema = Type.Object({
   avatarUrl: Type.Union([Type.String(), Type.Null()]),
   availability: Type.Boolean(),
   region: Type.String(),
-  createdAt: Type.String(),
-  updatedAt: Type.String(),
+  createdAt: Type.String({ format: 'date-time' }),
+  updatedAt: Type.String({ format: 'date-time' }),
   lastConnectedAt: Type.String(),
-  gameProfile: GameProfileSchema
+  gameProfile: Type.Union([GameProfileSchema, Type.Null()])
 });
 export type ProfileResponse = Static<typeof ProfileResponseSchema>;
-
 
 
 export const PublicProfileResponseSchema = Type.Object({
@@ -48,7 +45,44 @@ export const PublicProfileResponseSchema = Type.Object({
   avatarUrl: Type.Union([Type.String(), Type.Null()]),
   availability: Type.Boolean(),
   region: Type.String(),
-  createdAt: Type.String(),
-  gameProfile: GameProfileSchema
+  createdAt: Type.String({ format: 'date-time' }),
+  gameProfile: Type.Union([GameProfileSchema, Type.Null()])
 });
 export type PublicProfileResponse = Static<typeof PublicProfileResponseSchema>;
+
+
+
+
+// export const GameProfileSchema = Type.Object({
+//   gameProfileId: Type.String({ format: 'uuid' }),
+//   totalGames: Type.Number(),
+//   totalWins: Type.Number(),
+//   totalLoses: Type.Number(),
+//   totalEnemiesKilled: Type.Number(),
+//   totalXp: Type.Number(),
+//   level: Type.Number(),
+//   bestTime: Type.Optional(Type.Number()),
+// });
+
+// export const PrivateProfileSchema = Type.Object({
+//   appUserId: Type.String({ format: 'uuid' }),
+//   firstName: Type.String(),
+//   lastName: Type.String(),
+//   username: Type.String(),
+//   mail: Type.String(),
+//   avatarUrl: Type.Optional(Type.String()),
+//   availability: Type.Boolean(),
+//   region: Type.String(),
+//   createdAt: Type.String({ format: 'date-time' }),
+//   gameProfile: Type.Optional(GameProfileSchema),
+// });
+
+// export const PublicProfileSchema = Type.Object({
+//   username: Type.String(),
+//   avatarUrl: Type.Optional(Type.String()),
+//   createdAt: Type.String({ format: 'date-time' }),
+//   gameProfile: Type.Optional(GameProfileSchema),
+// });
+
+// export type PrivateProfile = Static<typeof PrivateProfileSchema>
+// export type PublicProfile = Static<typeof PublicProfileSchema>
