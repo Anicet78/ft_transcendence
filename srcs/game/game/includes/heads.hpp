@@ -12,7 +12,7 @@ enum state
 
 int	init_sdl(Engine &gSdl);
 int mainloop(Engine &sdl, Map &floor0);
-SDL_Texture *loadTexture(std::string path, Engine &sdl);
+// SDL_Texture *loadTexture(std::string path, Engine &sdl);
 
 void	key_down(void);
 void	key_up(void);

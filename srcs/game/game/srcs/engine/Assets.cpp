@@ -16,30 +16,32 @@ Assets::~Assets(void) {
 
 void Assets::importAssets(std::string path, int tile_size) {
 
-	//we firs need to load the image into a surface
-	SDL_Surface *image = SDL_LoadBMP(path.c_str());
-	if (!image)
-	{
-		std::string error = "Error in image conversion to surface : ";
-		error += SDL_GetError();
-		throw std::runtime_error(error);
-	}
+	// //we firs need to load the image into a surface
+	// SDL_Surface *image = SDL_LoadBMP(path.c_str());
+	// if (!image)
+	// {
+	// 	std::string error = "Error in image conversion to surface : ";
+	// 	error += SDL_GetError();
+	// 	throw std::runtime_error(error);
+	// }
 
-	//convert it into texture
-	_MapTexture = SDL_CreateTextureFromSurface(gSdl.renderer, image);
-	if (!_MapTexture)
-	{
-		std::string error = "Error in surface conversion to texture : ";
-		error += SDL_GetError();
-		throw std::runtime_error(error);
-		return ;
-	}
+	// //convert it into texture
+	// _MapTexture = SDL_CreateTextureFromSurface(gSdl.renderer, image);
+	// if (!_MapTexture)
+	// {
+	// 	std::string error = "Error in surface conversion to texture : ";
+	// 	error += SDL_GetError();
+	// 	throw std::runtime_error(error);
+	// 	return ;
+	// }
 
-	_MapImgW = image->w;
-	_MapImgH = image->h;
+	// _MapImgW = image->w;
+	// _MapImgH = image->h;
 
-	//dont need surface anymore after conversion
-	SDL_FreeSurface(image);
+	// //dont need surface anymore after conversion
+	// SDL_FreeSurface(image);
+
+	_MapTexture = loadTexture(path, _MapImgW, _MapImgH);
 
 	//define every tile asset position and stock it in _mapAssets
 	int y = 0;

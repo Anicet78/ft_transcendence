@@ -24,5 +24,6 @@
 # define SCREEN_HEIGHT 800
 # define MAX_FPS 60
 
+SDL_Texture *loadTexture(std::string path, int &imgW, int &imgH);
 
 #endif

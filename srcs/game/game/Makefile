@@ -15,18 +15,18 @@ SRCS		=	main.cpp \
 				engine/Engine.cpp \
 				engine/Key.cpp \
 				engine/Assets.cpp \
-				engine/sdl_loop.cpp \
+				engine/sdlLoop.cpp \
 				engine/load_image.cpp \
-				engine/init_sdl.cpp \
-				engine/key_action.cpp \
-				engine/map_printer.cpp \
+				engine/initSdl.cpp \
+				engine/keyAction.cpp \
+				engine/mapPrinter.cpp \
 				engine/SDLTimer.cpp \
 				player/Player.cpp \
 				player/PlayerAssets.cpp \
 				engine/Mob.cpp \
 				engine/RoomEvent.cpp \
 				engine/HitBox.cpp \
-				engine/print_entity.cpp \
+				engine/printEntity.cpp \
 				player/Camera.cpp \
 				mapGen/mapMain.cpp Room.cpp Map.cpp aStar.cpp mapGen/mapGen.cpp
 
