@@ -5,4 +5,4 @@ export const AppErrorSchema = Type.Object({
 	code: Type.Optional(Type.String())
 });
 
-export type User = Static<typeof AppErrorSchema>
+export type User = Static<typeof AppErrorSchema> //shouldnt be type Error ?

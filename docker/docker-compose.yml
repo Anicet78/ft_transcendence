@@ -20,6 +20,8 @@ services:
       context: ../srcs/backend
       dockerfile: Dockerfile
     container_name: node-c
+    ports:
+      - 3000:3000
     restart: on-failure
     env_file:
       - .env

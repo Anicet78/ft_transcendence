@@ -20,6 +20,7 @@ export const UserService = {
 				lastName: user.lastname,
 				username: user.username,
 				mail: user.email,
+				region: user.region,
 				passwordHash: user.passwordHash
 			}
 		});
