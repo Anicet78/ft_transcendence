@@ -6,15 +6,15 @@
 class HitBox
 {
 private:
-	SDL_FRect	_wallHitBox;
+	// SDL_FRect	_wallHitBox;
 	SDL_FRect	_atkHitBox;
 	SDL_FRect	_hurtBox;
 
 	bool		_atkActive;
 	float		_tile_s;
 
-	float		&_x;
-	float		&_y;
+	// float		&_x;
+	// float		&_y;
 
 	float		&_screenX;
 	float		&_screenY;
@@ -25,7 +25,7 @@ public:
 	HitBox(float &x, float &y, float &screenX, float &screenY, int &last_dir);
 	~HitBox();
 
-	SDL_FRect	&getWallHitBox(void);
+	// SDL_FRect	&getWallHitBox(void);
 	SDL_FRect	&getAtkHitBox(void);
 	SDL_FRect	&getDmgHitBox(void);
 

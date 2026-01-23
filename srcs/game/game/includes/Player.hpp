@@ -28,6 +28,10 @@ private:
 	int			_atk;
 	int			_def;
 
+//	player action
+
+	bool		_atkState;
+
 //hitbox
 	SDL_FRect	_wallHitBox;
 	SDL_FRect	_hitBox;
@@ -66,9 +70,13 @@ public:
 	void	setDef(int def);
 	void	setWallHitBox(void);
 
+//player attacking action
+	void	startAtk(void);
+	void	endAtk(void);
+	bool	checkAtkState(void) const;
+
 //action
 	void		move(float timeStep);
-	void		attack(void);
 	void		takeDamage(int amount);
 	void		heal(int amount);
 

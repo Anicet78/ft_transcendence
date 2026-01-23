@@ -1,6 +1,8 @@
 #include<HitBox.hpp>
 
-HitBox::HitBox(float &x, float &y, float &screenX, float &screenY, int &last_dir) : _wallHitBox({0, 0, 0, 0}), _atkHitBox({0, 0, 0, 0}), _hurtBox({0, 0, 0, 0}), _atkActive(false), _x(x), _y(y), _screenX(screenX), _screenY(screenY), _last_dir(last_dir) {
+HitBox::HitBox(float &x, float &y, float &screenX, float &screenY, int &last_dir) : /*_wallHitBox({0, 0, 0, 0}),*/ _atkHitBox({0, 0, 0, 0}), _hurtBox({0, 0, 0, 0}), _atkActive(false), /*_x(x), _y(y),*/ _screenX(screenX), _screenY(screenY), _last_dir(last_dir) {
+	(void)x;
+	(void)y;
 	_tile_s = gSdl.getMapTileSize() * 2;
 	return ;
 }
@@ -9,9 +11,9 @@ HitBox::~HitBox(void) {
 	return ;
 }
 
-SDL_FRect	&HitBox::getWallHitBox(void) {
-	return(_wallHitBox);
-}
+// SDL_FRect	&HitBox::getWallHitBox(void) {
+// 	return(_wallHitBox);
+// }
 
 SDL_FRect	&HitBox::getAtkHitBox(void) {
 	return (_atkHitBox);
@@ -23,18 +25,16 @@ SDL_FRect	&HitBox::getDmgHitBox(void) {
 
 void	HitBox::updateHitBox() {
 
-	(void)_last_dir;
-	//update wallHitBox :
+	//update wallHitBox
 
-	_wallHitBox.x = _x - 0.3f;
-	_wallHitBox.y = _y + 0.1f;
-	_wallHitBox.w = 0.6f;
-	_wallHitBox.h = 0.2f;
-
+	// _wallHitBox.x = _x - 0.3f;
+	// _wallHitBox.y = _y + 0.1f;
+	// _wallHitBox.w = 0.6f;
+	// _wallHitBox.h = 0.2f;
+	//-----------------
 	float	hitX = _screenX - (0.5 * _tile_s);
 	float	hitY = (_screenY - (0.5 * _tile_s)) - 0.2f * _tile_s;
 	float	hitW = 0.8f * _tile_s;
-
 
 	// update atkhitbox
 
@@ -53,12 +53,14 @@ void	HitBox::updateHitBox() {
 		_atkHitBox.w = _tile_s;
 		_atkHitBox.h = 1.3f * _tile_s;
 	}
+	//-----------------
 
 	//update hurtbox
 	_hurtBox.x = hitX;
 	_hurtBox.y = hitY;
 	_hurtBox.w = 1.2f * hitW;
 	_hurtBox.h = 1.3f * _tile_s;
+	//--------------
 	return ;
 }
 

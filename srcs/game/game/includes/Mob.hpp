@@ -9,10 +9,12 @@ private:
 	static std::map<int, SDL_Rect>	_mobWalk;
 	static std::map<int, SDL_Rect>	_mobAttack;
 	static std::map<int, SDL_Rect>	_mobIdle;
+	static std::map<int, SDL_Rect>	_mobHurt;
 
 	static SDL_Texture	*_mobWalkText;
 	static SDL_Texture	*_mobAttackText;
 	static SDL_Texture	*_mobIdleText;
+	static SDL_Texture	*_mobHurtText;
 
 	static int						_walkImgW;
 	static int						_walkImgH;
@@ -23,9 +25,13 @@ private:
 	static int						_idleImgW;
 	static int						_idleImgH;
 
+	static int						_hurtImgW;
+	static int						_hurtImgH;
+
 	static void	importMobsWalkAssets(int tile_size);
 	static void	importMobsAttackAssets(int tile_size);
 	static void	importMobsIdleAssets(int tile_size);
+	static void	importMobsHurtAssets(int tile_size);
 
 //----------------------------------------------------
 	float	_x;
@@ -38,6 +44,11 @@ private:
 
 	int		_last_dir;
 
+	// int		_anim;
+	int		_frame;
+
+	bool	_isInvinsible;
+
 	HitBox	_box;
 
 public:
@@ -47,12 +58,13 @@ public:
 
 	static void	importMobsAssets(int tile_size);
 
-	float	getX(void);
-	float	getY(void);
-	float	getScreenX(void);
-	float	getScreenY(void);
-	int		getHp(void);
-	int		getLastDir(void);
+	float	getX(void) const;
+	float	getY(void) const;
+	float	getScreenX(void) const;
+	float	getScreenY(void) const;
+	int		getHp(void) const;
+	int		getLastDir(void) const;
+	int		getFrame(void) const;
 	HitBox	&getBox(void);
 	void	updateScreenPos(float camX, float camY, int tile_s);
 
@@ -61,9 +73,18 @@ public:
 	void	setHp(int hp);
 	void	updateLastDir(void);
 
+//make the mob invinsible after getting attacked
+	void	startInvinsibleFrame(void);
+	void	endInvinsibleFrame(void);
+	bool	checkInvinsibleFrame(void);
+
+//mob renderer
 	void	rendMobWalk(int x, int y, int index, float scale);
 	void	rendMobAttack(int x, int y, int index, float scale);
 	void	rendMobIdle(int x, int y, int index, float scale);
+	void	rendMobHurt(int x, int y, int index, float scale);
+
+	void	printMob(float camX, float camY, int tile_size);
 };
 
 
