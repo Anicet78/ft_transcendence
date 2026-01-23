@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import * as profileController from '../../controllers/profile/profileController.js';
-import { /*UpdateProfileBodySchema,*/ ProfileResponseSchema, PublicProfileResponseSchema } from '../../schema/profileSchema.js';
+import { UpdateProfileBodySchema, ProfileResponseSchema, PublicProfileResponseSchema } from '../../schema/profileSchema.js';
 
 export async function profileRoutes(fastify: FastifyInstance) {
 
@@ -29,15 +29,15 @@ export async function profileRoutes(fastify: FastifyInstance) {
     handler: profileController.getPublicProfile
   });
 
-  // fastify.patch('/profile', {
-  //   schema: {
-  //     body: UpdateProfileBodySchema,
-  //     response: {
-  //       200: ProfileResponseSchema
-  //     }
-  //   },
-  //   handler: profileController.updateProfile
-  // });
+  fastify.patch('/profile', {
+    schema: {
+      body: UpdateProfileBodySchema,
+      response: {
+        200: ProfileResponseSchema
+      }
+    },
+    handler: profileController.updateProfile
+  });
 
   fastify.delete('/profile', {
     schema: {

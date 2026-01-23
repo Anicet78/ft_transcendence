@@ -1,7 +1,7 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import * as profileService from '../../services/db/profileService.js';
-// import { Prisma } from '@prisma/client';
-//import { /*type UpdateProfileBody,*/ type ProfileResponse, type PublicProfileResponse} from '../../schema/profileSchema.js';
+import { Prisma } from '@prisma/client';
+import { type UpdateProfileBody/*, type ProfileResponse, type PublicProfileResponse */} from '../../schema/profileSchema.js';
 import { mapProfileToResponse, mapPublicProfileToResponse } from './profileMapper.js';
 import { serializePrisma } from '../../utils/serializePrisma.js';
 
@@ -15,8 +15,6 @@ export async function getProfile( req: FastifyRequest, reply: FastifyReply ) {
       return reply.status(404).send({ error: 'Profile not found' });
     }
 
-    // const response: ProfileResponse = mapProfileToResponse(profile);
-    // return reply.send(response);
     return reply.send(serializePrisma(mapProfileToResponse(profile)));
 
   } catch (err) {
@@ -24,7 +22,6 @@ export async function getProfile( req: FastifyRequest, reply: FastifyReply ) {
     return reply.status(500).send({ error: 'Internal server error' });
   }
 }
-
 
 // GET /profile/:id
 export async function getPublicProfile( req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply ) {
@@ -36,8 +33,6 @@ export async function getPublicProfile( req: FastifyRequest<{ Params: { id: stri
       return reply.status(404).send({ error: 'User not found' });
     }
 
-    // const response: PublicProfileResponse = mapPublicProfileToResponse(profile);
-    // return reply.send(response);
     return reply.send(serializePrisma(mapPublicProfileToResponse(profile)));
 
   } catch (err) {
@@ -46,61 +41,38 @@ export async function getPublicProfile( req: FastifyRequest<{ Params: { id: stri
   }
 }
 
+export async function updateProfile( req: FastifyRequest<{ Body: UpdateProfileBody }>, reply: FastifyReply ) {
+  try {
+    const userId = req.user.id;
 
-// // PATCH /profile
-// export async function updateProfile( req: FastifyRequest<{ Body: UpdateProfileBody }>, reply: FastifyReply ) {
-//   try {
-//     const userId = req.user.id;
-//     const body = req.body;
+    //Specify which fields can be updated
+    const allowedFields = new Set([
+      'firstName', 'lastName', 'username', 'avatarUrl', 'region', 'availability'
+    ]);
 
-// 	const allowedFields: (keyof UpdateProfileBody)[] = [
-// 		'firstName', 'lastName', 'username',
-// 		'avatarUrl', 'region', 'availability'
-// 	];
+    const bodyFields = Object.keys(req.body);
+    const forbidden = bodyFields.filter(key => !allowedFields.has(key));
 
-// 	const updateData: { [K in keyof UpdateProfileBody]?: UpdateProfileBody[K] } = {};
+    if (forbidden.length > 0) {
+      return reply.status(400).send({ error: `Forbidden field(s): ${forbidden.join(', ')}`});
+    }
 
-// 	for (const key of allowedFields) {
-// 		const value = body[key];
-// 		if (value !== undefined) {
-// 			updateData[key] = value;
-// 		}
-// 	}
+    //if allowed, update profile
+    const updated = await profileService.updateProfile(userId, req.body);
 
-// 	await profileService.updateProfile(userId, updateData);
+    return reply.send(serializePrisma(mapProfileToResponse(updated)));
 
-//     // const updated = await profileService.updateProfile(userId, updateData);
+  } catch (err) {
+    req.log.error(err);
 
-//     // Prisma returns Date → convert to string
-//     // const response: ProfileResponse = {
-//     //   ...updated,
-//     //   createdAt: updated.createdAt.toISOString(),
-//     //   updatedAt: updated.updatedAt.toISOString()
-//     // };
-//     // return reply.send(response);
-
-// 	// Fetch full profile so we return the correct TypeBox response
-// 	const fullProfile = await profileService.getProfile(userId);
-// 	if (!fullProfile) {
-// 		return reply.status(500).send({ error: 'Profile not found after update' });
-// 	}
-
-// 	const response = mapProfileToResponse(fullProfile);
-// 	return reply.send(response);
-
-//   } catch (err) {
-//     req.log.error(err);
-
-// 	if (err instanceof Prisma.PrismaClientKnownRequestError) {
-//       if (err.code === 'P2002') {
-//       	return reply.status(409).send({ error: 'Username or email already exists' });
-//     	}//Prisma error, unique constraint violation (username or email already taken)
-//     }
-
-//     return reply.status(500).send({ error: 'Internal server error' });
-//   }
-// }
-
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2002') {
+      	return reply.status(409).send({ error: 'Username or email already exists' });
+    	}//Prisma error code, unique constraint violation (username or email already taken)
+    }
+    return reply.status(500).send({ error: 'Internal server error' });
+  }
+}
 
 // DELETE /profile
 export async function deleteProfile(req: FastifyRequest, reply: FastifyReply) {

@@ -28,6 +28,7 @@ export const profileSelect = Prisma.validator<Prisma.AppUserSelect>()({
 export type PrismaProfile = Prisma.AppUserGetPayload<{ select: typeof profileSelect }>;
 
 // Access authenticated user's to its own profile
+//rename with getPublicProfile
 export async function getProfile(userId: string) {
   return prisma.appUser.findUnique({
 	where: { appUserId: userId },
@@ -61,6 +62,7 @@ export async function getProfile(userId: string) {
 }
 
 // Retrieve another user's public profile
+//rename with getPublicProfileById
 export async function getPublicProfile(userId: string) {
   return prisma.appUser.findUnique({
 	where: { appUserId: userId },
@@ -86,27 +88,28 @@ export async function getPublicProfile(userId: string) {
   });
 }
 
-// // Update user's own profile
-// export async function updateProfile(userId: string, data: Record<string, unknown>) {
-//   return prisma.appUser.update({
-// 	where: { appUserId: userId },
-// 	data: {
-// 	  ...data,
-// 	  updatedAt: new Date()
-// 	},
-// 	select: {
-// 	  appUserId: true,
-// 	  firstName: true,
-// 	  lastName: true,
-// 	  username: true,
-// 	  mail: true,
-// 	  avatarUrl: true,
-// 	  availability: true,
-// 	  region: true,
-// 	  updatedAt: true
-// 	}
-//   });
-// }
+// Update user's own profile
+export async function updateProfile(userId: string, data: Record<string, unknown>) {
+  return prisma.appUser.update({
+	where: { appUserId: userId },
+	data: {
+	  ...data,
+	  updatedAt: new Date()
+	},
+	select: profileSelect
+	// select: {
+	//   appUserId: true,
+	//   firstName: true,
+	//   lastName: true,
+	//   username: true,
+	//   mail: true,
+	//   avatarUrl: true,
+	//   availability: true,
+	//   region: true,
+	//   updatedAt: true
+	// }
+  });
+}
 
 // Soft-delete the user: anonymize but keep rows for FK integrity
 export async function softDeleteProfile(userId: string) {
@@ -129,66 +132,3 @@ export async function softDeleteProfile(userId: string) {
 	}
   });
 }
-
-// export async function getUserByUsername(username: string) {
-//   return prisma.appUser.findUnique({
-//     where: { username }
-//   });
-// }
-
-
-
-
-
-// export const getPrivateProfile = (userId: string) => {
-//   return prisma.appUser.findFirst({
-//     where: {
-//       appUserId: userId,
-//       deletedAt: null,
-//     },
-//     include: {
-//       gameProfile: {
-//         where: { deletedAt: null },
-//       },
-//     },
-//   })
-// }
-
-// export const getPublicProfileById = (userId: string) => {
-//   return prisma.appUser.findFirst({
-//     where: {
-//       appUserId: userId,
-//       deletedAt: null,
-//     },
-//     select: {
-//       username: true,
-//       avatarUrl: true,
-//       createdAt: true,
-//       gameProfile: {
-//         where: { deletedAt: null },
-//       },
-//     },
-//   })
-// }
-
-// export const softDeleteProfile = async (userId: string) => {
-//   return prisma.$transaction([
-//     prisma.appUser.update({
-//       where: { appUserId: userId },
-//       data: {
-//         deletedAt: new Date(),
-//         username: `deleted_${userId}`,
-//         firstName: 'Deleted',
-//         lastName: 'User',
-//         mail: `deleted_${userId}@anon.local`,
-//         avatarUrl: null,
-//         availability: false,
-//       },
-//     }),
-//     prisma.gameProfile.updateMany({
-//       where: { userId },
-//       data: { deletedAt: new Date() },
-//     }),
-//   ])
-// }
-
