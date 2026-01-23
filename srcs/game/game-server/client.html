@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Test WebSocket uWebSockets</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        #log { border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: auto; }
+        #msg { width: 300px; }
+    </style>
+</head>
+<body>
+    <h1>Client WebSocket</h1>
+
+    <div>
+        <button id="connectBtn">Se connecter</button>
+        <button id="disconnectBtn" disabled>Se déconnecter</button>
+    </div>
+
+    <h2>Log</h2>
+    <div id="log"></div>
+
+    <h2>Envoyer un message JSON</h2>
+    <input type="text" id="msg" placeholder='Ex: {"action":"ping"}'>
+    <button id="sendBtn" disabled>Envoyer</button>
+
+    <script>
+        let socket = null;
+        const logDiv = document.getElementById('log');
+        const connectBtn = document.getElementById('connectBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+        const sendBtn = document.getElementById('sendBtn');
+        const msgInput = document.getElementById('msg');
+
+        function log(text) {
+            const p = document.createElement('p');
+            p.textContent = text;
+            logDiv.appendChild(p);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        connectBtn.onclick = () => {
+            socket = new WebSocket('ws://localhost:3000');
+
+            socket.onopen = () => {
+                log('✅ Connecté au serveur');
+                connectBtn.disabled = true;
+                disconnectBtn.disabled = false;
+                sendBtn.disabled = false;
+            };
+
+            socket.onmessage = async (event) => {
+                let data = event.data;
+
+                // Si le serveur envoie un Blob → on convertit en texte
+                if (data instanceof Blob) {
+                    data = await data.text();
+                }
+
+                try {
+                    const json = JSON.parse(data);
+                    log('📥 Reçu JSON : ' + JSON.stringify(json, null, 2));
+                } catch {
+                    log('📥 Reçu (non-JSON) : ' + data);
+                }
+            };
+
+            socket.onclose = () => {
+                log('❌ Déconnecté du serveur');
+                connectBtn.disabled = false;
+                disconnectBtn.disabled = true;
+                sendBtn.disabled = true;
+            };
+
+            socket.onerror = (err) => {
+                log('⚠️ Erreur WebSocket');
+                console.error(err);
+            };
+        };
+
+        disconnectBtn.onclick = () => {
+            if (socket) socket.close();
+        };
+
+        sendBtn.onclick = () => {
+            const text = msgInput.value.trim();
+            if (!text) return;
+
+            try {
+                const obj = JSON.parse(text); // Vérifie que c'est du JSON valide
+                const payload = JSON.stringify(obj);
+
+                log('📤 Envoyé JSON : ' + payload);
+                socket.send(payload);
+                msgInput.value = '';
+            } catch {
+                log('❌ JSON invalide');
+            }
+        };
+
+        msgInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') sendBtn.click();
+        });
+    </script>
+</body>
+</html>
