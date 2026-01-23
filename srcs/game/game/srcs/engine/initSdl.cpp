@@ -1,4 +1,4 @@
-#include"game_sdl.hpp"
+#include"Player.hpp"
 
 int	init_sdl(Engine &gSdl)
 {
@@ -19,7 +19,12 @@ int	init_sdl(Engine &gSdl)
 	//need a renderer for the texture in general
 	gSdl.renderer = SDL_CreateRenderer(gSdl.window, -1, SDL_RENDERER_ACCELERATED);
 	if (!gSdl.renderer)
+	{
+		SDL_DestroyWindow(gSdl.window);
 		std::cerr << "render/20 : " << SDL_GetError() << std::endl;
+		SDL_Quit();
+		return (0);
+	}
 
 	//start a global timer from the begining
 	if (!gSdl.timer.getStarted())

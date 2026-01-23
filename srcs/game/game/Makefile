@@ -1,6 +1,5 @@
 CXX      = c++
 CXXFLAGS = -Wall -Werror -Wextra -std=c++20 -g
-CXXFLAGS2 = -Wall -Werror -Wextra -std=c++20 -g
 LDFLAGS  = $(shell sdl2-config --libs)
 
 EMSCRIPTEN	= em++
@@ -14,17 +13,21 @@ CXXFLAGS += -I$(HEADERS)
 
 SRCS		=	main.cpp \
 				engine/Engine.cpp \
-				engine/Texture.cpp \
 				engine/Key.cpp \
 				engine/Assets.cpp \
-				engine/sdl_loop.cpp \
+				engine/sdlLoop.cpp \
 				engine/load_image.cpp \
-				engine/init_sdl.cpp \
-				engine/key_action.cpp \
-				engine/map_printer.cpp \
+				engine/initSdl.cpp \
+				engine/keyAction.cpp \
+				engine/mapPrinter.cpp \
 				engine/SDLTimer.cpp \
 				player/Player.cpp \
 				player/PlayerAssets.cpp \
+				engine/Mob.cpp \
+				engine/RoomEvent.cpp \
+				engine/HitBox.cpp \
+				engine/printEntity.cpp \
+				player/Camera.cpp \
 				mapGen/mapMain.cpp Room.cpp Map.cpp aStar.cpp mapGen/mapGen.cpp
 
 EMSRCS		= $(patsubst %, $(SRC_DIR)%, $(SRCS))
