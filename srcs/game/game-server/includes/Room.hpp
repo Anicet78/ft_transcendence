@@ -11,6 +11,8 @@ class Room
 		int _width;
 		//Height of the room
 		int _height;
+		//if the room is rotated
+		int _rotated;
 		//_exits[0] = North, _exits[1] = East, _exits[2] = South, _exits[3] = West
 		std::array<bool, 4> _exits;
 		//localisations of the exits
@@ -46,19 +48,21 @@ class Room
 		~Room(void);
 	
 	public:
-		int	getWidth() const;
-		int getHeight() const;
-		static Room getWatingRoom();
-		std::array<std::array<int, 2>, 4> getExitsLoc() const;
-		std::array<bool, 4> getExits() const;
-		std::string getName() const;
-		std::vector<std::string> getRoomPlan() const;
-		static std::map<std::string, std::shared_ptr<Room>> getFloor0();
-		static void importRooms();
-		void	randomizeRoom();
-		void	turnMapLeft(void);
-		void	turnMapRight(void);
-		void	turnMapUpDown(void);
+		int													getWidth() const;
+		int													getHeight() const;
+		int													getRotated() const;
+		void												incrementRotate();
+		static Room											getWatingRoom();
+		std::array<std::array<int, 2>, 4>					getExitsLoc() const;
+		std::array<bool, 4>									getExits() const;
+		std::string											getName() const;
+		std::vector<std::string>							getRoomPlan() const;
+		static std::map<std::string, std::shared_ptr<Room>>	getFloor0();
+		static void											importRooms();
+		void												randomizeRoom();
+		void												turnMapLeft(void);
+		void												turnMapRight(void);
+		void												turnMapUpDown(void);
 };
 
 std::ostream &operator<<(std::ostream &o, Room const &obj);

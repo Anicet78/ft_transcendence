@@ -36,8 +36,8 @@ void updatePlayerState(Game &game, val &msg)
 	player.setPos(msg["player_x"].as<float>(), msg["player_y"].as<float>());
 	player.setHp(msg["player_health"].as<int>());
 	player.setAnim(msg["player_anim"].as<int>());
-	if (msg.hasOwnProperty("player_exit"))
-		updateRoom(player);
+	if (msg.hasOwnProperty("player_exit") && msg["player_exit"].as<std::string>() != " ")
+		updateRoom(game, player, msg["player_exit"].as<std::string>());
 	if (nbPlayers == 1)
 		game.clearOtherPlayers();
 	for (int i = 1; i < nbPlayers; i++)
@@ -73,7 +73,53 @@ void updatePlayerState(Game &game, val &msg)
 	}
 }
 
-void parseJson(bool &init, Game &game)
+void	fillMap(std::vector<Map> &maps, val &msg, std::string mapName)
+{
+	val mObj = msg[mapName];
+	int sx = mObj["size_x"].as<int>();
+	int sy = mObj["size_y"].as<int>();
+	maps.emplace_back(sx, sy);
+	val rooms = mObj["rooms"];
+	int len = mObj["nb_rooms"].as<int>();
+	for (int i = 0; i < len; i++)
+	{
+		val r = rooms[i];
+		std::string name = r["name"].as<std::string>();
+		int x = r["x"].as<int>();
+		int y = r["y"].as<int>();
+		int rot = r["rot"].as<int>();
+		maps.back().setRoomInNode(name, x, y, rot, maps.size() - 1);
+	}
+}
+
+void	fillMapInfos(val &msg, Game &game)
+{
+
+	auto &vmaps = game.getMaps();
+	val maps = msg["maps"];
+
+	fillMap(vmaps, maps, "waiting_map");
+	fillMap(vmaps, maps, "floor_0");
+	printMap(vmaps[1]);
+}
+
+void	launchGame(Game &game)
+{
+	auto &maps = game.getMaps();
+	quadList start;
+	for (quadList &node : maps[1].getNodes())
+	{
+		if (node->getRoom() && node->getRoom()->getName() == "start")
+		{
+			start = node;
+			break ;
+		}
+	}
+	game.getPlayer().setNode(start);
+	EM_ASM_({onCppMessage({action: "launched"});});
+}
+
+void	parseJson(bool &init, Game &game)
 {
 	if (msgJson.isUndefined() || msgJson.isNull())
 		return ;
@@ -88,14 +134,14 @@ void parseJson(bool &init, Game &game)
 	if (msg["action"].as<std::string>() == "waiting")
 	{
 		init = true;
-		Map map(1, 1);
-		map.setWaitingRoom();
-		game.addMap(map);
-		game.getPlayer().setNode(map.getNodes()[0]);
+		fillMapInfos(msg, game);
+		game.getPlayer().setNode(game.getMaps()[0].getNodes()[0]);
 		EM_ASM_({onCppMessage({action: "connected"});});
 	}
 	else if (msg["action"].as<std::string>() == "player_state")
 		updatePlayerState(game, msg);
+	else if (msg["action"].as<std::string>() == "launch")
+		launchGame(game);
 	msgJson = val::undefined();
 }
 

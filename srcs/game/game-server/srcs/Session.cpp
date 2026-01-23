@@ -21,6 +21,25 @@ Session::~Session(void)
 
 //-----------------------------------------------------------------
 
+void	Session::launch()
+{
+	quadList start, vide;
+	this->_running = true;
+	for (quadList &node : this->_maps[1].getNodes())
+	{
+		if (node->getRoom() && node->getRoom()->getName() == "start")
+		{
+			start = node;
+			break ;
+		}
+	}
+	for (auto &player : this->_players)
+	{
+		player->setNode(start);
+		player->getWs()->send("{\"action\": \"launch\"}");
+	}
+}
+
 void	Session::sendToAll(Player &sender)
 {
 	for (auto &player : _players)
@@ -31,17 +50,51 @@ void	Session::sendToAll(Player &sender)
 	}
 }
 
+std::string	Session::sendMaps(void)
+{
+	if (!this->_mapInfos.empty())
+		return this->_mapInfos;
+
+	std::string msg = "{\"action\": \"waiting\", \"maps\": { ";
+	for (size_t i = 0; i < this->_maps.size(); i++)
+	{
+		if (!i)
+			msg += "\"waiting_map\": { ";
+		else
+			msg += ", \"floor_" + std::to_string(i - 1) + "\": { ";
+		msg += "\"size_x\": " + std::to_string(this->_maps[i].getWidth()) + ", "
+			+ "\"size_y\": " + std::to_string(this->_maps[i].getHeight()) + ", "
+			+ "\"rooms\": [";
+		int j = 0;
+		for (quadList &node : this->_maps[i].getNodes())
+		{
+			if (!node->getRoom())
+				continue ;
+			auto room = node->getRoom();
+			if (j)
+				msg += ", ";
+			msg += "{\"name\": \"" + room->getName() + "\", "
+				+ "\"x\": " + std::to_string(node->getX()) + ", "
+				+ "\"y\": " + std::to_string(node->getY()) + ", "
+				+ "\"rot\": " + std::to_string(room->getRotated()) + '}';
+			j++;
+		}
+		msg += "], \"nb_rooms\": " + std::to_string(j) + "}";
+	}
+	msg += "}}";
+	this->_mapInfos = msg;
+	return this->_mapInfos;
+}
+
 void	Session::addParty(Party &newParty)
 {
+	std::string msg;
 	for (std::shared_ptr<Player> &player : newParty.getPlayers())
 	{
 		player->setNode(this->_maps[0].getNodes()[0]);
 		this->_players.push_back(player);
-		player->getWs()->send("{\"action\": \"waiting\"}");
-		//std::cout << "avant\n";
-		//usleep(300000);
-		//std::cout << "apres\n";
-		//sendPlayerState(*player, *this, "");
+		msg = this->sendMaps();
+		player->getWs()->send(msg);
         player->getWs()->send("You have been added to a session !", uWS::OpCode::TEXT);
 	}
 }
@@ -100,6 +153,14 @@ bool Session::hasEnded() const
 bool Session::isRunning() const
 {
 	return this->_running;
+}
+
+bool Session::doesAllPlayersConnected() const
+{
+	for (auto &player : this->_players)
+		if (!player->isConnected())
+			return false;
+	return true;
 }
 
 bool Session::isPlayerInSession(std::string &uid) const

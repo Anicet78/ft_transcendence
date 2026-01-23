@@ -5,7 +5,7 @@ std::map<std::string, std::shared_ptr<Room>> Room::_RoomsF1;
 std::map<std::string, std::shared_ptr<Room>> Room::_RoomsF2;
 std::map<std::string, std::shared_ptr<Room>> Room::_RoomsF3;
 std::map<std::string, std::shared_ptr<Room>> Room::_RoomsF4;
-std::map<std::string, std::shared_ptr<Room>> Room::_WatingRooms;
+std::map<std::string, std::shared_ptr<Room>> Room::_WaitingRooms;
 
 Room &Room::operator=(Room const &rhs)
 {
@@ -198,8 +198,20 @@ void	Room::turnMapUpDown(void)
 	this->identifyExits();
 }
 
-std::map<std::string, std::shared_ptr<Room>> Room::getFloor0()
+std::map<std::string, std::shared_ptr<Room>> Room::getFloor(int nb)
 {
+	if (!nb)
+		return _WaitingRooms;
+	if (nb == 1)
+		return _RoomsF0;
+	if (nb == 2)
+		return _RoomsF1;
+	if (nb == 3)
+		return _RoomsF2;
+	if (nb == 4)
+		return _RoomsF3;
+	if (nb == 5)
+		return _RoomsF4;
 	return _RoomsF0;
 }
 
@@ -259,16 +271,14 @@ Room Room::getWatingRoom()
 {
 	// if (!_WatingRooms.size())
 	// 	throw std::runtime_error("No wating room available");
-	return *_WatingRooms["waiting"].get();
+	return *_WaitingRooms["waiting"].get();
 }
 
 void Room::importRooms()
 {
 	std::string path("../assets/rooms/");
-	Room::importFloor(path + "waitingRooms/", _WatingRooms);
+	Room::importFloor(path + "waitingRooms/", _WaitingRooms);
 	Room::importFloor(path + "floor0/", _RoomsF0);
-	// for (auto &room : _RoomsF0)
-	// 	std::cout << *room.second.get() << std::endl;
 }
 
 std::ostream &operator<<(std::ostream &o, Room const &obj)

@@ -32,7 +32,7 @@ static int checkRoomBorders(quadList const &place, Room const &room)
 
 quadList Map::chooseRoom(std::string mapName)
 {
-	auto F0 = Room::getFloor0();
+	auto F0 = Room::getFloor(1);
 	Room temp;
 	int x = rand() % this->_width;
 	int y = rand() % this->_height;
@@ -133,7 +133,7 @@ bool neighborExists(quadList node, int dir)
 static void selectRoom(quadList &node, std::vector<Room> &candidates, std::array<bool, 4> &directions)
 {
 	int sum = directions[0] + directions[1] + directions[2] + directions[3];
-	for (auto &room : Room::getFloor0())
+	for (auto &room : Room::getFloor(1))
 	{
 		if (room.first == "start" || room.first == "stairs")
 			continue ;

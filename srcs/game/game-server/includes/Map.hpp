@@ -58,6 +58,8 @@ class Map
 	public:
 		quadList				&getHead(void);
 		std::vector<quadList>	getNodes() const;
+		int						getWidth() const;
+		int						getHeight() const;
 		void					fillMap(void);
 		void					setWaitingRoom();
 };

@@ -153,6 +153,16 @@ Map::~Map(void)
 
 //Member Functions--------------------------------------------------------
 
+void	Map::setRoomInNode(std::string &roomName, int x, int y, int rot, int roomSet)
+{
+	quadList &node = _nodes[y * _width + x];
+	auto mapSet = Room::getFloor(roomSet);
+	Room room = *mapSet[roomName].get();
+	while (rot--)
+		room.turnMapLeft();
+	node->addRoom(room);
+}
+
 void	Map::setWaitingRoom()
 {
 	this->_nodes[0]->addRoom(Room::getWatingRoom());
@@ -163,7 +173,7 @@ quadList &Map::getHead()
 	return this->_head;
 }
 
-std::vector<quadList> Map::getNodes() const
+std::vector<quadList> &Map::getNodes()
 {
 	return this->_nodes;
 }

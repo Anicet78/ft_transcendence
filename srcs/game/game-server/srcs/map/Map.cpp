@@ -168,3 +168,12 @@ std::vector<quadList> Map::getNodes() const
 	return this->_nodes;
 }
 
+int	Map::getHeight() const
+{
+	return this->_height;
+}
+
+int	Map::getWidth() const
+{
+	return this->_width;
+}

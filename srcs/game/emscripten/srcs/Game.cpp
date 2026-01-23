@@ -23,7 +23,7 @@ void Game::addMap(Map &map)
 	this->_maps.push_back(map);
 }
 
-std::vector<Map> Game::getMaps() const
+std::vector<Map> &Game::getMaps()
 {
 	return this->_maps;
 }

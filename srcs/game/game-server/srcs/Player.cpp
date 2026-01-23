@@ -2,13 +2,18 @@
 
 Player::Player(std::string uid, int partySize, std::string partyName, std::string name, uWS::WebSocket<false, true, PerSocketData> *ws)
 				: _uid(uid), _partySize(partySize),  _partyName(partyName), _name(name), _inQueue(true), _inSession(false),
-					_connected(0), _exit(' '), _ws(ws), _x(0), _y(0), _anim(0), _last_dir(0), _hp(3), _atk(1), _def(0)
+					_launched(0), _connected(0), _exit(' '), _ws(ws), _x(0), _y(0), _anim(0), _last_dir(0), _hp(3), _atk(1), _def(0)
 {}
 
 Player::~Player(void)
 {}
 
 //get player value
+
+bool Player::isLaunched(void) const
+{
+	return this->_launched;
+}
 
 char Player::getExit(void) const
 {
@@ -95,12 +100,22 @@ quadList Player::getNode() const
 	return this->_node;
 }
 
+quadList Player::getPrevNode() const
+{
+	return this->_prev_node;
+}
+
 int Player::getLastDir(void) const
 {
 	return this->_last_dir;
 }
 
 //set player value
+
+void	Player::setLaunched(bool flag)
+{
+	this->_launched = flag;
+}
 
 void	Player::setConnexion(bool c)
 {
@@ -112,10 +127,15 @@ void	Player::setExit(char c)
 	this->_exit = c;
 }
 
+void	Player::setPrevNode(const quadList &node)
+{
+	this->_prev_node = node;
+}
+
 void	Player::setNode(const quadList &node)
 {
 	this->_node = node;
-	if (node->getRoom()->getName() == "waiting")
+	if (node->getRoom()->getName() == "waiting" || node->getRoom()->getName() == "start")
 	{
 		int i = 0;
 		for (auto &line : node->getRoom()->getRoomPlan())

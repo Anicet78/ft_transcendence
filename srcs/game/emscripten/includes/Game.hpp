@@ -18,7 +18,7 @@ class Game
 		~Game(void);
 	
 	public:
-		std::vector<Map>	getMaps() const;
+		std::vector<Map>	&getMaps();
 		Player				&getPlayer();
 		std::vector<Player> &getOtherPlayers();
 		Player				&getOtherPlayer(std::string &uid);
@@ -46,7 +46,7 @@ SDL_Texture *loadTexture(std::string path, Engine &sdl);
 void	key_down(void);
 void	key_up(void);
 void	key_action(void);
-void	updateRoom(Player &player);
+void	updateRoom(Game &game, Player &player, std::string dir);
 void	print_map(Player &player, std::vector<Player> &otherPlayers);
 
 #endif

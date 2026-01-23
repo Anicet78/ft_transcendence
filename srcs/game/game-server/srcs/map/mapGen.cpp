@@ -172,9 +172,11 @@ static void selectRoom(quadList &node, std::vector<Room> &candidates, std::array
 					break;
 				}
 			}
-
 			if (flag)
+			{
 				temp.turnMapLeft();
+				temp.incrementRotate();
+			}
 			else
 				break ;
 		}
