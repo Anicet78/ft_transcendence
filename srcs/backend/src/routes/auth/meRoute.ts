@@ -7,7 +7,8 @@ export const MeResponseSchema = Type.Object({
 	user: Type.Object({
 		id: Type.String(),
 		email: Type.String()
-	})
+	}),
+	roomId: Type.String()
 });
 export type MeResponseType = Static<typeof MeResponseSchema>
 
