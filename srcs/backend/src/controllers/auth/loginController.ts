@@ -40,7 +40,6 @@ export async function postLoginController(
 		lastname: dbUser.lastName,
 		username: dbUser.username,
 		email: dbUser.mail,
-		region: dbUser.region,//need to check, added to compile
 		passwordHash: dbUser.passwordHash
 	};
 
