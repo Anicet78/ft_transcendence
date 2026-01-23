@@ -7,6 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Region {
+  EU
+  NA
+  SAM
+  MENA
+  OCE
+  APAC
+  SSA
+  Deleted
+}
+
 model AppUser {
   appUserId           String        @id @default(dbgenerated("uuid_generate_v4()")) @map("app_user_id") @db.Uuid
   firstName           String        @map("first_name")
@@ -16,7 +27,7 @@ model AppUser {
   passwordHash        String        @map("password_hash")
   avatarUrl           String?       @map("avatar_url")
   availability        Boolean       @default(false)
-  region              String
+  region              Region
   createdAt           DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt           DateTime      @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt           DateTime?     @map("deleted_at") @db.Timestamptz(6)

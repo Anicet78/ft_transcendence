@@ -4,12 +4,11 @@ import authPlugin from './plugins/auth.js';
 import { router } from './routes/index.js';
 
 export const fastify = Fastify({
-	logger: true, // active le logging intégré
+	logger: true,
 });
 
 fastify.withTypeProvider<TypeBoxTypeProvider>();
 
-// Démarrage du serveur
 const start = async () => {
 	try {
 		fastify.register(authPlugin);
