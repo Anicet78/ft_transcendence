@@ -5,7 +5,8 @@ import viteLogo from '../public/vite.svg'
 import './App.css'
 
 import { Server } from './server.ts'
-import { Navbar } from './navigation_bar.tsx'
+import Banner from './components/Banner.tsx';
+import ButtonSubmit from './components/ButtonSubmit.tsx';
 
 /**
  * composant principal
@@ -35,56 +36,45 @@ function App() {
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-        {/* ce qui est entre les accolades ne sont pas des elements html, comme ce commentaire qui est en ts */}
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
+      {/* ce qui est entre les accolades ne sont pas des elements html, comme ce commentaire qui est en ts */}
+      <h1><Banner /></h1>
       <div className="card">
-        <Button color="primary" onClick={increaseCount}> {/*onClick attend une fonction qui va etre appele quand on clique, qui ne prend pas d'argument*/}
-          count is {count}
-        </Button>
-
         <form action={login}>
-          <label for="email">Email</label>
-          <br />
-          <input
-            type="email"
-            id="email"
-            name="email"
-            required
-            minlength="3"
-            maxlength="80"
-          />
+          <p>
+            <label for="email">Email</label>
+            <br />
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              minLength={3}
+              maxLength={80}
+            />
 
-          <br />
+            <br />
 
-          <label for="pwd">Password</label>
+            <label for="pwd">Password</label>
+            <br />
+            <input
+              type="password"
+              id="pwd"
+              name="pwd"
+              required
+              minLength={8}
+            />
+          </p>
           <br />
-          <input
-            type="password"
-            id="pwd"
-            name="pwd"
-            required
-            minlength="8"
-          />
-          <button type="submit">Login</button>
+          <p>
+            <ButtonSubmit />
+          </p>
         </form>
-
-
-        <Navbar token={token} />
         <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
+          <Button color="primary" onClick={increaseCount}> {/*onClick attend une fonction qui va etre appele quand on clique, qui ne prend pas d'argument*/}
+          count is {count}
+          </Button>
         </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
