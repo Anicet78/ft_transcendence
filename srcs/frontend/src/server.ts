@@ -1,0 +1,48 @@
+//plus de details sur https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+
+export interface LoginSchema {
+	email: string,
+	password: string,
+}
+
+export interface User {
+	id: string
+	email: string
+}
+
+export interface LoginResponseSchema {
+	token: string
+	user: User
+	roomId: string
+}
+
+export class Server {
+	// static -> variable stockee avec la classe, type Server ou null tant que c'est pas initialise
+	private static instance: Server | null = null;
+	private api_url = "http://localhost:3000";
+
+	public static getInstance(): Server {
+		if (!Server.instance){
+			Server.instance = new Server();
+		}
+		return (Server.instance);
+	};
+
+	public async login(email: string, password: string): Promise<LoginResponseSchema> {
+		const data: LoginSchema = { "email": email, "password": password };
+
+		//cree l'url a partir des arguments qu'on lui donne, l'appelle pour acceder au serrver backend et il renvoie la reponse du server backend
+		const response = await fetch(
+			`${this.api_url}/auth/login`,
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json', // type de donnees renvoyees par le backend
+				},
+				body: JSON.stringify(data)   // donnees attendues par le backend
+			},
+		)
+
+		return await response.json();
+	}
+}
