@@ -3,6 +3,8 @@ import { RoomService } from "../../services/rooms/roomService.js";
 import type { Room } from "../../schema/roomSchema.js";
 import type { RoomBodyType, RoomParamsType } from "../../routes/rooms/roomRoute.js";
 import { AppError } from "../../schema/errorSchema.js";
+import type { Socket } from "socket.io";
+import { SocketService } from "../../services/socket/SocketService.js";
 
 export async function getRoomController(
 	request: FastifyRequest<{ Params: RoomParamsType }>,
@@ -20,12 +22,16 @@ export async function getRoomController(
 }
 
 export async function newRoomController(
-	request: FastifyRequest,
+	request: FastifyRequest<{ Body: RoomBodyType }>,
 	reply: FastifyReply
 ) {
-	RoomService.leave(request.user.id);
+	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.body.socketId);
+	if (!userSocket)
+		return reply.code(404).send({ error: "Socket not found" });
 
-	const response: Room = RoomService.create(request.user.id);
+	await RoomService.leave(request.user.id, userSocket);
+
+	const response: Room = await RoomService.create(request.user.id, userSocket);
 
 	return reply.status(200).send(response);
 }
@@ -34,8 +40,12 @@ export async function joinRoomController(
 	request: FastifyRequest<{ Params: RoomParamsType, Body: RoomBodyType }>,
 	reply: FastifyReply
 ) {
+	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.body.socketId);
+	if (!userSocket)
+		return reply.code(404).send({ error: "Socket not found" });
+
 	try {
-		const response: Room = RoomService.join(request.params.id, request.user.id);
+		const response: Room = await RoomService.join(request.params.id, request.user.id, userSocket);
 		return reply.status(200).send(response);
 	} catch (err) {
 		request.log.error(err);
@@ -69,6 +79,11 @@ export async function hostRoomController(
 	if (!room.playersId.includes(request.body.userId))
 		return reply.code(404).send({ error: "Target not in room" });
 
+	SocketService.send(room.roomId, "host_changed", {
+		oldHost: room.hostId,
+		newHost: request.body.userId
+	});
+
 	room.hostId = request.body.userId;
 	return reply.status(200).send(room);
 }
@@ -97,8 +112,16 @@ export async function kickRoomController(
 	if (!room.playersId.includes(request.body.userId))
 		return reply.code(404).send({ error: "Target not in room" });
 
-	RoomService.leave(request.body.userId);
-	room = RoomService.create(request.body.userId);
+	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.body.socketId);
+	if (!userSocket)
+		return reply.code(404).send({ error: "Socket not found" });
+
+	await RoomService.leave(request.body.userId, userSocket, "Kicked");
+
+	SocketService.send(request.body.userId, "kicked", {
+		hostId: request.user.id,
+		Room: await RoomService.create(request.body.userId, userSocket)
+	});
 	return reply.status(200).send(room);
 }
 

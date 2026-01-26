@@ -29,10 +29,13 @@ fastify.get("/:id", {
 	}
 }, getRoomController);
 
-fastify.get("/new", {
+fastify.post("/new", {
 	schema: {
+		body: RoomBodySchema,
 		response: {
 			200: RoomSchema,
+			400: AppErrorSchema,
+			404: AppErrorSchema,
 			500: AppErrorSchema
 		}
 	}
@@ -44,6 +47,7 @@ fastify.post("/:id/join", {
 		body: RoomBodySchema,
 		response: {
 			200: RoomSchema,
+			400: AppErrorSchema,
 			404: AppErrorSchema,
 			409: AppErrorSchema,
 			500: AppErrorSchema
