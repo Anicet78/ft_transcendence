@@ -1,7 +1,5 @@
 import { useState } from 'react'
 import { Button } from '@allxsmith/bestax-bulma'; // quand on exporte pas en default mettre des accolades
-import reactLogo from './assets/react.svg'
-import viteLogo from '../public/vite.svg'
 import './App.css'
 
 import { Server } from './server.ts'
@@ -41,7 +39,7 @@ function App() {
       <div className="card">
         <form action={login}>
           <p>
-            <label for="email">Email</label>
+            <label htmlFor="email">Email</label>
             <br />
             <input
               type="email"
@@ -54,7 +52,7 @@ function App() {
 
             <br />
 
-            <label for="pwd">Password</label>
+            <label htmlFor="pwd">Password</label>
             <br />
             <input
               type="password"

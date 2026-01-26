@@ -1,51 +1,52 @@
-// import { useState } from 'react'
-import { Button, Icon, IconText, Dropdown } from '@allxsmith/bestax-bulma';
+import { useState } from 'react'
+import { Navbar, Icon, Button } from '@allxsmith/bestax-bulma';
 import '../styles/Banner.css'
 
-const Logo = () => {
-	return(
-		<Button color="primary" isOutlined display="flex" justifyContent="center" alignItems="center">
-		<IconText
-		iconProps={{
-			name: 'dragon',
-			ariaLabel: 'Home',
-			textColor: 'primary',
-		}}
-		>
-		TransDungeon
-		</IconText>
-		</Button>
-	)
-}
-
-const Menu = () => {
-	return (
-		<div>
-		<Button color="primary" isOutlined>
-			<Icon
-			name="bars"
-			color="primary"
-			ariaLabel="Menu"
-			>
-			</Icon>
-		</Button>
-		<Dropdown label="Menu">
-			<Dropdown.Item>Language</Dropdown.Item>
-			<Dropdown.Item>Light/Dark Mode</Dropdown.Item>
-			<Dropdown.Divider />
-			<Dropdown.Item>About the game</Dropdown.Item>
-			<Dropdown.Item>Credentials</Dropdown.Item>
-		</Dropdown>
-		</div>
-	)
-}
-
 const Banner = () => {
+	const [active, setActive] = useState(false);
 	return (
-	<div className='banner'>
-		<Logo />
-		<Menu />
-	</div>)
+		<Navbar color='dark'>
+			<Navbar.Brand>
+				<Navbar.Item href="index.html">
+					<Button color="primary" isOutlined display="flex" justifyContent="center" alignItems="center" size='large'>
+						<Icon
+						name="dragon"
+						ariaLabel="dragon logo"
+						/>
+						<span>TransDungeon</span>
+					</Button>
+				</Navbar.Item>
+				<Navbar.Burger
+				active={active}
+				onClick={() => setActive(a => !a)}
+				aria-label="menu"
+				aria-expanded={active}
+				/>
+			</Navbar.Brand>
+			<Navbar.Menu active={active}>
+				<Navbar.Start>
+				</Navbar.Start>
+				<Navbar.End>
+					<Navbar.Dropdown hoverable>
+						<Navbar.Item as="a" textColor='primary'>
+						<Icon
+						name="bars"
+						ariaLabel="Menu"
+						/>
+						<span>Menu</span>
+						</Navbar.Item>
+						<Navbar.DropdownMenu>
+							<Navbar.Item href="#">Language</Navbar.Item>
+							<Navbar.Item href="#">Dark mode</Navbar.Item>
+							<Navbar.Divider />
+							<Navbar.Item href="#">About the game</Navbar.Item>
+							<Navbar.Item href="#">Credentials</Navbar.Item>
+						</Navbar.DropdownMenu>
+					</Navbar.Dropdown>
+				</Navbar.End>
+			</Navbar.Menu>
+		</Navbar>
+	)
 }
 
 export default Banner
