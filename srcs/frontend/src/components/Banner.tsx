@@ -5,7 +5,7 @@ import '../styles/Banner.css'
 const Banner = () => {
 	const [active, setActive] = useState(false);
 	return (
-		<Navbar color='dark'>
+		<Navbar color='dark' aria-label='navigation bar'>
 			<Navbar.Brand>
 				<Navbar.Item href="index.html">
 					<Button color="primary" isOutlined display="flex" justifyContent="center" alignItems="center" size='large'>

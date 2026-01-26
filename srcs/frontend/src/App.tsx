@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button } from '@allxsmith/bestax-bulma'; // quand on exporte pas en default mettre des accolades
+// import { Button } from '@allxsmith/bestax-bulma'; // quand on exporte pas en default mettre des accolades
 import './App.css'
 
 import { Server } from './server.ts'
@@ -13,13 +13,13 @@ import ButtonSubmit from './components/ButtonSubmit.tsx';
 function App() {
   const server = Server.getInstance();
   // useState -> count = objet qui sera modifie et setCount = fonction qui va modifier la valeur de l'objet
-  const [count, setCount] = useState<number>(0); // number = equivalent typescript de int
+//   const [count, setCount] = useState<number>(0); // number = equivalent typescript de int
   const [token, setToken] = useState<string | undefined>(undefined);
 
   // that's how you define a function
-  const increaseCount = () => {
-    setCount(count + 1);
-  }
+//   const increaseCount = () => {
+//     setCount(count + 1);
+//   }
 
   function login(formData) {
       const email = formData.get("email");
@@ -38,40 +38,43 @@ function App() {
       <h1><Banner /></h1>
       <div className="card">
         <form action={login}>
-          <p>
+          <div className="field">
             <label htmlFor="email">Email</label>
-            <br />
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              minLength={3}
-              maxLength={80}
-            />
-
-            <br />
-
-            <label htmlFor="pwd">Password</label>
-            <br />
-            <input
-              type="password"
-              id="pwd"
-              name="pwd"
-              required
-              minLength={8}
-            />
-          </p>
-          <br />
+            <p className="control has-icons-left">
+              <input
+                className="input"
+                type="email"
+                id="email"
+                name="email"
+                required
+                minLength={3}
+                maxLength={80}
+              />
+              <span className="icon is-small is-left">
+                <i className="fas fa-envelope"></i>
+              </span>
+            </p>
+          </div>
+          <div className="field">
+            <label htmlFor="password">Pasword</label>
+            <p className="control has-icons-left">
+              <input
+                className="input"
+                type="password"
+                id="pwd"
+                name="pwd"
+                required
+                minLength={8}
+              />
+              <span className="icon is-small is-left">
+                <i className="fas fa-lock"></i>
+              </span>
+            </p>
+          </div>
           <p>
             <ButtonSubmit />
           </p>
         </form>
-        <p>
-          <Button color="primary" onClick={increaseCount}> {/*onClick attend une fonction qui va etre appele quand on clique, qui ne prend pas d'argument*/}
-          count is {count}
-          </Button>
-        </p>
       </div>
     </>
   )
