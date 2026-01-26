@@ -10,7 +10,7 @@ export const RoomParamsSchema = Type.Object({
 export type RoomParamsType = Static<typeof RoomParamsSchema>;
 
 export const RoomBodySchema = Type.Object({
-	roomId: Type.String(),
+	socketId: Type.String(),
 	userId: Type.String()
 });
 export type RoomBodyType = Static<typeof RoomBodySchema>;
@@ -38,9 +38,10 @@ fastify.get("/new", {
 	}
 }, newRoomController);
 
-fastify.get("/join/:id", {
+fastify.post("/:id/join", {
 	schema: {
 		params: RoomParamsSchema,
+		body: RoomBodySchema,
 		response: {
 			200: RoomSchema,
 			404: AppErrorSchema,
@@ -50,8 +51,9 @@ fastify.get("/join/:id", {
 	}
 }, joinRoomController);
 
-fastify.patch("/host", {
+fastify.post("/:id/host", {
 	schema: {
+		params: RoomParamsSchema,
 		body: RoomBodySchema,
 		response: {
 			200: RoomSchema,
@@ -63,8 +65,9 @@ fastify.patch("/host", {
 	}
 }, hostRoomController);
 
-fastify.patch("/kick", {
+fastify.post("/:id/kick", {
 	schema: {
+		params: RoomParamsSchema,
 		body: RoomBodySchema,
 		response: {
 			200: RoomSchema,
@@ -76,7 +79,7 @@ fastify.patch("/kick", {
 	}
 }, kickRoomController);
 
-fastify.patch("/verify", {
+fastify.post("/verify", {
 	schema: {
 		body: RoomSchema,
 		response: {

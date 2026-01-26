@@ -31,7 +31,7 @@ export async function newRoomController(
 }
 
 export async function joinRoomController(
-	request: FastifyRequest<{ Params: RoomParamsType }>,
+	request: FastifyRequest<{ Params: RoomParamsType, Body: RoomBodyType }>,
 	reply: FastifyReply
 ) {
 	try {
@@ -46,7 +46,7 @@ export async function joinRoomController(
 }
 
 export async function hostRoomController(
-	request: FastifyRequest<{ Body: RoomBodyType }>,
+	request: FastifyRequest<{ Params: RoomParamsType, Body: RoomBodyType }>,
 	reply: FastifyReply
 ) {
 	if (request.body.userId === request.user.id)
@@ -55,7 +55,7 @@ export async function hostRoomController(
 	let room: Room;
 
 	try {
-		room = RoomService.get(request.body.roomId, request.user.id);
+		room = RoomService.get(request.params.id, request.user.id);
 	} catch(err) {
 		request.log.error(err);
 		if (err instanceof AppError)
@@ -74,7 +74,7 @@ export async function hostRoomController(
 }
 
 export async function kickRoomController(
-	request: FastifyRequest<{ Body: RoomBodyType }>,
+	request: FastifyRequest<{ Params: RoomParamsType, Body: RoomBodyType }>,
 	reply: FastifyReply
 ) {
 	if (request.body.userId === request.user.id)
@@ -83,7 +83,7 @@ export async function kickRoomController(
 	let room: Room;
 
 	try {
-		room = RoomService.get(request.body.roomId, request.user.id);
+		room = RoomService.get(request.params.id, request.user.id);
 	} catch(err) {
 		request.log.error(err);
 		if (err instanceof AppError)
