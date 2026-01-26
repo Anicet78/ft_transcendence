@@ -10,9 +10,18 @@ OBJ_DIR  = ./objs/
 
 CXXFLAGS += -I$(HEADERS) -I./uWebSockets/src -I./uWebSockets/uSockets/src
 
-SRCS =  main.cpp parseServer.cpp Server.cpp Session.cpp \
-        map/Map.cpp map/mapMain.cpp map/mapGen.cpp map/aStar.cpp \
-        Room.cpp Player.cpp Party.cpp \
+SRCS =  main.cpp \
+		parseServer.cpp \
+		Server.cpp Session.cpp \
+        map/Map.cpp \
+		map/mapMain.cpp \
+		map/mapGen.cpp \
+		map/aStar.cpp \
+        Room.cpp \
+		RoomEvent.cpp \
+		Mob.cpp \
+		Player.cpp \
+		Party.cpp
 
 
 OBJS = $(patsubst %.cpp, $(OBJ_DIR)%.o, $(SRCS))

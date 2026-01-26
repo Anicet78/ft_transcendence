@@ -153,13 +153,19 @@ Map::~Map(void)
 
 //Member Functions--------------------------------------------------------
 
-void	Map::setRoomInNode(std::string &roomName, int x, int y, int rot, int roomSet)
+void	Map::setRoomInNode(std::string &roomName, int x, int y, int rot, int roomSet, std::shared_ptr<ARoomEvent> event)
 {
 	quadList &node = _nodes[y * _width + x];
 	auto mapSet = Room::getFloor(roomSet);
 	Room room = *mapSet[roomName].get();
 	while (rot--)
 		room.turnMapLeft();
+	if (event)
+	{
+		room.setEvent(event);
+		std::cout << room.getRoomEvent()->getType() << std::endl;
+	}
+	//room.setEvent()
 	node->addRoom(room);
 }
 

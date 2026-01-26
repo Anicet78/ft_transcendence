@@ -22,6 +22,10 @@ class Player
 		float		_x;
 		float		_y;
 
+	//player pos on screen
+		float	_screenX;
+		float	_screenY;
+
 	//pos in map
 		quadList	_node;
 		int			_anim;
@@ -30,6 +34,15 @@ class Player
 		int			_hp;
 		int			_atk;
 		int			_def;
+	
+	//	player action
+
+		bool		_atkState;
+
+	//hitbox
+		SDL_FRect	_wallHitBox;
+
+		Camera		_camera;
 
 	//player anim
 		int				_last_dir;
@@ -43,15 +56,22 @@ class Player
 	//getter
 		std::string	getUid(void) const;
 		std::string	getName(void) const;
-		Room		getRoom() const;
+		Room		&getRoom() const;
 		quadList	getNode() const;
 
 		float		getX(void) const;
 		float		getY(void) const;
 
+		float		getScreenX(void) const;
+		float		getScreenY(void) const;
+
 		int			getHp(void) const;
 		int			getAtk(void) const;
 		int			getDef(void) const;
+	
+		SDL_FRect	&getWallHitBox(void);
+		Camera		&getCamera(void);
+	
 		int			getAnim(void) const;
 		int			getLastDir(void) const;
 
@@ -63,16 +83,25 @@ class Player
 		void	setDef(int def);
 		void	setAnim(int anim);
 		void	setDir(int dir);
+
 		void	updateLastDir(void);
+		void	setWallHitBox(void);
 
 	//print
 		void	printPlayer(float px, float py);
+
+	//player attacking action
+		void	startAtk(void);
+		void	endAtk(void);
+		bool	checkAtkState(void) const;
 
 	//action
 		void		move(void);
 		void		attack(void);
 		void		takeDamage(int amount);
 		void		heal(int amount);
+
+		void	updateScreenPos(int tile_s);
 };
 
 #endif

@@ -2,14 +2,6 @@
 #include <ctime>
 #include <sys/time.h>
 
-long	time_in_us(void)
-{
-	struct timeval	start;
-
-	gettimeofday(&start, NULL);
-	return (start.tv_usec);
-}
-
 void updateRoom(Game &game, Player &player, std::string dir)
 {
 	Room room = player.getRoom();
@@ -100,10 +92,20 @@ void	updatePlayerPosition(Player &player)
 
 void	game_loop(Game &game)
 {
+	Player	&player = game.getPlayer();
 	//updateRoom(player);
 	#ifdef __EMSCRIPTEN__
 
 	updatePlayerPosition(game.getPlayer());
 	#endif
-	print_map(game.getPlayer(), game.getOtherPlayers());
+	print_map(player);
+
+	if (player.getRoom().getRoomEvent())
+	{
+		MobRush &mobrush = dynamic_cast<MobRush &>(*player.getRoom().getRoomEvent());
+		std::cout << mobrush.getMobs().size() << std::endl;
+	}
+	print_others(player, game.getOtherPlayers());
+	player.printPlayer(player.getScreenX(), player.getScreenY());
+
 }

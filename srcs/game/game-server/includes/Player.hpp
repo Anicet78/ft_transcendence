@@ -47,7 +47,8 @@ class Player
 		int			_hp;
 		int			_atk;
 		int			_def;
-
+	//wall hitbox
+		FRect		_wallHitBox;
 	public:
 		Player(std::string uid, int partySize, std::string partyName, std::string name,
 				uWS::WebSocket<false, true, PerSocketData> *ws);
@@ -76,6 +77,8 @@ class Player
 		int			getAtk(void) const;
 		int			getDef(void) const;
 		int			getLastDir(void) const;
+		FRect		&getWallHitBox(void);
+		Room		&getRoomRef(void);
 
 	//setter
 		void		setConnexion(bool c);
@@ -87,6 +90,7 @@ class Player
 		void		setHp(int hp);
 		void		setAtk(int atk);
 		void		setDef(int def);
+		void		setWallHitBox(void);
 		void		setInQueue(bool flag);
 		void		setInSession(bool flag);
 		void		setAnim(int anim);

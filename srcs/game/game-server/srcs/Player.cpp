@@ -3,7 +3,10 @@
 Player::Player(std::string uid, int partySize, std::string partyName, std::string name, uWS::WebSocket<false, true, PerSocketData> *ws)
 				: _uid(uid), _partySize(partySize),  _partyName(partyName), _name(name), _inQueue(true), _inSession(false),
 					_launched(0), _connected(0), _exit(' '), _ws(ws), _x(0), _y(0), _anim(0), _last_dir(0), _hp(3), _atk(1), _def(0)
-{}
+{
+	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
+	return ;
+}
 
 Player::~Player(void)
 {}
@@ -73,6 +76,15 @@ int		Player::getAnim(void) const
 Room	Player::getRoom(void) const
 {
 	return *this->_node->getRoom().get();
+}
+
+Room	&Player::getRoomRef(void)
+{
+	return *this->_node->getRoom().get();
+}
+
+FRect	&Player::getWallHitBox(void) {
+	return (this->_wallHitBox);
 }
 
 bool Player::isInQueue(void) const
@@ -185,6 +197,11 @@ void	Player::setAtk(int atk)
 void	Player::setDef(int def)
 {
 	_def = def;
+	return ;
+}
+
+void	Player::setWallHitBox(void) {
+	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
 	return ;
 }
 

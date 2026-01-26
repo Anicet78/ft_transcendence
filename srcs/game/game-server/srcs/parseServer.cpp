@@ -44,15 +44,89 @@ void Server::parseJson(std::map<std::string, std::string> &res, std::string msg)
     
 }
 
+bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &rect, int const flag, Player &player) {
+	if (flag == 0)
+	{
+		float y = rect.y - 0.1;
+		if (plan[y][rect.x] == '1' || plan[y][rect.x + rect.h] == '1')
+			return (true);
+
+		//if the event in the room is not cleared, player cant go on 'E' tiles
+		std::weak_ptr<ARoomEvent> event = player.getRoomRef().getRoomEvent();
+
+		if (!event.expired() && event.lock()->isCleared() == false)
+		{
+			if (plan[y][rect.x] == 'E' || plan[y][rect.x + rect.h] == 'E')
+				return (true);
+		}
+	}
+	if (flag == 1)
+	{
+		float x = rect.x - 0.1;
+		if (plan[rect.y][x] == '1' || plan[rect.y + rect.h][x] == '1')
+			return (true);
+
+		//if the event in the room is not cleared, player cant go on 'E' tiles
+		std::weak_ptr<ARoomEvent> event = player.getRoomRef().getRoomEvent();
+
+		if (!event.expired() && event.lock()->isCleared() == false)
+		{
+			if (plan[rect.y][x] == 'E' || plan[rect.y + rect.h][x] == 'E')
+				return (true);
+		}
+	}
+	if (flag == 2)
+	{
+		float y = rect.y + 0.1;
+		if (plan[y + rect.h][rect.x] == '1' || plan[y + rect.h][rect.x + rect.w] == '1')
+			return (true);
+		
+		//if the event in the room is not cleared, player cant go on 'E' tiles
+		std::weak_ptr<ARoomEvent> event = player.getRoomRef().getRoomEvent();
+
+		if (!event.expired() && event.lock()->isCleared() == false)
+		{
+			if (plan[y + rect.h][rect.x] == 'E' || plan[y + rect.h][rect.x + rect.w] == 'E')
+				return (true);
+		}
+	}
+	if (flag == 3)
+	{
+		float x = rect.x + 0.1;
+		if (plan[rect.y][x + rect.h] == '1' || plan[rect.y + rect.h][x + rect.w] == '1')
+			return (true);
+		
+		//if the event in the room is not cleared, player cant go on 'E' tiles
+		std::weak_ptr<ARoomEvent> event = player.getRoomRef().getRoomEvent();
+
+		if (!event.expired() && event.lock()->isCleared() == false)
+		{
+			if (plan[rect.y][x + rect.h] == 'E' || plan[rect.y + rect.h][x + rect.w] == 'E')
+				return (true);
+		}
+	}
+	return (false);
+}
+
 void updatePlayerPos(Player &player, std::map<std::string, std::string> &req)
 {
     Room room = player.getRoom();
 	float x = player.getX(), y = player.getY();
 	auto plan = room.getRoomPlan();
+    player.setWallHitBox();
+    if (room.getRoomEvent())
+    {
+        if (room.getRoomEvent()->getType() == "MobRush")
+        {
+            MobRush &event = dynamic_cast<MobRush &>(*room.getRoomEvent());
+            std::cout << event.getMobs().size() << std::endl;
+        }
+    }
+
 	if (req["w_key"] == "true")
 	{
 		y -= 0.1;
-		if (y >= 0 && plan[y][x] != '1')
+		if (y >= 0 && !checkWallHitBox(plan, player.getWallHitBox(), 0, player))
 			player.setPos(x, y);
 		else
 			y += 0.1;
@@ -60,7 +134,7 @@ void updatePlayerPos(Player &player, std::map<std::string, std::string> &req)
 	if (req["a_key"] == "true")
 	{
 		x -= 0.1;
-		if (x >= 0 && plan[y][x] != '1')
+		if (x >= 0 && !checkWallHitBox(plan, player.getWallHitBox(), 1, player))
 			player.setPos(x, y);
 		else
 			x += 0.1;
@@ -68,7 +142,7 @@ void updatePlayerPos(Player &player, std::map<std::string, std::string> &req)
 	if (req["s_key"] == "true")
 	{
 		y += 0.1;
-		if (y < room.getHeight() && plan[y][x] != '1')
+		if (y < room.getHeight() && !checkWallHitBox(plan, player.getWallHitBox(), 2, player))
 			player.setPos(x, y);
 		else
 			y -= 0.1;
@@ -76,7 +150,7 @@ void updatePlayerPos(Player &player, std::map<std::string, std::string> &req)
 	if (req["d_key"] == "true")
 	{
 		x += 0.1;
-		if (x < room.getWidth() && plan[y][x] != '1')
+		if (x < room.getWidth() && !checkWallHitBox(plan, player.getWallHitBox(), 3, player))
 			player.setPos(x, y);
 		else
 			x -= 0.1;
@@ -99,7 +173,18 @@ void updateRoom(Player &player)
     Room room = player.getRoom();
 	auto plan = room.getRoomPlan();
 	float x = player.getX(), y = player.getY();
+    // Room &roomref = player.getRoomRef();
 
+    // if (roomref.getRoomEvent().get() && roomref.getRoomEvent()->isCleared() == false)
+	// {
+    //     std::cout << "NOPE" << std::endl;
+	// 	return ;
+	// }
+    if (room.getRoomEvent().get() && room.getRoomEvent()->isCleared() == false)
+	{
+        std::cout << "NOPE" << std::endl;
+		return ;
+	}
 	if (plan[y][x] == 'E')
 	{
 		auto exitsLoc = room.getExitsLoc();

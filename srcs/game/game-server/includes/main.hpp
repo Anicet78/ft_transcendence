@@ -22,5 +22,20 @@
 # include <sstream>
 # include <list>
 
+typedef struct FRect
+{
+	float x;
+	float y;
+	float w;
+	float h;
+} FRect;
+
+typedef struct Rect
+{
+	int x;
+	int y;
+	int w;
+	int h;
+} Rect;
 
 #endif

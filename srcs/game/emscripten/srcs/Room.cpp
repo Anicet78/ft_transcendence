@@ -274,6 +274,23 @@ Room Room::getWatingRoom()
 	return *_WaitingRooms["waiting"].get();
 }
 
+std::shared_ptr<ARoomEvent>	Room::getRoomEvent(void) const {
+	return (_event);
+}
+
+std::shared_ptr<ARoomEvent>	Room::getRoomEventModif(void) {
+	return (_event);
+}
+
+void	Room::setEvent(std::shared_ptr<ARoomEvent> event) {
+		this->_event = event;
+	return ;
+}
+
+std::string const	&ARoomEvent::getType(void) const {
+	return (this->_type);
+}
+
 void Room::importRooms()
 {
 	std::string path("../assets/rooms/");

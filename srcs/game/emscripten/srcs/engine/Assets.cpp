@@ -31,7 +31,6 @@ void Assets::importAssets(std::string path, int tile_size) {
 		std::string error = "Error in surface conversion to texture : ";
 		error += SDL_GetError();
 		throw std::runtime_error(error);
-		return ;
 	}
 	_MapImgW = image->w;
 	_MapImgH = image->h;
