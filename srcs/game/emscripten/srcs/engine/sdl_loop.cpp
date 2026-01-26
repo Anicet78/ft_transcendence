@@ -89,6 +89,13 @@ void	updatePlayerPosition(Player &player)
 	}
 }
 
+static void print_mobs(MobRush &mobRush, Player &player)
+{
+	int		tile_s = gSdl.getMapTileSize() * 2;
+	Camera	&cam = player.getCamera();
+	for (auto &mob : mobRush.getMobs())
+		mob.second->printMob(cam.getCamY(), cam.getCamY(), tile_s);
+}
 
 void	game_loop(Game &game)
 {
@@ -99,13 +106,11 @@ void	game_loop(Game &game)
 	updatePlayerPosition(game.getPlayer());
 	#endif
 	print_map(player);
-
 	if (player.getRoom().getRoomEvent())
 	{
 		MobRush &mobrush = dynamic_cast<MobRush &>(*player.getRoom().getRoomEvent());
-		std::cout << mobrush.getMobs().size() << std::endl;
+		print_mobs(mobrush, player);
 	}
 	print_others(player, game.getOtherPlayers());
 	player.printPlayer(player.getScreenX(), player.getScreenY());
-
 }

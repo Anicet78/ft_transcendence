@@ -173,16 +173,12 @@ void updateRoom(Player &player)
     Room room = player.getRoom();
 	auto plan = room.getRoomPlan();
 	float x = player.getX(), y = player.getY();
-    // Room &roomref = player.getRoomRef();
-
-    // if (roomref.getRoomEvent().get() && roomref.getRoomEvent()->isCleared() == false)
-	// {
-    //     std::cout << "NOPE" << std::endl;
-	// 	return ;
-	// }
+    
     if (room.getRoomEvent().get() && room.getRoomEvent()->isCleared() == false)
 	{
-        std::cout << "NOPE" << std::endl;
+		if (player.getExit() > 32)
+        	player.setExit(' ');
+        // std::cout << "NOPE" << std::endl;
 		return ;
 	}
 	if (plan[y][x] == 'E')

@@ -7,41 +7,41 @@
 //class for event management in room
 class ARoomEvent
 {
-protected:
-	std::string _type;
-public:
-	virtual ~ARoomEvent() {};
-	// virtual	void	createEvent(void) = 0;
-	virtual bool	isCleared(void) = 0;
-	virtual bool	isStarted(void) = 0;
-	virtual void	checkCleared(void) = 0;
-	std::string	const	&getType(void) const;
+	protected:
+		std::string _type;
+	public:
+		virtual ~ARoomEvent() {};
+		// virtual	void	createEvent(void) = 0;
+		virtual bool	isCleared(void) = 0;
+		virtual bool	isStarted(void) = 0;
+		virtual void	checkCleared(void) = 0;
+		std::string	const	&getType(void) const;
 };
 
 //make the room event a mob rush, player need to kill every mob in the room to clear it
 class MobRush : public ARoomEvent
 {
-private:
-	// std::vector<std::string>			&_roomPlan;
-	std::map<int, std::unique_ptr<Mob>>	_mobs;
-	// std::vector<int>					_mobsId;
+	private:
+		// std::vector<std::string>			&_roomPlan;
+		std::map<int, std::unique_ptr<Mob>>	_mobs;
+		// std::vector<int>					_mobsId;
 
-	bool	_started;
-	bool	_cleared;
+		bool	_started;
+		bool	_cleared;
 
-	// void	createEvent(void);
-public:
-	// MobRush(std::vector<std::string> &roomPlan);
-	MobRush(std::string type);
-	~MobRush();
+		// void	createEvent(void);
+	public:
+		// MobRush(std::vector<std::string> &roomPlan);
+		MobRush(std::string type);
+		~MobRush();
 
-	bool	isCleared(void);
-	bool	isStarted(void);
-	void	addMob(int id, float x, float y, int hp);
-	// void	destroyEvent(void);
-	void	checkCleared(void);
+		bool	isCleared(void);
+		bool	isStarted(void);
+		void	addMob(int id, float x, float y, int hp);
+		// void	destroyEvent(void);
+		void	checkCleared(void);
 
-	std::map<int, std::unique_ptr<Mob>>	&getMobs(void);
+		std::map<int, std::unique_ptr<Mob>>	&getMobs(void);
 };
 
 class Room

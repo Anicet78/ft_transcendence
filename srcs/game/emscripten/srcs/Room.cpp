@@ -17,6 +17,7 @@ Room &Room::operator=(Room const &rhs)
 	this->_exits = rhs._exits;
 	this->_roomPlan = rhs._roomPlan;
 	this->_exitsLoc = rhs._exitsLoc;
+	this->_event = rhs._event;
 	return *this;
 }
 
@@ -32,7 +33,7 @@ Room::Room(void)
 }
 
 Room::Room(Room const &rhs): _width(rhs._width), _height(rhs._height),
-				_exits(rhs._exits), _exitsLoc(rhs._exitsLoc), _name(rhs._name), _roomPlan(rhs._roomPlan)
+				_exits(rhs._exits), _exitsLoc(rhs._exitsLoc), _name(rhs._name), _roomPlan(rhs._roomPlan), _event(rhs._event)
 {}
 
 Room::~Room()
@@ -274,20 +275,24 @@ Room Room::getWatingRoom()
 	return *_WaitingRooms["waiting"].get();
 }
 
-std::shared_ptr<ARoomEvent>	Room::getRoomEvent(void) const {
+std::shared_ptr<ARoomEvent>	Room::getRoomEvent(void) const
+{
 	return (_event);
 }
 
-std::shared_ptr<ARoomEvent>	Room::getRoomEventModif(void) {
+std::shared_ptr<ARoomEvent>	Room::getRoomEventModif(void)
+{
 	return (_event);
 }
 
-void	Room::setEvent(std::shared_ptr<ARoomEvent> event) {
+void	Room::setEvent(std::shared_ptr<ARoomEvent> event)
+{
 		this->_event = event;
 	return ;
 }
 
-std::string const	&ARoomEvent::getType(void) const {
+std::string const	&ARoomEvent::getType(void) const
+{
 	return (this->_type);
 }
 

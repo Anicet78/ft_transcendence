@@ -6,7 +6,8 @@
 // 	return ;
 // }
 
-MobRush::MobRush(std::string type) : _started(false), _cleared(false) {
+MobRush::MobRush(std::string type) : _started(false), _cleared(false)
+{
 	this->_type = type;
 	return ;
 }
@@ -41,25 +42,30 @@ MobRush::~MobRush() {
 // 	return ;
 // }
 
-void	MobRush::addMob(int id, float x, float y, int hp) {
+void	MobRush::addMob(int id, float x, float y, int hp)
+{
 	std::cout << "mob created" << std::endl;
 	_mobs.emplace(id, std::make_unique<Mob>(id, x, y, hp));
 	return ;
 }
 
-void	MobRush::checkCleared(void) {
+void	MobRush::checkCleared(void)
+{
 	if (_cleared == false && _mobs.size() == 0)
 		_cleared = true;
 }
 
-bool	MobRush::isStarted(void) {
+bool	MobRush::isStarted(void)
+{
 	return(_started);
 }
 
-bool	MobRush::isCleared(void) {
+bool	MobRush::isCleared(void)
+{
 	return (_cleared);
 }
 
-std::map<int, std::unique_ptr<Mob> >	&MobRush::getMobs(void) {
+std::map<int, std::unique_ptr<Mob> >	&MobRush::getMobs(void)
+{
 	return (_mobs);
 }
