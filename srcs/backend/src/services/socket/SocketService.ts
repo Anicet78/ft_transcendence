@@ -1,5 +1,5 @@
-import fastify, { type FastifyInstance } from "fastify";
-import { Server } from "socket.io";
+import { type FastifyInstance } from "fastify";
+import { Server, Socket } from "socket.io";
 
 export const SocketService = {
 	io: null as Server | null,
@@ -8,15 +8,15 @@ export const SocketService = {
 		this.io = instance.io;
 	},
 
-	addInRoom(roomId: string, userId: string): void {
-		this.io?.socketsJoin(roomId);
+	async addInRoom(roomId: string, userSocket: Socket): Promise<void> {
+		await userSocket.join(roomId);
 	},
 
-	rmFromRoom(roomId: string, userId: string): void {
-
+	async rmFromRoom(roomId: string, userSocket: Socket): Promise<void> {
+		await userSocket.leave(roomId);
 	},
 
-	send<T>(receiver: string, event: string, data: T): void {
-
+	send(receiver: string, event: string, data: object): void {
+		this.io?.sockets.to(receiver).emit(event, data);
 	}
 };
