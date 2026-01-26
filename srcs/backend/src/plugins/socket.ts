@@ -2,6 +2,7 @@ import type { FastifyPluginCallback } from "fastify";
 import fp from "fastify-plugin";
 import socketio from 'fastify-socket.io';
 import { Server } from 'socket.io';
+import { SocketService } from "../services/socket/SocketService.js";
 
 type SocketIOOptions = {
 	cors?: {
@@ -17,6 +18,8 @@ export default fp(async (fastify) => {
 			methods: ["GET", "POST"]
 	}
 	});
+
+	SocketService.init(fastify);
 });
 
 declare module 'fastify' {
