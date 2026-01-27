@@ -74,7 +74,6 @@ function Register() {
 							<option value='SSA'>SSA</option>
 							</select>
 						</div>
-						
 					</div>
 				</div>
 			</div>
