@@ -1,7 +1,7 @@
 import Type, { type Static } from 'typebox';
-import { Region } from '@prisma/client';
+import { region_list } from '@prisma/client';
 
-export const RegionSchema = Type.Enum(Region);
+export const RegionSchema = Type.Enum(region_list);
 
 export const UserSchema = Type.Object({
 	id: Type.String(),

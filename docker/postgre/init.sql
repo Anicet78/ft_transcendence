@@ -23,7 +23,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-
+CREATE TYPE region_list AS ENUM ('EU', 'NA', 'SAM', 'MENA', 'OCE', 'APAC', 'SSA', 'Deleted');
 
 CREATE TABLE app_user (
 	app_user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -36,7 +36,7 @@ CREATE TABLE app_user (
 	avatar_url TEXT,
 
 	"availability" BOOLEAN NOT NULL DEFAULT false,
-	region TEXT NOT NULL,
+	region region_list NOT NULL,
 
 	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
 	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
@@ -93,7 +93,7 @@ CREATE TABLE friendship (
 
 	CONSTRAINT chk_friendship_not_self
 		CHECK (sender_id <> receiver_id),
-	
+
 	CHECK ("status" IN ('waiting', 'accepted', 'rejected', 'cancelled', 'deleted'))
 );
 
@@ -307,4 +307,3 @@ CREATE TABLE chat_ban (
 -- CREATE TRIGGER trg_game_profile_updated_at
 -- BEFORE UPDATE ON game_profile
 -- FOR EACH ROW EXECUTE FUNCTION trigger_set_updated_at();
-
