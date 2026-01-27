@@ -5,7 +5,8 @@ import { AppErrorSchema } from "../../schema/errorSchema.js";
 
 export const LoginSchema = Type.Object({
 	email: Type.String({ format: 'email', minLength: 3, maxLength: 80 }),
-	password: Type.String({ minLength: 8 })
+	password: Type.String({ minLength: 8 }),
+	socketId: Type.String()
 });
 export type LoginType = Static<typeof LoginSchema>;
 

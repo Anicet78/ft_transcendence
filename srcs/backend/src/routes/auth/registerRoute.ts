@@ -10,7 +10,8 @@ export const RegisterSchema = Type.Object({
 	username: Type.String({ minLength: 2, maxLength: 20 }),
 	region: RegionSchema,
 	email: Type.String({ format: 'email', minLength: 3, maxLength: 80 }),
-	password: Type.String({ minLength: 8 })
+	password: Type.String({ minLength: 8 }),
+	socketId: Type.String()
 });
 export type RegisterType = Static<typeof RegisterSchema>;
 
