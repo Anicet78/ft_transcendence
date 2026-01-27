@@ -28,10 +28,10 @@ model AppUser {
   avatarUrl           String?       @map("avatar_url")
   availability        Boolean       @default(false)
   region              Region
-  createdAt           DateTime?     @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt           DateTime?     @default(now()) @map("updated_at") @db.Timestamptz(6)
+  createdAt           DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime      @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt           DateTime?     @map("deleted_at") @db.Timestamptz(6)
-  lastConnectedAt     DateTime?     @default(now()) @map("last_connected_at") @db.Timestamptz(6)
+  lastConnectedAt     DateTime      @default(now()) @map("last_connected_at") @db.Timestamptz(6)
   chatBansGiven       ChatBan[]     @relation("ChatBanBannedBy")
   chatBansReceived    ChatBan[]     @relation("ChatBanUser")
   chatMemberships     ChatMember[]  @relation("UserChatMemberships")
@@ -97,18 +97,18 @@ model Friendship {
 
 model GameProfile {
   gameProfileId      String    @id @default(dbgenerated("uuid_generate_v4()")) @map("game_profile_id") @db.Uuid
-  userId             String?   @unique @map("user_id") @db.Uuid
-  createdAt          DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt          DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  userId             String    @unique @map("user_id") @db.Uuid
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt          DateTime? @map("deleted_at") @db.Timestamptz(6)
-  totalGames         Int?      @default(0) @map("total_games")
-  totalWins          Int?      @default(0) @map("total_wins")
-  totalLoses         Int?      @default(0) @map("total_loses")
-  totalEnemiesKilled Int?      @default(0) @map("total_ennemies_killed")
-  totalXp            Int?      @default(0) @map("total_xp")
-  level              Int?      @default(0) @map("level")
-  bestTime           Int?      @map("best_time")
-  user               AppUser?  @relation(fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_profile_user_id")
+  totalGames         Int       @default(0) @map("total_games")
+  totalWins          Int       @default(0) @map("total_wins")
+  totalLoses         Int       @default(0) @map("total_loses")
+  totalEnemiesKilled Int       @default(0) @map("total_ennemies_killed")
+  totalXp            Int       @default(0) @map("total_xp")
+  level              Int       @default(0) @map("level")
+  bestTime           Int       @default(0) @map("best_time")
+  user               AppUser   @relation(fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_profile_user_id")
 
   @@map("game_profile")
 }

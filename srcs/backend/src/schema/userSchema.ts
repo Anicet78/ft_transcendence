@@ -10,6 +10,7 @@ export const UserSchema = Type.Object({
 	username: Type.String(),
 	region: RegionSchema,
 	email: Type.String({ format: 'email' }),
+	region: Type.String(), //need to check, added to compile
 	passwordHash: Type.String()
 });
 
