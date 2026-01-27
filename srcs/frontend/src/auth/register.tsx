@@ -11,27 +11,17 @@ import Banner from '../components/Banner.tsx';
 import ButtonSubmit from '../components/ButtonSubmit.tsx';
 import InputEmail from '../components/InputEmail.tsx';
 import InputPassword from '../components/InputPassword.tsx';
+import InputName from '../components/InputName.tsx';
 
-/**
- * composant principal
- * comme tout composant il renvoie du html
- */
-function Login() {
+function Register() {
   const server = Server.getInstance();
-  // useState -> count = objet qui sera modifie et setCount = fonction qui va modifier la valeur de l'objet
-//   const [count, setCount] = useState<number>(0); // number = equivalent typescript de int
   const [token, setToken] = useState<string | undefined>(undefined);
 
-  // that's how you define a function
-//   const increaseCount = () => {
-//     setCount(count + 1);
-//   }
-
-  function login(formData) {
+  function register(formData) {
       const email = formData.get("email");
       const pwd = formData.get("pwd");
 
-      server.login(email, pwd).then((data) => {
+      server.register(email, pwd).then((data) => {
         setToken(data.token);
       })
   }
@@ -48,11 +38,32 @@ function Login() {
 			<Button color='primary' isOutlined>Login with 42</Button>
 		</div>
 		<br />
-        <form action={login}>
-			<InputEmail />
-			<div className="field">
-				<label htmlFor="password">Pasword</label>
-				<InputPassword />
+        <form action={register}>
+			<div>
+				<div className="field">
+					<label htmlFor="text">First name</label>
+					<InputName />
+				</div>
+				<div className="field">
+					<label htmlFor="text">Last name</label>
+					<InputName />
+				</div>
+				<div className="field">
+					<label htmlFor="text">User name</label>
+					<InputName />
+				</div>
+			</div>
+			<div>
+				<InputEmail />
+				<div className="field">
+					<label htmlFor="password">Password</label>
+					<InputPassword />
+				</div>
+				<div className="field">
+					<label htmlFor="password">Confirm password</label>
+					<InputPassword />
+				</div>
+				<br />
 			</div>
             <ButtonSubmit />
         </form>
@@ -63,6 +74,6 @@ function Login() {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <Login />
+    <Register />
   </StrictMode>,
 )

@@ -31,7 +31,7 @@ export class Server {
 	public async login(email: string, password: string): Promise<LoginResponseSchema> {
 		const data: LoginSchema = { "email": email, "password": password };
 
-		//cree l'url a partir des arguments qu'on lui donne, l'appelle pour acceder au serrver backend et il renvoie la reponse du server backend
+		//cree l'url a partir des arguments qu'on lui donne, l'appelle pour acceder au server backend et il renvoie la reponse du server backend
 		const response = await fetch(
 			`${this.api_url}/auth/login`,
 			{

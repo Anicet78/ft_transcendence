@@ -13,7 +13,7 @@ const Home = () => {
 				<br/>
 				<div>
 					<a href="./auth/login.html" className="button is-dark is-medium is-outlined">Sign in</a>
-					<Button color='dark' isOutlined size='medium'>Sign up</Button>
+					<a href="./auth/register.html" className="button is-dark is-medium is-outlined">Sign up</a>
 				</div>
 			</Box>
 		</>
