@@ -1,6 +1,6 @@
 services:
-  db:
-    image: postgres
+  postgres:
+    image: postgres:18.1
     container_name: postgre-c
     restart: on-failure
     env_file:
@@ -25,13 +25,35 @@ services:
       - .env
     secrets:
       - db_password
+      - jwt_secret
     networks:
       - transcendence
     depends_on:
-      - db
+      - postgres
+
+  node-dev:
+    image: node:25.2.1
+    container_name: node-dev-c
+    restart: on-failure
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    secrets:
+      - db_password
+      - jwt_secret
+    volumes:
+      - ../srcs/backend:/app
+    working_dir: /app
+    entrypoint: ["/app/prisma_entrypoint.sh"]
+    command: ["sh", "-c", "npm install --legacy-peer-deps && npx prisma generate && sleep infinity"]
+    networks:
+      - transcendence
+    depends_on:
+      - postgres
 
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:9.11.0
     container_name: pgadmin-c
     restart: on-failure
     ports:
@@ -45,10 +67,10 @@ services:
     networks:
       - transcendence
     depends_on:
-      - db
+      - postgres
 
   emscripten:
-    image: emscripten/emsdk
+    image: emscripten/emsdk:4.0.23
     container_name: emscripten-c
     volumes:
       - ../srcs/game:/src
@@ -58,7 +80,7 @@ services:
     entrypoint: ["make", "wasm"]
 
   nginx:
-    image: nginx
+    image: nginx:1.29.4
     container_name: nginx-c
     restart: on-failure
     ports:
@@ -77,6 +99,8 @@ services:
 secrets:
   db_password:
     file: ./secrets/db_password.txt
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
   pgadmin_password:
     file: ./secrets/pgadmin_password.txt
 
