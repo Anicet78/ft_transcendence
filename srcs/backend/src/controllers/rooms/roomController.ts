@@ -5,6 +5,7 @@ import type { RoomBodyType, RoomParamsType } from "../../routes/rooms/roomRoute.
 import { AppError } from "../../schema/errorSchema.js";
 import type { Socket } from "socket.io";
 import { SocketService } from "../../services/socket/SocketService.js";
+import type { GlobalHeaders } from "../../schema/globalHeadersSchema.js";
 
 export async function getRoomController(
 	request: FastifyRequest<{ Params: RoomParamsType }>,
@@ -22,10 +23,10 @@ export async function getRoomController(
 }
 
 export async function newRoomController(
-	request: FastifyRequest<{ Body: RoomBodyType }>,
+	request: FastifyRequest<{ Headers: GlobalHeaders, Body: RoomBodyType }>,
 	reply: FastifyReply
 ) {
-	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.body.socketId);
+	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.headers["x-socket-id"]);
 	if (!userSocket)
 		return reply.code(404).send({ error: "Socket not found" });
 
@@ -37,10 +38,10 @@ export async function newRoomController(
 }
 
 export async function joinRoomController(
-	request: FastifyRequest<{ Params: RoomParamsType, Body: RoomBodyType }>,
+	request: FastifyRequest<{ Headers: GlobalHeaders, Params: RoomParamsType, Body: RoomBodyType }>,
 	reply: FastifyReply
 ) {
-	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.body.socketId);
+	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.headers["x-socket-id"]);
 	if (!userSocket)
 		return reply.code(404).send({ error: "Socket not found" });
 
@@ -89,7 +90,7 @@ export async function hostRoomController(
 }
 
 export async function kickRoomController(
-	request: FastifyRequest<{ Params: RoomParamsType, Body: RoomBodyType }>,
+	request: FastifyRequest<{ Headers: GlobalHeaders, Params: RoomParamsType, Body: RoomBodyType }>,
 	reply: FastifyReply
 ) {
 	if (request.body.userId === request.user.id)
@@ -112,7 +113,7 @@ export async function kickRoomController(
 	if (!room.playersId.includes(request.body.userId))
 		return reply.code(404).send({ error: "Target not in room" });
 
-	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.body.socketId);
+	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.headers["x-socket-id"]);
 	if (!userSocket)
 		return reply.code(404).send({ error: "Socket not found" });
 

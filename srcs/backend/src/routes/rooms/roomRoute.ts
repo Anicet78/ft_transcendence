@@ -3,6 +3,7 @@ import Type, { type Static } from "typebox";
 import { AppErrorSchema } from "../../schema/errorSchema.js";
 import { getRoomController, hostRoomController, joinRoomController, kickRoomController, newRoomController, verifyRoomController } from "../../controllers/rooms/roomController.js";
 import { RoomSchema } from "../../schema/roomSchema.js";
+import { GlobalHeadersSchema } from "../../schema/globalHeadersSchema.js";
 
 export const RoomParamsSchema = Type.Object({
 	id: Type.String()
@@ -10,7 +11,6 @@ export const RoomParamsSchema = Type.Object({
 export type RoomParamsType = Static<typeof RoomParamsSchema>;
 
 export const RoomBodySchema = Type.Object({
-	socketId: Type.String(),
 	userId: Type.String()
 });
 export type RoomBodyType = Static<typeof RoomBodySchema>;
@@ -31,6 +31,7 @@ fastify.get("/:id", {
 
 fastify.post("/new", {
 	schema: {
+		headers: GlobalHeadersSchema,
 		body: RoomBodySchema,
 		response: {
 			200: RoomSchema,
@@ -43,6 +44,7 @@ fastify.post("/new", {
 
 fastify.post("/:id/join", {
 	schema: {
+		headers: GlobalHeadersSchema,
 		params: RoomParamsSchema,
 		body: RoomBodySchema,
 		response: {
@@ -71,6 +73,7 @@ fastify.post("/:id/host", {
 
 fastify.post("/:id/kick", {
 	schema: {
+		headers: GlobalHeadersSchema,
 		params: RoomParamsSchema,
 		body: RoomBodySchema,
 		response: {
