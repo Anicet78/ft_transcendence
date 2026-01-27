@@ -34,7 +34,7 @@ class Game
 extern Map		floor0;
 
 #ifdef __EMSCRIPTEN__
-	extern val msgJson;
+	extern std::queue<val> msgJson;
 #endif
 
 

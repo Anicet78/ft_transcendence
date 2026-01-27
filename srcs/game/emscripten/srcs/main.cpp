@@ -5,8 +5,6 @@ Map floor0(1, 1);
 
 #ifdef __EMSCRIPTEN__
 
-	val msgJson;
-
 	void testIncrement(val info)
 	{
 		int a = info["age"].as<int>();
@@ -16,7 +14,7 @@ Map floor0(1, 1);
 
 	void getMessage(val obj)
 	{
-		msgJson = obj;
+		msgJson.emplace(obj);
 	}
 
 #endif
@@ -44,7 +42,7 @@ void updatePlayerState(Game &game, val &msg)
 	{
 		std::string key = "player" + std::to_string(i);
 		if (!msg.hasOwnProperty(std::string(key + "_id").c_str()))
-			continue; // évite undefined → std::string
+			continue;
 		std::string uid = msg[key + "_id"].as<std::string>();
 		if (!game.isInOtherPlayers(uid))
 		{
@@ -121,16 +119,15 @@ void	launchGame(Game &game)
 
 void	parseJson(bool &init, Game &game)
 {
-	if (msgJson.isUndefined() || msgJson.isNull())
+	if (!msgJson.size())
 		return ;
-
-	val msg = msgJson;
-
+	
+	val msg = msgJson.front();
+	msgJson.pop();
+	if (msg.isUndefined() || msg.isNull())
+		return ;
 	if (!msg.hasOwnProperty("action"))
-	{
-		msgJson = val::undefined();
 		return;
-	}
 	if (msg["action"].as<std::string>() == "waiting")
 	{
 		init = true;
@@ -142,7 +139,6 @@ void	parseJson(bool &init, Game &game)
 		updatePlayerState(game, msg);
 	else if (msg["action"].as<std::string>() == "launch")
 		launchGame(game);
-	msgJson = val::undefined();
 }
 
 void mainloopE(void)
@@ -173,32 +169,6 @@ void mainloopE(void)
 	SDL_RenderClear(gSdl.renderer);
 }
 
-void mainloop(void)
-{
-	auto nodes = floor0.getNodes();
-	bool running = true;
-	static Player player("505", "betaTester");
-	static bool init = false;
-
-	if (!init)
-		player.setNode(nodes[0]);
-	while (running)
-	{
-		//game_loop(player);
-		while (SDL_PollEvent(&gSdl.event))
-		{
-			if (gSdl.event.type == SDL_QUIT)
-				running = false;
-			else if (gSdl.event.type == SDL_KEYDOWN)
-				key_down();
-			else if (gSdl.event.type == SDL_KEYUP)
-				key_up();
-		}
-		SDL_RenderPresent(gSdl.renderer);
-		SDL_RenderClear(gSdl.renderer);
-		SDL_Delay(16);
-	}
-}
 
 int main(void)
 {
@@ -237,8 +207,6 @@ int main(void)
 	// printMap(floor0);
 	#ifdef __EMSCRIPTEN__
 		emscripten_set_main_loop(mainloopE, 120, true);
-	#else
-		mainloop();
 	#endif
 	return (0);
 }

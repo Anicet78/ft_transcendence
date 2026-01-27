@@ -1,6 +1,6 @@
 # include "Session.hpp"
 
-Session::Session(void): _maxNumPlayer(5), _running(0), _ended(0)
+Session::Session(void): _maxNumPlayer(2), _running(0), _ended(0)
 {
 	(void)_running;
 	_maps.emplace_back(1, 1);
