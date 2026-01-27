@@ -1,15 +1,21 @@
-import { Field, Control, Input } from '@allxsmith/bestax-bulma';
-
 const InputPassword = () => {
 	return (
-		<Field label="Password">
-			<Control
-				hasIconsLeft
-				iconLeft={{ name: 'lock' }}
-			>
-			<Input type='password' placeholder="your password" />
-			</Control>
-		</Field>
+		<div className="field">
+			<label htmlFor="password">Pasword</label>
+			<p className="control has-icons-left">
+				<input
+					className="input"
+					type="password"
+					id="pwd"
+					name="pwd"
+					required
+					minLength={8}
+				/>
+				<span className="icon is-small is-left">
+					<i className="fas fa-lock"></i>
+				</span>
+			</p>
+		</div>
 	)
 }
 

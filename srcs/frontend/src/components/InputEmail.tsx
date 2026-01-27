@@ -1,15 +1,22 @@
-import { Field, Control, Input } from '@allxsmith/bestax-bulma';
-
 const InputEmail = () => {
 	return (
-		<Field label="Email">
-		<Control
-		hasIconsLeft
-		iconLeft={{ name: 'envelope' }}
-		>
-		<Input type='email' placeholder="example@mail.com" />
-		</Control>
-		</Field>
+		<div className="field">
+        	<label htmlFor="email">Email</label>
+			<p className="control has-icons-left">
+				<input
+					className="input"
+					type="email"
+					id="email"
+					name="email"
+					required
+					minLength={3}
+					maxLength={80}
+				/>
+				<span className="icon is-small is-left">
+					<i className="fas fa-envelope"></i>
+				</span>
+        	</p>
+		</div>
 	)
 }
 

@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import 'bulma/css/bulma.min.css'; // bulma style css
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './index.css'
+import './App.css'
 import App from './App.tsx'
 
 // va chercher l'element avec l'ID 'root' dans le doc index.html et met App dedans
