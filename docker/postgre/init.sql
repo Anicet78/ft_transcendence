@@ -38,10 +38,10 @@ CREATE TABLE app_user (
 	"availability" BOOLEAN NOT NULL DEFAULT false,
 	region region_list NOT NULL,
 
-	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
-	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	deleted_at timestamptz,
-	last_connected_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	last_connected_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
 	CHECK (trim(first_name) <> ''),
 	CHECK (trim(last_name) <> ''),
@@ -99,17 +99,17 @@ CREATE TABLE friendship (
 
 CREATE TABLE game_profile (
 	game_profile_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-	user_id UUID UNIQUE,
-	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
-	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	user_id UUID UNIQUE NOT NULL,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	deleted_at timestamptz,
-	total_games INT DEFAULT 0,
-	total_wins INT DEFAULT 0,
-	total_loses INT DEFAULT 0,
-	total_ennemies_killed INT DEFAULT 0,
-	total_xp INT DEFAULT 0,
-	"level" INT DEFAULT 0,
-	best_time INT, --minutes ? seconds ?
+	total_games INT NOT NULL DEFAULT 0,
+	total_wins INT NOT NULL DEFAULT 0,
+	total_loses INT NOT NULL DEFAULT 0,
+	total_ennemies_killed INT NOT NULL DEFAULT 0,
+	total_xp INT NOT NULL DEFAULT 0,
+	"level" INT NOT NULL DEFAULT 0,
+	best_time INT NOT NULL DEFAULT 0, --minutes ? seconds ?
 
 	CONSTRAINT fk_game_profile_user_id
 		FOREIGN KEY (user_id)

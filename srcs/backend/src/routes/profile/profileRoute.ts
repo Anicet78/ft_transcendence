@@ -1,26 +1,44 @@
 import type { FastifyInstance } from 'fastify';
 import * as profileController from '../../controllers/profile/profileController.js';
+import { DeleteProfileResponseSchema, ProfileIdParamsSchema, UpdateProfileBodySchema, ProfileResponseSchema, PublicProfileResponseSchema } from '../../schema/profileSchema.js';
 
-async function profileRoutes(fastify: FastifyInstance) {
+export async function profileRoutes(fastify: FastifyInstance) {
 
   fastify.get('/profile', {
-    preHandler: [fastify.authenticate],
+    schema: {
+      response: {
+        200: ProfileResponseSchema
+      }
+    },
     handler: profileController.getProfile
   });
 
   fastify.get('/profile/:id', {
+    schema: {
+      params: ProfileIdParamsSchema,
+      response: {
+        200: PublicProfileResponseSchema
+      }
+    },
     handler: profileController.getPublicProfile
   });
 
   fastify.patch('/profile', {
-    preHandler: [fastify.authenticate],
+    schema: {
+      body: UpdateProfileBodySchema,
+      response: {
+        200: ProfileResponseSchema
+      }
+    },
     handler: profileController.updateProfile
   });
 
   fastify.delete('/profile', {
-    preHandler: [fastify.authenticate],
+    schema: {
+      response: {
+        204: DeleteProfileResponseSchema
+      }
+    },
     handler: profileController.deleteProfile
   });
 }
-
-export default profileRoutes;
