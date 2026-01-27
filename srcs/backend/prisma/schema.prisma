@@ -17,8 +17,8 @@ model AppUser {
   avatarUrl           String?       @map("avatar_url")
   availability        Boolean       @default(false)
   region              region_list
-  createdAt           DateTime?     @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt           DateTime?     @default(now()) @map("updated_at") @db.Timestamptz(6)
+  createdAt           DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime      @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt           DateTime?     @map("deleted_at") @db.Timestamptz(6)
   lastConnectedAt     DateTime      @default(now()) @map("last_connected_at") @db.Timestamptz(6)
   chatBansGiven       ChatBan[]     @relation("ChatBanBannedBy")
