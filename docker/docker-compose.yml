@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres
+    image: postgres:18.1
     container_name: postgre-c
     restart: on-failure
     env_file:
@@ -53,7 +53,7 @@ services:
       - postgres
 
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:9.11.0
     container_name: pgadmin-c
     restart: on-failure
     ports:
@@ -70,7 +70,7 @@ services:
       - postgres
 
   emscripten:
-    image: emscripten/emsdk
+    image: emscripten/emsdk:4.0.23
     container_name: emscripten-c
     volumes:
       - ../srcs/game:/src
@@ -80,7 +80,7 @@ services:
     entrypoint: ["make", "wasm"]
 
   nginx:
-    image: nginx
+    image: nginx:1.29.4
     container_name: nginx-c
     restart: on-failure
     ports:
