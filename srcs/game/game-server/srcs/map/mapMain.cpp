@@ -24,11 +24,11 @@ void printRooms(Map &map)
 void printMap(Map &floor0)
 {
 	auto tab = floor0.getNodes();
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < floor0.getHeight(); i++)
 	{
-		for (int j = 0; j < 10; j++)
+		for (int j = 0; j < floor0.getWidth(); j++)
 		{
-			auto cell = tab[i * 10 + j];
+			auto cell = tab[i * floor0.getWidth() + j];
 			auto room = cell->getRoom();
 
 			if (room && room->getName() == "start")

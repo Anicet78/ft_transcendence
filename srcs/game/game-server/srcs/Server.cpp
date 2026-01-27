@@ -111,7 +111,6 @@ void    Server::manageQueue()
     }
     addPartyMulti(this->_matchMakingQueue, this->_sessions);
     addPartySolo(sumSolo, this->_matchMakingQueue, this->_sessions);
-
 }
 
 void    Server::removePlayer(std::string &uid)
@@ -137,12 +136,14 @@ void    Server::removePlayer(std::string &uid)
             }
             else if (it->get()->isInSession())
             {
-                for (Session &session : _sessions)
+                for (auto itS = _sessions.begin(); itS != _sessions.end(); it++)
                 {
-                    if (session.isPlayerInSession(uid))
+                    if (itS->isPlayerInSession(uid))
                     {
-                        session.sendToAll(*(*it).get());
-                        session.removePlayer(*it);
+                        itS->sendToAll(*(*it).get());
+                        itS->removePlayer(*it);
+                        if (itS->isRunning() && itS->getNumPlayers() < 1)
+                            this->_sessions.erase(itS);
                         break ;
                     }
                 }
@@ -188,7 +189,7 @@ void	Server::run(void)
             },
             .close = [this](auto *ws, int code, std::string_view msg)
             {
-                (void)ws, (void)code, (void)msg;
+                (void)code, (void)msg;
                 auto *data = (PerSocketData *)ws->getUserData();
                 this->removePlayer(data->playerId);
                 std::cout << "Client déconnecté\n";

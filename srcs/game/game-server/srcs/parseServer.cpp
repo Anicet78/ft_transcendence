@@ -219,7 +219,7 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
                         continue ;
                     if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isConnected() && !session.isRunning())
                         sendPlayerState(*oplayer, session, "");
-                    else if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isLaunched())
+                    else if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isLaunched() && session.isRunning())
                         sendPlayerState(*oplayer, session, "");
                 }
                 if (!session.getPlaceLeft() && session.doesAllPlayersConnected() && !session.isRunning())

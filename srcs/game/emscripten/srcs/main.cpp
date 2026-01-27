@@ -5,6 +5,8 @@ Map floor0(1, 1);
 
 #ifdef __EMSCRIPTEN__
 
+	val msgJson;
+
 	void testIncrement(val info)
 	{
 		int a = info["age"].as<int>();
@@ -14,7 +16,7 @@ Map floor0(1, 1);
 
 	void getMessage(val obj)
 	{
-		msgJson.emplace(obj);
+		msgJson = obj;
 	}
 
 #endif
@@ -42,7 +44,7 @@ void updatePlayerState(Game &game, val &msg)
 	{
 		std::string key = "player" + std::to_string(i);
 		if (!msg.hasOwnProperty(std::string(key + "_id").c_str()))
-			continue;
+			continue; // évite undefined → std::string
 		std::string uid = msg[key + "_id"].as<std::string>();
 		if (!game.isInOtherPlayers(uid))
 		{
@@ -119,15 +121,16 @@ void	launchGame(Game &game)
 
 void	parseJson(bool &init, Game &game)
 {
-	if (!msgJson.size())
+	if (msgJson.isUndefined() || msgJson.isNull())
 		return ;
-	
-	val msg = msgJson.front();
-	msgJson.pop();
-	if (msg.isUndefined() || msg.isNull())
-		return ;
+
+	val msg = msgJson;
+
 	if (!msg.hasOwnProperty("action"))
+	{
+		msgJson = val::undefined();
 		return;
+	}
 	if (msg["action"].as<std::string>() == "waiting")
 	{
 		init = true;
@@ -139,18 +142,18 @@ void	parseJson(bool &init, Game &game)
 		updatePlayerState(game, msg);
 	else if (msg["action"].as<std::string>() == "launch")
 		launchGame(game);
+	msgJson = val::undefined();
 }
 
 void mainloopE(void)
 {
-	auto nodes = floor0.getNodes();
 	static Player player("505", "betaTester");
 	static Game	game(player);
 	static bool init = false;
 	parseJson(init, game);
 	if (!init)
 		return ;
-	game_loop(game);
+	
 	while (SDL_PollEvent(&gSdl.event))
 	{
 		if (gSdl.event.type == SDL_KEYDOWN && gSdl.event.key.keysym.sym == SDLK_ESCAPE)
@@ -165,10 +168,10 @@ void mainloopE(void)
 		else if (gSdl.event.type == SDL_KEYUP)
 			key_up();
 	}
+	game_loop(game);
 	SDL_RenderPresent(gSdl.renderer);
 	SDL_RenderClear(gSdl.renderer);
 }
-
 
 int main(void)
 {
@@ -182,9 +185,7 @@ int main(void)
 	{
 		Assets::importAssets("../assets/sprite/assets.bmp", 16);
 		PlayerAssets::importPlayersAssets(100);
-		Room::importRooms();
-		//floor0.setWaitingRoom();
-		// floor0.fillMap();
+		Room::importRooms();	
 		#ifdef __EMSCRIPTEN__
 		std::string id = std::to_string(rand() % 500);
 		std::string name = "guest_" + id;

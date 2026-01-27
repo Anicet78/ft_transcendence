@@ -59,6 +59,8 @@ class Map
 		quadList				&getHead(void);
 		std::vector<quadList>	&getNodes();
 		void					fillMap(void);
+		int						getWidth() const;
+		int						getHeight() const;
 		void					setRoomInNode(std::string &roomName, int x, int y, int rot, int roomSet);
 		void					setWaitingRoom();
 };

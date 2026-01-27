@@ -61,8 +61,6 @@ class Room
 		static void											importRooms();
 		void												randomizeRoom();
 		void												turnMapLeft(void);
-		void												turnMapRight(void);
-		void												turnMapUpDown(void);
 };
 
 std::ostream &operator<<(std::ostream &o, Room const &obj);

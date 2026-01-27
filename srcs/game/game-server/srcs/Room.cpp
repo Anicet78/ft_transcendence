@@ -99,21 +99,26 @@ void Room::randomizeRoom()
 {
 	if (this->_roomPlan.empty())
 		return ;
-	this->_exits = {0, 0, 0, 0};
 	int num = rand() % 4;
 	if (num == 1)
 	{
+		this->_exits = {0, 0, 0, 0};
 		this->turnMapLeft();
 		this->_rotated = 1;
 	}
 	else if (num == 2)
 	{
-		this->turnMapRight();
+		this->_exits = {0, 0, 0, 0};
+		this->turnMapLeft();
+		this->turnMapLeft();
+		this->turnMapLeft();
 		this->_rotated = 3;
 	}
 	else if (num == 3)
 	{
-		this->turnMapUpDown();
+		this->_exits = {0, 0, 0, 0};
+		this->turnMapLeft();
+		this->turnMapLeft();
 		this->_rotated = 2;
 	}
 }
@@ -184,39 +189,6 @@ void Room::turnMapLeft()
 	this->identifyExits();
 }
 
-void Room::turnMapRight()
-{
-	auto src = this->_roomPlan;
-	this->_roomPlan.clear();
-
-	int height = src.size();
-
-	for (int x = 0; x < _width; x++)
-	{
-		std::string line;
-		for (int y = height - 1; y >= 0; y--)
-		{
-			if (x < static_cast<int>(src[y].size()))
-				line += src[y][x];
-			else
-				line += ' ';
-		}
-		this->_roomPlan.push_back(line);
-	}
-	this->updateSize();
-	this->identifyExits();
-}
-
-void	Room::turnMapUpDown(void)
-{
-	auto src = this->_roomPlan;
-	this->_roomPlan.clear();
-
-	for (int i = src.size() - 1; i >= 0; i--)
-		this->_roomPlan.push_back(src[i]);
-	this->updateSize();
-	this->identifyExits();
-}
 
 std::map<std::string, std::shared_ptr<Room>> Room::getFloor0()
 {
