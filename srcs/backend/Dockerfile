@@ -6,7 +6,7 @@ COPY ./prisma_entrypoint.sh /usr/local/bin/prisma_entrypoint.sh
 RUN chmod +x /usr/local/bin/prisma_entrypoint.sh
 
 COPY ./package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 COPY . .
 

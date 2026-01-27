@@ -1,12 +1,14 @@
 import { AppError } from "../../schema/errorSchema.js";
 import type { Room } from "../../schema/roomSchema.js";
+import { SocketService } from "../socket/SocketService.js";
+import type { Socket } from "socket.io";
 
 const rooms = new Map<string, Room>();
 
 export const RoomService = {
 	rooms: rooms as ReadonlyMap<string, Room>,
 
-	create(userId: string): Room {
+	async create(userId: string, userSocket: Socket): Promise<Room> {
 		let roomId: string = Math.random().toString(36).substring(7).toUpperCase();
 		while (rooms.has(roomId))
 			roomId = Math.random().toString(36).substring(7).toUpperCase();
@@ -18,6 +20,8 @@ export const RoomService = {
 		};
 
 		rooms.set(roomId, newRoom);
+
+		await SocketService.addInRoom(roomId, userSocket);
 		return newRoom;
 	},
 
@@ -34,7 +38,7 @@ export const RoomService = {
 		return Array.from(rooms.values());
 	},
 
-	join(roomId: string, userId: string): Room {
+	async join(roomId: string, userId: string, userSocket: Socket): Promise<Room> {
 		const room = rooms.get(roomId);
 		if (!room)
 			throw new AppError('Room not found', 404);
@@ -45,15 +49,27 @@ export const RoomService = {
 		if (room.playersId.length >= 8)
 			throw new AppError('Room full', 409);
 
-		this.leave(userId);
+		await this.leave(userId, userSocket);
+		await SocketService.addInRoom(roomId, userSocket);
 
 		room.playersId.push(userId);
 		return room;
 	},
 
-	leave(userId: string): void {
+	async leave(userId: string, userSocket: Socket | null = null, reason: string = "Quit"): Promise<void> {
 		for (const [roomId, room] of rooms.entries()) {
-			room.playersId = room.playersId.filter((id: string) => id !== userId);
+			if (room.playersId.includes(userId))
+			{
+				room.playersId = room.playersId.filter((id: string) => id !== userId);
+				if (userSocket)
+				{
+					await SocketService.rmFromRoom(roomId, userSocket);
+					SocketService.send(roomId, "player_left", {
+						playerId: userId,
+						reason: reason
+					});
+				}
+			}
 			if (room.playersId.length === 0) {
 				rooms.delete(roomId);
 			}

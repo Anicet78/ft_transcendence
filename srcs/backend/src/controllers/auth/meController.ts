@@ -24,11 +24,9 @@ export async function getMeController(
 	if (!user)
 		return reply.code(401).send({ error: "Invalid identifiers" });
 
-	let room: Room | null = RoomService.find(request.user.id);
-	if (!room)
-		room = RoomService.create(request.user.id);
+	const room: Room | null = RoomService.find(request.user.id);
 
-	const response: MeResponseType = { user: { id: user.appUserId, email: user.mail }, roomId: room.roomId };
+	const response: MeResponseType = { user: { id: user.appUserId, email: user.mail }, roomId: room?.roomId || "" };
 
 	return reply.status(200).send(response);
 }

@@ -3,6 +3,7 @@ import Type, { type Static } from "typebox";
 import { AppErrorSchema } from "../../schema/errorSchema.js";
 import { getRoomController, hostRoomController, joinRoomController, kickRoomController, newRoomController, verifyRoomController } from "../../controllers/rooms/roomController.js";
 import { RoomSchema } from "../../schema/roomSchema.js";
+import { GlobalHeadersSchema } from "../../schema/globalHeadersSchema.js";
 
 export const RoomParamsSchema = Type.Object({
 	id: Type.String()
@@ -10,7 +11,6 @@ export const RoomParamsSchema = Type.Object({
 export type RoomParamsType = Static<typeof RoomParamsSchema>;
 
 export const RoomBodySchema = Type.Object({
-	roomId: Type.String(),
 	userId: Type.String()
 });
 export type RoomBodyType = Static<typeof RoomBodySchema>;
@@ -29,20 +29,27 @@ fastify.get("/:id", {
 	}
 }, getRoomController);
 
-fastify.get("/new", {
+fastify.post("/new", {
 	schema: {
+		headers: GlobalHeadersSchema,
+		body: RoomBodySchema,
 		response: {
 			200: RoomSchema,
+			400: AppErrorSchema,
+			404: AppErrorSchema,
 			500: AppErrorSchema
 		}
 	}
 }, newRoomController);
 
-fastify.get("/join/:id", {
+fastify.post("/:id/join", {
 	schema: {
+		headers: GlobalHeadersSchema,
 		params: RoomParamsSchema,
+		body: RoomBodySchema,
 		response: {
 			200: RoomSchema,
+			400: AppErrorSchema,
 			404: AppErrorSchema,
 			409: AppErrorSchema,
 			500: AppErrorSchema
@@ -50,8 +57,9 @@ fastify.get("/join/:id", {
 	}
 }, joinRoomController);
 
-fastify.patch("/host", {
+fastify.post("/:id/host", {
 	schema: {
+		params: RoomParamsSchema,
 		body: RoomBodySchema,
 		response: {
 			200: RoomSchema,
@@ -63,8 +71,10 @@ fastify.patch("/host", {
 	}
 }, hostRoomController);
 
-fastify.patch("/kick", {
+fastify.post("/:id/kick", {
 	schema: {
+		headers: GlobalHeadersSchema,
+		params: RoomParamsSchema,
 		body: RoomBodySchema,
 		response: {
 			200: RoomSchema,
@@ -76,7 +86,7 @@ fastify.patch("/kick", {
 	}
 }, kickRoomController);
 
-fastify.patch("/verify", {
+fastify.post("/verify", {
 	schema: {
 		body: RoomSchema,
 		response: {

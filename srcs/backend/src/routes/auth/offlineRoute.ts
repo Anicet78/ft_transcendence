@@ -4,7 +4,7 @@ import { postOfflineController } from "../../controllers/auth/offlineController.
 import { AppErrorSchema } from "../../schema/errorSchema.js";
 
 export const OfflineBodySchema = Type.Object({
-
+	socketId: Type.String()
 });
 export type OfflineBodyType = Static<typeof OfflineBodySchema>
 
@@ -21,6 +21,7 @@ fastify.post("/offline", {
 		response: {
 			200: OfflineResponseSchema,
 			400: AppErrorSchema,
+			404: AppErrorSchema,
 			500: AppErrorSchema
 		}
 	}

@@ -5,9 +5,11 @@ import { verifyPassword } from "../../services/auth/password.js";
 import type { AppUser } from "@prisma/client";
 import { UserService } from "../../services/db/userService.js";
 import { RoomService } from "../../services/rooms/roomService.js";
+import type { Socket } from "socket.io";
+import type { GlobalHeaders } from "../../schema/globalHeadersSchema.js";
 
 export async function postLoginController(
-	request: FastifyRequest<{ Body: LoginType }>,
+	request: FastifyRequest<{ Headers: GlobalHeaders, Body: LoginType }>,
 	reply: FastifyReply
 ) {
 	const {email, password} = request.body;
@@ -44,8 +46,12 @@ export async function postLoginController(
 		passwordHash: dbUser.passwordHash
 	};
 
+	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.headers["x-socket-id"]);
+	if (!userSocket)
+		return reply.code(404).send({ error: "Socket not found" });
+
 	const token = await reply.jwtSign({ id: user.id, email: user.email });
-	const room = RoomService.create(user.id);
+	const room = await RoomService.create(user.id, userSocket);
 
 	const response: LoginResponseType = {token: token, user: user, roomId: room.roomId };
 
