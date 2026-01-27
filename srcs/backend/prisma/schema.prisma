@@ -204,6 +204,21 @@ model ChatMember {
   @@map("chat_member")
 }
 
+// model ChatMember {
+//   chatMemberId String    @id @default(dbgenerated("uuid_generate_v4()")) @map("chat_member_id") @db.Uuid
+//   chatId       String?   @map("chat_id") @db.Uuid
+//   userId       String?   @map("user_id") @db.Uuid
+//   createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+//   updatedAt    DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+//   deletedAt    DateTime? @map("deleted_at") @db.Timestamptz(6)
+//   joinedAt     DateTime? @default(now()) @map("joined_at") @db.Timestamptz(6)
+//   leftAt       DateTime? @map("left_at") @db.Timestamptz(6)
+//   chat         Chat?     @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction)
+//   user         AppUser?  @relation(fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
+
+//   @@map("chat_member")
+// }
+
 model ChatMessage {
   messageId   String         @id @default(dbgenerated("uuid_generate_v4()")) @map("message_id") @db.Uuid
   chatId      String         @map("chat_id") @db.Uuid
