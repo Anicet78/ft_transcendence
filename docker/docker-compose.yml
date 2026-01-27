@@ -1,5 +1,5 @@
 services:
-  db:
+  postgres:
     image: postgres
     container_name: postgre-c
     restart: on-failure
@@ -20,8 +20,6 @@ services:
       context: ../srcs/backend
       dockerfile: Dockerfile
     container_name: node-c
-    ports:
-      - 3000:3000
     restart: on-failure
     env_file:
       - .env
@@ -31,12 +29,14 @@ services:
     networks:
       - transcendence
     depends_on:
-      - db
+      - postgres
 
   node-dev:
     image: node:25.2.1
     container_name: node-dev-c
     restart: on-failure
+    ports:
+      - 3000:3000
     env_file:
       - .env
     secrets:
@@ -46,11 +46,11 @@ services:
       - ../srcs/backend:/app
     working_dir: /app
     entrypoint: ["/app/prisma_entrypoint.sh"]
-    command: ["sh", "-c", "npm install && npx prisma generate && sleep infinity"]
+    command: ["sh", "-c", "npm install --legacy-peer-deps && npx prisma generate && sleep infinity"]
     networks:
       - transcendence
     depends_on:
-      - db
+      - postgres
 
   pgadmin:
     image: dpage/pgadmin4
@@ -67,7 +67,7 @@ services:
     networks:
       - transcendence
     depends_on:
-      - db
+      - postgres
 
   emscripten:
     image: emscripten/emsdk
