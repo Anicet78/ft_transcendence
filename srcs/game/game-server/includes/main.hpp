@@ -38,4 +38,10 @@ typedef struct Rect
 	int h;
 } Rect;
 
+typedef struct FPoint
+{
+	float x;
+	float y;
+} FPoint;
+
 #endif

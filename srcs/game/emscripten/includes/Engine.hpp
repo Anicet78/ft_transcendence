@@ -13,6 +13,7 @@ public:
 	SDL_Renderer	*renderer;
 	SDL_Event		event;
 	SDL_Texture		*texture;
+	SDLTimer		cap;
 	Key				key;
 
 	Engine();
@@ -22,6 +23,8 @@ public:
 
 	void	setPlayerSize(int tile_size);
 	int		getPlayerSize(void);
+
+	SDLTimer	&getTimer(void);
 };
 
 extern Engine	gSdl;

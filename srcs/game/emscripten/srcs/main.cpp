@@ -185,7 +185,9 @@ void mainloopE(void)
 	parseJson(init, game);
 	if (!init)
 		return ;
-	
+
+	int	ticksPerFrame = 1000 / 60;
+	gSdl.cap.startTimer();
 	while (SDL_PollEvent(&gSdl.event))
 	{
 		if (gSdl.event.type == SDL_KEYDOWN && gSdl.event.key.keysym.sym == SDLK_ESCAPE)
@@ -203,6 +205,10 @@ void mainloopE(void)
 	game_loop(game);
 	SDL_RenderPresent(gSdl.renderer);
 	SDL_RenderClear(gSdl.renderer);
+	int frameTicks = gSdl.cap.getTicks();
+	if (frameTicks < ticksPerFrame)
+		SDL_Delay(ticksPerFrame - frameTicks);
+
 }
 
 void mainloop(void)
@@ -275,7 +281,7 @@ int main(void)
 	}
 	// printMap(floor0);
 	#ifdef __EMSCRIPTEN__
-		emscripten_set_main_loop(mainloopE, 120, true);
+		emscripten_set_main_loop(mainloopE, 60, true);
 	#else
 		mainloop();
 	#endif

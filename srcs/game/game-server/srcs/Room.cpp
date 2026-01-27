@@ -309,6 +309,10 @@ std::shared_ptr<ARoomEvent>	Room::getRoomEvent(void) const {
 	return (_event);
 }
 
+std::shared_ptr<ARoomEvent>	Room::getRoomEventRef(void) {
+	return (_event);
+}
+
 std::ostream &operator<<(std::ostream &o, Room const &obj)
 {
 	o << "Room name: " << obj.getName() << std::endl;

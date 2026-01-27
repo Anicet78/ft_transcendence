@@ -12,7 +12,9 @@ CXXFLAGS += -I$(HEADERS) -I./uWebSockets/src -I./uWebSockets/uSockets/src
 
 SRCS =  main.cpp \
 		parseServer.cpp \
-		Server.cpp Session.cpp \
+		updateClient.cpp \
+		Server.cpp \
+		Session.cpp \
         map/Map.cpp \
 		map/mapMain.cpp \
 		map/mapGen.cpp \
@@ -21,6 +23,7 @@ SRCS =  main.cpp \
 		RoomEvent.cpp \
 		Mob.cpp \
 		Player.cpp \
+		HitBox.cpp \
 		Party.cpp
 
 

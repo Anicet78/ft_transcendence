@@ -104,6 +104,7 @@ class Room
 		void												turnMapUpDown(void);
 		void												setEvent(void);
 		std::shared_ptr<ARoomEvent>							getRoomEvent(void) const;
+		std::shared_ptr<ARoomEvent>							getRoomEventRef(void);
 };
 
 std::ostream &operator<<(std::ostream &o, Room const &obj);

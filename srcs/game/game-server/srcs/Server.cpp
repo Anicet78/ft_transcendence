@@ -163,8 +163,9 @@ Player  &Server::getPlayer(std::string &uid)
 
 void	Server::run(void)
 {
-	uWS::App()
-        .ws<PerSocketData>("/*", uWS::App::WebSocketBehavior<PerSocketData>{
+    uWS::App    app;
+
+	app.ws<PerSocketData>("/*", uWS::App::WebSocketBehavior<PerSocketData> {
             .open = [](auto *ws) 
             {
                 (void)ws;

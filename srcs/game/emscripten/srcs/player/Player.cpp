@@ -62,10 +62,6 @@ quadList Player::getNode() const
 	return this->_node;
 }
 
-SDL_FRect	&Player::getWallHitBox(void) {
-	return (_wallHitBox);
-}
-
 Camera	&Player::getCamera(void) {
 	return (_camera);
 }
@@ -78,6 +74,10 @@ int Player::getAnim(void) const
 int	Player::getLastDir(void) const
 {
 	return this->_last_dir;
+}
+
+int	Player::getFrame(void) const {
+	return (_frame);
 }
 
 //set player value
@@ -133,11 +133,6 @@ void	Player::setAtk(int atk)
 void	Player::setDef(int def)
 {
 	_def = def;
-	return ;
-}
-
-void	Player::setWallHitBox(void) {
-	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
 	return ;
 }
 

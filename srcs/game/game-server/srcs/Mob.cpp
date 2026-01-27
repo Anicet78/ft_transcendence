@@ -1,6 +1,6 @@
 #include "Mob.hpp"
 
-Mob::Mob(float x, float y, int hp) : _x(x), _y(y), _hp(hp), _last_dir(0), _frame(0), _isInvinsible(false)/*, _box(_x, _y, _screenX, _screenY, _last_dir)*/ {
+Mob::Mob(float x, float y, int hp) : _x(x), _y(y), _hp(hp), _last_dir(0), _frame(0), _isInvinsible(false), _isDead(false), _invFrame(0) , _box(_x, _y, _last_dir) {
 	return ;
 }
 
@@ -21,6 +21,10 @@ void	Mob::setHp(int hp) {
 	return ;
 }
 
+void	Mob::setInvFrame(int invFrame) {
+	this->_invFrame = invFrame;
+}
+
 float	Mob::getX(void) const {
 	return (_x);
 }
@@ -37,12 +41,16 @@ int		Mob::getLastDir(void) const {
 	return (_last_dir);
 }
 
-// HitBox	&Mob::getBox(void) {
-// 	return (_box);
-// }
+HitBox	&Mob::getBox(void) {
+	return (_box);
+}
 
 int		Mob::getFrame(void) const {
 	return (_frame);
+}
+
+int		Mob::getInvFrame(void) const {
+	return (_invFrame);
 }
 
 //-----------------------------------------------------------------------
@@ -59,4 +67,12 @@ void	Mob::endInvinsibleFrame(void) {
 
 bool	Mob::checkInvinsibleFrame(void) {
 	return (this->_isInvinsible);
+}
+
+void	Mob::die(void) {
+	this->_isDead = true;
+}
+
+bool	Mob::isDead(void) {
+	return (this->_isDead);
 }

@@ -29,5 +29,8 @@ class Server
 
 };
 
+void	updatePlayer(Player &player, std::map<std::string, std::string> &req);
+void	updateRoom(Player &player);
+void	updateWorld(Player &player);
 
 #endif

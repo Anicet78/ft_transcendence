@@ -49,6 +49,11 @@ class Player
 		int			_def;
 	//wall hitbox
 		FRect		_wallHitBox;
+		HitBox		_box;
+
+	//atk state
+		bool		_isAttacking;
+		int			_atkFrame;
 	public:
 		Player(std::string uid, int partySize, std::string partyName, std::string name,
 				uWS::WebSocket<false, true, PerSocketData> *ws);
@@ -79,6 +84,7 @@ class Player
 		int			getLastDir(void) const;
 		FRect		&getWallHitBox(void);
 		Room		&getRoomRef(void);
+		HitBox		&getHitBox(void);
 
 	//setter
 		void		setConnexion(bool c);
@@ -97,8 +103,13 @@ class Player
 		void		setLastDir(int dir);
 
 	//action
-		void		move(void);
+
 		void		attack(void);
+		bool		getIsAttacking(void) const;
+		void		endAttacking(void);
+
+		void		updateAnim(std::string const &req);
+		void		move(std::map<std::string, std::string> &req);
 		void		takeDamage(int amount);
 		void		heal(int amount);
 };

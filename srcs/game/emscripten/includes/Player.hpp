@@ -39,8 +39,7 @@ class Player
 
 		bool		_atkState;
 
-	//hitbox
-		SDL_FRect	_wallHitBox;
+	//camera
 
 		Camera		_camera;
 
@@ -68,11 +67,11 @@ class Player
 		int			getHp(void) const;
 		int			getAtk(void) const;
 		int			getDef(void) const;
-	
-		SDL_FRect	&getWallHitBox(void);
+
 		Camera		&getCamera(void);
 	
 		int			getAnim(void) const;
+		int			getFrame(void) const;
 		int			getLastDir(void) const;
 
 	//setter
@@ -85,7 +84,6 @@ class Player
 		void	setDir(int dir);
 
 		void	updateLastDir(void);
-		void	setWallHitBox(void);
 
 	//print
 		void	printPlayer(float px, float py);
