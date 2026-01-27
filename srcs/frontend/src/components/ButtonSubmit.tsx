@@ -1,7 +1,7 @@
 import { Button } from "@allxsmith/bestax-bulma";
 
-const	ButtonSubmit = () => {
-	return (<Button type="submit" color="primary" isOutlined>Sign in</Button>)
+const	ButtonSubmit = ({name}) => {
+	return (<Button type="submit" color="primary" isOutlined>{name}</Button>)
 }
 
 export default ButtonSubmit

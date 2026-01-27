@@ -7,7 +7,7 @@ const Banner = () => {
 	return (
 		<Navbar color='dark' aria-label='navigation bar'>
 			<Navbar.Brand>
-				<Navbar.Item href="index.html">
+				<Navbar.Item href="http://localhost:5173/index.html">
 					<Button color="primary" isOutlined display="flex" justifyContent="center" alignItems="center" size='large'>
 						<Icon
 						name="dragon"

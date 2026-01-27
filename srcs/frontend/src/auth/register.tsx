@@ -2,7 +2,7 @@ import { useState, StrictMode } from 'react'
 import { createRoot } from 'react-dom/client';
 import 'bulma/css/bulma.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import './login.css'
+import './register.css'
 import './index.css'
 
 import { Button } from '@allxsmith/bestax-bulma';
@@ -18,12 +18,16 @@ function Register() {
   const [token, setToken] = useState<string | undefined>(undefined);
 
   function register(formData) {
-      const email = formData.get("email");
-      const pwd = formData.get("pwd");
 
-      server.register(email, pwd).then((data) => {
-        setToken(data.token);
-      })
+	const fname = formData.get("firstname");
+	const lname = formData.get("lastname");
+	const uname = formData.get("username");
+	const email = formData.get("email");
+	const pwd = formData.get("pwd");
+
+	server.register(fname, lname, uname, email, pwd).then((data) => {
+		setToken(data.token);
+	})
   }
 
   console.log("app token is", token);
@@ -38,21 +42,43 @@ function Register() {
 			<Button color='primary' isOutlined>Login with 42</Button>
 		</div>
 		<br />
-        <form action={register}>
+        <form action={register} className='form'>
 			<div>
 				<div className="field">
 					<label htmlFor="text">First name</label>
-					<InputName />
+					<InputName nameType="firstname" />
 				</div>
 				<div className="field">
 					<label htmlFor="text">Last name</label>
-					<InputName />
+					<InputName nameType="lastname"/>
 				</div>
 				<div className="field">
 					<label htmlFor="text">User name</label>
-					<InputName />
+					<InputName nameType="username"/>
+				</div>
+				<div className="field">
+					<label htmlFor="region">Region</label>
+					<div className="control has-icons-left">
+						<div className="select">
+							<div className="icon is-small is-left">
+							<i className="fas fa-globe"></i>
+							</div>
+							<select id='region' name='region'>
+							<option defaultValue='EU'>Select your region</option>
+							<option value='EU'>EU</option>
+							<option value='NA'>NA</option>
+							<option value='SAM'>SAM</option>
+							<option value='MENA'>MENA</option>
+							<option value='OCE'>OCE</option>
+							<option value='APAC'>APAC</option>
+							<option value='SSA'>SSA</option>
+							</select>
+						</div>
+						
+					</div>
 				</div>
 			</div>
+			<br />
 			<div>
 				<InputEmail />
 				<div className="field">
@@ -65,7 +91,7 @@ function Register() {
 				</div>
 				<br />
 			</div>
-            <ButtonSubmit />
+            <ButtonSubmit name='Sign up' />
         </form>
       </div>
     </>

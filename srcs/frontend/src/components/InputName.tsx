@@ -1,13 +1,13 @@
-const InputName = () => {
+const InputName = ({nameType}) => {
 	return (
 		<p className="control has-icons-left">
 			<input
 				className="input"
 				type="text"
-				id="name"
-				name="name"
+				id={nameType}
+				name={nameType}
 				required
-				minLength={8}
+				minLength={2}
 			/>
 			<span className="icon is-small is-left">
 				<i className="fas fa-user"></i>

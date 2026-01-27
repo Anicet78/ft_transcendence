@@ -4,7 +4,7 @@ import './App.css'
 import Banner from './components/Banner.tsx';
 import { Box, Button } from '@allxsmith/bestax-bulma';
 
-const Home = () => {
+const App = () => {
 	return (
 		<>
 			<h1><Banner /></h1>
@@ -20,4 +20,4 @@ const Home = () => {
 	)
 }
 
-export default Home
+export default App
