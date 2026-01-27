@@ -49,3 +49,11 @@ export const PublicProfileResponseSchema = Type.Object({
   gameProfile: Type.Union([GameProfileSchema, Type.Null()])
 });
 export type PublicProfileResponse = Static<typeof PublicProfileResponseSchema>;
+
+
+export const ProfileIdParamsSchema = Type.Object({
+  id: Type.String()
+});
+export type ProfileIdParams = Static<typeof ProfileIdParamsSchema>;
+
+export const DeleteProfileResponseSchema = Type.Null();

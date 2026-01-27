@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import * as profileController from '../../controllers/profile/profileController.js';
-import { UpdateProfileBodySchema, ProfileResponseSchema, PublicProfileResponseSchema } from '../../schema/profileSchema.js';
+import { DeleteProfileResponseSchema, ProfileIdParamsSchema, UpdateProfileBodySchema, ProfileResponseSchema, PublicProfileResponseSchema } from '../../schema/profileSchema.js';
 
 export async function profileRoutes(fastify: FastifyInstance) {
 
@@ -15,13 +15,7 @@ export async function profileRoutes(fastify: FastifyInstance) {
 
   fastify.get('/profile/:id', {
     schema: {
-      params: {
-        type: 'object',
-        properties: {
-          id: { type: 'string' }
-        },
-        required: ['id']
-      },
+      params: ProfileIdParamsSchema,
       response: {
         200: PublicProfileResponseSchema
       }
@@ -42,7 +36,7 @@ export async function profileRoutes(fastify: FastifyInstance) {
   fastify.delete('/profile', {
     schema: {
       response: {
-        204: { type: 'null' }
+        204: DeleteProfileResponseSchema
       }
     },
     handler: profileController.deleteProfile

@@ -1,7 +1,7 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import * as profileService from '../../services/db/profileService.js';
 import { Prisma } from '@prisma/client';
-import { type UpdateProfileBody/*, type ProfileResponse, type PublicProfileResponse */} from '../../schema/profileSchema.js';
+import { type UpdateProfileBody, type ProfileIdParams/*, type ProfileResponse, type PublicProfileResponse */} from '../../schema/profileSchema.js';
 import { mapProfileToResponse, mapPublicProfileToResponse } from './profileMapper.js';
 import { serializePrisma } from '../../utils/serializePrisma.js';
 
@@ -23,8 +23,12 @@ export async function getProfile( req: FastifyRequest, reply: FastifyReply ) {
   }
 }
 
+
 // GET /profile/:id
-export async function getPublicProfile( req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply ) {
+// export async function getPublicProfile( req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply ) {
+export async function getPublicProfile(
+  req: FastifyRequest<{ Params: ProfileIdParams }>,
+  reply: FastifyReply ) {
   try {
     const userId = req.params.id;
 
