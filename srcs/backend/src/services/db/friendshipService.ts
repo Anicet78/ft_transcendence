@@ -1,4 +1,4 @@
-import { prisma } from './db.js';
+import { prisma } from './prisma.js';
 
 export async function getFriends(userId: string) {
   return prisma.friendship.findMany({

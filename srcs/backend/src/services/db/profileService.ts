@@ -1,4 +1,4 @@
-import { prisma } from '../db/db.js';
+import { prisma } from './prisma.js';
 import { Prisma } from '@prisma/client';
 
 export const profileSelect = Prisma.validator<Prisma.AppUserSelect>()({
