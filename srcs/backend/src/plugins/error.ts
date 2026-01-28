@@ -1,4 +1,5 @@
 import fp from "fastify-plugin";
+import http from "http";
 import { AppError } from "../schema/errorSchema.js";
 import { Prisma } from "@prisma/client";
 import type { FastifyError } from "fastify";
@@ -10,22 +11,6 @@ export default fp(async (fastify) => {
 	// AppError
 	if (error instanceof AppError)
 		return reply.code(error.statusCode).send({ error: error.error, message: error.message });
-
-	// Typebox
-	const fError = error as FastifyError;
-	if (fError.validation) {
-		const detailMessage = fError.validation
-			.map(err => {
-				const field = err.instancePath.replace('/', '');
-				return `${field ? field + ': ' : ''}${err.message}`;
-			})
-			.join(', ');
-
-		return reply.code(400).send({
-			error: "Bad Request",
-			message: `Validation failed: ${detailMessage}`
-		});
-	}
 
 	// Prisma
 	if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -45,6 +30,29 @@ export default fp(async (fastify) => {
 			});
 		}
 	}
+
+	// Typebox
+	const fError = error as FastifyError;
+	if (fError.validation) {
+		const detailMessage = fError.validation
+			.map(err => {
+				const field = err.instancePath.replace('/', '');
+				return `${field ? field + ': ' : ''}${err.message}`;
+			})
+			.join(', ');
+
+		return reply.code(400).send({
+			error: "Bad Request",
+			message: `Validation failed: ${detailMessage}`
+		});
+	}
+
+	// Fastify
+	if (fError.statusCode)
+		return reply.code(fError.statusCode).send({
+			error: http.STATUS_CODES[fError.statusCode] || "Internal Server Error",
+			message: fError.statusCode >= 500 ? "An unexpected error occurred" : error.message
+		});
 
 	// Default
 	return reply.code(500).send({ error: "Internal Server Error" });
