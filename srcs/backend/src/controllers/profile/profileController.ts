@@ -1,9 +1,10 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import * as profileService from '../../services/db/profileService.js';
 import { Prisma } from '@prisma/client';
-import { type UpdateProfileBody, type ProfileIdParams/*, type ProfileResponse, type PublicProfileResponse */} from '../../schema/profileSchema.js';
+import { type UpdateProfileBody, type ProfileIdParams} from '../../schema/profileSchema.js';
 import { mapProfileToResponse, mapPublicProfileToResponse } from './profileMapper.js';
 import { serializePrisma } from '../../utils/serializePrisma.js';
+import { UserService } from '../../services/db/userService.js';
 
 // GET /profile
 export async function getProfile( req: FastifyRequest, reply: FastifyReply ) {
@@ -12,14 +13,14 @@ export async function getProfile( req: FastifyRequest, reply: FastifyReply ) {
 
     const profile = await profileService.getProfile(userId);
     if (!profile) {
-      return reply.status(404).send({ error: 'Profile not found' });
+      return reply.code(404).send({ error: 'Profile not found' });
     }
 
-    return reply.send(serializePrisma(mapProfileToResponse(profile)));
+    return reply.status(200).send(serializePrisma(mapProfileToResponse(profile)));
 
   } catch (err) {
     req.log.error(err);
-    return reply.status(500).send({ error: 'Internal server error' });
+    return reply.code(500).send({ error: 'Internal Server Error' });
   }
 }
 
@@ -34,14 +35,14 @@ export async function getPublicProfile(
 
     const profile = await profileService.getPublicProfile(userId);
     if (!profile) {
-      return reply.status(404).send({ error: 'User not found' });
+      return reply.code(404).send({ error: 'User not found' });
     }
 
-    return reply.send(serializePrisma(mapPublicProfileToResponse(profile)));
+    return reply.status(200).send(serializePrisma(mapPublicProfileToResponse(profile)));
 
   } catch (err) {
     req.log.error(err);
-    return reply.status(500).send({ error: 'Internal server error' });
+    return reply.code(500).send({ error: 'Internal Server Error' });
   }
 }
 
@@ -58,23 +59,23 @@ export async function updateProfile( req: FastifyRequest<{ Body: UpdateProfileBo
     const forbidden = bodyFields.filter(key => !allowedFields.has(key));
 
     if (forbidden.length > 0) {
-      return reply.status(400).send({ error: `Forbidden field(s): ${forbidden.join(', ')}`});
+      return reply.code(400).send({ error: `Forbidden field(s): ${forbidden.join(', ')}`});
     }
 
     //if allowed, update profile
     const updated = await profileService.updateProfile(userId, req.body);
 
-    return reply.send(serializePrisma(mapProfileToResponse(updated)));
+    return reply.status(200).send(serializePrisma(mapProfileToResponse(updated)));
 
   } catch (err) {
     req.log.error(err);
 
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
-      	return reply.status(409).send({ error: 'Username or email already exists' });
+      	return reply.code(409).send({ error: 'Username or email already exists' });
     	}//Prisma error code, unique constraint violation (username or email already taken)
     }
-    return reply.status(500).send({ error: 'Internal server error' });
+    return reply.code(500).send({ error: 'Internal Server Error' });
   }
 }
 
@@ -88,6 +89,23 @@ export async function deleteProfile(req: FastifyRequest, reply: FastifyReply) {
 
   } catch (err) {
     req.log.error(err);
-    return reply.status(500).send({ error: 'Internal server error' });
+    return reply.code(500).send({ error: 'Internal Server Error' });
   }
+}
+
+// POST /profile/:id/block
+export async function blockProfile(req: FastifyRequest<{ Params: ProfileIdParams }>, reply: FastifyReply) {
+  try {
+    const userId = req.user.id;
+
+    if (await UserService.getUserById(req.params.id) == null)
+      return reply.code(404).send({ error: 'User not found' });
+
+    await profileService.blockProfile(userId, req.params.id);
+  } catch (err) {
+    req.log.error(err);
+    return reply.code(500).send({ error: 'Internal Server Error' });
+  }
+
+  return reply.status(204).send();
 }

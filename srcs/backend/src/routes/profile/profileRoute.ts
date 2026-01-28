@@ -1,13 +1,17 @@
 import type { FastifyInstance } from 'fastify';
 import * as profileController from '../../controllers/profile/profileController.js';
 import { DeleteProfileResponseSchema, ProfileIdParamsSchema, UpdateProfileBodySchema, ProfileResponseSchema, PublicProfileResponseSchema } from '../../schema/profileSchema.js';
+import { AppErrorSchema } from '../../schema/errorSchema.js';
+import Type from 'typebox';
 
 export async function profileRoutes(fastify: FastifyInstance) {
 
   fastify.get('/profile', {
     schema: {
       response: {
-        200: ProfileResponseSchema
+        200: ProfileResponseSchema,
+        404: AppErrorSchema,
+        500: AppErrorSchema
       }
     },
     handler: profileController.getProfile
@@ -17,7 +21,9 @@ export async function profileRoutes(fastify: FastifyInstance) {
     schema: {
       params: ProfileIdParamsSchema,
       response: {
-        200: PublicProfileResponseSchema
+        200: PublicProfileResponseSchema,
+        404: AppErrorSchema,
+        500: AppErrorSchema
       }
     },
     handler: profileController.getPublicProfile
@@ -27,7 +33,10 @@ export async function profileRoutes(fastify: FastifyInstance) {
     schema: {
       body: UpdateProfileBodySchema,
       response: {
-        200: ProfileResponseSchema
+        200: ProfileResponseSchema,
+        400: AppErrorSchema,
+        409: AppErrorSchema,
+        500: AppErrorSchema
       }
     },
     handler: profileController.updateProfile
@@ -36,9 +45,24 @@ export async function profileRoutes(fastify: FastifyInstance) {
   fastify.delete('/profile', {
     schema: {
       response: {
-        204: DeleteProfileResponseSchema
+        204: DeleteProfileResponseSchema,
+        500: AppErrorSchema
       }
     },
     handler: profileController.deleteProfile
+  });
+
+  fastify.post('/profile/:id/block', {
+    schema: {
+      params: ProfileIdParamsSchema,
+      body: Type.Null(),
+      response: {
+        204: Type.Null(),
+        400: AppErrorSchema,
+        404: AppErrorSchema,
+        500: AppErrorSchema
+      }
+    },
+    handler: profileController.blockProfile
   });
 }

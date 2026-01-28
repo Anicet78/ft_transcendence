@@ -132,3 +132,14 @@ export async function softDeleteProfile(userId: string) {
 	}
   });
 }
+
+export async function blockProfile(userId: string, targetId: string) {
+	return prisma.blocked_list.create({
+		data: {
+			blocker: userId,
+			blocked: targetId,
+			created_at: new Date(),
+			updated_at: new Date()
+		}
+	});
+}
