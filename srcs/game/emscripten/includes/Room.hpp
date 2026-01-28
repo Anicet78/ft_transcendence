@@ -14,7 +14,7 @@ class ARoomEvent
 		// virtual	void	createEvent(void) = 0;
 		virtual bool	isCleared(void) = 0;
 		virtual bool	isStarted(void) = 0;
-		virtual void	checkCleared(void) = 0;
+		// virtual void	checkCleared(void) = 0;
 		std::string	const	&getType(void) const;
 };
 
@@ -39,7 +39,8 @@ class MobRush : public ARoomEvent
 		bool	isStarted(void);
 		void	addMob(int id, float x, float y, int hp);
 		// void	destroyEvent(void);
-		void	checkCleared(void);
+		// void	checkCleared(void);
+		void	setCleared(bool value);
 
 		std::map<int, std::unique_ptr<Mob>>	&getMobs(void);
 };

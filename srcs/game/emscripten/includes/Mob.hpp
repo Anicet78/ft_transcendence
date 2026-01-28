@@ -50,6 +50,8 @@ private:
 	int		_frame;
 
 	bool	_isInvinsible;
+	bool	_isDead;
+	bool	_tookDamage;
 
 public:
 
@@ -76,6 +78,12 @@ public:
 	void	startInvinsibleFrame(void);
 	void	endInvinsibleFrame(void);
 	bool	checkInvinsibleFrame(void);
+
+	bool	isDead(void) const;
+	void	setIsDead(bool value);
+
+	void	damaged(bool value);
+	bool	isDamaged(void) const;
 
 //mob renderer
 	void	rendMobWalk(int x, int y, int index, float scale);

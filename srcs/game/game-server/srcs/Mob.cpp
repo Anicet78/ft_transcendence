@@ -1,6 +1,8 @@
 #include "Mob.hpp"
 
-Mob::Mob(float x, float y, int hp) : _x(x), _y(y), _hp(hp), _last_dir(0), _frame(0), _isInvinsible(false), _isDead(false), _invFrame(0) , _box(_x, _y, _last_dir) {
+Mob::Mob(float x, float y, int hp) : _x(x), _y(y), _hp(hp), _last_dir(0), _frame(0),
+	_isInvinsible(false), _isDead(false), _invFrame(0), _tookDamage(false), _sendDeath(false),
+	_box(_x, _y, _last_dir) {
 	return ;
 }
 
@@ -55,6 +57,7 @@ int		Mob::getInvFrame(void) const {
 
 //-----------------------------------------------------------------------
 
+//--------------Mob invinsible frame-------------------------------------
 void	Mob::startInvinsibleFrame(void) {
 	this->_isInvinsible = true;
 	this->_frame = -1;
@@ -69,10 +72,40 @@ bool	Mob::checkInvinsibleFrame(void) {
 	return (this->_isInvinsible);
 }
 
+//-----------------------------------------------------------------------
+
+//-------------Mob death  flag----------------
+
 void	Mob::die(void) {
 	this->_isDead = true;
 }
 
-bool	Mob::isDead(void) {
+bool	Mob::isDead(void) const {
 	return (this->_isDead);
 }
+
+//-----------------------------------------------------------------------
+
+//-------------Mob take damage flag----------------
+
+void	Mob::damaged(bool value) {
+	_tookDamage = value;
+}
+
+bool	Mob::isDamaged(void) const {
+	return (_tookDamage);
+}
+
+//-----------------------------------------------------------------------
+
+//-------------Mob death send message flag----------------
+
+void	Mob::setSendDeath(bool value) {
+	_sendDeath = value;
+}
+
+bool	Mob::isDeathSend(void) const {
+	return (_sendDeath);
+}
+
+//-----------------------------------------------------------------------

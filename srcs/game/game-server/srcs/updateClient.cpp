@@ -26,15 +26,15 @@ void updateRoom(Player &player)
     Room room = player.getRoom();
 	auto plan = room.getRoomPlan();
 	float x = player.getX(), y = player.getY();
-    
-    if (room.getRoomEvent().get() && room.getRoomEvent()->isCleared() == false)
-	{
-		if (player.getExit() > 32)
-        	player.setExit(' ');
-		return ;
-	}
+
 	if (plan[y][x] == 'E')
 	{
+		if (room.getRoomEvent().get() && room.getRoomEvent()->isCleared() == false)
+		{
+			if (player.getExit() > 32)
+				player.setExit(' ');
+			return ;
+		}
 		auto exitsLoc = room.getExitsLoc();
 
 		if (exitsLoc[2][0] == static_cast<int>(x) && exitsLoc[2][1] == static_cast<int>(y)
@@ -85,7 +85,7 @@ float	abs_dist(Player const &player, Mob const &mob)
 	return (std::fabs(player.getX() - mob.getX()) + std::fabs(player.getY() - mob.getY()));
 }
 
-static void    mobInteraction(Mob &mob, Player &player)
+static void    mobInteraction(MobRush &rush, int id, Mob &mob, Player &player)
 {
     if (mob.checkInvinsibleFrame() == true)
     {
@@ -102,17 +102,15 @@ static void    mobInteraction(Mob &mob, Player &player)
 	{
 		if (abs_dist(player, mob) <= 2)
 		{
-			std::cout << abs_dist(player, mob) << std::endl;
 			HitBox	&box = mob.getBox();
-			std::cout << "close enought" << std::endl;
 			box.updateHurtBox();
 			if (box.isDmgHit(player.getHitBox().getAtkHitBox()))
 			{
-				std::cout << "aie" << std::endl;
+				mob.damaged(true);
 				mob.setHp(mob.getHp() - 1);
 				if (mob.getHp() <= 0)
 				{
-					mob.die();
+					rush.makeDie(id);
 					return ;
 				}
 				mob.startInvinsibleFrame();
@@ -121,9 +119,9 @@ static void    mobInteraction(Mob &mob, Player &player)
 	}
 }
 
-void    updateWorld(Player &player)
+void	updateWorld(Player &player)
 {
-    Room &room = player.getRoomRef();
+	Room &room = player.getRoomRef();
 	std::shared_ptr<ARoomEvent> event = room.getRoomEvent();
 	if (event && event->getType() == "MobRush")
 	{
@@ -134,10 +132,7 @@ void    updateWorld(Player &player)
 		{
 			for (auto it = mobs.begin(); it != mobs.end(); ++it)
 			{
-				if (it->second->isDead() == true)
-					std::cout << "dead" << std::endl;
-				else
-					mobInteraction(*it->second, player);
+				mobInteraction(rush, it->first, *it->second, player);
 			}
 		}
 	}

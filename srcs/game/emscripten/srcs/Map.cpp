@@ -163,7 +163,6 @@ void	Map::setRoomInNode(std::string &roomName, int x, int y, int rot, int roomSe
 	if (event)
 	{
 		room.setEvent(event);
-		std::cout << room.getRoomEvent()->getType() << std::endl;
 	}
 	node->addRoom(room);
 }

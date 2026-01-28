@@ -57,6 +57,11 @@ Room	&Player::getRoom(void) const
 	return *this->_node->getRoom().get();
 }
 
+Room	&Player::getRoomRef(void)
+{
+	return *this->_node->getRoom().get();
+}
+
 quadList Player::getNode() const
 {
 	return this->_node;

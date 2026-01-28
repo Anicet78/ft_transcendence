@@ -44,15 +44,19 @@ MobRush::~MobRush() {
 
 void	MobRush::addMob(int id, float x, float y, int hp)
 {
-	std::cout << "mob created" << std::endl;
 	_mobs.emplace(id, std::make_unique<Mob>(id, x, y, hp));
 	return ;
 }
 
-void	MobRush::checkCleared(void)
+// void	MobRush::checkCleared(void)
+// {
+// 	if (_cleared == false && _mobs.size() == 0)
+// 		_cleared = true;
+// }
+
+void	MobRush::setCleared(bool value)
 {
-	if (_cleared == false && _mobs.size() == 0)
-		_cleared = true;
+	this->_cleared = value;
 }
 
 bool	MobRush::isStarted(void)

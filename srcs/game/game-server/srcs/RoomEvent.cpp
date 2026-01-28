@@ -1,6 +1,6 @@
 #include "Room.hpp"
 
-MobRush::MobRush(std::vector<std::string> &roomPlan) :  _roomPlan(roomPlan), _started(false), _cleared(false) {
+MobRush::MobRush(std::vector<std::string> &roomPlan) :  _roomPlan(roomPlan), _nbrDead(0), _started(false), _cleared(false) {
 	this->_type = "MobRush";
 	createEvent();
 	return ;
@@ -26,6 +26,7 @@ void	MobRush::createEvent(void) {
 				id++;
 			}
 		}
+		_nbrMob = _mobs.size();
 	}
 }
 
@@ -37,8 +38,16 @@ void	MobRush::destroyEvent(void) {
 }
 
 void	MobRush::checkCleared(void) {
-	if (_cleared == false && _mobs.size() == 0)
+	if (_cleared == false && _nbrDead == _nbrMob)
 		_cleared = true;
+}
+
+void	MobRush::makeDie(int id) {
+	if (_mobs[id]->isDead() == false)
+	{
+		_mobs[id]->die();
+		_nbrDead++;
+	}
 }
 
 bool	MobRush::isStarted(void) {

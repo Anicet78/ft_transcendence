@@ -99,7 +99,16 @@ static void print_mobs(MobRush &mobRush, Player &player)
 	int		tile_s = gSdl.getMapTileSize() * 2;
 	Camera	&cam = player.getCamera();
 	for (auto &mob : mobRush.getMobs())
-		mob.second->printMob(cam.getCamY(), cam.getCamY(), tile_s);
+	{
+		if (mob.second->isDead() == false)
+		{
+			if (mob.second->checkInvinsibleFrame() == true && mob.second->getFrame() >= 23)
+				mob.second->endInvinsibleFrame();
+			if (mob.second->isDamaged())
+				mob.second->startInvinsibleFrame();
+			mob.second->printMob(cam.getCamX(), cam.getCamY(), tile_s);
+		}
+	}
 }
 
 void	playerAction(Player &player)

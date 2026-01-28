@@ -42,78 +42,85 @@ void	HitBox::updateHurtBox(void) {
 }
 
 
-//only SDL_PointInRect exist in sdl lib idk why so im doing my own with float ¯\_(ツ)_/¯
-bool	FPointInFRect(FPoint *point, FRect const *rect) {
-	return ( (point->x >= rect->x) && (point->x < (rect->x + rect->w)) &&
-			(point->y >= rect->y) && (point->y < (rect->y + rect->h)) ) ? true : false;
-}
+// //only SDL_PointInRect exist in sdl lib idk why so im doing my own with float ¯\_(ツ)_/¯
+// bool	FPointInFRect(FPoint *point, FRect const *rect) {
+// 	return ( (point->x >= rect->x) && (point->x < (rect->x + rect->w)) &&
+// 			(point->y >= rect->y) && (point->y < (rect->y + rect->h)) ) ? true : false;
+// }
+
+// bool	HitBox::isDmgHit(FRect &rect) const {
+
+// 	//check if rect top left corner if in _hurtBox
+// 	FPoint top_left = {
+// 		rect.x,
+// 		rect.y
+// 	};
+// 	if (FPointInFRect(&top_left, &_hurtBox))
+// 		return (true);
+
+// 	FPoint mid_top = {
+// 		rect.x + (rect.w / 2),
+// 		rect.y
+// 	};
+// 	if (FPointInFRect(&mid_top, &_hurtBox))
+// 		return (true);
+// 	//check if rect top right corner if in _hurtBox
+// 	FPoint top_right = {
+// 		rect.x + rect.w,
+// 		rect.y
+// 	};
+// 	if (FPointInFRect(&top_right, &_hurtBox))
+// 		return (true);
+	
+// 	FPoint mid_right = {
+// 		rect.x + rect.w,
+// 		rect.y + (rect.h / 2)
+// 	};
+// 	if (FPointInFRect(&mid_right, &_hurtBox))
+// 		return (true);
+
+// 	//check if rect down left corner if in _hurtBox
+// 	FPoint down_left = {
+// 		rect.x,
+// 		rect.y + rect.h
+// 	};
+// 	if (FPointInFRect(&down_left, &_hurtBox))
+// 		return (true);
+
+// 	FPoint mid_down = {
+// 		rect.x + (rect.w / 2),
+// 		rect.y + rect.h
+// 	};
+// 	if (FPointInFRect(&mid_down, &_hurtBox))
+// 		return (true);
+
+// 	//check if rect down right corner if in _hurtBox
+// 	FPoint down_right = {
+// 		rect.x + rect.w,
+// 		rect.y + rect.h
+// 	};
+// 	if (FPointInFRect(&down_right, &_hurtBox))
+// 		return (true);
+
+// 	FPoint mid_left = {
+// 		rect.x,
+// 		rect.y + (rect.h / 2)
+// 	};
+// 	if (FPointInFRect(&mid_left, &_hurtBox))
+// 		return (true);
+
+// 	FPoint center = {
+// 		rect.x + (rect.w / 2),
+// 		rect.y + (rect.h / 2)
+// 	};
+// 	if (FPointInFRect(&center, &_hurtBox))
+// 		return (true);
+// 	return (false);
+// }
 
 bool	HitBox::isDmgHit(FRect &rect) const {
-
-	//check if rect top left corner if in _hurtBox
-	FPoint top_left = {
-		rect.x,
-		rect.y
-	};
-	if (FPointInFRect(&top_left, &_hurtBox))
-		return (true);
-
-	FPoint mid_top = {
-		rect.x + (rect.w / 2),
-		rect.y
-	};
-	if (FPointInFRect(&mid_top, &_hurtBox))
-		return (true);
-	//check if rect top right corner if in _hurtBox
-	FPoint top_right = {
-		rect.x + rect.w,
-		rect.y
-	};
-	if (FPointInFRect(&top_right, &_hurtBox))
-		return (true);
-	
-	FPoint mid_right = {
-		rect.x + rect.w,
-		rect.y + (rect.h / 2)
-	};
-	if (FPointInFRect(&mid_right, &_hurtBox))
-		return (true);
-
-	//check if rect down left corner if in _hurtBox
-	FPoint down_left = {
-		rect.x,
-		rect.y + rect.h
-	};
-	if (FPointInFRect(&down_left, &_hurtBox))
-		return (true);
-
-	FPoint mid_down = {
-		rect.x + (rect.w / 2),
-		rect.y + rect.h
-	};
-	if (FPointInFRect(&mid_down, &_hurtBox))
-		return (true);
-
-	//check if rect down right corner if in _hurtBox
-	FPoint down_right = {
-		rect.x + rect.w,
-		rect.y + rect.h
-	};
-	if (FPointInFRect(&down_right, &_hurtBox))
-		return (true);
-
-	FPoint mid_left = {
-		rect.x,
-		rect.y + (rect.h / 2)
-	};
-	if (FPointInFRect(&mid_left, &_hurtBox))
-		return (true);
-
-	FPoint center = {
-		rect.x + (rect.w / 2),
-		rect.y + (rect.h / 2)
-	};
-	if (FPointInFRect(&center, &_hurtBox))
+	if (_hurtBox.x < rect.x + rect.w && _hurtBox.x + _hurtBox.w > rect.x
+		&& _hurtBox.y < rect.y + rect.h && _hurtBox.y + _hurtBox.h > rect.y)
 		return (true);
 	return (false);
-}
+} 

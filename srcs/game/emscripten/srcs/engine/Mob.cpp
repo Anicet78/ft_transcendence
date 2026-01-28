@@ -22,7 +22,7 @@ int						Mob::_idleImgH;
 int						Mob::_hurtImgW;
 int						Mob::_hurtImgH;
 
-Mob::Mob(int id, float x, float y, int hp) : _id(id), _x(x), _y(y), _screenX(0), _screenY(0), _hp(hp), _last_dir(0), _frame(0), _isInvinsible(false) {
+Mob::Mob(int id, float x, float y, int hp) : _id(id), _x(x), _y(y), _screenX(0), _screenY(0), _hp(hp), _last_dir(0), _frame(0), _isInvinsible(false), _isDead(false), _tookDamage(false) {
 	return ;
 }
 
@@ -305,6 +305,30 @@ void	Mob::rendMobHurt(int x, int y, int assetIndex, float scale) {
 		SDL_RenderCopy(gSdl.renderer, _mobHurtText, rect, &renderRect);
 	else
 		SDL_RenderCopyEx(gSdl.renderer, _mobHurtText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
+}
+
+//-----------------------------------------------------------------------
+
+//-------------Mob death  flag----------------
+
+void	Mob::setIsDead(bool value) {
+	this->_isDead = value;
+}
+
+bool	Mob::isDead(void) const {
+	return (this->_isDead);
+}
+
+//-----------------------------------------------------------------------
+
+//-------------Mob take damage flag----------------
+
+void	Mob::damaged(bool value) {
+	this->_tookDamage = value;
+}
+
+bool	Mob::isDamaged(void) const {
+	return (this->_tookDamage);
 }
 
 //-----------------------------------------------------------------------

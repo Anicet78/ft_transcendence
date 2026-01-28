@@ -2,129 +2,231 @@
 
 void Server::parseJson(std::map<std::string, std::string> &res, std::string msg)
 {
-    if (msg[0] != '{' || msg.empty())
-       throw std::runtime_error("Json imput invalid syntax");
-    
-    std::istringstream stream(msg);
-    std::string buffer;
+	if (msg[0] != '{' || msg.empty())
+	   throw std::runtime_error("Json imput invalid syntax");
+		
+	std::istringstream stream(msg);
+	std::string buffer;
 
-    while (std::getline(stream, buffer, ','))
-    {
-        buffer.erase(0, buffer.find_first_not_of(" \n\r\t{"));
-        buffer.erase(buffer.find_last_not_of(" \n\r\t}") + 1);
+	while (std::getline(stream, buffer, ','))
+	{
+		buffer.erase(0, buffer.find_first_not_of(" \n\r\t{"));
+		buffer.erase(buffer.find_last_not_of(" \n\r\t}") + 1);
 
-        if (buffer.empty())
-            continue ;
-        size_t pos1, pos2;
-        if ((pos1 = buffer.find('\"')) == std::string::npos)
-            throw std::runtime_error(std::string("Json input invalid syntax near \"") + buffer[0] + '\"');
-        if ((pos2 = buffer.find("\":")) == std::string::npos)
-            throw std::runtime_error(std::string("Json input invalid syntax near \"") + buffer[pos1 + 1] + '\"');
-        pos1++;
-        std::string key = buffer.substr(pos1, pos2 - pos1);
-        std::string value;
-        pos1 = pos2 + 2;
-        if ((pos1 = buffer.find('\"', pos1)) == std::string::npos)
-        {
-            pos1 = pos2 + 2;
-            if (isdigit(buffer[pos1]))
-                value = buffer.substr(pos1);
-            else
-                throw std::runtime_error(std::string("Json input invalid syntax near \"") + key + buffer[pos1] + '\"');
-        }
-        else if ((pos2 = buffer.find('\"', pos1 + 1)) == std::string::npos)
-            throw std::runtime_error(std::string("Json input invalid syntax near \"") + key + buffer[pos1] + buffer[pos1 + 1] + '\"');
-        else
-        {
-            pos1++;
-            value = buffer.substr(pos1, pos2 - pos1);
-        }
-        res.emplace(key, value);
-    }
-    
+		if (buffer.empty())
+			continue ;
+		size_t pos1, pos2;
+		if ((pos1 = buffer.find('\"')) == std::string::npos)
+			throw std::runtime_error(std::string("Json input invalid syntax near \"") + buffer[0] + '\"');
+		if ((pos2 = buffer.find("\":")) == std::string::npos)
+			throw std::runtime_error(std::string("Json input invalid syntax near \"") + buffer[pos1 + 1] + '\"');
+		pos1++;
+		std::string key = buffer.substr(pos1, pos2 - pos1);
+		std::string value;
+		pos1 = pos2 + 2;
+		if ((pos1 = buffer.find('\"', pos1)) == std::string::npos)
+		{
+			pos1 = pos2 + 2;
+			if (isdigit(buffer[pos1]))
+				value = buffer.substr(pos1);
+			else
+				throw std::runtime_error(std::string("Json input invalid syntax near \"") + key + buffer[pos1] + '\"');
+		}
+		else if ((pos2 = buffer.find('\"', pos1 + 1)) == std::string::npos)
+			throw std::runtime_error(std::string("Json input invalid syntax near \"") + key + buffer[pos1] + buffer[pos1 + 1] + '\"');
+		else
+		{
+			pos1++;
+			value = buffer.substr(pos1, pos2 - pos1);
+		}
+		res.emplace(key, value);
+	}
+
+}
+
+// void sendPlayerState(Player &player, Session &session, std::string uid_leave)
+// {
+// 	std::string msg =   "{ \"action\" : \"player_state\", \"player_x\" : " + std::to_string(player.getX()) + ", "
+// 						+ "\"player_y\" : " + std::to_string(player.getY()) + ", "
+// 						+ "\"player_health\" : " + std::to_string(player.getHp()) + ", "
+// 						+ "\"player_anim\" : " + std::to_string(player.getAnim()) + ", "
+// 						+ "\"player_exit\" : \"" + player.getExit() + "\"";
+		
+// 	int sumPlayer = 1;
+// 	for (auto &oplayer : session.getPlayers())
+// 	{
+// 		if (oplayer->getUid() == player.getUid())
+// 			continue ;
+// 		if (oplayer->getNode() == player.getNode() || (oplayer->getPrevNode() == player.getNode() && oplayer->getExit() > 32))
+// 		{
+// 			msg += ", \"player" + std::to_string(sumPlayer) + "_x\" : " + std::to_string(oplayer->getX()) + ", "
+// 					+ "\"player" + std::to_string(sumPlayer) + "_y\" : " + std::to_string(oplayer->getY()) + ", "
+// 					+ "\"player" + std::to_string(sumPlayer) + "_id\" : \"" + oplayer->getUid() + "\", "
+// 					+ "\"player" + std::to_string(sumPlayer) + "_name\" : \"" + oplayer->getName() + "\", "
+// 					+ "\"player" + std::to_string(sumPlayer) + "_health\" : " + std::to_string(oplayer->getHp()) + ", "
+// 					+ "\"player" + std::to_string(sumPlayer) + "_anim\" : " + std::to_string(oplayer->getAnim()) + ", "
+// 					+ "\"player" + std::to_string(sumPlayer) + "_dir\" : " + std::to_string(oplayer->getLastDir()) + ", "
+// 					+ "\"player" + std::to_string(sumPlayer) + "_exit\" : \"" + oplayer->getExit() + "\"";
+// 			if ((!uid_leave.empty() && uid_leave == oplayer->getUid()) || oplayer->getExit() > 32)
+// 				msg += ", \"player" + std::to_string(sumPlayer) + "_leave\" : \"true\"";
+// 			sumPlayer++;
+// 		}
+// 	}
+// 	msg += ", \"player_num\" : " + std::to_string(sumPlayer) + "}";
+
+// 	player.getWs()->send(msg);
+// }
+
+void	sendRoomState(Player &player, std::string &msg)
+{
+	std::shared_ptr<ARoomEvent> const event = player.getRoom().getRoomEvent();
+	//if there is no event in the current room
+	if (!event)
+	{
+		msg += ", \"room_state\": {\"room_event\":\"None\"} }";
+		return ;
+	}
+	//if the event is a MobRush
+	else if (event && event->getType() == "MobRush")
+	{
+		MobRush &rush = dynamic_cast<MobRush &>(*player.getRoomRef().getRoomEvent());
+		std::string cleared = "false";
+
+		//check if the actual event is cleared
+		if (rush.isCleared() == true)
+			cleared = "true";
+		msg += ", \"room_state\": {\"room_event\":\"MobRush\", \"cleared\":\"" + cleared + "\"";
+		std::map<int, std::unique_ptr<Mob>> &mobs = rush.getMobs();
+		if (mobs.size() != 0)
+		{
+			int	nbrMobSended = 0;
+			msg += ", \"mobs\":[";
+			for (auto& [key, value] : mobs) {
+
+				//check if the mobs already send the message saying he's dead
+				if (value->isDeathSend() == false)
+				{
+					nbrMobSended++;
+					int	damg = 0;
+					std::string damaged = "false";
+					//check if the mobs took damage
+					if (value->isDamaged() == true)
+					{
+						damg = 1;
+						damaged = "true";
+						value->damaged(false);
+					}
+					//check if the mobs id dead
+					int dea = 0;
+					std::string dead = "false";
+					if (value->isDead() == true)
+					{
+						dea = 1;
+						dead = "true";
+						//set the flag for death message sended to true
+						value->setSendDeath(true);
+					}
+
+					msg += "{ \"mob_id\":" + std::to_string(key) + ", "
+					+ "\"mob_x\":" + std::to_string(value->getX()) + ", "
+					+ "\"mob_y\":" + std::to_string(value->getY()) + ", "
+					+ "\"damaged\":" + std::to_string(damg) + ", "
+					+ "\"isdead\":" + std::to_string(dea) + "},";
+				}
+			}
+			if (*msg.rbegin() == ',')
+				msg.pop_back();
+			msg += "],";
+			msg += "\"nbr_mob\":" + std::to_string(nbrMobSended);
+		}
+		msg += '}';
+	}
+	msg += '}';
 }
 
 void sendPlayerState(Player &player, Session &session, std::string uid_leave)
 {
-    std::string msg =   "{ \"action\" : \"player_state\", \"player_x\" : " + std::to_string(player.getX()) + ", "
-                        + "\"player_y\" : " + std::to_string(player.getY()) + ", "
-                        + "\"player_health\" : " + std::to_string(player.getHp()) + ", "
-                        + "\"player_anim\" : " + std::to_string(player.getAnim()) + ", "
-                        + "\"player_exit\" : \"" + player.getExit() + "\"";
-    
-    int sumPlayer = 1;
-    for (auto &oplayer : session.getPlayers())
-    {
-        if (oplayer->getUid() == player.getUid())
-            continue ;
-        if (oplayer->getNode() == player.getNode() || (oplayer->getPrevNode() == player.getNode() && oplayer->getExit() > 32))
-        {
-            msg += ", \"player" + std::to_string(sumPlayer) + "_x\" : " + std::to_string(oplayer->getX()) + ", "
-                    + "\"player" + std::to_string(sumPlayer) + "_y\" : " + std::to_string(oplayer->getY()) + ", "
-                    + "\"player" + std::to_string(sumPlayer) + "_id\" : \"" + oplayer->getUid() + "\", "
-                    + "\"player" + std::to_string(sumPlayer) + "_name\" : \"" + oplayer->getName() + "\", "
-                    + "\"player" + std::to_string(sumPlayer) + "_health\" : " + std::to_string(oplayer->getHp()) + ", "
-                    + "\"player" + std::to_string(sumPlayer) + "_anim\" : " + std::to_string(oplayer->getAnim()) + ", "
-                    + "\"player" + std::to_string(sumPlayer) + "_dir\" : " + std::to_string(oplayer->getLastDir()) + ", "
-                    + "\"player" + std::to_string(sumPlayer) + "_exit\" : \"" + oplayer->getExit() + "\"";
-            if ((!uid_leave.empty() && uid_leave == oplayer->getUid()) || oplayer->getExit() > 32)
-                msg += ", \"player" + std::to_string(sumPlayer) + "_leave\" : \"true\"";
-            sumPlayer++;
-        }
-    }
-    msg += ", \"player_num\" : " + std::to_string(sumPlayer) + "}";
-    player.getWs()->send(msg);
+	std::string msg =   "{ \"action\" : \"update\", \"player_state\": { \"player_x\" : " + std::to_string(player.getX()) + ", "
+						+ "\"player_y\" : " + std::to_string(player.getY()) + ", "
+						+ "\"player_health\" : " + std::to_string(player.getHp()) + ", "
+						+ "\"player_anim\" : " + std::to_string(player.getAnim()) + ", "
+						+ "\"player_exit\" : \"" + player.getExit() + "\"";
+		
+	int sumPlayer = 1;
+	for (auto &oplayer : session.getPlayers())
+	{
+		if (oplayer->getUid() == player.getUid())
+			continue ;
+		if (oplayer->getNode() == player.getNode() || (oplayer->getPrevNode() == player.getNode() && oplayer->getExit() > 32))
+		{
+			msg += ", \"player" + std::to_string(sumPlayer) + "_x\" : " + std::to_string(oplayer->getX()) + ", "
+					+ "\"player" + std::to_string(sumPlayer) + "_y\" : " + std::to_string(oplayer->getY()) + ", "
+					+ "\"player" + std::to_string(sumPlayer) + "_id\" : \"" + oplayer->getUid() + "\", "
+					+ "\"player" + std::to_string(sumPlayer) + "_name\" : \"" + oplayer->getName() + "\", "
+					+ "\"player" + std::to_string(sumPlayer) + "_health\" : " + std::to_string(oplayer->getHp()) + ", "
+					+ "\"player" + std::to_string(sumPlayer) + "_anim\" : " + std::to_string(oplayer->getAnim()) + ", "
+					+ "\"player" + std::to_string(sumPlayer) + "_dir\" : " + std::to_string(oplayer->getLastDir()) + ", "
+					+ "\"player" + std::to_string(sumPlayer) + "_exit\" : \"" + oplayer->getExit() + "\"";
+			if ((!uid_leave.empty() && uid_leave == oplayer->getUid()) || oplayer->getExit() > 32)
+				msg += ", \"player" + std::to_string(sumPlayer) + "_leave\" : \"true\"";
+			sumPlayer++;
+		}
+	}
+	msg += ", \"player_num\" : " + std::to_string(sumPlayer) + "}";
+
+	sendRoomState(player, msg);
+	player.getWs()->send(msg);
 }
 
 int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSocketData> *ws)
 {
-    std::map<std::string, std::string> &req = data->jsonMsg;
-    
-    if (req["action"] == "join_queue")
-    {
+	std::map<std::string, std::string> &req = data->jsonMsg;
+		
+	if (req["action"] == "join_queue")
+	{
 		data->pseudo = req["player_name"];
-        data->playerId = req["player_id"];
-        data->group = req["group_id"];
-        data->groupSize = std::atoi(req["group_size"].c_str());
-        ws->send("You have been added in the queue !", uWS::OpCode::TEXT);
-        this->_players.emplace_back(std::make_shared<Player>(data->playerId, data->groupSize, data->group, data->pseudo, ws));
-        this->addPlayerOnQueue(_players.back());
-        data->jsonMsg.clear();
-        return 0;
-    }
-    else if (req["action"] == "player_move" || req["action"] == "connected" || req["action"] == "launched")
-    {
-        for (Session &session : _sessions)
-        {
-            if (session.isPlayerInSession(ws->getUserData()->playerId))
-            {
-                std::shared_ptr<Player> player = session.getPlayer(ws->getUserData()->playerId);
-                if (req["action"] == "connected")
-                    player->setConnexion(1);
-                if (req["action"] == "launched")
-                    player->setLaunched(1);
-                if (req["action"] == "player_move")
-                {
-                    updatePlayer(*player, req);
-                    updateRoom(*player);
-                    updateWorld(*player);
-                }
-                sendPlayerState(*player, session, "");
-                for (auto &oplayer : session.getPlayers())
-                {
-                    if (oplayer->getUid() == player->getUid())
-                        continue ;
-                    if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isConnected() && !session.isRunning())
-                        sendPlayerState(*oplayer, session, "");
-                    else if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isLaunched())
-                        sendPlayerState(*oplayer, session, "");
-                }
-                if (!session.getPlaceLeft() && session.doesAllPlayersConnected() && !session.isRunning())
-                    session.launch();
-                break;
-            }
-        }
-    }
-    data->jsonMsg.clear();
-    return 1;
+		data->playerId = req["player_id"];
+		data->group = req["group_id"];
+		data->groupSize = std::atoi(req["group_size"].c_str());
+		ws->send("You have been added in the queue !", uWS::OpCode::TEXT);
+		this->_players.emplace_back(std::make_shared<Player>(data->playerId, data->groupSize, data->group, data->pseudo, ws));
+		this->addPlayerOnQueue(_players.back());
+		data->jsonMsg.clear();
+		return 0;
+	}
+	else if (req["action"] == "player_move" || req["action"] == "connected" || req["action"] == "launched")
+	{
+		for (Session &session : _sessions)
+		{
+			if (session.isPlayerInSession(ws->getUserData()->playerId))
+			{
+				std::shared_ptr<Player> player = session.getPlayer(ws->getUserData()->playerId);
+				if (req["action"] == "connected")
+					player->setConnexion(1);
+				if (req["action"] == "launched")
+					player->setLaunched(1);
+				if (req["action"] == "player_move")
+				{
+					updatePlayer(*player, req);
+					updateRoom(*player);
+					updateWorld(*player);
+				}
+				sendPlayerState(*player, session, "");
+				for (auto &oplayer : session.getPlayers())
+				{
+					if (oplayer->getUid() == player->getUid())
+						continue ;
+					if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isConnected() && !session.isRunning())
+						sendPlayerState(*oplayer, session, "");
+					else if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isLaunched())
+						sendPlayerState(*oplayer, session, "");
+				}
+				if (!session.getPlaceLeft() && session.doesAllPlayersConnected() && !session.isRunning())
+					session.launch();
+				break;
+			}
+		}
+	}
+	data->jsonMsg.clear();
+	return 1;
 }

@@ -56,6 +56,7 @@ class Player
 		std::string	getUid(void) const;
 		std::string	getName(void) const;
 		Room		&getRoom() const;
+		Room		&getRoomRef(void);
 		quadList	getNode() const;
 
 		float		getX(void) const;

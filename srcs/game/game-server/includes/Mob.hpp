@@ -22,6 +22,8 @@ private:
 	bool	_isInvinsible;
 	bool	_isDead;
 	int		_invFrame;
+	bool	_tookDamage;
+	bool	_sendDeath;
 
 	HitBox	_box;
 
@@ -49,9 +51,14 @@ public:
 	void	endInvinsibleFrame(void);
 	bool	checkInvinsibleFrame(void);
 
-//mob die interaction
+//mob die and damage interaction
 	void	die(void);
-	bool	isDead(void);
+	bool	isDead(void) const;
+	void	damaged(bool value);
+	bool	isDamaged(void) const;
+
+	void	setSendDeath(bool value);
+	bool	isDeathSend(void) const;
 };
 
 

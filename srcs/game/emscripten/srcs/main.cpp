@@ -29,7 +29,7 @@ Map floor0(1, 1);
 	}
 #endif
 
-void updatePlayerState(Game &game, val &msg)
+void updatePlayerState(Game &game, val msg)
 {
 	Player &player = game.getPlayer();
 	int nbPlayers = msg["player_num"].as<int>();
@@ -70,6 +70,44 @@ void updatePlayerState(Game &game, val &msg)
 			oPlayer.setAnim(msg[key + "_anim"].as<int>());
 		if (msg.hasOwnProperty(std::string(key + "_dir").c_str()))
 			oPlayer.setDir(msg[key + "_dir"].as<int>());
+	}
+}
+
+void	updateRoomState(Game &game, val msg) {
+	if (msg["room_event"].as<std::string>() == "MobRush")
+	{
+		MobRush &rush = dynamic_cast<MobRush &>(*game.getPlayer().getRoomRef().getRoomEvent());
+		if (rush.isCleared() == false && msg["cleared"].as<std::string>() == "true")
+			rush.setCleared(true);
+		std::map<int, std::unique_ptr<Mob>> &mobs = rush.getMobs();
+		if (msg.hasOwnProperty(std::string("mobs").c_str()))
+		{
+			int nbr_mob = msg["nbr_mob"].as<int>();
+			val mob = msg["mobs"];
+			for (int i = 0; i < nbr_mob; i++)
+			{
+				//gather all mob information from the message
+				int id = mob["mob_id"].as<int>();
+
+				float x = mob["mob_x"].as<float>();
+
+				float y = mob["mob_y"].as<float>();
+
+				if (mob["damaged"].as<int>() == 1)
+				{
+					std::cout << "damaged" << std::endl;
+					mobs[id]->damaged(true);
+				}
+				if (mob["isdead"].as<int>() == 1)
+				{
+					std::cout << "dead" << std::endl;
+					mobs[id]->setIsDead(true);
+				}
+
+				mobs[id]->setPos(x, y);
+			}
+		}
+
 	}
 }
 
@@ -170,8 +208,11 @@ void	parseJson(bool &init, Game &game)
 		game.getPlayer().setNode(game.getMaps()[0].getNodes()[0]);
 		EM_ASM_({onCppMessage({action: "connected"});});
 	}
-	else if (msg["action"].as<std::string>() == "player_state")
-		updatePlayerState(game, msg);
+	else if (msg["action"].as<std::string>() == "update")
+	{
+		updatePlayerState(game, msg["player_state"]);
+		updateRoomState(game, msg["room_state"]);
+	}
 	else if (msg["action"].as<std::string>() == "launch")
 		launchGame(game);
 	msgJson = val::undefined();
@@ -241,22 +282,16 @@ void mainloop(void)
 int main(void)
 {
 	srand(time(0));
-	std::cout << "here-1" << std::endl;
 	if (!init_sdl(gSdl))
 	{
 		std::cerr << "Error in sdl init" << std::endl;
 		return (1);
 	}
-	std::cout << "here-0.5" << std::endl;
 	try
 	{
-		std::cout << "here-0.4" << std::endl;
 		Assets::importAssets("../assets/sprite/assets.bmp", 16);
-		std::cout << "here-0.3" << std::endl;
 		PlayerAssets::importPlayersAssets(100);
-		std::cout << "here0" << std::endl;
 		Mob::importMobsAssets(100);
-		std::cout << "here1" << std::endl;
 		Room::importRooms();
 		//floor0.setWaitingRoom();
 		// floor0.fillMap();

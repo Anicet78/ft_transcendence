@@ -24,6 +24,8 @@ private:
 	std::vector<std::string>			&_roomPlan;
 	std::map<int, std::unique_ptr<Mob>>	_mobs;
 	std::vector<int>					_mobsId;
+	int									_nbrMob;
+	int									_nbrDead;
 
 	bool	_started;
 	bool	_cleared;
@@ -37,6 +39,8 @@ public:
 	bool	isStarted(void);
 	void	destroyEvent(void);
 	void	checkCleared(void);
+
+	void	makeDie(int id);
 
 	std::map<int, std::unique_ptr<Mob>>	&getMobs(void);
 };
