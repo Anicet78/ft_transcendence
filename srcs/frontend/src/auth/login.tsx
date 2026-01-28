@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import 'bulma/css/bulma.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './login.css'
-import './index.css'
+import '../index.css'
 
 import { Button } from '@allxsmith/bestax-bulma';
 import { Server } from '../server.ts'
@@ -11,6 +11,7 @@ import Banner from '../components/Banner.tsx';
 import ButtonSubmit from '../components/ButtonSubmit.tsx';
 import InputEmail from '../components/InputEmail.tsx';
 import InputPassword from '../components/InputPassword.tsx';
+import MyFooter from '../components/Footer.tsx';
 
 /**
  * composant principal
@@ -44,19 +45,17 @@ function Login() {
       <h1><Banner /></h1>
       <div className="card">
 		<div>
-			<Button color='primary' isOutlined>Login with Google</Button>
-			<Button color='primary' isOutlined>Login with 42</Button>
+			<Button color='primary' isOutlined className='login-button'>Login with Google</Button>
+			<Button color='primary' isOutlined className='login-button'>Login with 42</Button>
 		</div>
 		<br />
         <form action={login}>
-			<InputEmail />
-			<div className="field">
-				<label htmlFor="password">Pasword</label>
-				<InputPassword />
-			</div>
+			<InputEmail label="Email"/>
+			<InputPassword label="Password"/>
             <ButtonSubmit name='Sign in' />
         </form>
       </div>
+	  <MyFooter />
     </>
   )
 }

@@ -1,7 +1,7 @@
-const InputEmail = () => {
+const InputEmail = ({label}) => {
 	return (
 		<div className="field">
-        	<label htmlFor="email">Email</label>
+        	<label htmlFor="email">{label}</label>
 			<p className="control has-icons-left">
 				<input
 					className="input"

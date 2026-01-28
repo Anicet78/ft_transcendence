@@ -1,8 +1,9 @@
-import { useState } from 'react'
+// import { useState } from 'react'
 // import { Button } from '@allxsmith/bestax-bulma'; // quand on exporte pas en default mettre des accolades
 import './App.css'
 import Banner from './components/Banner.tsx';
-import { Box, Button } from '@allxsmith/bestax-bulma';
+import MyFooter from './components/Footer.tsx';
+import { Box } from '@allxsmith/bestax-bulma';
 
 const App = () => {
 	return (
@@ -16,6 +17,7 @@ const App = () => {
 					<a href="./auth/register.html" className="button is-dark is-medium is-outlined">Sign up</a>
 				</div>
 			</Box>
+			<MyFooter />
 		</>
 	)
 }

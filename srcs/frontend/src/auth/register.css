@@ -10,5 +10,9 @@
 }
 
 .form {
-	  columns: 2;
+	columns: 2;
+}
+
+.login-button {
+	margin: 10px;
 }

@@ -1,5 +1,7 @@
-const InputPassword = () => {
+const InputPassword = ({label}) => {
 	return (
+		<div className="field">
+		<label htmlFor={"password"}>{label}</label>
 		<p className="control has-icons-left">
 			<input
 				className="input"
@@ -13,6 +15,7 @@ const InputPassword = () => {
 				<i className="fas fa-lock"></i>
 			</span>
 		</p>
+		</div>
 	)
 }
 
