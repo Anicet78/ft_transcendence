@@ -11,27 +11,16 @@ export async function postLoginController(
 ) {
 	const {email, password} = request.body;
 
-	let dbUser: AppUser | null = null;
-
-	try {
-		dbUser = await UserService.getUserByMail(email);
-		if (dbUser?.availability === false)
-			await UserService.setAvailabality(dbUser.appUserId, true);
-	} catch (err) {
-		request.log.error(err);
-		return reply.code(500).send({ error: "Database issue" });
-	}
+	const dbUser: AppUser | null = await UserService.getUserByMail(email);
 
 	if (!dbUser)
-		return reply.code(404).send({ error: "Email doesn't exist in db" });
+		return reply.code(404).send({ error: "Email not found" });
 
-	try {
-		if (!await verifyPassword(dbUser.passwordHash, password))
-			return reply.code(401).send({ error: "Incorrect password" });
-	} catch (err) {
-		request.log.error(err);
-		return reply.code(500).send({ error: "Password verification error" });
-	}
+	if (dbUser.availability === false)
+		await UserService.setAvailabality(dbUser.appUserId, true);
+
+	if (!await verifyPassword(dbUser.passwordHash, password))
+		return reply.code(401).send({ error: "Incorrect password" });
 
 	const user: User = {
 		id: dbUser.appUserId,

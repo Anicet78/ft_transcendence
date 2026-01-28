@@ -3,7 +3,7 @@ import type { User } from "../../schema/userSchema.js";
 import type { RegisterResponseType, RegisterType } from "../../routes/auth/registerRoute.js";
 import { hashPassword } from "../../services/auth/password.js";
 import { UserService } from "../../services/db/userService.js";
-import { Prisma, type AppUser } from "@prisma/client";
+import { type AppUser } from "@prisma/client";
 
 export async function postRegisterController(
 	request: FastifyRequest<{ Body: RegisterType }>,
@@ -11,26 +11,12 @@ export async function postRegisterController(
 ) {
 	const { firstname, lastname, username, region, email, password } = request.body;
 
-	let dbUser: AppUser | null = null;
-
-	try {
-		dbUser = await UserService.getUserByMail(email);
-	} catch (err) {
-		request.log.error(err);
-		return reply.code(500).send({ error: "Database issue" });
-	}
+	let dbUser: AppUser | null = await UserService.getUserByMail(email);
 
 	if (dbUser)
 		return reply.code(409).send({ error: "Already exist" });
 
-	let hash: string | null = null;
-
-	try {
-		hash = await hashPassword(password);
-	} catch (err) {
-		request.log.error(err);
-		return reply.code(500).send({ error: "Password hashing error" });
-	}
+	const hash: string | null = await hashPassword(password);
 
 	const user: User = {
 		id: "",
@@ -42,20 +28,10 @@ export async function postRegisterController(
 		passwordHash: hash
 	};
 
-	try {
-		const dbUser: AppUser = await UserService.createUser(user);
-		user.id = dbUser.appUserId;
-		if (dbUser.availability === false)
-			await UserService.setAvailabality(user.id, true);
-	} catch (err) {
-		request.log.error(err);
-		if (err instanceof Prisma.PrismaClientKnownRequestError) {
-			if (err.code === 'P2002') {
-				return reply.code(409).send({ error: "Already taken", field: err.meta?.target });
-			}
-		}
-		return reply.code(500).send({ error: "Database issue" });
-	}
+	dbUser = await UserService.createUser(user);
+	user.id = dbUser.appUserId;
+	if (dbUser.availability === false)
+		await UserService.setAvailabality(user.id, true);
 
 	const token = await reply.jwtSign({ id: user.id, email: user.email });
 
