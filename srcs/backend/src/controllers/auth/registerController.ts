@@ -4,12 +4,9 @@ import type { RegisterResponseType, RegisterType } from "../../routes/auth/regis
 import { hashPassword } from "../../services/auth/password.js";
 import { UserService } from "../../services/db/userService.js";
 import { Prisma, type AppUser } from "@prisma/client";
-import { RoomService } from "../../services/rooms/roomService.js";
-import type { Socket } from "socket.io";
-import type { GlobalHeaders } from "../../schema/globalHeadersSchema.js";
 
 export async function postRegisterController(
-	request: FastifyRequest<{ Headers: GlobalHeaders, Body: RegisterType }>,
+	request: FastifyRequest<{ Body: RegisterType }>,
 	reply: FastifyReply
 ) {
 	const { firstname, lastname, username, region, email, password } = request.body;
@@ -60,14 +57,9 @@ export async function postRegisterController(
 		return reply.code(500).send({ error: "Database issue" });
 	}
 
-	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.headers["x-socket-id"]);
-	if (!userSocket)
-		return reply.code(404).send({ error: "Socket not found" });
-
 	const token = await reply.jwtSign({ id: user.id, email: user.email });
-	const room = await RoomService.create(user.id, userSocket);
 
-	const response: RegisterResponseType = {token: token, user: user, roomId: room.roomId };
+	const response: RegisterResponseType = {token: token, user: user, roomId: "" };
 
 	return reply.status(200).send(response);
 }

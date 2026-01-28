@@ -16,10 +16,8 @@ export async function postOfflineController(
 	}
 
 	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.body.socketId);
-	if (!userSocket)
-		return reply.code(404).send({ error: "Socket not found" });
-
-	await RoomService.leave(request.user.id, userSocket, "Disconnect");
+	if (userSocket)
+		await RoomService.leave(request.user.id, userSocket, "Disconnect");
 
 	return reply.status(200).send({ success: true });
 }

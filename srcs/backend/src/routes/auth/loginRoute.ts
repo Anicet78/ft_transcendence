@@ -2,7 +2,6 @@ import { postLoginController } from "../../controllers/auth/loginController.js";
 import Type, { type Static } from "typebox";
 import type { FastifyInstance } from "fastify";
 import { AppErrorSchema } from "../../schema/errorSchema.js";
-import { GlobalHeadersSchema } from "../../schema/globalHeadersSchema.js";
 
 export const LoginSchema = Type.Object({
 	email: Type.String({ format: 'email', minLength: 3, maxLength: 80 }),
@@ -24,7 +23,6 @@ export async function loginRoutes(fastify: FastifyInstance) {
 
 fastify.post("/login", {
 	schema: {
-		headers: GlobalHeadersSchema,
 		body: LoginSchema,
 		response: {
 			200: LoginResponseSchema,
