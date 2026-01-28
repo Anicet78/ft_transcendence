@@ -1,9 +1,10 @@
 import fp from "fastify-plugin";
 import { AppError } from "../schema/errorSchema.js";
 import { Prisma } from "@prisma/client";
+import type { FastifyError } from "fastify";
 
 export default fp(async (fastify) => {
-	fastify.setErrorHandler((error, request, reply) => {
+	fastify.setErrorHandler((error: FastifyError | AppError | Error, request, reply) => {
 	request.log.error(error);
 
 	// AppError
@@ -11,8 +12,20 @@ export default fp(async (fastify) => {
 		return reply.code(error.statusCode).send({ error: error.error, message: error.message });
 
 	// Typebox
-	if (typeof error === 'object' && error !== null && 'validation' in error)
-		return reply.code(400).send({ error: "Invalid data", message: error.validation });
+	const fError = error as FastifyError;
+	if (fError.validation) {
+		const detailMessage = fError.validation
+			.map(err => {
+				const field = err.instancePath.replace('/', '');
+				return `${field ? field + ': ' : ''}${err.message}`;
+			})
+			.join(', ');
+
+		return reply.code(400).send({
+			error: "Bad Request",
+			message: `Validation failed: ${detailMessage}`
+		});
+	}
 
 	// Prisma
 	if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -27,7 +40,7 @@ export default fp(async (fastify) => {
 		// P2025: Record not found
 		if (error.code === 'P2025') {
 			return reply.code(404).send({
-				error: "Not found",
+				error: "Not Found",
 				message: "Record not found"
 			});
 		}
