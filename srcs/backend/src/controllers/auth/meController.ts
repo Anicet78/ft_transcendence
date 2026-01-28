@@ -9,20 +9,12 @@ export async function getMeController(
 	request: FastifyRequest,
 	reply: FastifyReply
 ) {
-
-	let user: AppUser | null = null;
-
-	try {
-		user = await UserService.getUserById(request.user.id);
-		if (user?.availability === false)
-			await UserService.setAvailabality(request.user.id, true);
-	} catch (err) {
-		request.log.error(err);
-		return reply.code(500).send({ error: "Database issue" });
-	}
-
+	const user: AppUser | null = await UserService.getUserById(request.user.id);
 	if (!user)
 		return reply.code(401).send({ error: "Invalid identifiers" });
+
+	if (user.availability === false)
+		await UserService.setAvailabality(request.user.id, true);
 
 	const room: Room | null = RoomService.find(request.user.id);
 
