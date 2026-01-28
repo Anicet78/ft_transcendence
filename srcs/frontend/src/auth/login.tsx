@@ -51,7 +51,7 @@ function Login() {
 		<br />
         <form action={login}>
 			<InputEmail label="Email"/>
-			<InputPassword label="Password"/>
+			<InputPassword label="Password" id="pwd"/>
             <ButtonSubmit name='Sign in' />
         </form>
       </div>

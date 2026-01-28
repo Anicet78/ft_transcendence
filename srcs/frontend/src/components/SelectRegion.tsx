@@ -8,7 +8,7 @@ const SelectRegion = () => {
 					<i className="fas fa-globe"></i>
 					</div>
 					<select id='region' name='region'>
-					<option defaultValue='EU'>Select your region</option>
+					<option defaultValue='default'>Select your region</option>
 					<option value='EU'>EU</option>
 					<option value='NA'>NA</option>
 					<option value='SAM'>SAM</option>

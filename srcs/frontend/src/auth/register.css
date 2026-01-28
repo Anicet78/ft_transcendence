@@ -9,8 +9,9 @@
   padding: 2em;
 }
 
-.form {
+.inputs {
 	columns: 2;
+	margin-bottom: 1rem;
 }
 
 .login-button {

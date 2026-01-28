@@ -1,12 +1,12 @@
-const InputPassword = ({label}) => {
+const InputPassword = ({label, id}) => {
 	return (
 		<div className="field">
-		<label htmlFor={"password"}>{label}</label>
+		<label htmlFor="password">{label}</label>
 		<p className="control has-icons-left">
 			<input
 				className="input"
 				type="password"
-				id="pwd"
+				id={id}
 				name="pwd"
 				required
 				minLength={8}

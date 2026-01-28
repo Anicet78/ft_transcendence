@@ -12,5 +12,5 @@ npm create vite@latest frontend -- --template react-ts
 npm install @allxsmith/bestax-bulma
 npm install bulma
 npm install -D typescript @types/react @types/react-dom
-npm install @mdi/font
+npm install react-hook-form
 ```

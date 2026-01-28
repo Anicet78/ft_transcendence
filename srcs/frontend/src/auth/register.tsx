@@ -44,20 +44,17 @@ function Register() {
 			<Button color='primary' isOutlined className='login-button'>Login with 42</Button>
 		</div>
 		<br />
-        <form action={register} className='form'>
-			<div>
+        <form action={register}>
+			<div className='inputs'>
 				<InputName label="First name" nameType="firstname" />
 				<InputName label="Last name" nameType="lastname"/>
 				<InputName label="User name" nameType="username"/>
-				<SelectRegion />
-			</div>
-			<div>
 				<InputEmail label="Email" />
-				<InputPassword label="Password"/>
-				<InputPassword label="Confirm password"/>
+				<InputPassword label="Password" id="first-pwd"/>
+				<InputPassword label="Confirm password" id="second-pwd" />
 			</div>
-			<br />
 			<div>
+				<SelectRegion />
             	<ButtonSubmit name='Sign up' />
 			</div>
         </form>
