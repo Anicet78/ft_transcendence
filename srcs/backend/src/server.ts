@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import errorPlugin from './plugins/error.js';
 import authPlugin from './plugins/auth.js';
 import socketPlugin from './plugins/socket.js';
 import { router } from './routes/index.js';
@@ -12,6 +13,7 @@ fastify.withTypeProvider<TypeBoxTypeProvider>();
 
 const start = async () => {
 	try {
+		fastify.register(errorPlugin);
 		fastify.register(authPlugin);
 		fastify.register(socketPlugin);
 		fastify.register(router);
