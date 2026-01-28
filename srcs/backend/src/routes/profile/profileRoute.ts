@@ -65,4 +65,18 @@ export async function profileRoutes(fastify: FastifyInstance) {
     },
     handler: profileController.blockProfile
   });
+
+  fastify.post('/profile/:id/unblock', {
+    schema: {
+      params: ProfileIdParamsSchema,
+      body: Type.Null(),
+      response: {
+        204: Type.Null(),
+        400: AppErrorSchema,
+        404: AppErrorSchema,
+        500: AppErrorSchema
+      }
+    },
+    handler: profileController.unblockProfile
+  });
 }

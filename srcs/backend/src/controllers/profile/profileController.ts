@@ -109,3 +109,25 @@ export async function blockProfile(req: FastifyRequest<{ Params: ProfileIdParams
 
   return reply.status(204).send();
 }
+
+// POST /profile/:id/unblock
+export async function unblockProfile(req: FastifyRequest<{ Params: ProfileIdParams }>, reply: FastifyReply) {
+  try {
+    const userId = req.user.id;
+
+    if (await UserService.getUserById(req.params.id) == null)
+      return reply.code(404).send({ error: 'User not found' });
+
+    const lastBlockId: string | null = await profileService.getLastBlock(userId, req.params.id);
+
+    if (!lastBlockId)
+      return reply.code(400).send({ error: 'Not blocked' });
+
+    await profileService.unblockProfile(lastBlockId);
+
+    return reply.status(204).send();
+  } catch (err) {
+    req.log.error(err);
+    return reply.code(500).send({ error: 'Internal Server Error' });
+  }
+}
