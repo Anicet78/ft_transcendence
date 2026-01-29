@@ -18,7 +18,6 @@ model AppUser {
   availability                                          Boolean          @default(false)
   playing                                               Boolean          @default(false)
   region                                                region_list
-<<<<<<< HEAD
   createdAt                                             DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                                             DateTime         @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt                                             DateTime?        @map("deleted_at") @db.Timestamptz(6)
@@ -37,25 +36,6 @@ model AppUser {
   chat_role_chat_role_user_idToapp_user                 ChatRole[]       @relation("chat_role_user_idToapp_user")
   friendshipsReceived                                   Friendship[]     @relation("FriendshipReceiver")
   friendshipsSent                                       Friendship[]     @relation("FriendshipSender")
-=======
-  createdAt                                             DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                                             DateTime          @default(now()) @map("updated_at") @db.Timestamptz(6)
-  deletedAt                                             DateTime?         @map("deleted_at") @db.Timestamptz(6)
-  lastConnectedAt                                       DateTime          @default(now()) @map("last_connected_at") @db.Timestamptz(6)
-  blocked_list_blocked_list_blockedToapp_user           blocked_list[]    @relation("blocked_list_blockedToapp_user")
-  blocked_list_blocked_list_blockerToapp_user           blocked_list[]    @relation("blocked_list_blockerToapp_user")
-  chatBansGiven                                         ChatBan[]         @relation("ChatBanBannedBy")
-  chatBansReceived                                      ChatBan[]         @relation("ChatBanUser")
-  chat_invitation_chat_invitation_receiver_idToapp_user chat_invitation[] @relation("chat_invitation_receiver_idToapp_user")
-  chat_invitation_chat_invitation_sender_idToapp_user   chat_invitation[] @relation("chat_invitation_sender_idToapp_user")
-  chatMemberships                                       ChatMember[]      @relation("UserChatMemberships")
-  moderatedMessages                                     ChatMessage[]     @relation("MessageModerator")
-  messages                                              ChatMessage[]     @relation("MessageAuthor")
-  chatRolesGiven                                        ChatRole[]        @relation("ChatRoleAttributedBy")
-  chatRoles                                             ChatRole[]        @relation("ChatRoleUser")
-  friendshipsReceived                                   Friendship[]      @relation("FriendshipReceiver")
-  friendshipsSent                                       Friendship[]      @relation("FriendshipSender")
->>>>>>> dfd1222 (created blocked_list)
   gameProfile                                           GameProfile?
   gameResults                                           GameResult[]
   private_chat_private_chat_user1_idToapp_user          PrivateChat[]    @relation("private_chat_user1_idToapp_user")
@@ -110,7 +90,7 @@ model GameResult {
   gainedXp       Int          @default(0) @map("gained_xp")
   isWinner       Boolean      @default(false) @map("is_winner")
   gameSession    GameSession? @relation(fields: [gameId], references: [sessionId], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_result_match")
-  player         AppUser?     @relation(fields: [playerId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_result_user")
+  player         AppUser?     @relation(fields: [playerId], references: [appUserId], onDelete: Cascade, onUpdate: NoAction, map: "fk_game_result_user")
 
   @@map("game_result")
 }
@@ -278,69 +258,15 @@ model PrivateChat {
   user1Id       String?   @map("user1_id") @db.Uuid
   user2Id       String?   @map("user2_id") @db.Uuid
   chatId        String?   @map("chat_id") @db.Uuid
+  chatId        String?   @map("chat_id") @db.Uuid
   createdAt     DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt     DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt     DateTime? @map("deleted_at") @db.Timestamptz(6)
-  chat          Chat?     @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction)
-  user1         AppUser?  @relation("private_chat_user1_idToapp_user", fields: [user1Id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
-  user2         AppUser?  @relation("private_chat_user2_idToapp_user", fields: [user2Id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
+  user1         AppUser?  @relation("PrivateChatUser1", fields: [user1Id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_private_chat_user1")
+  user2         AppUser?  @relation("PrivateChatUser2", fields: [user2Id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_private_chat_user2")
 
   @@unique([user1Id, user2Id], map: "chk_private_chat_unique_pair")
   @@map("private_chat")
-}
-
-<<<<<<< HEAD
-=======
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model chat_invitation {
-  chat_invitation_id                             String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  sender_id                                      String?   @db.Uuid
-  receiver_id                                    String?   @db.Uuid
-  chat_id                                        String?   @db.Uuid
-  status                                         String    @default("waiting") @db.VarChar(10)
-  created_at                                     DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at                                     DateTime? @default(now()) @db.Timestamptz(6)
-  deleted_at                                     DateTime? @db.Timestamptz(6)
-  chat                                           Chat?     @relation(fields: [chat_id], references: [chatId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_id")
-  app_user_chat_invitation_receiver_idToapp_user AppUser?  @relation("chat_invitation_receiver_idToapp_user", fields: [receiver_id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ivitate_receiver")
-  app_user_chat_invitation_sender_idToapp_user   AppUser?  @relation("chat_invitation_sender_idToapp_user", fields: [sender_id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ivitate_sender")
-}
-
-model blocked_list {
-  blocked_list                            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  blocker                                 String?   @db.Uuid
-  blocked                                 String?   @db.Uuid
-  created_at                              DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at                              DateTime? @default(now()) @db.Timestamptz(6)
-  deleted_at                              DateTime? @db.Timestamptz(6)
-  app_user_blocked_list_blockedToapp_user AppUser?  @relation("blocked_list_blockedToapp_user", fields: [blocked], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
-  app_user_blocked_list_blockerToapp_user AppUser?  @relation("blocked_list_blockerToapp_user", fields: [blocker], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
-}
-
-enum chat_role_type {
-  owner
-  admin
-  moderator
-  read_only
-}
-
-enum message_status {
-  posted
-  edited
-  deleted
-  moderated
-}
-
->>>>>>> dfd1222 (created blocked_list)
-enum region_list {
-  EU
-  NA
-  SAM
-  MENA
-  OCE
-  APAC
-  SSA
-  Deleted
 }
 
 enum chat_role_type {
@@ -358,7 +284,13 @@ enum message_status {
   moderated
 }
 
-enum type_list {
-  private
-  group
+enum region_list {
+  EU
+  NA
+  SAM
+  MENA
+  OCE
+  APAC
+  SSA
+  Deleted
 }
