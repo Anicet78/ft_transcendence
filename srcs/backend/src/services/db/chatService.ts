@@ -316,6 +316,7 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 	data: {
 		chatId,
 		userId,
+		status: 'posted',
 		content
 	},
 	select: {
@@ -330,4 +331,54 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 
 	return message;
 }
+
+//DELETE MESSAGE
+export async function deleteMessage(messageId: string, userId: string) {
+	// 1. Load message
+	const message = await prisma.chatMessage.findUnique({
+	where: { messageId },
+	select: {
+		messageId: true,
+		chatId: true,
+		userId: true, // author
+		status: true
+	}
+	});
+
+	if (!message) {
+		throw new AppError('Message not found', 404);
+	}
+
+	// 2. Load user role in this chat
+	// const role = await prisma.chatRole.findFirst({
+	// where: { chatId: message.chatId, userId },
+	// select: { role: true }
+	// });
+	// const userRole = role?.role ?? 'member';
+	// const isModeratorOrAbove = ; 
+	//NEED to add check if user is moderator
+
+	const isAuthor = message.userId === userId;
+	if (!isAuthor /*&& !isModeratorOrAbove*/) {
+		throw new AppError('You do not have permission to delete this message', 403);
+	}
+
+	// 3. Soft delete
+	const updated = await prisma.chatMessage.update({
+	where: { messageId },
+	data: {
+		status: 'deleted',
+		deletedAt: new Date()
+	},
+	select: {
+		messageId: true,
+		chatId: true,
+		status: true,
+		deletedAt: true
+	}
+	});
+
+	return updated;
+}
+
 

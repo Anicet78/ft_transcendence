@@ -14,6 +14,10 @@ import { listUserChats } from '../../services/db/chatService.js';
 import { sendMessage } from '../../services/db/chatService.js';
 import type { SendMessageParams, SendMessageBody } from '../../schema/chatSchema.js';
 
+import { deleteMessage } from '../../services/db/chatService.js';
+import type { DeleteMessageParams } from '../../schema/chatSchema.js';
+
+
 //CREATE GROUP CHAT
 function normalizeChat(chat: any) {
 	return {
@@ -136,4 +140,27 @@ export async function sendMessageController(
 	postedAt: message.postedAt?.toISOString() ?? null
 	});
 }
+
+//DELETE MESSAGE
+export async function deleteMessageController(
+	req: FastifyRequest<{ Params: DeleteMessageParams }>,
+	reply: FastifyReply
+	) {
+	const userId = req.user.id;
+	const { messageId } = req.params;
+
+	if (!userId) {
+	throw new AppError('Unauthorized', 401);
+	}
+
+	const result = await deleteMessage(messageId, userId);
+
+	return reply.status(200).send({
+	messageId: result.messageId,
+	chatId: result.chatId,
+	status: result.status,
+	deletedAt: result.deletedAt?.toISOString() ?? null
+	});
+}
+
 

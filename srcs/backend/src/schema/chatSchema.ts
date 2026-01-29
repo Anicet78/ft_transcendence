@@ -89,3 +89,17 @@ export const ChatMessageResponseSchema = Type.Object({
 	status: Type.String(),
 	postedAt: Type.String()
 });
+
+//DELETE MESSAGE
+export const DeleteMessageParamsSchema = Type.Object({
+	messageId: Type.String({ format: 'uuid' })
+});
+export type DeleteMessageParams = Static<typeof DeleteMessageParamsSchema>;
+
+export const DeleteMessageResponseSchema = Type.Object({
+	messageId: Type.String(),
+	chatId: Type.String(),
+	status: Type.String(),
+	deletedAt: Type.String()
+});
+
