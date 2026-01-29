@@ -88,7 +88,7 @@ export async function unblockProfile(req: FastifyRequest<{ Params: ProfileIdPara
   const targetId: string = req.params.id;
 
   if (userId === targetId)
-    return reply.status(400).send({ error: 'Cannot block yourself' });
+    return reply.status(400).send({ error: 'Cannot unblock yourself' });
 
   if (await UserService.getUserById(targetId) == null)
     return reply.code(404).send({ error: 'User not found' });

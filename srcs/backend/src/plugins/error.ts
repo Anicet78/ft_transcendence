@@ -29,9 +29,6 @@ export default fp(async (fastify) => {
 
 	// Prisma
 	if (error instanceof Prisma.PrismaClientKnownRequestError) {
-		if (error.meta)
-			error.meta.target = null;
-
 		const mapping = PRISMA_ERROR_MAP[error.code];
 
 		if (mapping) {
