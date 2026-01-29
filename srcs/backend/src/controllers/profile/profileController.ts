@@ -63,24 +63,37 @@ export async function deleteProfile(req: FastifyRequest, reply: FastifyReply) {
 
 // POST /profile/:id/block
 export async function blockProfile(req: FastifyRequest<{ Params: ProfileIdParams }>, reply: FastifyReply) {
-  const userId = req.user.id;
+  const userId: string = req.user.id;
+  const targetId: string = req.params.id;
 
-  if (await UserService.getUserById(req.params.id) == null)
+  if (userId === targetId)
+    return reply.status(400).send({ error: 'Cannot block yourself' });
+
+  if (await UserService.getUserById(targetId) == null)
     return reply.code(404).send({ error: 'User not found' });
 
-  await profileService.blockProfile(userId, req.params.id);
+  const lastBlockId: string | null = await profileService.getLastBlock(userId, targetId);
+
+  if (lastBlockId)
+    return reply.code(400).send({ error: 'Already blocked' });
+
+  await profileService.blockProfile(userId, targetId);
 
   return reply.status(204).send();
 }
 
 // POST /profile/:id/unblock
 export async function unblockProfile(req: FastifyRequest<{ Params: ProfileIdParams }>, reply: FastifyReply) {
-  const userId = req.user.id;
+  const userId: string = req.user.id;
+  const targetId: string = req.params.id;
 
-  if (await UserService.getUserById(req.params.id) == null)
+  if (userId === targetId)
+    return reply.status(400).send({ error: 'Cannot block yourself' });
+
+  if (await UserService.getUserById(targetId) == null)
     return reply.code(404).send({ error: 'User not found' });
 
-  const lastBlockId: string | null = await profileService.getLastBlock(userId, req.params.id);
+  const lastBlockId: string | null = await profileService.getLastBlock(userId, targetId);
 
   if (!lastBlockId)
     return reply.code(400).send({ error: 'Not blocked' });

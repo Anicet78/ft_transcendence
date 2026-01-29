@@ -4,6 +4,21 @@ import { AppError } from "../schema/errorSchema.js";
 import { Prisma } from "@prisma/client";
 import type { FastifyError } from "fastify";
 
+const PRISMA_ERROR_MAP: Record<string, { statusCode: number, getMessage: (meta: any) => string }> = {
+	P2002: {
+		statusCode: 409,
+		getMessage: (meta) => `Duplicate value for: ${meta?.target?.join(', ') || 'unknown field'}`
+	},
+	P2025: {
+		statusCode: 404,
+		getMessage: (meta) => meta?.cause || "Record Not Found"
+	},
+	P2023: {
+		statusCode: 400,
+		getMessage: (meta) => meta?.message || "Inconsistent column data"
+	}
+};
+
 export default fp(async (fastify) => {
 	fastify.setErrorHandler((error: FastifyError | AppError | Error, request, reply) => {
 	request.log.error(error);
@@ -14,19 +29,17 @@ export default fp(async (fastify) => {
 
 	// Prisma
 	if (error instanceof Prisma.PrismaClientKnownRequestError) {
-		// P2002: Unique constraint failed
-		if (error.code === 'P2002') {
-			return reply.code(409).send({
-				error: "Conflict",
-				message: "Unique constraint failed"
-			});
-		}
+		if (error.meta)
+			error.meta.target = null;
 
-		// P2025: Record not found
-		if (error.code === 'P2025') {
-			return reply.code(404).send({
-				error: "Not Found",
-				message: "Record not found"
+		const mapping = PRISMA_ERROR_MAP[error.code];
+
+		if (mapping) {
+			const message = mapping.getMessage(error.meta);
+
+			return reply.code(mapping.statusCode).send({
+				error: http.STATUS_CODES[mapping.statusCode],
+				message
 			});
 		}
 	}

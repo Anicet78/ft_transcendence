@@ -46,7 +46,7 @@ export async function hostRoomController(
 	reply: FastifyReply
 ) {
 	if (request.body.userId === request.user.id)
-		return reply.code(400).send({ error: "Cannot kick yourself" });
+		return reply.code(400).send({ error: "Already host" });
 
 	const room: Room = RoomService.get(request.params.id, request.user.id);
 

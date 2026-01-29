@@ -133,17 +133,6 @@ export async function softDeleteProfile(userId: string) {
   });
 }
 
-export async function blockProfile(userId: string, targetId: string) {
-  return prisma.blocked_list.create({
-    data: {
-      blocker: userId,
-      blocked: targetId,
-      created_at: new Date(),
-      updated_at: new Date()
-    }
-  });
-}
-
 export async function getLastBlock(userId: string, targetId: string): Promise<string | null> {
   const lastblock: { blocked_list: string, deleted_at: Date | null } | null = await prisma.blocked_list.findFirst({
     where: {
@@ -157,15 +146,27 @@ export async function getLastBlock(userId: string, targetId: string): Promise<st
       deleted_at: true
     }
   });
-  if (!lastblock || lastblock.deleted_at == null)
+  if (!lastblock || lastblock.deleted_at !== null)
     return null;
   return lastblock.blocked_list;
+}
+
+export async function blockProfile(userId: string, targetId: string) {
+  return prisma.blocked_list.create({
+    data: {
+      blocker: userId,
+      blocked: targetId,
+      created_at: new Date(),
+      updated_at: new Date()
+    }
+  });
 }
 
 export async function unblockProfile(lastBlockId: string) {
   return prisma.blocked_list.update({
     where: { blocked_list: lastBlockId },
     data: {
+      updated_at: new Date(),
       deleted_at: new Date()
     }
   });

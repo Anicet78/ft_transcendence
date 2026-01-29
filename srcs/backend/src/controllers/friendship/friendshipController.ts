@@ -37,7 +37,7 @@ export async function sendRequest(
   const receiverId = req.params.id;
 
   if (senderId === receiverId)
-    return reply.status(400).send({ error: 'Cannot friend yourself' });
+    return reply.status(400).send({ error: 'Cannot befriend yourself' });
 
   // Prevent duplicates
   const existing = await Service.findExistingFriendship(senderId, receiverId);
