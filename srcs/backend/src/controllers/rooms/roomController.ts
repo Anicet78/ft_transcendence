@@ -18,9 +18,7 @@ export async function newRoomController(
 	request: FastifyRequest<{ Headers: GlobalHeaders, Body: RoomBodyType }>,
 	reply: FastifyReply
 ) {
-	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.headers["x-socket-id"]);
-	if (!userSocket)
-		return reply.code(404).send({ error: "Socket not found" });
+	const userSocket: Socket = request.getSocket();
 
 	await RoomService.leave(request.user.id, userSocket);
 
@@ -33,9 +31,7 @@ export async function joinRoomController(
 	request: FastifyRequest<{ Headers: GlobalHeaders, Params: RoomParamsType, Body: RoomBodyType }>,
 	reply: FastifyReply
 ) {
-	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.headers["x-socket-id"]);
-	if (!userSocket)
-		return reply.code(404).send({ error: "Socket not found" });
+	const userSocket: Socket = request.getSocket();
 
 	const response: Room = await RoomService.join(request.params.id, request.user.id, userSocket);
 	return reply.status(200).send(response);
@@ -80,9 +76,7 @@ export async function kickRoomController(
 	if (!room.playersId.includes(request.body.userId))
 		return reply.code(404).send({ error: "Target not in room" });
 
-	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.headers["x-socket-id"]);
-	if (!userSocket)
-		return reply.code(404).send({ error: "Socket not found" });
+	const userSocket: Socket = request.getSocket();
 
 	await RoomService.leave(request.body.userId, userSocket, "Kicked");
 
