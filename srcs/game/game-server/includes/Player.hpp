@@ -93,6 +93,7 @@ class Player
 		void		setLastDir(int dir);
 
 	//action
+		void		findP(void);
 		void		move(void);
 		void		attack(void);
 		void		takeDamage(int amount);

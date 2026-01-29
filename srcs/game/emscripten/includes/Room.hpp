@@ -46,19 +46,16 @@ class Room
 		~Room(void);
 	
 	public:
-		int	getWidth() const;
-		int getHeight() const;
-		static Room getWatingRoom();
-		std::array<std::array<int, 2>, 4> getExitsLoc() const;
-		std::array<bool, 4> getExits() const;
-		std::string getName() const;
-		std::vector<std::string> getRoomPlan() const;
-		static std::map<std::string, std::shared_ptr<Room>> getFloor(int nb);
-		static void importRooms();
-		void	randomizeRoom();
-		void	turnMapLeft(void);
-		void	turnMapRight(void);
-		void	turnMapUpDown(void);
+		int													getWidth() const;
+		int													getHeight() const;
+		static Room											getWatingRoom();
+		std::array<std::array<int, 2>, 4>					getExitsLoc() const;
+		std::array<bool, 4>									getExits() const;
+		std::string											getName() const;
+		std::vector<std::string>							getRoomPlan() const;
+		static std::map<std::string, std::shared_ptr<Room>>	getFloor(int nb);
+		static void											importRooms();
+		void												turnMapLeft(void);
 };
 
 std::ostream &operator<<(std::ostream &o, Room const &obj);

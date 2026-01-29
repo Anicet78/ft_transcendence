@@ -141,6 +141,15 @@ void updateRoom(Player &player)
 			player.setPos(exitsLoc[1][0] - 0.1, exitsLoc[1][1] + 0.5);
 		}
 	}
+	else if (plan[y][x] == 'S')
+	{
+		if (player.getNode()->up.expired())
+			return ;
+		player.setExit('U');
+		player.setPrevNode(player.getNode());
+		player.setNode(player.getNode()->up.lock());
+		player.findP();
+	}
     else if (player.getExit() > 32)
     {
         player.setExit(' ');

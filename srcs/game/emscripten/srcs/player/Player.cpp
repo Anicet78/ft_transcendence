@@ -75,23 +75,7 @@ void	Player::updateLastDir(void)
 
 void Player::setNode(const quadList &node)
 {
-	if (this->_node->getRoom()->getName() == "waiting" || this->_node->getRoom()->getName() == "start")
-	{
-		this->_node = node;
-		int i = 0;
-		for (auto &line : _node->getRoom()->getRoomPlan())
-		{
-			size_t pos = line.find('P');
-			if (pos != std::string::npos)
-			{
-				_x = pos + 0.5, _y = i + 0.5;
-				break ;
-			}
-			i++;
-		}
-	}
-	else
-		this->_node = node;
+	this->_node = node;
 }
 
 void	Player::setPos(float x, float y)

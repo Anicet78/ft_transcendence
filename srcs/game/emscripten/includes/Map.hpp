@@ -12,6 +12,7 @@ class chainedMap
 		int						_x;
 		int						_y;
 
+
 	public:
 		chainedMap(void);
 		~chainedMap(void);
@@ -21,14 +22,18 @@ class chainedMap
 		std::weak_ptr<chainedMap>	south;
 		std::weak_ptr<chainedMap>	east;
 		std::weak_ptr<chainedMap>	west;
-		void addRoom(const Room &room);
-		std::shared_ptr<Room> getRoom(void) const;
-		void setPath(int flag);
-		int	getPath() const;
-		int getX() const;
-		int getY() const;
-		void setX(int nb);
-		void setY(int nb);
+		std::weak_ptr<chainedMap>	up;
+	
+	public:
+
+		void					addRoom(const Room &room);
+		std::shared_ptr<Room>	getRoom(void) const;
+		void					setPath(int flag);
+		int						getPath() const;
+		int						getX() const;
+		int						getY() const;
+		void					setX(int nb);
+		void					setY(int nb);
 };
 
 using quadList = std::shared_ptr<chainedMap>;
@@ -40,15 +45,7 @@ class Map
 		int						_height;
 		quadList				_head;
 		std::vector<quadList>	_nodes;
-	
-	private:
-		quadList				chooseRoom(std::string mapName);
-		int						checkObs(quadList &node);
-		void					preparePathMap(void);
-		void					fillPrimaryPath(void);
-		void					fillOtherRooms(void);
-		int						heuristic(const quadList &a, const quadList &b) const;
-		std::vector<quadList>	astar(const quadList &start, const quadList &goal);
+
 
 	public:
 		Map(void);
@@ -58,7 +55,7 @@ class Map
 	public:
 		quadList				&getHead(void);
 		std::vector<quadList>	&getNodes();
-		void					fillMap(void);
+		void					link(Map &up);
 		int						getWidth() const;
 		int						getHeight() const;
 		void					setRoomInNode(std::string &roomName, int x, int y, int rot, int roomSet);

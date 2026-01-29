@@ -45,6 +45,11 @@ void updateRoom(Game &game, Player &player, std::string dir)
 		exitsLoc = player.getRoom().getExitsLoc();
 		player.setPos(exitsLoc[1][0] - 0.1, exitsLoc[1][1] + 0.5);
 	}
+	else if (dir == "U")
+	{
+		game.clearOtherPlayers();
+		player.setNode(player.getNode()->up.lock());
+	}
 }
 
 void	updatePlayerPosition(Player &player)

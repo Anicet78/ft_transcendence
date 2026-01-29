@@ -17,6 +17,7 @@ class Session
 		std::string								_mapInfos;
 
 	private:
+		void									linkMaps(Map &down, Map &up);
 		std::string								sendMaps(void);
 
 

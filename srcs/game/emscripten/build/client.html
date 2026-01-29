@@ -56,7 +56,7 @@
 		}
 
         connectBtn.onclick = () => {
-            socket = new WebSocket('ws://f6r12s9:3000');
+            socket = new WebSocket('ws://localhost:3000');
 
             socket.onopen = () => {
                 log('✅ Connecté au serveur');

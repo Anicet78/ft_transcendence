@@ -28,7 +28,7 @@ SRCS		=	main.cpp \
 				engine/map_printer.cpp \
 				player/Player.cpp \
 				player/PlayerAssets.cpp \
-				mapGen/mapMain.cpp Room.cpp Map.cpp mapGen/aStar.cpp mapGen/mapGen.cpp Game.cpp
+				mapGen/mapMain.cpp Room.cpp Map.cpp Game.cpp
 
 EMSRCS		= $(patsubst %, $(SRC_DIR)%, $(SRCS))
 
@@ -54,9 +54,9 @@ clean:
 	rm -rf $(OBJ_DIR)
 
 wfclean:
-	rm ./build/game.js
-	rm ./build/game.wasm
-	rm ./build/game.data
+	rm -f ./build/game.js
+	rm -f ./build/game.wasm
+	rm -f ./build/game.data
 
 fclean: clean
 	rm -rf $(NAME)

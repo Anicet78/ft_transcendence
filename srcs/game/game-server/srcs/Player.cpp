@@ -197,3 +197,20 @@ void	Player::setInSession(bool flag)
 {
 	this->_inSession = flag;
 }
+
+void	Player::findP(void)
+{
+	auto plan = this->getRoom().getRoomPlan();
+
+	int i = 0;
+	for (std::string &line : plan)
+	{
+		size_t pos = 0;
+		if ((pos = line.find('P')) != std::string::npos)
+		{
+			this->_x = pos + 0.5;
+			this->_y = i + 0.5;
+		}
+		i++;
+	}
+}

@@ -7,7 +7,11 @@ Session::Session(void): _maxNumPlayer(3), _running(0), _ended(0)
 	_maps.back().setWaitingRoom();
 	_maps.emplace_back(size, size);
 	_maps.back().fillMap(_maxNumPlayer, 0);
+	_maps.emplace_back(size * 0.7, size * 0.7);
+	_maps.back().fillMap(_maxNumPlayer, 1);
 	printMap(_maps[1]);
+	printMap(_maps[2]);
+	this->linkMaps(_maps[1], _maps[2]);
 }
 
 Session::Session(int numPLayer): _maxNumPlayer(numPLayer), _running(0), _ended(0)
@@ -25,18 +29,17 @@ void	Session::launch()
 {
 	quadList start, vide;
 	this->_running = true;
+	size_t pos = 0;
 	for (quadList &node : this->_maps[1].getNodes())
 	{
-		if (node->getRoom() && node->getRoom()->getName() == "start")
-		{
-			start = node;
+		if (!node->getRoom() || node->getRoom()->getName() != "start")
+			continue ;
+		if (pos >= this->_players.size())
 			break ;
-		}
-	}
-	for (auto &player : this->_players)
-	{
-		player->setNode(start);
-		player->getWs()->send("{\"action\": \"launch\"}");
+		this->_players[pos]->setNode(node);
+		std::string msg = "{\"action\": \"launch\", \"start\": " + std::to_string(pos) + '}';
+		this->_players[pos]->getWs()->send(msg);
+		pos++;
 	}
 }
 
@@ -48,6 +51,11 @@ void	Session::sendToAll(Player &sender)
 			continue ;
 		sendPlayerState(*player, *this, sender.getUid());
 	}
+}
+
+void	Session::linkMaps(Map &down, Map &up)
+{
+	down.link(up);
 }
 
 std::string	Session::sendMaps(void)

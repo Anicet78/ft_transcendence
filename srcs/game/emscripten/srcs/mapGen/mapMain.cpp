@@ -89,23 +89,3 @@ void printMap(Map &floor0)
  	   std::cout << '\n';
 	}
 }
-
-
-// int main()
-// {
-// 	Map floor0(10, 10);
-// 	srand(time(0));
-// 	try
-// 	{
-// 		Room::importRooms();
-// 		floor0.fillMap();
-// 	}
-// 	catch(const std::exception& e)
-// 	{
-// 		std::cerr << e.what() << '\n';
-// 	}
-	
-// 	printMap(floor0);
-// 	//printRooms(floor0);
-// 	return 0;
-// }

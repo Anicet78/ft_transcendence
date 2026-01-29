@@ -49,9 +49,9 @@ static int checkRoomBorders(quadList const &place, Room const &room, Map const &
 	return 1;
 }
 
-quadList Map::chooseRoom(std::string mapName)
+quadList Map::chooseRoom(std::string mapName, int lvl)
 {
-	auto F0 = Room::getFloor0();
+	auto floor = Room::getFloor(lvl);
 	Room temp;
 
 	while (true)
@@ -67,49 +67,19 @@ quadList Map::chooseRoom(std::string mapName)
 
 		quadList tmp = this->_nodes[y * _width + x];
 
-		temp = *F0[mapName].get();
+		temp = *floor[mapName];
 		temp.randomizeRoom();
-
 		int i = 0;
 		while (!checkRoomBorders(tmp, temp, *this) && i < 4)
 		{
 			temp.turnMapLeft();
 			i++;
 		}
-
 		if (i == 4)	
 			continue;
 
 		tmp->addRoom(temp);
 		return tmp;
-	}
-}
-
-static void chooseDirections3(quadList &node, std::array<bool, 4> &directions)
-{
-	if (node.get()->north.expired() == false)
-	{
-		quadList next = node.get()->north.lock();
-		if (next && next->getPath() == 3 && node->getPath() == 3)
-			directions[0] = 1;
-	}
-	if (node.get()->east.expired() == false)
-	{
-		quadList next = node.get()->east.lock();
-		if (next && next->getPath() == 3 && node->getPath() == 3)
-			directions[1] = 1;
-	}
-	if (node.get()->south.expired() == false)
-	{
-		quadList next = node.get()->south.lock();
-		if (next && next->getPath() == 3 && node->getPath() == 3)
-			directions[2] = 1;
-	}
-	if (node.get()->west.expired() == false)
-	{
-		quadList next = node.get()->west.lock();
-		if (next && next->getPath() == 3 && node->getPath() == 3)
-			directions[3] = 1;
 	}
 }
 
@@ -120,11 +90,15 @@ static void chooseDirections(quadList &node, std::array<bool, 4> &directions)
 		quadList next = node.get()->north.lock();
 		if (next && next->getPath() > 0 && node->getPath() != 3)
 			directions[0] = 1;
+		else if (next && next->getPath() == 3 && node->getPath() == 3)
+			directions[0] = 1;
 	}
 	if (node.get()->east.expired() == false)
 	{
 		quadList next = node.get()->east.lock();
 		if (next && next->getPath() && node->getPath() != 3)
+			directions[1] = 1;
+		else if (next && next->getPath() == 3 && node->getPath() == 3)
 			directions[1] = 1;
 	}
 	if (node.get()->south.expired() == false)
@@ -132,11 +106,15 @@ static void chooseDirections(quadList &node, std::array<bool, 4> &directions)
 		quadList next = node.get()->south.lock();
 		if (next && next->getPath() && node->getPath() != 3)
 			directions[2] = 1;
+		else if (next && next->getPath() == 3 && node->getPath() == 3)
+			directions[2] = 1;
 	}
 	if (node.get()->west.expired() == false)
 	{
 		quadList next = node.get()->west.lock();
 		if (next && next->getPath() && node->getPath() != 3)
+			directions[3] = 1;
+		else if (next && next->getPath() == 3 && node->getPath() == 3)
 			directions[3] = 1;
 	}
 }
@@ -153,10 +131,10 @@ bool neighborExists(quadList node, int dir)
 }
 
 
-static void selectRoom(quadList &node, std::vector<Room> &candidates, std::array<bool, 4> &directions)
+static void selectRoom(quadList &node, std::vector<Room> &candidates, std::array<bool, 4> &directions, int lvl)
 {
 	int sum = directions[0] + directions[1] + directions[2] + directions[3];
-	for (auto &room : Room::getFloor0())
+	for (auto &room : Room::getFloor(lvl))
 	{
 		if (room.first == "start" || room.first == "stairs")
 			continue ;
@@ -196,10 +174,7 @@ static void selectRoom(quadList &node, std::vector<Room> &candidates, std::array
 				}
 			}
 			if (flag)
-			{
 				temp.turnMapLeft();
-				temp.incrementRotate();
-			}
 			else
 				break ;
 		}
@@ -208,7 +183,7 @@ static void selectRoom(quadList &node, std::vector<Room> &candidates, std::array
 	}
 }
 
-static void selectAndAddRoom(quadList &node)
+static void selectAndAddRoom(quadList &node, int lvl)
 {
 	if (!node->getRoom())
 	{
@@ -220,11 +195,8 @@ static void selectAndAddRoom(quadList &node)
 			std::vector<Room> candidates;
 			std::array<bool, 4> directions = {0, 0, 0, 0};
 
-			if (node->getPath() == 3)
-				chooseDirections3(node, directions);
-			else
-				chooseDirections(node, directions);
-			selectRoom(node, candidates, directions);
+			chooseDirections(node, directions);
+			selectRoom(node, candidates, directions, lvl);
 
 			if (candidates.empty())
 			{
@@ -306,9 +278,9 @@ void Map::preparePathMap(int numPlayers, int depth)
 	std::vector<quadList> stairs;
 	std::vector<quadList> starts;
 	for (int i = 0; i < numPlayers - depth; i++)
-		starts.emplace_back(this->chooseRoom("start"));
+		starts.emplace_back(this->chooseRoom("start", depth + 1));
 	for (int i = 0; i < numPlayers - depth - 1; i++)
-		stairs.emplace_back(this->chooseRoom("stairs"));
+		stairs.emplace_back(this->chooseRoom("stairs", depth + 1));
 
 	for (int i = 0; i < numPlayers - depth; i++)
 	{
@@ -338,13 +310,13 @@ void Map::preparePathMap(int numPlayers, int depth)
 	}
 }
 
-void Map::fillPrimaryPath()
+void Map::fillPrimaryPath(int lvl)
 {
 	for (auto &node : this->_nodes)
 	{
 		if (node->getPath() != 3)
 			continue ;
-		selectAndAddRoom(node);
+		selectAndAddRoom(node, lvl);
 		if (!node->north.expired() && !node->north.lock()->getPath())
 			node->north.lock()->setPath(1);
 		if (!node->east.expired() && !node->east.lock()->getPath())
@@ -356,7 +328,7 @@ void Map::fillPrimaryPath()
 	}
 }
 
-void Map::fillOtherRooms()
+void Map::fillOtherRooms(int lvl)
 {
 	int count = 1;
 	while (count)
@@ -366,32 +338,32 @@ void Map::fillOtherRooms()
 		{
 			if (node->getPath() != 1 && node->getPath() != 2)
 				continue ;
-			selectAndAddRoom(node);
+			selectAndAddRoom(node, lvl);
 			if (!node->north.expired() && !node->north.lock()->getPath())
 			{
 				quadList next = node->north.lock();
-				selectAndAddRoom(next);
+				selectAndAddRoom(next, lvl);
 				next->setPath(1);
 				count++;
 			}
 			if (!node->east.expired() && !node->east.lock()->getPath())
 			{
 				quadList next = node->east.lock();
-				selectAndAddRoom(next);
+				selectAndAddRoom(next, lvl);
 				next->setPath(1);
 				count++;
 			}
 			if (!node->south.expired() && !node->south.lock()->getPath())
 			{
 				quadList next = node->south.lock();
-				selectAndAddRoom(next);
+				selectAndAddRoom(next, lvl);
 				next->setPath(1);
 				count++;
 			}
 			if (!node->west.expired() && !node->west.lock()->getPath())
 			{
 				quadList next = node->west.lock();
-				selectAndAddRoom(next);
+				selectAndAddRoom(next, lvl);
 				next->setPath(1);
 				count++;
 			}
@@ -405,8 +377,8 @@ void Map::fillMap(int numPlayers, int depth)
 		try
 		{
 			this->preparePathMap(numPlayers, depth);
-			this->fillPrimaryPath();
-			this->fillOtherRooms();
+			this->fillPrimaryPath(depth + 1);
+			this->fillOtherRooms(depth + 1);
 			break ;
 		}
 		catch(const std::exception& e)

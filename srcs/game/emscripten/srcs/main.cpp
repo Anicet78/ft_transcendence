@@ -1,11 +1,10 @@
 #include "Game.hpp"
 
 Engine gSdl;
-Map floor0(1, 1);
 
 #ifdef __EMSCRIPTEN__
 
-	val msgJson;
+	std::queue<val> msgJson;
 
 	void testIncrement(val info)
 	{
@@ -16,7 +15,9 @@ Map floor0(1, 1);
 
 	void getMessage(val obj)
 	{
-		msgJson = obj;
+		msgJson.push(obj);
+		if (msgJson.size() > 5)
+			msgJson.pop();
 	}
 
 #endif
@@ -100,16 +101,20 @@ void	fillMapInfos(val &msg, Game &game)
 
 	fillMap(vmaps, maps, "waiting_map");
 	fillMap(vmaps, maps, "floor_0");
+	fillMap(vmaps, maps, "floor_1");
+	vmaps[1].link(vmaps[2]);
 	printMap(vmaps[1]);
+	printMap(vmaps[2]);
 }
 
-void	launchGame(Game &game)
+void	launchGame(Game &game, val &msg)
 {
 	auto &maps = game.getMaps();
 	quadList start;
+	int startRoom = msg["start"].as<int>();
 	for (quadList &node : maps[1].getNodes())
 	{
-		if (node->getRoom() && node->getRoom()->getName() == "start")
+		if (node->getRoom() && node->getRoom()->getName() == "start" && !startRoom--)
 		{
 			start = node;
 			break ;
@@ -121,14 +126,17 @@ void	launchGame(Game &game)
 
 void	parseJson(bool &init, Game &game)
 {
-	if (msgJson.isUndefined() || msgJson.isNull())
+	if (!msgJson.size())
 		return ;
 
-	val msg = msgJson;
+	val msg = msgJson.front();
+	msgJson.pop();
+	if (msg.isUndefined() || msg.isNull())
+		return ;
 
 	if (!msg.hasOwnProperty("action"))
 	{
-		msgJson = val::undefined();
+		// msgJson = val::undefined();
 		return;
 	}
 	if (msg["action"].as<std::string>() == "waiting")
@@ -141,8 +149,8 @@ void	parseJson(bool &init, Game &game)
 	else if (msg["action"].as<std::string>() == "player_state")
 		updatePlayerState(game, msg);
 	else if (msg["action"].as<std::string>() == "launch")
-		launchGame(game);
-	msgJson = val::undefined();
+		launchGame(game, msg);
+	// msgJson = val::undefined();
 }
 
 void mainloopE(void)
@@ -153,7 +161,6 @@ void mainloopE(void)
 	parseJson(init, game);
 	if (!init)
 		return ;
-	
 	while (SDL_PollEvent(&gSdl.event))
 	{
 		if (gSdl.event.type == SDL_KEYDOWN && gSdl.event.key.keysym.sym == SDLK_ESCAPE)
