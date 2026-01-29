@@ -5,12 +5,18 @@ import {
 	InviteToGroupParamsSchema,
 	ChatInvitationResponseSchema,
 	AcceptInvitationParamsSchema,
-	ChatMemberResponseSchema
+	ChatMemberResponseSchema,
+	ChatListResponseSchema,
+	SendMessageParamsSchema,
+	SendMessageBodySchema,
+	ChatMessageResponseSchema
 } from '../../schema/chatSchema.js';
 import {
 	createGroupChatController,
 	inviteToGroupController,
-	acceptGroupInvitationController
+	acceptGroupInvitationController,
+	listUserChatsController,
+	sendMessageController
 } from '../../controllers/chat/chatController.js';
 
 async function chatRoutes(fastify: FastifyInstance) {
@@ -43,6 +49,27 @@ async function chatRoutes(fastify: FastifyInstance) {
 		},
 		handler: acceptGroupInvitationController
 	});
+
+	fastify.get('/chat/list', {
+		schema: {
+		response: {
+			200: ChatListResponseSchema
+		}
+		},
+		handler: listUserChatsController
+	});
+
+	fastify.post('/chat/:chatId', {
+		schema: {
+		params: SendMessageParamsSchema,
+		body: SendMessageBodySchema,
+		response: {
+			201: ChatMessageResponseSchema
+		}
+		},
+		handler: sendMessageController
+	});
+
 
 } export default chatRoutes;
 

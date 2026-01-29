@@ -9,6 +9,11 @@ import type { InviteToGroupParams } from '../../schema/chatSchema.js';
 import { acceptGroupInvitation } from '../../services/db/chatService.js';
 import type { AcceptInvitationParams } from '../../schema/chatSchema.js';
 
+import { listUserChats } from '../../services/db/chatService.js';
+
+import { sendMessage } from '../../services/db/chatService.js';
+import type { SendMessageParams, SendMessageBody } from '../../schema/chatSchema.js';
+
 //CREATE GROUP CHAT
 function normalizeChat(chat: any) {
 	return {
@@ -88,6 +93,47 @@ export async function acceptGroupInvitationController(
 	userId: member.userId,
 	role: 'member',
 	joinedAt: member.joinedAt ? member.joinedAt.toISOString() : null
+	});
+}
+
+//RETURN USER'S CHAT LIST
+export async function listUserChatsController(
+	req: FastifyRequest, reply: FastifyReply
+) {
+	const userId = req.user.id;
+
+	if (!userId) {
+	throw new AppError('Unauthorized', 401);
+	}
+
+	const chats = await listUserChats(userId);
+
+	return reply.status(200).send(
+	chats.map(normalizeChat) //should rework that to use it everywhere
+	);
+}
+
+//SEND MESSAGE
+export async function sendMessageController(
+	req: FastifyRequest<{ Params: SendMessageParams; Body: SendMessageBody }>, reply: FastifyReply
+) {
+	const userId = req.user.id;
+	const { chatId } = req.params;
+	const { content } = req.body;
+
+	if (!userId) {
+	throw new AppError('Unauthorized', 401);
+	}
+
+	const message = await sendMessage(chatId, userId, content);
+
+	return reply.status(201).send({
+	messageId: message.messageId,
+	chatId: message.chatId,
+	userId: message.userId,
+	content: message.content,
+	status: message.status,
+	postedAt: message.postedAt?.toISOString() ?? null
 	});
 }
 

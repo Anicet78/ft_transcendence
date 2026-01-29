@@ -64,3 +64,28 @@ export const ChatMemberResponseSchema = Type.Object({
 	role: Type.String(),
 	joinedAt: Type.String()
 });
+
+//RETURN USER'S CHATS LIST
+export const ChatListResponseSchema = Type.Array(ChatSchema);
+export type ChatListResponse = Static<typeof ChatListResponseSchema>;
+
+//SEND MESSAGE
+export const SendMessageParamsSchema = Type.Object({
+  chatId: Type.String({ format: 'uuid' })
+});
+export type SendMessageParams = Static<typeof SendMessageParamsSchema>;
+
+
+export const SendMessageBodySchema = Type.Object({
+  content: Type.String({ minLength: 1, maxLength: 2000 })//should decide on that later
+});
+export type SendMessageBody = Static<typeof SendMessageBodySchema>;
+
+export const ChatMessageResponseSchema = Type.Object({
+	messageId: Type.String(),
+	chatId: Type.String(),
+	userId: Type.String(),
+	content: Type.String(),
+	status: Type.String(),
+	postedAt: Type.String()
+});

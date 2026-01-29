@@ -212,4 +212,122 @@ export async function acceptGroupInvitation( chatInvitationId: string, userId: s
 	return result;
 }
 
+//RETURN USER'S CHAT LIST
+export async function listUserChats(userId: string) {
+	const chats = await prisma.chat.findMany({
+	where: {
+		members: {
+		some: { userId }
+		}
+	},
+	select: {
+		chatId: true,
+		chatType: true,
+		chatName: true,
+		createdAt: true,
+
+		creator: {
+		select: {
+			appUserId: true,
+			username: true,
+			avatarUrl: true,
+			availability: true
+		}
+		},
+
+		members: {
+		select: {
+			chatMemberId: true,
+			joinedAt: true,
+			user: {
+			select: {
+				appUserId: true,
+				username: true,
+				avatarUrl: true,
+				availability: true
+			}
+			}
+		}
+		},
+
+		roles: {
+		select: {
+			userId: true,
+			role: true
+		}
+		}
+	}
+	});
+
+	return chats;
+}
+
+//SEND MESSAGE
+export async function sendMessage(chatId: string, userId: string, content: string) {
+	// 1. check if chat exists
+	const chat = await prisma.chat.findUnique({
+	where: { chatId },
+	select: { chatId: true }
+	});
+
+	if (!chat) {
+		throw new AppError('Chat not found', 404);
+	}
+
+	// 2. is user a member
+	const member = await prisma.chatMember.findFirst({
+	where: { chatId, userId }
+	});
+
+	if (!member) {
+		throw new AppError('You are not a member of this chat', 403);
+	}
+
+	// 3. check user is not banned
+	const ban = await prisma.chatBan.findFirst({
+	where: {
+		chatId,
+		userId,
+		deletedAt: null,
+		OR: [
+		{ expiresAt: null },
+		{ expiresAt: { gt: new Date() } }
+		]
+	}
+	});
+
+	if (ban) {
+	throw new AppError('You are banned from this chat', 403);
+	}
+
+	// 4. Check user role always writting (writer or above)
+	const role = await prisma.chatRole.findFirst({
+		where: { chatId, userId },
+		select: { role: true }
+	});
+	
+	const userRole = role?.role ?? 'member';//check user role, if dont exists, define as member by default
+	if (userRole == 'member') {
+		throw new AppError('You do not have permission to write in this chat', 403);
+	}
+
+	// 4. Create message
+	const message = await prisma.chatMessage.create({
+	data: {
+		chatId,
+		userId,
+		content
+	},
+	select: {
+		messageId: true,
+		chatId: true,
+		userId: true,
+		content: true,
+		status: true,
+		postedAt: true
+	}
+	});
+
+	return message;
+}
 
