@@ -19,8 +19,7 @@ export default fp(async (fastify) => {
 	fastify.decorate("authenticate", async (request: FastifyRequest, reply: FastifyReply) => {
 		try {
 			await request.jwtVerify();
-		} catch (err) {
-			request.log.error(err);
+		} catch {
 			reply.code(401).send({ error: "Not authenticated" });
 		}
 	});
@@ -34,8 +33,7 @@ export default fp(async (fastify) => {
 
 		try {
 			await request.jwtVerify();
-		} catch (err) {
-			request.log.error(err);
+		} catch {
 			return reply.code(401).send({ error: "Not authenticated" });
 		}
 	});
