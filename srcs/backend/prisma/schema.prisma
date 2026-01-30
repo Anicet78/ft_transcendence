@@ -8,71 +8,42 @@ datasource db {
 }
 
 model AppUser {
-  appUserId                                             String            @id @default(dbgenerated("uuid_generate_v4()")) @map("app_user_id") @db.Uuid
-  firstName                                             String            @map("first_name")
-  lastName                                              String            @map("last_name")
-  username                                              String            @unique
-  mail                                                  String            @unique @map("mail_address") @db.Citext
-  passwordHash                                          String            @map("password_hash")
-  avatarUrl                                             String?           @map("avatar_url")
-  availability                                          Boolean           @default(false)
+  appUserId                                             String           @id @default(dbgenerated("uuid_generate_v4()")) @map("app_user_id") @db.Uuid
+  firstName                                             String           @map("first_name")
+  lastName                                              String           @map("last_name")
+  username                                              String           @unique
+  mail                                                  String           @unique @map("mail_address") @db.Citext
+  passwordHash                                          String           @map("password_hash")
+  avatarUrl                                             String?          @map("avatar_url")
+  availability                                          Boolean          @default(false)
+  playing                                               Boolean          @default(false)
   region                                                region_list
-  createdAt                                             DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                                             DateTime          @default(now()) @map("updated_at") @db.Timestamptz(6)
-  deletedAt                                             DateTime?         @map("deleted_at") @db.Timestamptz(6)
-  lastConnectedAt                                       DateTime          @default(now()) @map("last_connected_at") @db.Timestamptz(6)
-  blocked_list_blocked_list_blockedToapp_user           blocked_list[]    @relation("blocked_list_blockedToapp_user")
-  blocked_list_blocked_list_blockerToapp_user           blocked_list[]    @relation("blocked_list_blockerToapp_user")
-  chatBansGiven                                         ChatBan[]         @relation("ChatBanBannedBy")
-  chatBansReceived                                      ChatBan[]         @relation("ChatBanUser")
-  chat_invitation_chat_invitation_receiver_idToapp_user chat_invitation[] @relation("chat_invitation_receiver_idToapp_user")
-  chat_invitation_chat_invitation_sender_idToapp_user   chat_invitation[] @relation("chat_invitation_sender_idToapp_user")
-  chatMemberships                                       ChatMember[]      @relation("UserChatMemberships")
-  moderatedMessages                                     ChatMessage[]     @relation("MessageModerator")
-  messages                                              ChatMessage[]     @relation("MessageAuthor")
-  chatRolesGiven                                        ChatRole[]        @relation("ChatRoleAttributedBy")
-  chatRoles                                             ChatRole[]        @relation("ChatRoleUser")
-  friendshipsReceived                                   Friendship[]      @relation("FriendshipReceiver")
-  friendshipsSent                                       Friendship[]      @relation("FriendshipSender")
+  createdAt                                             DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                                             DateTime         @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt                                             DateTime?        @map("deleted_at") @db.Timestamptz(6)
+  lastConnectedAt                                       DateTime         @default(now()) @map("last_connected_at") @db.Timestamptz(6)
+  blocked_list_blocked_list_blockedToapp_user           BlockedList[]    @relation("blocked_list_blockedToapp_user")
+  blocked_list_blocked_list_blockerToapp_user           BlockedList[]    @relation("blocked_list_blockerToapp_user")
+  chat                                                  Chat[]
+  chat_ban_chat_ban_banned_byToapp_user                 ChatBan[]        @relation("chat_ban_banned_byToapp_user")
+  chat_ban_chat_ban_user_idToapp_user                   ChatBan[]        @relation("chat_ban_user_idToapp_user")
+  chat_invitation_chat_invitation_receiver_idToapp_user ChatInvitation[] @relation("chat_invitation_receiver_idToapp_user")
+  chat_invitation_chat_invitation_sender_idToapp_user   ChatInvitation[] @relation("chat_invitation_sender_idToapp_user")
+  chat_member                                           ChatMember[]
+  chat_message_chat_message_moderated_byToapp_user      ChatMessage[]    @relation("chat_message_moderated_byToapp_user")
+  chat_message_chat_message_user_idToapp_user           ChatMessage[]    @relation("chat_message_user_idToapp_user")
+  chat_role_chat_role_attributed_byToapp_user           ChatRole[]       @relation("chat_role_attributed_byToapp_user")
+  chat_role_chat_role_user_idToapp_user                 ChatRole[]       @relation("chat_role_user_idToapp_user")
+  friendshipsReceived                                   Friendship[]     @relation("FriendshipReceiver")
+  friendshipsSent                                       Friendship[]     @relation("FriendshipSender")
   gameProfile                                           GameProfile?
   gameResults                                           GameResult[]
-  privateChatsAsUser1                                   PrivateChat[]     @relation("PrivateChatUser1")
-  privateChatsAsUser2                                   PrivateChat[]     @relation("PrivateChatUser2")
-  rolesGiven                                            UserRole[]        @relation("UserRoleAttributedBy")
-  rolesReceived                                         UserRole[]        @relation("UserRoleAttributedTo")
+  private_chat_private_chat_user1_idToapp_user          PrivateChat[]    @relation("private_chat_user1_idToapp_user")
+  private_chat_private_chat_user2_idToapp_user          PrivateChat[]    @relation("private_chat_user2_idToapp_user")
+  rolesGiven                                            UserRole[]       @relation("UserRoleAttributedBy")
+  rolesReceived                                         UserRole[]       @relation("UserRoleAttributedTo")
 
   @@map("app_user")
-}
-
-model Chat {
-  chatId          String            @id @default(dbgenerated("uuid_generate_v4()")) @map("chat_id") @db.Uuid
-  createdAt       DateTime?         @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime?         @default(now()) @map("updated_at") @db.Timestamptz(6)
-  deletedAt       DateTime?         @map("deleted_at") @db.Timestamptz(6)
-  chatType        String            @default("private") @map("chat_type") @db.VarChar(20)
-  chatName        String            @map("chat_name") @db.VarChar(255)
-  bans            ChatBan[]
-  chat_invitation chat_invitation[]
-  members         ChatMember[]      @relation("ChatMembers")
-  messages        ChatMessage[]
-  roles           ChatRole[]
-
-  @@map("chat")
-}
-
-model ChatMember {
-  chatMemberId String    @id @default(dbgenerated("uuid_generate_v4()")) @map("chat_member_id") @db.Uuid
-  chatId       String?   @map("chat_id") @db.Uuid
-  userId       String?   @map("user_id") @db.Uuid
-  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
-  deletedAt    DateTime? @map("deleted_at") @db.Timestamptz(6)
-  joinedAt     DateTime? @default(now()) @map("joined_at") @db.Timestamptz(6)
-  leftAt       DateTime? @map("left_at") @db.Timestamptz(6)
-  chat         Chat?     @relation("ChatMembers", fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_member_chat")
-  user         AppUser?  @relation("UserChatMemberships", fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_member_user")
-
-  @@map("chat_member")
 }
 
 model Friendship {
@@ -119,7 +90,7 @@ model GameResult {
   gainedXp       Int          @default(0) @map("gained_xp")
   isWinner       Boolean      @default(false) @map("is_winner")
   gameSession    GameSession? @relation(fields: [gameId], references: [sessionId], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_result_match")
-  player         AppUser?     @relation(fields: [playerId], references: [appUserId], onDelete: Cascade, onUpdate: NoAction, map: "fk_game_result_user")
+  player         AppUser?     @relation(fields: [playerId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_result_user")
 
   @@map("game_result")
 }
@@ -152,107 +123,135 @@ model UserRole {
   @@map("user_role")
 }
 
+model BlockedList {
+  blockedListId                            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  blocker                                 String?   @db.Uuid
+  blocked                                 String?   @db.Uuid
+  createdAt                              DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt                              DateTime? @default(now()) @db.Timestamptz(6)
+  deletedAt                              DateTime? @db.Timestamptz(6)
+  app_user_blocked_list_blockedToapp_user AppUser?  @relation("blocked_list_blockedToapp_user", fields: [blocked], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
+  app_user_blocked_list_blockerToapp_user AppUser?  @relation("blocked_list_blockerToapp_user", fields: [blocker], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("blocked_list")
+}
+
+model Chat {
+  chatId      String           @id @default(dbgenerated("uuid_generate_v4()")) @map("chat_id") @db.Uuid
+  createdAt   DateTime?        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime?        @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt   DateTime?        @map("deleted_at") @db.Timestamptz(6)
+  chatType    type_list?       @default(private) @map("chat_type")
+  chatName    String?          @map("chat_name") @db.Citext
+  createdBy   String?          @map("created_by") @db.Uuid
+  creator     AppUser?         @relation(fields: [createdBy], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_created_by")
+  bans        ChatBan[]
+  invitations ChatInvitation[]
+  members     ChatMember[]
+  messages    ChatMessage[]
+  roles       ChatRole[]
+  privateChat PrivateChat[]
+
+  @@map("chat")
+}
+
 model ChatBan {
-  chatBanId  String    @id @default(dbgenerated("uuid_generate_v4()")) @map("chat_ban_id") @db.Uuid
-  chatId     String?   @map("chat_id") @db.Uuid
-  userId     String?   @map("user_id") @db.Uuid
-  bannedById String?   @map("banned_by") @db.Uuid
-  bannedAt   DateTime? @default(now()) @map("banned_at") @db.Timestamptz(6)
-  reason     String?
-  expiresAt  DateTime? @map("expires_at") @db.Timestamptz(6)
-  updatedAt  DateTime? @map("updated_at") @db.Timestamptz(6)
-  deletedAt  DateTime? @map("deleted_at") @db.Timestamptz(6)
-  bannedBy   AppUser?  @relation("ChatBanBannedBy", fields: [bannedById], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ban_banned_by")
-  chat       Chat?     @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ban_chat")
-  user       AppUser?  @relation("ChatBanUser", fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ban_user")
+  chatBanId    String    @id @default(dbgenerated("uuid_generate_v4()")) @map("chat_ban_id") @db.Uuid
+  chatId       String?   @map("chat_id") @db.Uuid
+  userId       String?   @map("user_id") @db.Uuid
+  bannedBy     String?   @map("banned_by") @db.Uuid
+  bannedAt     DateTime? @default(now()) @map("banned_at") @db.Timestamptz(6)
+  reason       String?
+  expiresAt    DateTime? @map("expires_at") @db.Timestamptz(6)
+  updatedAt    DateTime? @map("updated_at") @db.Timestamptz(6)
+  deletedAt    DateTime? @map("deleted_at") @db.Timestamptz(6)
+  bannedByUser AppUser?  @relation("chat_ban_banned_byToapp_user", fields: [bannedBy], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
+  chat         Chat?     @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction)
+  bannedUser   AppUser?  @relation("chat_ban_user_idToapp_user", fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("chat_ban")
 }
 
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model ChatInvitation {
+  chatInvitationId String    @id @default(dbgenerated("uuid_generate_v4()")) @map("chat_invitation_id") @db.Uuid
+  senderId         String?   @map("sender_id") @db.Uuid
+  receiverId       String?   @map("receiver_id") @db.Uuid
+  chatId           String?   @map("chat_id") @db.Uuid
+  status           String    @default("waiting") @db.VarChar(10)
+  createdAt        DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt        DateTime? @map("deleted_at") @db.Timestamptz(6)
+  chat             Chat?     @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_id")
+  receiver         AppUser?  @relation("chat_invitation_receiver_idToapp_user", fields: [receiverId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ivitate_receiver")
+  sender           AppUser?  @relation("chat_invitation_sender_idToapp_user", fields: [senderId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ivitate_sender")
+
+  @@map("chat_invitation")
+}
+
+model ChatMember {
+  chatMemberId String    @id @default(dbgenerated("uuid_generate_v4()")) @map("chat_member_id") @db.Uuid
+  chatId       String?   @map("chat_id") @db.Uuid
+  userId       String?   @map("user_id") @db.Uuid
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt    DateTime? @map("deleted_at") @db.Timestamptz(6)
+  joinedAt     DateTime? @default(now()) @map("joined_at") @db.Timestamptz(6)
+  leftAt       DateTime? @map("left_at") @db.Timestamptz(6)
+  chat         Chat?     @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction)
+  user         AppUser?  @relation(fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("chat_member")
+}
+
 model ChatMessage {
-  messageId     String         @id @default(dbgenerated("uuid_generate_v4()")) @map("message_id") @db.Uuid
-  chatId        String         @map("chat_id") @db.Uuid
-  userId        String         @map("user_id") @db.Uuid
-  content       String
-  status        message_status @default(posted) @map("status")
-  postedAt      DateTime?      @default(now()) @map("posted_at") @db.Timestamptz(6)
-  editedAt      DateTime?      @map("edited_at") @db.Timestamptz(6)
-  deletedAt     DateTime?      @map("deleted_at") @db.Timestamptz(6)
-  moderatedById String?        @map("moderated_by") @db.Uuid
-  chat          Chat           @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_message_chat")
-  moderator     AppUser?       @relation("MessageModerator", fields: [moderatedById], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_message_moderated_by")
-  author        AppUser        @relation("MessageAuthor", fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_message_user")
+  messageId   String         @id @default(dbgenerated("uuid_generate_v4()")) @map("message_id") @db.Uuid
+  chatId      String         @map("chat_id") @db.Uuid
+  userId      String         @map("user_id") @db.Uuid
+  content     String
+  status      message_status @default(posted)
+  postedAt    DateTime?      @default(now()) @map("posted_at") @db.Timestamptz(6)
+  editedAt    DateTime?      @map("edited_at") @db.Timestamptz(6)
+  deletedAt   DateTime?      @map("deleted_at") @db.Timestamptz(6)
+  moderatedBy String?        @map("moderated_by") @db.Uuid
+  chat        Chat           @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction)
+  moderator   AppUser?       @relation("chat_message_moderated_byToapp_user", fields: [moderatedBy], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
+  author      AppUser        @relation("chat_message_user_idToapp_user", fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("chat_message")
 }
 
 model ChatRole {
-  chatRoleId     String         @id @default(dbgenerated("uuid_generate_v4()")) @map("chat_role_id") @db.Uuid
-  chatId         String?        @map("chat_id") @db.Uuid
-  userId         String?        @map("user_id") @db.Uuid
-  role           chat_role_type @map("role")
-  attributedById String?        @map("attributed_by") @db.Uuid
-  attributedAt   DateTime?      @default(now()) @map("attributed_at") @db.Timestamptz(6)
-  modifiedAt     DateTime?      @map("modified_at") @db.Timestamptz(6)
-  deletedAt      DateTime?      @map("deleted_at") @db.Timestamptz(6)
-  attributedBy   AppUser?       @relation("ChatRoleAttributedBy", fields: [attributedById], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_role_attributed_by")
-  chat           Chat?          @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_role_chat")
-  user           AppUser?       @relation("ChatRoleUser", fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_role_user")
+  chatRoleId       String         @id @default(dbgenerated("uuid_generate_v4()")) @map("chat_role_id") @db.Uuid
+  chatId           String?        @map("chat_id") @db.Uuid
+  userId           String?        @map("user_id") @db.Uuid
+  role             chat_role_type @default(member)
+  attributedBy     String?        @map("attributed_by") @db.Uuid
+  attributedAt     DateTime?      @default(now()) @map("attributed_at") @db.Timestamptz(6)
+  modifiedAt       DateTime?      @map("modified_at") @db.Timestamptz(6)
+  deletedAt        DateTime?      @map("deleted_at") @db.Timestamptz(6)
+  attributedByUser AppUser?       @relation("chat_role_attributed_byToapp_user", fields: [attributedBy], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
+  chat             Chat?          @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction)
+  user             AppUser?       @relation("chat_role_user_idToapp_user", fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("chat_role")
 }
 
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model PrivateChat {
   privateChatId String    @id @default(dbgenerated("uuid_generate_v4()")) @map("private_chat_id") @db.Uuid
   user1Id       String?   @map("user1_id") @db.Uuid
   user2Id       String?   @map("user2_id") @db.Uuid
+  chatId        String?   @map("chat_id") @db.Uuid
   createdAt     DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt     DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt     DateTime? @map("deleted_at") @db.Timestamptz(6)
-  user1         AppUser?  @relation("PrivateChatUser1", fields: [user1Id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_private_chat_user1")
-  user2         AppUser?  @relation("PrivateChatUser2", fields: [user2Id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_private_chat_user2")
+  chat          Chat?     @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction)
+  user1         AppUser?  @relation("private_chat_user1_idToapp_user", fields: [user1Id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
+  user2         AppUser?  @relation("private_chat_user2_idToapp_user", fields: [user2Id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
 
+  @@unique([user1Id, user2Id], map: "chk_private_chat_unique_pair")
   @@map("private_chat")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model chat_invitation {
-  chat_invitation_id                             String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  sender_id                                      String?   @db.Uuid
-  receiver_id                                    String?   @db.Uuid
-  chat_id                                        String?   @db.Uuid
-  status                                         String    @default("waiting") @db.VarChar(10)
-  created_at                                     DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at                                     DateTime? @default(now()) @db.Timestamptz(6)
-  deleted_at                                     DateTime? @db.Timestamptz(6)
-  chat                                           Chat?     @relation(fields: [chat_id], references: [chatId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_id")
-  app_user_chat_invitation_receiver_idToapp_user AppUser?  @relation("chat_invitation_receiver_idToapp_user", fields: [receiver_id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ivitate_receiver")
-  app_user_chat_invitation_sender_idToapp_user   AppUser?  @relation("chat_invitation_sender_idToapp_user", fields: [sender_id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ivitate_sender")
-}
-
-model blocked_list {
-  blocked_list                            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  blocker                                 String?   @db.Uuid
-  blocked                                 String?   @db.Uuid
-  created_at                              DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at                              DateTime? @default(now()) @db.Timestamptz(6)
-  deleted_at                              DateTime? @db.Timestamptz(6)
-  app_user_blocked_list_blockedToapp_user AppUser?  @relation("blocked_list_blockedToapp_user", fields: [blocked], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
-  app_user_blocked_list_blockerToapp_user AppUser?  @relation("blocked_list_blockerToapp_user", fields: [blocker], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
-}
-
-enum chat_role_type {
-  owner
-  admin
-  moderator
-  read_only
-}
-
-enum message_status {
-  posted
-  edited
-  deleted
-  moderated
 }
 
 enum region_list {
@@ -264,4 +263,24 @@ enum region_list {
   APAC
   SSA
   Deleted
+}
+
+enum chat_role_type {
+  owner
+  admin
+  moderator
+  writer
+  member
+}
+
+enum message_status {
+  posted
+  edited
+  deleted
+  moderated
+}
+
+enum type_list {
+  private
+  group
 }
