@@ -255,7 +255,7 @@ export async function listUserChats(userId: string) {
 			userId: true,
 			role: true
 		}
-		}
+		}//maybe should only send group chat name ? See what front thinks
 	}
 	});
 

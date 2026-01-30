@@ -18,21 +18,21 @@ import { deleteMessage } from '../../services/db/chatService.js';
 import type { DeleteMessageParams } from '../../schema/chatSchema.js';
 
 
-//CREATE GROUP CHAT
+//CREATE GROUP CHAT (we're not sending an invite here, members are part of conversation)
 function normalizeChat(chat: any) {
 	return {
-		chatId: chat.chat_id,
-		chatType: chat.chat_type,
-		chatName: chat.chat_name,
-		createdAt: chat.created_at.toISOString(),
-		createdBy: chat.app_user,
-		members: chat.chat_member.map((m: any) => {
-			const role = chat.chat_role.find((r: any) => r.user_id === m.app_user.appUserId)?.role ?? 'member';
+		chatId: chat.chatId,
+		chatType: chat.chatType,
+		chatName: chat.chatName,
+		createdAt: chat.createdAt.toISOString(),
+		createdBy: chat.creator,
+		members: chat.members.map((m: any) => {
+			const role = chat.roles.find((r: any) => r.userId === m.user.appUserId)?.role ?? 'member';
 			return {
-				chatMemberId: m.chat_member_id,
-				joinedAt: m.joined_at.toISOString(),
+				chatMemberId: m.chatMemberId,
+				joinedAt: m.joinedAt.toISOString(),
 				role,
-				user: m.app_user
+				user: m.user
 			};
 		})
 	};
