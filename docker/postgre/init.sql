@@ -37,7 +37,6 @@ CREATE TABLE app_user (
 
 	"availability" BOOLEAN NOT NULL DEFAULT false,
 	playing BOOLEAN NOT NULL DEFAULT false,
-	playing BOOLEAN NOT NULL DEFAULT false,
 	region region_list NOT NULL,
 
 	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -74,7 +73,7 @@ CREATE TABLE user_role (
 );
 
 CREATE TABLE blocked_list (
-	blocked_list UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+	blocked_list_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	blocker UUID,
 	blocked UUID,
 
@@ -285,7 +284,6 @@ CREATE TABLE chat_role (
 	chat_role_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	chat_id UUID,
 	user_id UUID,
-	"role" chat_role_type NOT NULL DEFAULT 'member',
 	"role" chat_role_type NOT NULL DEFAULT 'member',
 
 	attributed_by UUID,

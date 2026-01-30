@@ -23,6 +23,7 @@ import {
 } from '../../controllers/chat/chatController.js';
 
 async function chatRoutes(fastify: FastifyInstance) {
+	//create group chat
 	fastify.post('/chat/group/new', {
 	schema: {
 		body: CreateGroupChatBodySchema,
@@ -33,6 +34,7 @@ async function chatRoutes(fastify: FastifyInstance) {
 	handler: createGroupChatController
 	});
 
+	//send group chat invitation
 	fastify.post('/group/:chatId/:memberId/invite', {
 		schema: {
 		params: InviteToGroupParamsSchema,
@@ -43,6 +45,7 @@ async function chatRoutes(fastify: FastifyInstance) {
 		handler: inviteToGroupController
 	});
 
+	//answer group chat invitation
 	fastify.post('/group/:chatInvitationId', {
 		schema: {
 		params: AcceptInvitationParamsSchema,
@@ -53,6 +56,7 @@ async function chatRoutes(fastify: FastifyInstance) {
 		handler: acceptGroupInvitationController
 	});
 
+	//get user's chats list
 	fastify.get('/chat/list', {
 		schema: {
 		response: {
@@ -62,6 +66,7 @@ async function chatRoutes(fastify: FastifyInstance) {
 		handler: listUserChatsController
 	});
 
+	//send message
 	fastify.post('/chat/:chatId', {
 		schema: {
 		params: SendMessageParamsSchema,
@@ -73,6 +78,7 @@ async function chatRoutes(fastify: FastifyInstance) {
 		handler: sendMessageController
 	});
 
+	//DELETE MESSAGE INSIDE CHAT
 	fastify.delete('/chat/:messageId', {
 		schema: {
 		params: DeleteMessageParamsSchema,

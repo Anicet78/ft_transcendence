@@ -90,7 +90,7 @@ model GameResult {
   gainedXp       Int          @default(0) @map("gained_xp")
   isWinner       Boolean      @default(false) @map("is_winner")
   gameSession    GameSession? @relation(fields: [gameId], references: [sessionId], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_result_match")
-  player         AppUser?     @relation(fields: [playerId], references: [appUserId], onDelete: Cascade, onUpdate: NoAction, map: "fk_game_result_user")
+  player         AppUser?     @relation(fields: [playerId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_result_user")
 
   @@map("game_result")
 }
@@ -124,12 +124,12 @@ model UserRole {
 }
 
 model BlockedList {
-  blockedListId                            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  blocker                                 String?   @db.Uuid
+  blockedListId                           String    @id @default(dbgenerated("uuid_generate_v4()")) @map("blocked_list_id") @db.Uuid
+  blocker                                 String?   @map("blocker") @db.Uuid
   blocked                                 String?   @db.Uuid
-  createdAt                              DateTime? @default(now()) @db.Timestamptz(6)
-  updatedAt                              DateTime? @default(now()) @db.Timestamptz(6)
-  deletedAt                              DateTime? @db.Timestamptz(6)
+  createdAt                               DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                               DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt                               DateTime? @map("deleted_at") @db.Timestamptz(6)
   app_user_blocked_list_blockedToapp_user AppUser?  @relation("blocked_list_blockedToapp_user", fields: [blocked], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
   app_user_blocked_list_blockerToapp_user AppUser?  @relation("blocked_list_blockerToapp_user", fields: [blocker], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
 
@@ -204,21 +204,6 @@ model ChatMember {
   @@map("chat_member")
 }
 
-// model ChatMember {
-//   chatMemberId String    @id @default(dbgenerated("uuid_generate_v4()")) @map("chat_member_id") @db.Uuid
-//   chatId       String?   @map("chat_id") @db.Uuid
-//   userId       String?   @map("user_id") @db.Uuid
-//   createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-//   updatedAt    DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
-//   deletedAt    DateTime? @map("deleted_at") @db.Timestamptz(6)
-//   joinedAt     DateTime? @default(now()) @map("joined_at") @db.Timestamptz(6)
-//   leftAt       DateTime? @map("left_at") @db.Timestamptz(6)
-//   chat         Chat?     @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction)
-//   user         AppUser?  @relation(fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
-
-//   @@map("chat_member")
-// }
-
 model ChatMessage {
   messageId   String         @id @default(dbgenerated("uuid_generate_v4()")) @map("message_id") @db.Uuid
   chatId      String         @map("chat_id") @db.Uuid
@@ -261,9 +246,9 @@ model PrivateChat {
   createdAt     DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt     DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt     DateTime? @map("deleted_at") @db.Timestamptz(6)
+  chat          Chat?     @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction)
   user1         AppUser?  @relation("PrivateChatUser1", fields: [user1Id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_private_chat_user1")
   user2         AppUser?  @relation("PrivateChatUser2", fields: [user2Id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_private_chat_user2")
-  chat          Chat?     @relation(fields: [chatId], references: [chatId])
 
   @@unique([user1Id, user2Id], map: "chk_private_chat_unique_pair")
   @@map("private_chat")
