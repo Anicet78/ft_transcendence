@@ -3,9 +3,10 @@ import { prisma } from "./prisma.js";
 import type { User } from "../../schema/userSchema.js";
 
 export const UserService = {
-	async getUserById(userId: string): Promise<AppUser | null> {
+	async getUserById(userId: string) {
 		return prisma.appUser.findUnique({
-			where: { appUserId: userId }
+			where: { appUserId: userId },
+			include: { rolesReceived: true }
 		});
 	},
 	async getUserByMail(email: string): Promise<AppUser | null> {

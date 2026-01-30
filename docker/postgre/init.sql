@@ -69,7 +69,25 @@ CREATE TABLE user_role (
 		FOREIGN KEY (attributed_by)
 		REFERENCES app_user(app_user_id),
 
-	CHECK ("role" IN ('guest', 'user', 'app_admin', 'banned_user'))
+	CHECK ("role" IN ('guest', 'user', 'app_admin'))
+);
+
+CREATE TABLE ban_list (
+	ban_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+	user_id UUID,
+
+	banned_by UUID,
+	banned_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	reason TEXT,
+	expires_at timestamptz,
+	updated_at timestamptz,
+	deleted_at timestamptz,
+
+	FOREIGN KEY (user_id)
+		REFERENCES app_user(app_user_id),
+
+	FOREIGN KEY (banned_by)
+		REFERENCES app_user(app_user_id)
 );
 
 CREATE TABLE blocked_list (

@@ -25,7 +25,8 @@ export async function postRegisterController(
 		username: username,
 		region: region,
 		email: email,
-		passwordHash: hash
+		passwordHash: hash,
+		role: "User"
 	};
 
 	dbUser = await UserService.createUser(user);
@@ -33,7 +34,7 @@ export async function postRegisterController(
 	if (dbUser.availability === false)
 		await UserService.setAvailabality(user.id, true);
 
-	const token = await reply.jwtSign({ id: user.id, email: user.email });
+	const token = await reply.jwtSign({ id: user.id, email: user.email, role: user.role });
 
 	const response: RegisterResponseType = {token: token, user: user, roomId: "" };
 

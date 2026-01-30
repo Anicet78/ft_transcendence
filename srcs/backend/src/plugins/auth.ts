@@ -16,11 +16,18 @@ export default fp(async (fastify) => {
 		sign: { expiresIn: "7d" }
 	});
 
+	fastify.decorate("verifyAdmin", async (request: FastifyRequest, reply: FastifyReply) => {
+		const user = request.user;
+
+		if (!user || user.role !== 'ADMIN')
+			return reply.code(403).send({ error: "Forbidden", message: "Not Admin" });
+	});
+
 	fastify.decorate("authenticate", async (request: FastifyRequest, reply: FastifyReply) => {
 		try {
 			await request.jwtVerify();
 		} catch {
-			reply.code(401).send({ error: "Not authenticated" });
+			return reply.code(401).send({ error: "Not authenticated" });
 		}
 	});
 
@@ -51,5 +58,6 @@ declare module "@fastify/jwt" {
 declare module "fastify" {
 	interface FastifyInstance {
 		authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+		verifyAdmin: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
 	}
 }
