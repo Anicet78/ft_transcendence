@@ -38,8 +38,8 @@ model AppUser {
   friendshipsSent                                       Friendship[]     @relation("FriendshipSender")
   gameProfile                                           GameProfile?
   gameResults                                           GameResult[]
-  private_chat_private_chat_user1_idToapp_user          PrivateChat[]    @relation("private_chat_user1_idToapp_user")
-  private_chat_private_chat_user2_idToapp_user          PrivateChat[]    @relation("private_chat_user2_idToapp_user")
+  privateChatsAsUser1                                   PrivateChat[]    @relation("PrivateChatUser1")
+  privateChatsAsUser2                                   PrivateChat[]    @relation("PrivateChatUser2")
   rolesGiven                                            UserRole[]       @relation("UserRoleAttributedBy")
   rolesReceived                                         UserRole[]       @relation("UserRoleAttributedTo")
 
@@ -258,15 +258,27 @@ model PrivateChat {
   user1Id       String?   @map("user1_id") @db.Uuid
   user2Id       String?   @map("user2_id") @db.Uuid
   chatId        String?   @map("chat_id") @db.Uuid
-  chatId        String?   @map("chat_id") @db.Uuid
   createdAt     DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt     DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt     DateTime? @map("deleted_at") @db.Timestamptz(6)
   user1         AppUser?  @relation("PrivateChatUser1", fields: [user1Id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_private_chat_user1")
   user2         AppUser?  @relation("PrivateChatUser2", fields: [user2Id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_private_chat_user2")
+  chat          Chat?     @relation(fields: [chatId], references: [chatId])
 
   @@unique([user1Id, user2Id], map: "chk_private_chat_unique_pair")
   @@map("private_chat")
+}
+
+enum type_list {
+  private
+  group
+}
+
+enum message_status {
+  posted
+  edited
+  deleted
+  moderated
 }
 
 enum chat_role_type {
@@ -275,13 +287,6 @@ enum chat_role_type {
   moderator
   writer
   member
-}
-
-enum message_status {
-  posted
-  edited
-  deleted
-  moderated
 }
 
 enum region_list {
