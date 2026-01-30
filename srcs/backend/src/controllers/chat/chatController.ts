@@ -9,6 +9,9 @@ import type { InviteToGroupParams } from '../../schema/chatSchema.js';
 import { acceptGroupInvitation } from '../../services/db/chatService.js';
 import type { AcceptInvitationParams } from '../../schema/chatSchema.js';
 
+import { getChatByIdForUser } from '../../services/db/chatService.js';
+import type { ChatInfoParams } from '../../schema/chatSchema.js';
+
 import { listUserChats } from '../../services/db/chatService.js';
 
 import { sendMessage } from '../../services/db/chatService.js';
@@ -100,6 +103,23 @@ export async function acceptGroupInvitationController(
 	});
 }
 
+//RETURN CHAT INFOS
+export async function getChatInfoController(
+	req: FastifyRequest<{ Params: ChatInfoParams }>,
+	reply: FastifyReply
+	) {
+	const userId = req.user.id;
+	const { chatId } = req.params;
+
+	if (!userId) {
+	throw new AppError('Unauthorized', 401);
+	}
+
+	const chat = await getChatByIdForUser(chatId, userId);
+
+	return reply.status(200).send(normalizeChat(chat));
+}
+
 //RETURN USER'S CHAT LIST
 export async function listUserChatsController(
 	req: FastifyRequest, reply: FastifyReply
@@ -111,10 +131,10 @@ export async function listUserChatsController(
 	}
 
 	const chats = await listUserChats(userId);
-
-	return reply.status(200).send(
-	chats.map(normalizeChat) //should rework that to use it everywhere
-	);
+	return reply.send(chats.map(normalizeChat));
+	// return reply.status(200).send(
+	// chats.map(normalizeChat) //should rework that to use it everywhere
+	// );
 }
 
 //SEND MESSAGE

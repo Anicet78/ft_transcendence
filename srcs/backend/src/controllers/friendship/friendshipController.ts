@@ -5,6 +5,9 @@ import {
   type RemoveFriendParams
 } from '../../schema/friendshipSchema.js';
 
+import { findOrCreatePrivateChat } from '../../services/db/privateChatService.js';
+
+
 function normalize<T extends Record<string, any>>(obj: T): T {
   return {
     ...obj,
@@ -51,7 +54,7 @@ export async function sendRequest(
 }
 
 //updated by friendship request ID
-export async function updateRequest(
+export async function updateFriendshipRequest(
   req: FastifyRequest<{ Params: { id: string }, Body: { action: 'accept' | 'reject' | 'cancel' } }>,
   reply: FastifyReply
 ) {
@@ -68,6 +71,10 @@ export async function updateRequest(
 
   const { senderId, receiverId } = friendship;
 
+  if (!senderId || !receiverId) {
+    return reply.status(500).send({ error: 'Invalid friendship data: missing at least one user IDs' });
+  }
+
   //Check if action is allowed depending if user is sender or receiver
   if (action === 'accept' || action === 'reject') {
     if (userId !== receiverId) {
@@ -81,6 +88,13 @@ export async function updateRequest(
     }
   }
 
+  // Create or reuse private chat
+  if (action === 'accept') {
+    await Service.updateFriendshipRequestStatus(friendshipId, 'accepted');
+    await findOrCreatePrivateChat(senderId, receiverId);
+  }
+
+
   //Apply the update
   const newStatus =
     action === 'accept'
@@ -89,7 +103,7 @@ export async function updateRequest(
       ? 'rejected'
       : 'cancelled';
 
-  await Service.updateRequestStatus(friendshipId, newStatus);
+  await Service.updateFriendshipRequestStatus(friendshipId, newStatus);
 
   return reply.send({ success: true });
 }
@@ -108,4 +122,4 @@ export async function removeFriend(
     return reply.status(404).send({ error: 'Friendship not found' });
 
   return reply.status(204).send();
-}//should I leave it like that, or use friendshipId like for updateRequest ?
+}//should I leave it like that, or use friendshipId like for updateFriendshipRequest ?

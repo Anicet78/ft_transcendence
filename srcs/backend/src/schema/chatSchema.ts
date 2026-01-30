@@ -65,6 +65,13 @@ export const ChatMemberResponseSchema = Type.Object({
 	joinedAt: Type.String()
 });
 
+//RETURN CHAT INFOS
+export const ChatInfoParamsSchema = Type.Object({
+	chatId: Type.String({ format: 'uuid' })
+});
+export type ChatInfoParams = Static<typeof ChatInfoParamsSchema>;
+
+
 //RETURN USER'S CHATS LIST
 export const ChatListResponseSchema = Type.Array(ChatSchema);
 export type ChatListResponse = Static<typeof ChatListResponseSchema>;

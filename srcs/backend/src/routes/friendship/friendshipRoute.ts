@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import * as controller from '../../controllers/friendship/friendshipController.js';
 import { Type } from 'typebox';
-import { FriendsListResponseSchema, FriendRequestsListSchema, SendRequestParamsSchema, UpdateRequestParamsSchema, UpdateRequestBodySchema, RemoveFriendParamsSchema } from '../../schema/friendshipSchema.js';
+import { FriendsListResponseSchema, FriendRequestsListSchema, SendRequestParamsSchema, updateFriendshipRequestParamsSchema, updateFriendshipRequestBodySchema, RemoveFriendParamsSchema } from '../../schema/friendshipSchema.js';
 
 async function friendshipRoutes(fastify: FastifyInstance) {
   fastify.get('/friends', {
@@ -34,13 +34,13 @@ async function friendshipRoutes(fastify: FastifyInstance) {
 
   fastify.patch('/friends/:id', {
     schema: {
-      params: UpdateRequestParamsSchema,
-      body: UpdateRequestBodySchema,
+      params: updateFriendshipRequestParamsSchema,
+      body: updateFriendshipRequestBodySchema,
       response: {
         200: Type.Object({ success: Type.Boolean() })
       }
     },
-    handler: controller.updateRequest
+    handler: controller.updateFriendshipRequest
   });
 
   fastify.delete('/friends/:id', {

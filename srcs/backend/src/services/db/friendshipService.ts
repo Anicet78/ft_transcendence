@@ -98,7 +98,7 @@ export async function sendRequest(senderId: string, receiverId: string) {
   });
 }
 
-export async function updateRequestStatus(friendshipId: string, status: string) {
+export async function updateFriendshipRequestStatus(friendshipId: string, status: string) {
   return prisma.friendship.updateMany({
     where: {
       friendshipId,
