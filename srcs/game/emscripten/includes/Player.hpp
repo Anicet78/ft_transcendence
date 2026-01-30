@@ -32,6 +32,7 @@ class Player
 		int			_def;
 
 	//player anim
+		int				_floor;
 		int				_last_dir;
 		int				_frame;
 		int				_prev_state;
@@ -54,6 +55,7 @@ class Player
 		int			getDef(void) const;
 		int			getAnim(void) const;
 		int			getLastDir(void) const;
+		int			getFloor(void) const;
 
 	//setter
 		void	setNode(const quadList &node);
@@ -64,6 +66,7 @@ class Player
 		void	setAnim(int anim);
 		void	setDir(int dir);
 		void	updateLastDir(void);
+		void	incrementFloor(void);
 
 	//print
 		void	printPlayer(float px, float py);

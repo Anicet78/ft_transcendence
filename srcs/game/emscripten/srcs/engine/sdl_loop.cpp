@@ -49,6 +49,7 @@ void updateRoom(Game &game, Player &player, std::string dir)
 	{
 		game.clearOtherPlayers();
 		player.setNode(player.getNode()->up.lock());
+		player.incrementFloor();
 	}
 }
 

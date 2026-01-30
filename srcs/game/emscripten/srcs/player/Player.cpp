@@ -1,7 +1,7 @@
 #include"Player.hpp"
 
 Player::Player(std::string uid, std::string name) : _uid(uid), _name(name), _x(0), _y(0),
-					_anim(0), _hp(3), _atk(1), _def(0), _last_dir(0), _frame(0), _prev_state(PLAYER_IDLE)
+					_anim(0), _hp(3), _atk(1), _def(0), _floor(0), _last_dir(0), _frame(0), _prev_state(PLAYER_IDLE)
 {}
 
 Player::~Player(void)
@@ -63,6 +63,11 @@ int	Player::getLastDir(void) const
 	return this->_last_dir;
 }
 
+int Player::getFloor(void) const
+{
+	return this->_floor;
+}
+
 //set player value
 
 void	Player::updateLastDir(void)
@@ -111,6 +116,11 @@ void Player::setDir(int dir)
 void	Player::setAnim(int anim)
 {
 	this->_anim = anim;
+}
+
+void	Player::incrementFloor(void)
+{
+	this->_floor++;
 }
 
 void	Player::printPlayer(float px, float py)

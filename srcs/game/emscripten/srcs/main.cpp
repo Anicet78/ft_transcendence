@@ -190,7 +190,9 @@ int main(void)
 	}
 	try
 	{
+		gSdl.setMapTileSize(16);
 		Assets::importAssets("../assets/sprite/assets.bmp", 16);
+		Assets::importAssets("../assets/sprite/forest/tiles-all.bmp", 32);
 		PlayerAssets::importPlayersAssets(100);
 		Room::importRooms();	
 		#ifdef __EMSCRIPTEN__
