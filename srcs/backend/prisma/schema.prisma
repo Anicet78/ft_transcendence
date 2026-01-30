@@ -124,12 +124,12 @@ model UserRole {
 }
 
 model BlockedList {
-  blocked_list                            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  blockedListId                            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   blocker                                 String?   @db.Uuid
   blocked                                 String?   @db.Uuid
-  created_at                              DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at                              DateTime? @default(now()) @db.Timestamptz(6)
-  deleted_at                              DateTime? @db.Timestamptz(6)
+  createdAt                              DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt                              DateTime? @default(now()) @db.Timestamptz(6)
+  deletedAt                              DateTime? @db.Timestamptz(6)
   app_user_blocked_list_blockedToapp_user AppUser?  @relation("blocked_list_blockedToapp_user", fields: [blocked], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
   app_user_blocked_list_blockerToapp_user AppUser?  @relation("blocked_list_blockerToapp_user", fields: [blocker], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
 
