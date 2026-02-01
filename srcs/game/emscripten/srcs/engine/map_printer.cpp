@@ -43,35 +43,35 @@ void	manage_border(int x, int y, Player &player)
 	int	tile_s = gSdl.getMapTileSize() * 2;
 	// check for top left wall corner
 	if (check_tile(x + 1, y + 1, player) && !check_tile(x, y + 1, player) && !check_tile(x + 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_UP_LEFT_CORNER, 2, player.getFloor());
+		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_UP_LEFT_CORNER, 2, 0);
 
 	// check for top right wall corner
 	else if (check_tile(x - 1, y + 1, player) && !check_tile(x, y + 1, player) && !check_tile(x - 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_UP_RIGHT_CORNER, 2, player.getFloor());
+		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_UP_RIGHT_CORNER, 2, 0);
 
 	//check for down left wall corner 
 	else if (check_tile(x + 1, y - 1, player) && !check_tile(x, y - 1, player) && !check_tile(x + 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_DOWN_LEFT_CORNER, 2, player.getFloor());
+		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_DOWN_LEFT_CORNER, 2, 0);
 
 	//check for down right wall corner
 	else if (check_tile(x - 1, y - 1, player) && !check_tile(x, y - 1, player) && !check_tile(x - 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_DOWN_RIGHT_CORNER, 2, player.getFloor());
+		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_DOWN_RIGHT_CORNER, 2, 0);
 
 	// check if the wall is on the left
 	else if (check_tile(x + 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_LEFT, 2, player.getFloor());
+		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_LEFT, 2, 0);
 
 	//check if the wall is on the right
 	else if (check_tile(x - 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_RIGHT, 2, player.getFloor());
+		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_RIGHT, 2, 0);
 
 	//check if the wall is on the top
 	else if (check_tile(x, y + 1, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL, 2, player.getFloor());
+		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL, 2, 0);
 
 	//check if the wall is on the bottom
 	else if (check_tile(x, y - 1, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_DOWN, 2, player.getFloor());
+		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_DOWN, 2, 0);
 }
 
 //manage the wall print
@@ -147,46 +147,188 @@ int checkTileWall(int x, int y, Player &player)
 uint8_t	checkWall(int x, int y, Player &player, int depth)
 {
 	uint8_t res = 0;
-	for (int i = y - 1 - depth; i < y + 1 + depth; i++)
+	
+	int minY = y - 1 - depth, maxY = y + 1 + depth;
+	int minX = x - 1 - depth, maxX = x + 1 + depth;
+
+	for (int i = minY; i <= maxY; i++)
 	{
-		for (int j = x - 1 - depth; j < x + 1 + depth; j++)
+		for (int j = minX; j <= maxX; j++)
 		{
 			if (checkTileWall(j, i, player))
 			{
-				if (i < y && j < x) //North-West
-					res |= 1 << 0;
-				else if (i < y && j == x) //North
+				if (i < y && j == x) //North
 					res |= 1 << 1;
-				else if (i < y && j > x) //North-East
-					res |= 1 << 2;
 				else if (i == y && j < x) //West
 					res |= 1 << 3;
 				else if (i == y && j > x) //East
 					res |= 1 << 4;
-				else if (i > y && j < x) //South-West
-					res |= 1 << 5;
 				else if (i > y && j == x) //South
 					res |= 1 << 6;
-				else if (i > y  && j > x) //South-East
+
+				else if (i < y && j < x && i == minY && j == minX) //North-West
+					res |= 1 << 0;
+				else if (i < y && j > x && i == minY && j == maxX) //North-East
+					res |= 1 << 2;
+				else if (i > y && j < x && i == maxY && j == minX) //South-West
+					res |= 1 << 5;
+				else if (i > y  && j > x && i == maxY && j == maxX) //South-East
 					res |= 1 << 7;
+
+				else if (i < y && j < x && i == minY) //North North-West
+					res |= 1 << 1;
+				else if (i < y && j > x && i == minY) //North North-East
+					res |= 1 << 1;
+				else if (i < y && j < x && j == minX) //West North-West
+					res |= 1 << 3;
+				else if (i > y && j < x && j == minX) //West South-West
+					res |= 1 << 3;
+				else if (i < y && j > x && j == maxX) //East North-East
+					res |= 1 << 4;
+				else if (i > y  && j > x && j == maxX) //East South-East
+					res |= 1 << 4;
+				else if (i > y && j < x && i == maxY) //South South-West
+					res |= 1 << 6;
+				else if (i > y  && j > x && i == maxY) //South South-East
+					res |= 1 << 6;
 			}
 		}
 	}
 	return res;
 }
 
-void	manage_wall2(int x, int y, Player &player)
+// static int checkLastTree(int x, std::vector<int> &line, std::vector<int> &prevLine)
+// {
+// 	if (prevLine.size() && prevLine[x] == 1)
+// 		return 1;
+// 	if (x - 1 >= 0 && line[x - 1] == 1)	
+// 		return 1;
+// 	return 0;
+// }
+
+// void	manage_wall2(int x, int y, Player &player)
+// {
+// 	static std::vector<int>	prevLine, line;
+// 	static int prevY = -1;
+// 	static quadList node;
+// 	int	tile_s = gSdl.getMapTileSize() * 2;
+
+// 	if (node != player.getNode())
+// 	{
+// 		node = player.getNode();
+// 		prevY = -1;
+// 		prevLine.clear();
+// 		line.assign(player.getRoom().getRoomPlan()[0].size(), 0);
+// 	}
+	
+// 	Assets::rendMap(x * tile_s, y * tile_s, 226, 1, 1);
+
+// 	if (y != prevY)
+// 	{
+// 		prevLine = line;
+// 		std::fill(line.begin(), line.end(), 0);
+// 		prevY = y;
+// 	}
+
+// 	if (!checkLastTree(x, line, prevLine))
+// 	{
+// 		Assets::rendMap(x * tile_s, y * tile_s, 145, 1, 1);
+// 		if (x - 2 >= 0 && line[x - 2])
+// 		{
+// 			Assets::rendMap((x - 1) * tile_s, (y - 1) * tile_s, 148, 1, 1);
+// 			Assets::rendMap((x - 1) * tile_s, (y - 2) * tile_s, 103, 1, 1);
+// 			Assets::rendMap((x - 1) * tile_s, (y - 3) * tile_s, 13, 1, 1);
+
+// 		}
+// 		else
+// 		{
+// 			Assets::rendMap((x - 1) * tile_s, (y - 1) * tile_s, 99, 1, 1);
+// 			Assets::rendMap((x - 1) * tile_s, (y - 2) * tile_s, 54, 1, 1);
+// 			Assets::rendMap((x - 1) * tile_s, (y - 3) * tile_s, 9, 1, 1);
+// 		}
+
+		
+// 		Assets::rendMap(x * tile_s, (y - 1) * tile_s, 100, 1, 1);
+// 		Assets::rendMap(x * tile_s, (y - 2) * tile_s, 55, 1, 1);
+// 		Assets::rendMap(x * tile_s, (y - 3) * tile_s, 10, 1, 1);
+
+// 		Assets::rendMap((x + 1) * tile_s, (y - 1) * tile_s, 101, 1, 1);
+// 		Assets::rendMap((x + 1) * tile_s, (y - 2) * tile_s, 56, 1, 1);
+// 		Assets::rendMap((x + 1) * tile_s, (y - 3) * tile_s, 11, 1, 1);
+// 		line[x] = 1;
+// 	}
+	
+// }
+
+void initAutoTileOffset(std::array<int, 256> &autoTileOffset)
 {
-	(void)player;
-	int	tile_s = gSdl.getMapTileSize() * 2;
-	Assets::rendMap(x * tile_s, y * tile_s, 226, 1, 1);
+	// Cas neutres
+	autoTileOffset[0]   = 0;
+	autoTileOffset[24]  = 0;
+	autoTileOffset[68]  = 0;
+
+	// Coins simples
+	autoTileOffset[1]   = 46;
+	autoTileOffset[4]   = 44;
+	autoTileOffset[32]  = -44;
+	autoTileOffset[128] = -46;
+
+	// Coins opposés
+	autoTileOffset[36]  = 185;
+	autoTileOffset[129] = 186;
+
+	// NW + around
+	int nwList[] = {10, 11, 12, 14, 15, 34, 38, 39, 42, 43, 44, 45, 47};
+	for (int m : nwList)
+		autoTileOffset[m] = -43;
+
+	// NE + around
+	int neList[] = {17, 18, 19, 22, 23, 130, 131, 135, 145, 146, 149, 150, 151};
+	for (int m : neList)
+		autoTileOffset[m] = -42;
+
+	// SW + around
+	int swList[] = {65, 72, 73, 104, 105, 136, 137, 169, 193, 200, 225, 232, 233};
+	for (int m : swList)
+		autoTileOffset[m] = 2;
+
+	// SE + around
+	int seList[] = {48, 52, 68, 80, 84, 100, 112, 180, 208, 212, 228, 240, 244};
+	for (int m : seList)
+		autoTileOffset[m] = 3;
+
+	// N group
+	int nList[] = {2, 3, 5, 6, 7};
+	for (int m : nList)
+		autoTileOffset[m] = 45;
+
+	// W group
+	int wList[] = {8, 9, 33, 40, 41};
+	for (int m : wList)
+		autoTileOffset[m] = 1;
+
+	// E group
+	int eList[] = {16, 20, 132, 144, 148};
+	for (int m : eList)
+		autoTileOffset[m] = -1;
+
+	// S group
+	int sList[] = {64, 96, 160, 192, 224};
+	for (int m : sList)
+		autoTileOffset[m] = -45;
 }
+
 
 void	manageSoil(int x, int y, Player &player)
 {
+	static std::array<int, 256>	autoTileOffset = {0};
 	int	tile_s = gSdl.getMapTileSize() * 2;
 	int depth = -1;
 	uint8_t	mask = 0;
+
+	if (!autoTileOffset[1])
+		initAutoTileOffset(autoTileOffset);
+
 	while (!mask)
 	{
 		depth++;
@@ -197,71 +339,34 @@ void	manageSoil(int x, int y, Player &player)
 			break ;
 		}
 	}
-	//586
-	int color = 226 + depth * 9;
+	std::cout << "x = " << x << ", y = " << y << ", mask = " << (int)mask << ", depth = " << depth << std::endl;
+	int color = 541 + depth * 9;
 	int color2 = (depth == 2) ? color : color + 9;
-	if (!mask) //no neighbors
-		Assets::rendMap(x * tile_s, y * tile_s, color, 1, 1);
-	else if (mask == 1 || mask == 11 || mask == 47) //NW
-	{
-		Assets::rendMap(x * tile_s, y * tile_s, color2, 1, 1);
-		Assets::rendMap(x * tile_s, y * tile_s, color - 43, 1, 1);
-	}
-	else if (mask == 2 || mask == 3 || mask == 6 || mask == 7) //N
-	{
-		Assets::rendMap(x * tile_s, y * tile_s, color2, 1, 1);
-		Assets::rendMap(x * tile_s, y * tile_s, color + 45, 1, 1);
-	}
-	else if (mask == 4 || mask == 151) //NE
-	{
-		Assets::rendMap(x * tile_s, y * tile_s, color2, 1, 1);
-		Assets::rendMap(x * tile_s, y * tile_s, color - 42, 1, 1);
-	}
-	else if (mask == 8 || mask == 9 || mask == 40 || mask == 41) //W
-	{
-		Assets::rendMap(x * tile_s, y * tile_s, color2, 1, 1);
-		Assets::rendMap(x * tile_s, y * tile_s, color + 1, 1, 1);
-	}
-	else if (mask == 16 || mask == 20 || mask == 144 || mask == 148) //E
-	{
-		Assets::rendMap(x * tile_s, y * tile_s, color2, 1, 1);
-		Assets::rendMap(x * tile_s, y * tile_s, color - 1, 1, 1);
-	}
-	else if (mask == 32 || mask == 233) //SW
-	{
-		Assets::rendMap(x * tile_s, y * tile_s, color2, 1, 1);
-		Assets::rendMap(x * tile_s, y * tile_s, color + 2, 1, 1);
-	}
-	else if (mask == 64 || mask == 96 || mask == 192 || mask == 224) //S
-	{
-		Assets::rendMap(x * tile_s, y * tile_s, color2, 1, 1);
-		Assets::rendMap(x * tile_s, y * tile_s, color - 45, 1, 1);
-	}
-	else if (mask == 128 || mask == 244) //SE
-	{
-		Assets::rendMap(x * tile_s, y * tile_s, color2, 1, 1);
-		Assets::rendMap(x * tile_s, y * tile_s, color + 3, 1, 1);
-	}
+	int offset = autoTileOffset[mask];
+	Assets::rendMap(x * tile_s, y * tile_s, color2, 1, 1);
+	Assets::rendMap(x * tile_s, y * tile_s, color + offset, 1, 1);
 }
 
 void	manageFloorPrint(int x, int y, char c, Player &player)
 {
 	int	tile_s = gSdl.getMapTileSize() * 2;
-	if (c == '1' && !player.getFloor())
-		manage_wall(x, y, player);
-	else if (c == '1' && player.getFloor() == 1)
-		manage_wall2(x, y, player);
-	else if (c == '0' && player.getFloor() == 0)
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::FLOOR, 2, player.getFloor());
-	else if (c == '0' && player.getFloor())
-		manageSoil(x, y, player);
-	else if (c == 'P' && player.getFloor())
+	if (player.getFloor() == 1)
 	{
-		Assets::rendMap(x * tile_s, y * tile_s, 244, 1, 1);
-		Assets::rendMap(x * tile_s, y * tile_s, 136, 1, 1);
+		if (c == '1')
+			manage_wall(x, y, player);
+		else if (c == '0')	
+			Assets::rendMap(x * tile_s, y * tile_s, Assets::FLOOR, 2, 0);
+		else if (c == 'E')
+			Assets::rendMap(x * tile_s, y * tile_s, Assets::DOOR_FRONT, 2, 0);
 	}
-	else if (c == 'E')
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::DOOR_FRONT, 2, player.getFloor());
+	else if (player.getFloor() == 0)
+	{
+		if (c == '1'  || c == ' ')
+			;//manage_wall2(x, y, player);
+		else if (c == '0' || c == 'P')
+			manageSoil(x, y, player);
+	}
+	
 }
 
 void	print_map(Player &player, std::vector<Player> &otherPlayers)
@@ -306,7 +411,7 @@ void	print_map(Player &player, std::vector<Player> &otherPlayers)
 
 	SDL_RenderCopy(gSdl.renderer, gSdl.texture, &camera, NULL);
 	float playerScreenX = (player.getX() - camX) * tile_s;
-    float playerScreenY = (player.getY() - camY) * tile_s;
+	float playerScreenY = (player.getY() - camY) * tile_s;
 	player.printPlayer(playerScreenX, playerScreenY);
 	if (otherPlayers.size())
 	{
