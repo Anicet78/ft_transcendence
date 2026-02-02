@@ -28,9 +28,11 @@ cert:
 	$(INFO) "Certificate created."
 
 $(SECRET_PATH)/jwt_secret.txt:
+	@mkdir -p $(SECRET_PATH)
 	@node -e "console.log(require('crypto').randomBytes(32).toString('hex'))" | cat > $@
 
 $(SECRET_PATH)/%.txt:
+	@mkdir -p $(SECRET_PATH)
 	@echo -n "passwd" > $@
 
 up: $(SECRETS)
