@@ -106,6 +106,8 @@ static void print_mobs(MobRush &mobRush, Player &player)
 	Camera	&cam = player.getCamera();
 	for (auto &mob : mobRush.getMobs())
 	{
+		// std::cout << "MOB_ID : " << mob.first << std::endl;
+		// std::cout << "mob_x : " << mob.second->getX() << "mob_y : " << mob.second->getY() << std::endl;
 		if (mob.second->isDead() == false)
 		{
 			if (mob.second->checkInvinsibleFrame() == true && mob.second->getFrame() >= 23)

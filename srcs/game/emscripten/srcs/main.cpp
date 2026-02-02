@@ -16,7 +16,7 @@ Engine gSdl;
 	void getMessage(val obj)
 	{
 		msgJson.push(obj);
-		if (msgJson.size() > 5)
+		if (msgJson.size() > 7)
 			msgJson.pop();
 	}
 
@@ -194,6 +194,26 @@ void	launchGame(Game &game, val &msg)
 	EM_ASM_({onCppMessage({action: "launched"});});
 }
 
+void	updateFromLoop(Game &game, val msg)
+{
+	MobRush &rush = dynamic_cast<MobRush &>(*game.getPlayer().getRoomRef().getRoomEvent());
+	std::unordered_map<int, std::unique_ptr<Mob>> &mobs = rush.getMobs();
+	int nbr_mob = msg["nbr_mobs"].as<int>();
+	std::cout << "here" << std::endl;
+	val mob = msg["mobs"];
+	std::cout << "mob here" << std::endl;
+	for (int i = 0; i < nbr_mob; i++)
+	{
+		val monster = mob[i];
+		//gather all mob information from the message
+		int id = monster["mob_id"].as<int>();
+		float x = monster["mob_x"].as<float>();
+		float y = monster["mob_y"].as<float>();
+		std::cout << "mob_id : " << id << " x : " << x << " y : " << y << std::endl;
+		mobs[id]->setPos(x, y);
+	}
+}
+
 void	parseJson(bool &init, Game &game)
 {
 	if (!msgJson.size())
@@ -218,8 +238,12 @@ void	parseJson(bool &init, Game &game)
 	}
 	else if (msg["action"].as<std::string>() == "update")
 	{
-		updatePlayerState(game, msg["player_state"]);
-		updateRoomState(game, msg["room_state"]);
+		if (msg.hasOwnProperty("player_state"))
+			updatePlayerState(game, msg["player_state"]);
+		if (msg.hasOwnProperty("room_state"))
+			updateRoomState(game, msg["room_state"]);
+		if (msg.hasOwnProperty("loop"))
+			updateFromLoop(game, msg["loop"]);
 	}
 	else if (msg["action"].as<std::string>() == "launch")
 		launchGame(game, msg);

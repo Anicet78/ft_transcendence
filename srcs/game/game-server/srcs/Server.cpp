@@ -210,15 +210,38 @@ void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer)
 	(void)allPlayer;
 	std::shared_ptr<ARoomEvent> event = room.getRoomEvent();
 	std::vector<std::string> map = room.getRoomPlan();
-	if (event && event->getType() == "MobRush")
+	if (event->getType() == "MobRush")
 	{
 		MobRush &rush = dynamic_cast<MobRush &>(*event);
 		std::unordered_map<int, std::unique_ptr<Mob>> &Mobs = rush.getMobs();
+		std::string	msg;
+		bool flag = false;
+		int	amount = 0;
 		for (auto& [key, value] : Mobs)
 		{
 			if (!value->isDead())
 			{
+				amount++;
+				if (flag == false)
+				{
+					flag = true;
+					msg +=  "{ \"action\" : \"update\", \"loop\": { \"mobs\": [";
+				}
 				moveMobs(map, *value);
+				std::cout << "mob_id : " << key << " x : " << value->getX() << " y : " << value->getY() << std::endl;
+				msg += "{ \"mob_id\":" + std::to_string(key) + ", "
+					+ "\"mob_x\":" + std::to_string(value->getX()) + ", "
+					+ "\"mob_y\":" + std::to_string(value->getY()) + "},";
+			}
+		}
+		if (flag == true)
+		{
+			if (*msg.rbegin() == ',')
+				msg.pop_back();
+			msg += "], \"nbr_mobs\":" + std::to_string(amount) + "}}";
+			for (auto player : allPlayer)
+			{
+				player->getWs()->send(msg);
 			}
 		}
 	}
@@ -265,7 +288,7 @@ void	Server::run(void)
 				}
 			}
 		}
-	}, 1000, 1000);
+	}, 64, 64);
 
 	uWS::App app;
 	app.ws<PerSocketData>("/*", uWS::App::WebSocketBehavior<PerSocketData> {
