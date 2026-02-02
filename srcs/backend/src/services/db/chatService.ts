@@ -1,223 +1,13 @@
 import { prisma } from './prisma.js';
 import { AppError } from '../../schema/errorSchema.js';
 
-//GROUP CREATION
-export async function createGroupChat(creatorId: string, name: string | null, memberIds: string[]) {
-	const uniqueMembers = Array.from(new Set([...memberIds, creatorId]));
-
-	const chat = await prisma.chat.create({
-	data: {
-		chatType: 'group',
-		chatName: name,
-		createdBy: creatorId,
-		members: {
-		create: uniqueMembers.map((userId) => ({
-			userId,
-			joinedAt: new Date()
-		}))
-		},
-
-		roles: {
-		create: [{
-			userId: creatorId,
-			role: 'owner',
-			attributedBy: creatorId
-			}]
-		}
-	},
-	select: {
-		chatId: true,
-		chatType: true,
-		chatName: true,
-		createdAt: true,
-
-		creator: {
-		select: {
-			appUserId: true,
-			username: true,
-			avatarUrl: true,
-			availability: true
-		}
-		},
-
-		members: {
-		select: {
-			chatMemberId: true,
-			joinedAt: true,
-			user: {
-			select: {
-				appUserId: true,
-				username: true,
-				avatarUrl: true,
-				availability: true
-			}
-			}
-		}
-		},
-
-		roles: {
-		select: {
-			userId: true,
-			role: true
-			}
-		}
-	}
-	});
-	return chat;
-}
-
-
-//INVITATION
-export async function inviteToGroupChat(chatId: string, senderId: string, receiverId: string) {
-	// 1. Check chat exists and is group
-	const chat = await prisma.chat.findUnique({
-		where: { chatId },
-		select: {
-			chatId: true,
-			chatType: true
-		}
-	});
-
-	if (!chat || chat.chatType !== 'group') {
-		throw new AppError('Chat not found or not a group chat', 404);
-	}
-
-	// 2. Check sender is a member
-	const isMember = await prisma.chatMember.findFirst({
-	where: { chatId, userId: senderId }
-	});
-
-	if (!isMember) {
-		throw new AppError('You are not a member of this group', 403);
-	}
-
-	// 3. Check receiver is not already a member
-	const alreadyMember = await prisma.chatMember.findFirst({
-	where: { chatId, userId: receiverId }
-	});
-
-	if (alreadyMember) {
-		throw new AppError('User is already a member of this group', 409);//or send 400 ?
-	}
-
-	// 4. Prevent duplicate invitations
-	const existingInvite = await prisma.chatInvitation.findFirst({
-	where: { chatId, receiverId, status: 'waiting' }
-	});
-
-	if (existingInvite) {
-		throw new AppError('An invitation is already pending for this user', 409);
-	}
-
-	// 5. Create invitation
-	const invitation = await prisma.chatInvitation.create({
-	data: {
-		chatId,
-		senderId,
-		receiverId,
-		status: 'waiting'
-	},
-	select: {
-		chatInvitationId: true,
-		chatId: true,
-		senderId: true,
-		receiverId: true,
-		status: true,
-		createdAt: true
-	}
-	});
-
-	return invitation;
-}
-
-//ANSWER PENDING GROUP CHAT INVITATION
-export async function acceptGroupInvitation( chatInvitationId: string, userId: string ) {
-	// 1. Load invitation
-	const invitation = await prisma.chatInvitation.findUnique({
-	where: { chatInvitationId },
-	select: {
-		chatInvitationId: true,
-		chatId: true,
-		receiverId: true,
-		status: true
-	}
-	});
-
-	if (!invitation) {
-		throw new AppError('Invitation not found', 404);
-	}
-
-	// 2. Must be waiting
-	if (invitation.status !== 'waiting') {
-		throw new AppError('Invitation is not pending', 400);
-	}
-
-	// 3. Only receiver can accept
-	if (invitation.receiverId !== userId) {
-		throw new AppError('You are not allowed to accept this invitation', 403);
-	}
-
-	// 4. Chat must exist and be group
-	const chat = await prisma.chat.findUnique({
-	where: { chatId: invitation.chatId! },
-	select: { chatType: true }
-	});
-
-	if (!chat || chat.chatType !== 'group') {
-		throw new AppError('Chat not found or not a group chat', 404);
-	}
-
-	// 5. Prevent duplicate membership
-	const alreadyMember = await prisma.chatMember.findFirst({
-	where: { chatId: invitation.chatId!, userId }
-	});
-
-	if (alreadyMember) {
-		throw new AppError('You are already a member of this group', 409);
-	}
-
-	// 6–7. Create member + role in a transaction
-	const result = await prisma.$transaction(async (tx) => {
-	const member = await tx.chatMember.create({
-		data: {
-		chatId: invitation.chatId!,
-		userId,
-		joinedAt: new Date()
-		},
-		select: {
-		chatMemberId: true,
-		chatId: true,
-		userId: true,
-		joinedAt: true
-		}
-	});
-
-	await tx.chatRole.create({
-		data: {
-		chatId: invitation.chatId!,
-		userId,
-		role: 'member',
-		attributedBy: userId
-		}
-	});
-
-	await tx.chatInvitation.update({
-		where: { chatInvitationId },
-		data: { status: 'accepted' }
-	});
-
-	return member;
-	});
-
-	return result;
-}
-
 //shared chat infos model
 export const chatSelect = {
 	chatId: true,
 	chatType: true,
 	chatName: true,
 	createdAt: true,
+	deletedAt: true,
 
 	creator: {
 	select: {
@@ -232,6 +22,7 @@ export const chatSelect = {
 	select: {
 		chatMemberId: true,
 		joinedAt: true,
+		leftAt: true,
 		user: {
 		select: {
 			appUserId: true,
@@ -273,7 +64,6 @@ export async function getChatByIdForUser(chatId: string, userId: string) {
 
 	return chat;
 }
-
 
 
 //RETURN USER'S CHAT LIST
@@ -327,6 +117,56 @@ export async function listUserChats(userId: string) {
 	return chats;
 }
 
+//RETURN USER'S CHAT INVITATIONS (send and received)
+export async function listUserChatInvitations(userId: string) {
+  const invitations = await prisma.chatInvitation.findMany({
+    where: {
+      OR: [
+        { senderId: userId },
+        { receiverId: userId }
+      ]
+    },
+    orderBy: { createdAt: 'desc' },
+    select: {
+      chatInvitationId: true,
+      chatId: true,
+      senderId: true,
+      receiverId: true,
+      status: true,
+      createdAt: true,
+
+      sender: {
+        select: {
+          appUserId: true,
+          username: true,
+          avatarUrl: true,
+          availability: true
+        }
+      },
+
+      receiver: {
+        select: {
+          appUserId: true,
+          username: true,
+          avatarUrl: true,
+          availability: true
+        }
+      },
+
+      chat: {
+        select: {
+          chatId: true,
+          chatType: true,
+          chatName: true
+        }
+      }
+    }
+  });
+
+  return invitations;
+}
+
+
 //SEND MESSAGE
 export async function sendMessage(chatId: string, userId: string, content: string) {
 	// 1. check if chat exists
@@ -338,6 +178,10 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 	if (!chat) {
 		throw new AppError('Chat not found', 404);
 	}
+
+	// if (chat.deletedAt !== null) {
+	// 	throw new AppError('This chat has been disbanded', 410);
+	// }
 
 	// 2. is user a member
 	const member = await prisma.chatMember.findFirst({
@@ -444,5 +288,43 @@ export async function deleteMessage(messageId: string, userId: string) {
 	});
 
 	return updated;
+}
+
+//RETRIEVE CONVERSATION MESSAGES
+export async function getChatMessages(chatId: string, userId: string) {
+  // 1. Check user is member of this conversation
+  const isMember = await prisma.chatMember.findFirst({
+    where: { chatId, userId }
+  });
+
+  if (!isMember) {
+    throw new AppError('You are not a member of this chat', 403);
+  }
+
+  // 2. Retrieve messages
+  const messages = await prisma.chatMessage.findMany({
+    where: { chatId },
+    orderBy: { postedAt: 'asc' },
+    select: {
+      messageId: true,
+      chatId: true,
+      userId: true,
+      content: true,
+      status: true,
+      postedAt: true,
+      editedAt: true,
+      deletedAt: true,
+      author: {
+        select: {
+          appUserId: true,
+          username: true,
+          avatarUrl: true,
+          availability: true
+        }
+      }
+    }
+  });
+
+  return messages;
 }
 
