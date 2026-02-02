@@ -71,8 +71,8 @@ std::vector<quadList> Map::astar(const quadList &start, const quadList &goal)
 
         for (auto &n : neighbors)
         {
-			if (n->getPath() != 1)
-				continue;
+			if (n->getPath() != 1 && n->getPath() != 3)
+				continue ;
 
             int tentative_g = gScore[current] + 1;
 

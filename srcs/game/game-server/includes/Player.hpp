@@ -103,6 +103,8 @@ class Player
 		void		setLastDir(int dir);
 
 	//action
+		void		findP(void);
+		void		move(void);
 
 		void		attack(void);
 		bool		getIsAttacking(void) const;

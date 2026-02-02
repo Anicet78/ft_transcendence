@@ -63,7 +63,7 @@ class Room
 		//Plan of the room
 		std::vector<std::string> _roomPlan;
 		//Wating Room maps
-		static std::map<std::string, std::shared_ptr<Room>> _WatingRooms;
+		static std::map<std::string, std::shared_ptr<Room>> _WaitingRooms;
 		//Map containing all of the rooms of the floor 0
 		static std::map<std::string, std::shared_ptr<Room>> _RoomsF0;
 		//Map containing all of the rooms of the floor 1
@@ -100,12 +100,10 @@ class Room
 		std::array<bool, 4>									getExits() const;
 		std::string											getName() const;
 		std::vector<std::string>							getRoomPlan() const;
-		static std::map<std::string, std::shared_ptr<Room>>	getFloor0();
+		static std::map<std::string, std::shared_ptr<Room>>	getFloor(int nb);
 		static void											importRooms();
 		void												randomizeRoom();
 		void												turnMapLeft(void);
-		void												turnMapRight(void);
-		void												turnMapUpDown(void);
 		void												setEvent(void);
 		std::shared_ptr<ARoomEvent>							getRoomEvent(void) const;
 		std::shared_ptr<ARoomEvent>							getRoomEventRef(void);

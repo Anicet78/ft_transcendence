@@ -14,13 +14,15 @@ chainedMap::~chainedMap(void)
 
 //Member Functions--------------------------------------------------------
 
+void chainedMap::resetRoom()
+{
+	this->_room.reset();
+}
+
 void chainedMap::addRoom(const Room &room)
 {
 	if (this->_room)
-	{
-		this->_room.reset();
 		*this->_room = room;
-	}
 	else
 		this->_room = std::make_shared<Room>(room);
 	
@@ -155,6 +157,47 @@ Map::~Map(void)
 {}
 
 //Member Functions--------------------------------------------------------
+
+void	Map::reset()
+{
+	for (int i = 0; i < _height; i++)
+	{
+		for (int j = 0; j < _width; j++)
+		{
+			quadList node = this->_nodes[i * _width + j];
+			node->resetRoom();
+			node->setPath(0);
+			if (j != 0)
+				node->west = _nodes[i * _width + j - 1];
+			if (j != _width - 1)
+				node->east = _nodes[i * _width + j + 1];
+			if (i != 0)
+				node->north = _nodes[(i - 1) * _width + j];
+			if (i != _height - 1)
+				node->south = _nodes[(i + 1) * _width + j];
+		}
+	}
+}
+
+void	Map::link(Map &up)
+{
+	size_t pos = 0;
+	for (quadList &node : this->_nodes)
+	{
+		if (!node->getRoom() || node->getRoom()->getName() != "stairs")
+			continue ;
+		for (; pos < up._nodes.size(); pos++)
+		{
+			if (!up._nodes[pos]->getRoom() || up._nodes[pos]->getRoom()->getName() != "start")
+				continue ;
+			node->up = up._nodes[pos];
+			pos++;
+			break ;
+		}
+		if (pos == up._nodes.size())
+			break ;
+	}
+}
 
 void	Map::setWaitingRoom()
 {

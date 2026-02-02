@@ -2,7 +2,7 @@
 
 Player::Player(std::string uid, std::string name) : _uid(uid), _name(name), _x(0), _y(0),
 					_screenX(0), _screenY(0), _anim(0), _hp(3), _atk(1), _def(0), _atkState(false),
-					_camera(_x, _y), _last_dir(0), _frame(0), _prev_state(PLAYER_IDLE)
+					_camera(_x, _y), _floor(0), _last_dir(0), _frame(0), _prev_state(PLAYER_IDLE)
 {}
 
 Player::~Player(void)
@@ -81,7 +81,13 @@ int	Player::getLastDir(void) const
 	return this->_last_dir;
 }
 
-int	Player::getFrame(void) const {
+int Player::getFloor(void) const
+{
+	return this->_floor;
+}
+
+int	Player::getFrame(void) const
+{
 	return (_frame);
 }
 
@@ -97,23 +103,7 @@ void	Player::updateLastDir(void)
 
 void Player::setNode(const quadList &node)
 {
-	if (this->_node->getRoom()->getName() == "waiting" || this->_node->getRoom()->getName() == "start")
-	{
-		this->_node = node;
-		int i = 0;
-		for (auto &line : _node->getRoom()->getRoomPlan())
-		{
-			size_t pos = line.find('P');
-			if (pos != std::string::npos)
-			{
-				_x = pos + 0.5, _y = i + 0.5;
-				break ;
-			}
-			i++;
-		}
-	}
-	else
-		this->_node = node;
+	this->_node = node;
 }
 
 void	Player::setPos(float x, float y)
@@ -151,15 +141,23 @@ void	Player::setAnim(int anim)
 	this->_anim = anim;
 }
 
-void	Player::startAtk(void) {
+void	Player::incrementFloor(void)
+{
+	this->_floor++;
+}
+
+void	Player::startAtk(void)
+{
 	this->_atkState = true;
 }
 
-void	Player::endAtk(void) {
+void	Player::endAtk(void)
+{
 	this->_atkState = false;
 }
 
-bool	Player::checkAtkState(void) const {
+bool	Player::checkAtkState(void) const
+{
 	return (_atkState);
 }
 

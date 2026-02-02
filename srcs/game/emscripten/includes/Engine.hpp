@@ -5,26 +5,29 @@
 
 class Engine
 {
-private:
-	int	_tile_size;
-	int	_player_size;
-public:
-	SDL_Window		*window;
-	SDL_Renderer	*renderer;
-	SDL_Event		event;
-	SDL_Texture		*texture;
-	SDLTimer		cap;
-	Key				key;
+	private:
+		int	_tile_size;
+		int	_player_size;
 
-	Engine();
-	~Engine();
-	void	setMapTileSize(int tile_size);
-	int		getMapTileSize(void);
 
-	void	setPlayerSize(int tile_size);
-	int		getPlayerSize(void);
+	public:
+		SDL_Window		*window;
+		SDL_Renderer	*renderer;
+		SDL_Event		event;
+		SDL_Texture		*texture;
+		SDL_Texture		*texture2;
+		SDLTimer		cap;
+		Key				key;
 
-	SDLTimer	&getTimer(void);
+		Engine();
+		~Engine();
+		void	setMapTileSize(int tile_size);
+		int		getMapTileSize(void);
+
+		void	setPlayerSize(int tile_size);
+		int		getPlayerSize(void);	
+
+		SDLTimer	&getTimer(void);
 };
 
 extern Engine	gSdl;

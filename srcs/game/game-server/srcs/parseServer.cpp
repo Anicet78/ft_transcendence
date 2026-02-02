@@ -155,48 +155,48 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
 	if (req["action"] == "join_queue")
 	{
 		data->pseudo = req["player_name"];
-		data->playerId = req["player_id"];
-		data->group = req["group_id"];
-		data->groupSize = std::atoi(req["group_size"].c_str());
-		ws->send("You have been added in the queue !", uWS::OpCode::TEXT);
-		this->_players.emplace_back(std::make_shared<Player>(data->playerId, data->groupSize, data->group, data->pseudo, ws));
-		this->addPlayerOnQueue(_players.back());
-		data->jsonMsg.clear();
-		return 0;
-	}
-	else if (req["action"] == "player_move" || req["action"] == "connected" || req["action"] == "launched")
-	{
-		for (Session &session : _sessions)
-		{
-			if (session.isPlayerInSession(ws->getUserData()->playerId))
-			{
-				std::shared_ptr<Player> player = session.getPlayer(ws->getUserData()->playerId);
-				if (req["action"] == "connected")
-					player->setConnexion(1);
-				if (req["action"] == "launched")
-					player->setLaunched(1);
-				if (req["action"] == "player_move")
-				{
-					updatePlayer(*player, req);
-					updateRoom(*player);
+        data->playerId = req["player_id"];
+        data->group = req["group_id"];
+        data->groupSize = std::atoi(req["group_size"].c_str());
+        ws->send("You have been added in the queue !", uWS::OpCode::TEXT);
+        this->_players.emplace_back(std::make_shared<Player>(data->playerId, data->groupSize, data->group, data->pseudo, ws));
+        this->addPlayerOnQueue(_players.back());
+        data->jsonMsg.clear();
+        return 0;
+    }
+    else if (req["action"] == "player_move" || req["action"] == "connected" || req["action"] == "launched")
+    {
+        for (Session &session : _sessions)
+        {
+            if (session.isPlayerInSession(ws->getUserData()->playerId))
+            {
+                std::shared_ptr<Player> player = session.getPlayer(ws->getUserData()->playerId);
+                if (req["action"] == "connected")
+                    player->setConnexion(1);
+                if (req["action"] == "launched")
+                    player->setLaunched(1);
+                if (req["action"] == "player_move")
+                {
+                    updatePlayer(*player, req);
+                    updateRoom(*player);
 					updateWorld(*player);
-				}
-				sendPlayerState(*player, session, "");
-				for (auto &oplayer : session.getPlayers())
-				{
-					if (oplayer->getUid() == player->getUid())
-						continue ;
-					if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isConnected() && !session.isRunning())
-						sendPlayerState(*oplayer, session, "");
-					else if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isLaunched())
-						sendPlayerState(*oplayer, session, "");
-				}
-				if (!session.getPlaceLeft() && session.doesAllPlayersConnected() && !session.isRunning())
-					session.launch();
-				break;
-			}
-		}
-	}
-	data->jsonMsg.clear();
-	return 1;
+                }
+                sendPlayerState(*player, session, "");
+                for (auto &oplayer : session.getPlayers())
+                {
+                    if (oplayer->getUid() == player->getUid())
+                        continue ;
+                    if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isConnected() && !session.isRunning())
+                        sendPlayerState(*oplayer, session, "");
+                    else if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isLaunched() && session.isRunning())
+                        sendPlayerState(*oplayer, session, "");
+                }
+                if (!session.getPlaceLeft() && session.doesAllPlayersConnected() && !session.isRunning())
+                    session.launch();
+                break;
+            }
+        }
+    }
+    data->jsonMsg.clear();
+    return 1;
 }

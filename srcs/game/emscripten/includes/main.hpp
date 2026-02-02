@@ -8,6 +8,7 @@
 # include <string>
 # include <cstdlib>
 # include <ctime>
+# include <cmath>
 # include <memory>
 # include <vector>
 # include <map>

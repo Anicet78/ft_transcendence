@@ -1,11 +1,10 @@
 #include "Game.hpp"
 
 Engine gSdl;
-Map floor0(1, 1);
 
 #ifdef __EMSCRIPTEN__
 
-	val msgJson;
+	std::queue<val> msgJson;
 
 	void testIncrement(val info)
 	{
@@ -16,7 +15,9 @@ Map floor0(1, 1);
 
 	void getMessage(val obj)
 	{
-		msgJson = obj;
+		msgJson.push(obj);
+		if (msgJson.size() > 5)
+			msgJson.pop();
 	}
 
 #endif
@@ -170,16 +171,20 @@ void	fillMapInfos(val &msg, Game &game)
 
 	fillMap(vmaps, maps, "waiting_map");
 	fillMap(vmaps, maps, "floor_0");
+	fillMap(vmaps, maps, "floor_1");
+	vmaps[1].link(vmaps[2]);
 	printMap(vmaps[1]);
+	printMap(vmaps[2]);
 }
 
-void	launchGame(Game &game)
+void	launchGame(Game &game, val &msg)
 {
 	auto &maps = game.getMaps();
 	quadList start;
+	int startRoom = msg["start"].as<int>();
 	for (quadList &node : maps[1].getNodes())
 	{
-		if (node->getRoom() && node->getRoom()->getName() == "start")
+		if (node->getRoom() && node->getRoom()->getName() == "start" && !startRoom--)
 		{
 			start = node;
 			break ;
@@ -191,14 +196,17 @@ void	launchGame(Game &game)
 
 void	parseJson(bool &init, Game &game)
 {
-	if (msgJson.isUndefined() || msgJson.isNull())
+	if (!msgJson.size())
 		return ;
 
-	val msg = msgJson;
+	val msg = msgJson.front();
+	msgJson.pop();
+	if (msg.isUndefined() || msg.isNull())
+		return ;
 
 	if (!msg.hasOwnProperty("action"))
 	{
-		msgJson = val::undefined();
+		// msgJson = val::undefined();
 		return;
 	}
 	if (msg["action"].as<std::string>() == "waiting")
@@ -214,8 +222,8 @@ void	parseJson(bool &init, Game &game)
 		updateRoomState(game, msg["room_state"]);
 	}
 	else if (msg["action"].as<std::string>() == "launch")
-		launchGame(game);
-	msgJson = val::undefined();
+		launchGame(game, msg);
+	// msgJson = val::undefined();
 }
 
 void mainloopE(void)
@@ -252,33 +260,6 @@ void mainloopE(void)
 
 }
 
-void mainloop(void)
-{
-	auto nodes = floor0.getNodes();
-	bool running = true;
-	static Player player("505", "betaTester");
-	static bool init = false;
-
-	if (!init)
-		player.setNode(nodes[0]);
-	while (running)
-	{
-		//game_loop(player);
-		while (SDL_PollEvent(&gSdl.event))
-		{
-			if (gSdl.event.type == SDL_QUIT)
-				running = false;
-			else if (gSdl.event.type == SDL_KEYDOWN)
-				key_down();
-			else if (gSdl.event.type == SDL_KEYUP)
-				key_up();
-		}
-		SDL_RenderPresent(gSdl.renderer);
-		SDL_RenderClear(gSdl.renderer);
-		SDL_Delay(16);
-	}
-}
-
 int main(void)
 {
 	srand(time(0));
@@ -289,7 +270,9 @@ int main(void)
 	}
 	try
 	{
+		gSdl.setMapTileSize(16);
 		Assets::importAssets("../assets/sprite/assets.bmp", 16);
+		Assets::importAssets("../assets/sprite/forest/tiles-all.bmp", 32);
 		PlayerAssets::importPlayersAssets(100);
 		Mob::importMobsAssets(100);
 		Room::importRooms();
@@ -317,8 +300,6 @@ int main(void)
 	// printMap(floor0);
 	#ifdef __EMSCRIPTEN__
 		emscripten_set_main_loop(mainloopE, 120, true);
-	#else
-		mainloop();
 	#endif
 	return (0);
 }

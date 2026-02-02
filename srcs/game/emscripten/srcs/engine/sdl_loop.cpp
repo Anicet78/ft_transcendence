@@ -37,6 +37,12 @@ void updateRoom(Game &game, Player &player, std::string dir)
 		exitsLoc = player.getRoom().getExitsLoc();
 		player.setPos(exitsLoc[1][0] - 0.1, exitsLoc[1][1] + 0.5);
 	}
+	else if (dir == "U")
+	{
+		game.clearOtherPlayers();
+		player.setNode(player.getNode()->up.lock());
+		player.incrementFloor();
+	}
 }
 
 void	updatePlayerPosition(Player &player)
@@ -123,6 +129,7 @@ void	playerAction(Player &player)
 void	game_loop(Game &game)
 {
 	Player	&player = game.getPlayer();
+	Camera	&camera = player.getCamera();
 	//updateRoom(player);
 	playerAction(player);
 	
@@ -138,4 +145,5 @@ void	game_loop(Game &game)
 	}
 	print_others(player, game.getOtherPlayers());
 	player.printPlayer(player.getScreenX(), player.getScreenY());
+	SDL_RenderCopy(gSdl.renderer, gSdl.texture2, &camera.getCamera(), NULL);
 }

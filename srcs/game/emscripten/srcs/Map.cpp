@@ -17,10 +17,7 @@ chainedMap::~chainedMap(void)
 void chainedMap::addRoom(const Room &room)
 {
 	if (this->_room)
-	{
-		this->_room.reset();
 		*this->_room = room;
-	}
 	else
 		this->_room = std::make_shared<Room>(room);
 	auto exits = this->_room->getExits();
@@ -153,6 +150,26 @@ Map::~Map(void)
 
 //Member Functions--------------------------------------------------------
 
+void	Map::link(Map &up)
+{
+	size_t pos = 0;
+	for (quadList &node : this->_nodes)
+	{
+		if (!node->getRoom() || node->getRoom()->getName() != "stairs")
+			continue ;
+		for (; pos < up._nodes.size(); pos++)
+		{
+			if (!up._nodes[pos]->getRoom() || up._nodes[pos]->getRoom()->getName() != "start")
+				continue ;
+			node->up = up._nodes[pos];
+			pos++;
+			break ;
+		}
+		if (pos == up._nodes.size())
+			break ;
+	}
+}
+
 void	Map::setRoomInNode(std::string &roomName, int x, int y, int rot, int roomSet, std::shared_ptr<ARoomEvent> event)
 {
 	quadList &node = _nodes[y * _width + x];
@@ -182,3 +199,12 @@ std::vector<quadList> &Map::getNodes()
 	return this->_nodes;
 }
 
+int	Map::getHeight() const
+{
+	return this->_height;
+}
+
+int	Map::getWidth() const
+{
+	return this->_width;
+}

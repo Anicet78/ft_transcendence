@@ -115,41 +115,43 @@ void	Server::manageQueue()
 
 void	Server::removePlayer(std::string &uid)
 {
-	for (auto it = _players.begin(); it != _players.end(); it++)
-	{
-		if (*it && it->get()->getUid() == uid)
-		{
-			if (it->get()->isInQueue())
-			{
-				for (Party &party : _matchMakingQueue)
-				{
-					if (party.isPlayerInParty(uid))
-					{
-						party.removePlayer(uid);
-						if (!party.getPartySize())
-							_matchMakingQueue.remove(party);
-						else
-							party.setPartySize(party.getPartySize());
-						break ;
-					}
-				}
-			}
-			else if (it->get()->isInSession())
-			{
-				for (Session &session : _sessions)
-				{
-					if (session.isPlayerInSession(uid))
-					{
-						session.sendToAll(*(*it).get());
-						session.removePlayer(*it);
-						break ;
-					}
-				}
-			}
-			this->_players.erase(it);
-			return ;
-		}
-	}
+    for (auto it = _players.begin(); it != _players.end(); it++)
+    {
+        if (*it && it->get()->getUid() == uid)
+        {
+            if (it->get()->isInQueue())
+            {
+                for (Party &party : _matchMakingQueue)
+                {
+                    if (party.isPlayerInParty(uid))
+                    {
+                        party.removePlayer(uid);
+                        if (!party.getPartySize())
+                            _matchMakingQueue.remove(party);
+                        else
+                            party.setPartySize(party.getPartySize());
+                        break ;
+                    }
+                }
+            }
+            else if (it->get()->isInSession())
+            {
+                for (auto itS = _sessions.begin(); itS != _sessions.end(); it++)
+                {
+                    if (itS->isPlayerInSession(uid))
+                    {
+                        itS->sendToAll(*(*it).get());
+                        itS->removePlayer(*it);
+                        if (itS->isRunning() && itS->getNumPlayers() < 1)
+                            this->_sessions.erase(itS);
+                        break ;
+                    }
+                }
+            }
+            this->_players.erase(it);
+            return ;
+        }
+    }
 }
 
 Player	&Server::getPlayer(std::string &uid)
@@ -170,7 +172,6 @@ void	moveMobs(std::vector<std::string> const &map, Mob &mob)
 	float x = mob.getX();
 	float y = mob.getY();
 
-	std::cout << "feur" << std::endl;
 	y -= 0.1;
 	if (map[y][x] == '1')
 		y += 0.1;

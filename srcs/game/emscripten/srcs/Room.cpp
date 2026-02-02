@@ -85,20 +85,6 @@ void Room::updateSize()
 	this->_height = nHeight;
 }
 
-void Room::randomizeRoom()
-{
-	if (this->_roomPlan.empty())
-		return ;
-	this->_exits = {0, 0, 0, 0};
-	int num = rand() % 4;
-	if (num == 1)
-		this->turnMapLeft();
-	else if (num == 2)
-		this->turnMapRight();
-	else if (num == 3)
-		this->turnMapUpDown();
-}
-
 void Room::identifyExits()
 {
 	_exits = {0, 0, 0, 0};
@@ -161,40 +147,6 @@ void Room::turnMapLeft()
 		}
 		this->_roomPlan.push_back(line);
 	}
-	this->updateSize();
-	this->identifyExits();
-}
-
-void Room::turnMapRight()
-{
-	auto src = this->_roomPlan;
-	this->_roomPlan.clear();
-
-	int height = src.size();
-
-	for (int x = 0; x < _width; x++)
-	{
-		std::string line;
-		for (int y = height - 1; y >= 0; y--)
-		{
-			if (x < static_cast<int>(src[y].size()))
-				line += src[y][x];
-			else
-				line += ' ';
-		}
-		this->_roomPlan.push_back(line);
-	}
-	this->updateSize();
-	this->identifyExits();
-}
-
-void	Room::turnMapUpDown(void)
-{
-	auto src = this->_roomPlan;
-	this->_roomPlan.clear();
-
-	for (int i = src.size() - 1; i >= 0; i--)
-		this->_roomPlan.push_back(src[i]);
 	this->updateSize();
 	this->identifyExits();
 }
@@ -301,6 +253,7 @@ void Room::importRooms()
 	std::string path("../assets/rooms/");
 	Room::importFloor(path + "waitingRooms/", _WaitingRooms);
 	Room::importFloor(path + "floor0/", _RoomsF0);
+	Room::importFloor(path + "floor1/", _RoomsF1);
 }
 
 std::ostream &operator<<(std::ostream &o, Room const &obj)

@@ -220,6 +220,23 @@ void	Player::setInSession(bool flag)
 	this->_inSession = flag;
 }
 
+void	Player::findP(void)
+{
+	auto plan = this->getRoom().getRoomPlan();
+
+	int i = 0;
+	for (std::string &line : plan)
+	{
+		size_t pos = 0;
+		if ((pos = line.find('P')) != std::string::npos)
+		{
+			this->_x = pos + 0.5;
+			this->_y = i + 0.5;
+		}
+		i++;
+	}
+}
+
 static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &rect, int const flag, Player &player) {
 	if (flag == 0)
 	{
@@ -281,6 +298,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &r
 				return (true);
 		}
 	}
+	
 	return (false);
 }
 
@@ -330,6 +348,7 @@ void	Player::move(std::map<std::string, std::string> &req) {
 	this->setPos(x, y);
     if (!req["last_dir"].empty())
 		this->setLastDir(std::atoi(req["last_dir"].c_str()));
+	
 }
 
 bool	Player::getIsAttacking(void) const {
