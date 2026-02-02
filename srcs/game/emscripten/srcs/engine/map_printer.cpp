@@ -197,68 +197,65 @@ uint8_t	checkWall(int x, int y, Player &player, int depth)
 	return res;
 }
 
-// static int checkLastTree(int x, std::vector<int> &line, std::vector<int> &prevLine)
-// {
-// 	if (prevLine.size() && prevLine[x] == 1)
-// 		return 1;
-// 	if (x - 1 >= 0 && line[x - 1] == 1)	
-// 		return 1;
-// 	return 0;
-// }
+static int checkLastTree(int x, int y, int w, std::vector<int> &plan)
+{
+	if (y - 1 >= 0 && plan[(y - 1) * w + x] == 1)
+		return 1;
+	if (x - 1 >= 0 && plan[y * w + x - 1] == 1)	
+		return 1;
+	return 0;
+}
 
-// void	manage_wall2(int x, int y, Player &player)
-// {
-// 	static std::vector<int>	prevLine, line;
-// 	static int prevY = -1;
-// 	static quadList node;
-// 	int	tile_s = gSdl.getMapTileSize() * 2;
+void	manage_wall2(int x, int y, Player &player, int iteration)
+{
+	static std::vector<int>	plan;
+	static quadList node;
+	int	tile_s = gSdl.getMapTileSize() * 2;
+	static int w;
 
-// 	if (node != player.getNode())
-// 	{
-// 		node = player.getNode();
-// 		prevY = -1;
-// 		prevLine.clear();
-// 		line.assign(player.getRoom().getRoomPlan()[0].size(), 0);
-// 	}
-	
-// 	Assets::rendMap(x * tile_s, y * tile_s, 226, 1, 1);
+	if (node != player.getNode())
+	{
+		w = player.getRoom().getRoomPlan()[0].size();
+		node = player.getNode();
+		plan.assign(w * player.getRoom().getRoomPlan().size(), 0);
+	}
 
-// 	if (y != prevY)
-// 	{
-// 		prevLine = line;
-// 		std::fill(line.begin(), line.end(), 0);
-// 		prevY = y;
-// 	}
 
-// 	if (!checkLastTree(x, line, prevLine))
-// 	{
-// 		Assets::rendMap(x * tile_s, y * tile_s, 145, 1, 1);
-// 		if (x - 2 >= 0 && line[x - 2])
-// 		{
-// 			Assets::rendMap((x - 1) * tile_s, (y - 1) * tile_s, 148, 1, 1);
-// 			Assets::rendMap((x - 1) * tile_s, (y - 2) * tile_s, 103, 1, 1);
-// 			Assets::rendMap((x - 1) * tile_s, (y - 3) * tile_s, 13, 1, 1);
+	if (!iteration && !checkLastTree(x, y, w, plan))
+	{
+		Assets::rendMap(x * tile_s, y * tile_s, 226, 1, 1);
+		Assets::rendMap(x * tile_s, y * tile_s, 145, 1, 1);
+		plan[y * w + x] = 1;
+	}
+	else if (!iteration)
+		Assets::rendMap(x * tile_s, y * tile_s, 226, 1, 1);
+	else if (iteration && plan[y * w + x])
+	{
+		if (x - 2 >= 0 && plan[y * w + x - 2])
+		{
+			Assets::rendMap((x - 1) * tile_s, (y - 1) * tile_s, 148, 1, 1);
+			Assets::rendMap((x - 1) * tile_s, (y - 2) * tile_s, 103, 1, 1);
+			Assets::rendMap((x - 1) * tile_s, (y - 3) * tile_s, 13, 1, 1);
 
-// 		}
-// 		else
-// 		{
-// 			Assets::rendMap((x - 1) * tile_s, (y - 1) * tile_s, 99, 1, 1);
-// 			Assets::rendMap((x - 1) * tile_s, (y - 2) * tile_s, 54, 1, 1);
-// 			Assets::rendMap((x - 1) * tile_s, (y - 3) * tile_s, 9, 1, 1);
-// 		}
+		}
+		else
+		{
+			Assets::rendMap((x - 1) * tile_s, (y - 1) * tile_s, 99, 1, 1);
+			Assets::rendMap((x - 1) * tile_s, (y - 2) * tile_s, 54, 1, 1);
+			Assets::rendMap((x - 1) * tile_s, (y - 3) * tile_s, 9, 1, 1);
+		}
 
 		
-// 		Assets::rendMap(x * tile_s, (y - 1) * tile_s, 100, 1, 1);
-// 		Assets::rendMap(x * tile_s, (y - 2) * tile_s, 55, 1, 1);
-// 		Assets::rendMap(x * tile_s, (y - 3) * tile_s, 10, 1, 1);
+		Assets::rendMap(x * tile_s, (y - 1) * tile_s, 100, 1, 1);
+		Assets::rendMap(x * tile_s, (y - 2) * tile_s, 55, 1, 1);
+		Assets::rendMap(x * tile_s, (y - 3) * tile_s, 10, 1, 1);
 
-// 		Assets::rendMap((x + 1) * tile_s, (y - 1) * tile_s, 101, 1, 1);
-// 		Assets::rendMap((x + 1) * tile_s, (y - 2) * tile_s, 56, 1, 1);
-// 		Assets::rendMap((x + 1) * tile_s, (y - 3) * tile_s, 11, 1, 1);
-// 		line[x] = 1;
-// 	}
+		Assets::rendMap((x + 1) * tile_s, (y - 1) * tile_s, 101, 1, 1);
+		Assets::rendMap((x + 1) * tile_s, (y - 2) * tile_s, 56, 1, 1);
+		Assets::rendMap((x + 1) * tile_s, (y - 3) * tile_s, 11, 1, 1);
+	}
 	
-// }
+}
 
 void initAutoTileOffset(std::array<int, 256> &autoTileOffset)
 {
@@ -339,7 +336,7 @@ void	manageSoil(int x, int y, Player &player)
 			break ;
 		}
 	}
-	std::cout << "x = " << x << ", y = " << y << ", mask = " << (int)mask << ", depth = " << depth << std::endl;
+	//std::cout << "x = " << x << ", y = " << y << ", mask = " << (int)mask << ", depth = " << depth << std::endl;
 	int color = 541 + depth * 9;
 	int color2 = (depth == 2) ? color : color + 9;
 	int offset = autoTileOffset[mask];
@@ -347,10 +344,11 @@ void	manageSoil(int x, int y, Player &player)
 	Assets::rendMap(x * tile_s, y * tile_s, color + offset, 1, 1);
 }
 
-void	manageFloorPrint(int x, int y, char c, Player &player)
+void	manageFloorPrint(int x, int y, char c, Player &player, int iteration)
 {
 	int	tile_s = gSdl.getMapTileSize() * 2;
-	if (player.getFloor() == 1)
+	(void)iteration;
+	if (player.getFloor() == 0)
 	{
 		if (c == '1')
 			manage_wall(x, y, player);
@@ -359,10 +357,10 @@ void	manageFloorPrint(int x, int y, char c, Player &player)
 		else if (c == 'E')
 			Assets::rendMap(x * tile_s, y * tile_s, Assets::DOOR_FRONT, 2, 0);
 	}
-	else if (player.getFloor() == 0)
+	else if (player.getFloor() == 1)
 	{
 		if (c == '1'  || c == ' ')
-			;//manage_wall2(x, y, player);
+			manage_wall2(x, y, player, iteration);
 		else if (c == '0' || c == 'P')
 			manageSoil(x, y, player);
 	}
@@ -381,10 +379,20 @@ void	print_map(Player &player, std::vector<Player> &otherPlayers)
 	{
 		mapX = node->getX();
 		mapY = node->getY();
+
 		if (gSdl.texture == NULL)
+		{
 			gSdl.texture = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 800 * 16, 800 * 16);
+			SDL_SetTextureBlendMode(gSdl.texture, SDL_BLENDMODE_BLEND);
+		}
+		if (gSdl.texture2 == NULL)
+		{
+			gSdl.texture2 = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 800 * 16, 800 * 16);
+			SDL_SetTextureBlendMode(gSdl.texture2, SDL_BLENDMODE_BLEND);
+		}
 
 		SDL_SetRenderTarget(gSdl.renderer, gSdl.texture);
+		SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 0);
 		SDL_RenderClear(gSdl.renderer);
 
 		int h = player.getRoom().getRoomPlan().size();
@@ -394,7 +402,21 @@ void	print_map(Player &player, std::vector<Player> &otherPlayers)
 			for (int x = 0; x < w; x++)
 			{
 				char c = player.getRoom().getRoomPlan()[y][x];
-				manageFloorPrint(x, y, c, player);
+				manageFloorPrint(x, y, c, player, 0);
+			}
+		}
+		SDL_SetRenderTarget(gSdl.renderer, gSdl.texture2);
+		SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 0);
+		SDL_RenderClear(gSdl.renderer);
+		for (int y = 0; y < h; y++)
+		{
+			int w = player.getRoom().getRoomPlan()[y].size();
+			for (int x = 0; x < w; x++)
+			{
+				char c = player.getRoom().getRoomPlan()[y][x];
+				if (c != '1' && c != ' ')
+					continue ;
+				manageFloorPrint(x, y, c, player, 1);
 			}
 		}
 		SDL_SetRenderTarget(gSdl.renderer, NULL);
@@ -422,4 +444,5 @@ void	print_map(Player &player, std::vector<Player> &otherPlayers)
 			op.printPlayer(playerScreenX, playerScreenY);
 		}
 	}
+	SDL_RenderCopy(gSdl.renderer, gSdl.texture2, &camera, NULL);
 }

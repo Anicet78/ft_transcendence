@@ -15,6 +15,7 @@ class Engine
 		SDL_Renderer	*renderer;
 		SDL_Event		event;
 		SDL_Texture		*texture;
+		SDL_Texture		*texture2;
 		Key				key;
 
 		Engine();
