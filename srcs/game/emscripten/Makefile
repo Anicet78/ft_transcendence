@@ -31,7 +31,7 @@ SRCS		=	main.cpp \
 				engine/Mob.cpp \
 				player/Player.cpp \
 				player/PlayerAssets.cpp \
-				mapGen/mapMain.cpp Room.cpp Map.cpp Game.cpp
+				mapGen/mapMain.cpp Room.cpp Map.cpp Game.cpp \
 				player/Camera.cpp \
 				engine/printEntity.cpp 
 

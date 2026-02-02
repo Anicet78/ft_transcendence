@@ -129,6 +129,7 @@ void	playerAction(Player &player)
 void	game_loop(Game &game)
 {
 	Player	&player = game.getPlayer();
+	Camera	&camera = player.getCamera();
 	//updateRoom(player);
 	playerAction(player);
 	
@@ -144,4 +145,5 @@ void	game_loop(Game &game)
 	}
 	print_others(player, game.getOtherPlayers());
 	player.printPlayer(player.getScreenX(), player.getScreenY());
+	SDL_RenderCopy(gSdl.renderer, gSdl.texture2, &camera.getCamera(), NULL);
 }

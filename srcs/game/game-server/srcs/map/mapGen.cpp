@@ -277,17 +277,19 @@ void Map::preparePathMap(int numPlayers, int depth)
 {
 	std::vector<quadList> stairs;
 	std::vector<quadList> starts;
-	for (int i = 0; i < numPlayers - depth; i++)
+	int numStart = (numPlayers - depth > 0) ? numPlayers - depth : 1;
+	int numStairs = (numPlayers - depth - 1 > 0) ? numPlayers - depth - 1 : 1;
+	for (int i = 0; i < numStart; i++)
 		starts.emplace_back(this->chooseRoom("start", depth + 1));
-	for (int i = 0; i < numPlayers - depth - 1; i++)
+	for (int i = 0; i < numStairs; i++)
 		stairs.emplace_back(this->chooseRoom("stairs", depth + 1));
 
-	for (int i = 0; i < numPlayers - depth; i++)
+	for (int i = 0; i < numStart; i++)
 	{
 		quadList start;
 		quadList goal = starts[i];
 	
-		if (i == numPlayers - depth - 1)
+		if (i == numStairs && i > 0)
 			start = stairs[i - 1];
 		else
 			start = stairs[i];

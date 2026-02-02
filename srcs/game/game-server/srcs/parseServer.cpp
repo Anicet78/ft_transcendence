@@ -177,8 +177,9 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
                     player->setLaunched(1);
                 if (req["action"] == "player_move")
                 {
-                    updatePlayerPos(*player, req);
+                    updatePlayer(*player, req);
                     updateRoom(*player);
+					updateWorld(*player);
                 }
                 sendPlayerState(*player, session, "");
                 for (auto &oplayer : session.getPlayers())

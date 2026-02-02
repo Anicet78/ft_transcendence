@@ -304,7 +304,7 @@ void	manageFloorPrint(int x, int y, char c, Player &player, int iteration)
 	(void)iteration;
 	if (player.getFloor() == 0)
 	{
-		if (c == '1')
+		if (c == '1' && !iteration)
 			manage_wall(x, y, player);
 		else if (c == '0')	
 			Assets::rendMap(x * tile_s, y * tile_s, Assets::FLOOR, 2, 0);
@@ -382,6 +382,5 @@ void	print_map(Player &player)
 	camera.updateCamera(tile_s, roomW, roomH);
 	player.updateScreenPos(tile_s);
 
-	//SDL_RenderCopy(gSdl.renderer, gSdl.texture2, &camera, NULL);
 	SDL_RenderCopy(gSdl.renderer, gSdl.texture, &camera.getCamera(), NULL);
 }

@@ -172,7 +172,6 @@ void	moveMobs(std::vector<std::string> const &map, Mob &mob)
 	float x = mob.getX();
 	float y = mob.getY();
 
-	std::cout << "feur" << std::endl;
 	y -= 0.1;
 	if (map[y][x] == '1')
 		y += 0.1;
