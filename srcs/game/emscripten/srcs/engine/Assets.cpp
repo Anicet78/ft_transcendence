@@ -1,6 +1,6 @@
 #include"Assets.hpp"
 
-std::map<int, SDL_Rect>	Assets::_mapAssets;
+std::unordered_map<int, SDL_Rect>	Assets::_mapAssets;
 SDL_Texture				*Assets::_MapTexture;
 int						Assets::_MapImgH;
 int						Assets::_MapImgW;
@@ -31,7 +31,6 @@ void Assets::importAssets(std::string path, int tile_size) {
 		std::string error = "Error in surface conversion to texture : ";
 		error += SDL_GetError();
 		throw std::runtime_error(error);
-		return ;
 	}
 	_MapImgW = image->w;
 	_MapImgH = image->h;

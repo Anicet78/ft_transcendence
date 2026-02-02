@@ -47,7 +47,13 @@ class Player
 		int			_hp;
 		int			_atk;
 		int			_def;
+	//wall hitbox
+		FRect		_wallHitBox;
+		HitBox		_box;
 
+	//atk state
+		bool		_isAttacking;
+		int			_atkFrame;
 	public:
 		Player(std::string uid, int partySize, std::string partyName, std::string name,
 				uWS::WebSocket<false, true, PerSocketData> *ws);
@@ -76,6 +82,9 @@ class Player
 		int			getAtk(void) const;
 		int			getDef(void) const;
 		int			getLastDir(void) const;
+		FRect		&getWallHitBox(void);
+		Room		&getRoomRef(void);
+		HitBox		&getHitBox(void);
 
 	//setter
 		void		setConnexion(bool c);
@@ -87,14 +96,20 @@ class Player
 		void		setHp(int hp);
 		void		setAtk(int atk);
 		void		setDef(int def);
+		void		setWallHitBox(void);
 		void		setInQueue(bool flag);
 		void		setInSession(bool flag);
 		void		setAnim(int anim);
 		void		setLastDir(int dir);
 
 	//action
-		void		move(void);
+
 		void		attack(void);
+		bool		getIsAttacking(void) const;
+		void		endAttacking(void);
+
+		void		updateAnim(std::string const &req);
+		void		move(std::map<std::string, std::string> &req);
 		void		takeDamage(int amount);
 		void		heal(int amount);
 };

@@ -77,7 +77,7 @@ void	game_loop(Player &player, SDLTimer &cap)
 
 	print_player(player.getScreenX(), player.getScreenY(), player);
 
-	// player.getBox().printHitBox();
+	player.getBox().printHitBox();
 }
 
 void	fps(Uint32 frame) {

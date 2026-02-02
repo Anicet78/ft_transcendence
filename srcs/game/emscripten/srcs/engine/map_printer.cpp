@@ -84,54 +84,7 @@ void	manage_wall(int x, int y, Player &player)
 	}
 }
 
-float	cameraX(Player const &player, int const tile_size) {
-	float idealMinX = player.getX() - 12;
-	float idealMaxX = player.getX() + 13;
-	int roomW = player.getRoom().getRoomPlan()[0].size();
-
-	if (idealMinX < 0)
-	{
-		idealMinX = 0;
-		idealMaxX = std::min(25, roomW);
-	}
-	else if (idealMaxX > roomW)
-	{
-		idealMaxX = roomW;
-		idealMinX = std::max(0, roomW - 25);
-	}
-
-	if (idealMinX > idealMaxX)
-		idealMinX = idealMaxX;
-
-	if (roomW * tile_size <= SCREEN_WIDTH)
-		idealMinX = 0;
-	return (idealMinX);
-}
-
-float	cameraY(Player const &player, int const tile_size) {
-	float idealMinY = player.getY() - 12;
-	float idealMaxY = player.getY() + 13;
-	int roomH = player.getRoom().getRoomPlan().size();
-	if (idealMinY < 0)
-	{
-		idealMinY = 0;
-		idealMaxY = std::min(25, roomH);
-	}
-	else if (idealMaxY > roomH)
-	{
-		idealMaxY = roomH;
-		idealMinY = std::max(0, roomH - 25);
-	}
-
-	if (idealMinY > idealMaxY)
-		idealMinY = idealMaxY;
-
-	if (roomH * tile_size <= SCREEN_HEIGHT)
-		idealMinY = 0;
-	return (idealMinY);
-}
-
-void	print_map(Player &player, std::vector<Player> &otherPlayers)
+void	print_map(Player &player/*, std::vector<Player> &otherPlayers*/)
 {
 	static int	mapX = -1;
 	static int	mapY = -1;
@@ -167,26 +120,11 @@ void	print_map(Player &player, std::vector<Player> &otherPlayers)
 		SDL_SetRenderTarget(gSdl.renderer, NULL);
 	}
 
-	float	camX = cameraX(player, tile_s);
-	float	camY = cameraY(player, tile_s);
-	SDL_Rect camera = {
-		static_cast<int>(camX * tile_s),
-		static_cast<int>(camY * tile_s),
-		SCREEN_WIDTH,
-		SCREEN_HEIGHT
-	};
+	int roomH = player.getRoom().getRoomPlan().size();
+	int roomW = player.getRoom().getRoomPlan()[0].size();
+	Camera	&camera = player.getCamera();
+	camera.updateCamera(tile_s, roomW, roomH);
+	player.updateScreenPos(tile_s);
 
-	SDL_RenderCopy(gSdl.renderer, gSdl.texture, &camera, NULL);
-	float playerScreenX = (player.getX() - camX) * tile_s;
-    float playerScreenY = (player.getY() - camY) * tile_s;
-	player.printPlayer(playerScreenX, playerScreenY);
-	if (otherPlayers.size())
-	{
-		for (Player &op : otherPlayers)
-		{
-			playerScreenX = (op.getX() - camX) * tile_s;
-			playerScreenY = (op.getY() - camY) * tile_s;
-			op.printPlayer(playerScreenX, playerScreenY);
-		}
-	}
+	SDL_RenderCopy(gSdl.renderer, gSdl.texture, &camera.getCamera(), NULL);
 }

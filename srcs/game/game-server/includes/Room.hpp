@@ -2,7 +2,48 @@
 
 # define ROOM_HPP
 
-# include "main.hpp"
+# include "Mob.hpp"
+
+class ARoomEvent
+{
+protected:
+	std::string _type;
+public:
+	virtual ~ARoomEvent() {};
+	virtual	void	createEvent(void) = 0;
+	virtual bool	isCleared(void) = 0;
+	virtual bool	isStarted(void) = 0;
+	virtual void	checkCleared(void) = 0;
+	std::string	const	&getType(void) const;
+};
+
+//make the room event a mob rush, player need to kill every mob in the room to clear it
+class MobRush : public ARoomEvent
+{
+private:
+	std::vector<std::string>			&_roomPlan;
+	std::unordered_map<int, std::unique_ptr<Mob>>	_mobs;
+	std::vector<int>					_mobsId;
+	int									_nbrMob;
+	int									_nbrDead;
+
+	bool	_started;
+	bool	_cleared;
+
+	void	createEvent(void);
+public:
+	MobRush(std::vector<std::string> &roomPlan);
+	~MobRush();
+
+	bool	isCleared(void);
+	bool	isStarted(void);
+	void	destroyEvent(void);
+	void	checkCleared(void);
+
+	void	makeDie(int id);
+
+	std::unordered_map<int, std::unique_ptr<Mob>>	&getMobs(void);
+};
 
 class Room
 {
@@ -33,7 +74,9 @@ class Room
 		static std::map<std::string, std::shared_ptr<Room>> _RoomsF3;
 		//Map containing all of the rooms of the floor 4
 		static std::map<std::string, std::shared_ptr<Room>> _RoomsF4;
-	
+
+		std::shared_ptr<ARoomEvent>	_event;
+
 	private:
 		static void importMap(std::string &fullPath, std::string mapName, std::map<std::string, std::shared_ptr<Room>> &set);
 		static void importFloor(std::string fullPath, std::map<std::string, std::shared_ptr<Room>> &set);
@@ -63,6 +106,9 @@ class Room
 		void												turnMapLeft(void);
 		void												turnMapRight(void);
 		void												turnMapUpDown(void);
+		void												setEvent(void);
+		std::shared_ptr<ARoomEvent>							getRoomEvent(void) const;
+		std::shared_ptr<ARoomEvent>							getRoomEventRef(void);
 };
 
 std::ostream &operator<<(std::ostream &o, Room const &obj);

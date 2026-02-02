@@ -276,10 +276,6 @@ void	Room::setEvent(void) {
 	return ;
 }
 
-std::string const	&ARoomEvent::getType(void) const {
-	return (this->_type);
-}
-
 std::shared_ptr<ARoomEvent>	Room::getRoomEvent(void) const {
 	return (_event);
 }

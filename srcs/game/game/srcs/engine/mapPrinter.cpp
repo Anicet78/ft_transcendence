@@ -115,7 +115,7 @@ void	print_map(Player &player) {
 				char c = player.getRoom().getRoomPlan()[y][x];
 				if (c == '1')
 					manage_wall(x, y, player);
-				else if (c == '0' || c == 'M')
+				else if (c == '0')
 					Assets::rendMap(x * tile_s, y * tile_s, Assets::FLOOR, 2);
 				else if (c == 'E')
 					Assets::rendMap(x * tile_s, y * tile_s, Assets::DOOR_FRONT, 2);

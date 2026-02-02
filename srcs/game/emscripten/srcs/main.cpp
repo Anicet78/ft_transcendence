@@ -29,7 +29,7 @@ Map floor0(1, 1);
 	}
 #endif
 
-void updatePlayerState(Game &game, val &msg)
+void updatePlayerState(Game &game, val msg)
 {
 	Player &player = game.getPlayer();
 	int nbPlayers = msg["player_num"].as<int>();
@@ -73,6 +73,64 @@ void updatePlayerState(Game &game, val &msg)
 	}
 }
 
+void	updateRoomState(Game &game, val msg) {
+	if (msg["room_event"].as<std::string>() == "MobRush")
+	{
+		MobRush &rush = dynamic_cast<MobRush &>(*game.getPlayer().getRoomRef().getRoomEvent());
+		if (rush.isCleared() == false && msg["cleared"].as<std::string>() == "true")
+			rush.setCleared(true);
+		std::unordered_map<int, std::unique_ptr<Mob>> &mobs = rush.getMobs();
+		if (msg.hasOwnProperty(std::string("mobs").c_str()))
+		{
+			int nbr_mob = msg["nbr_mob"].as<int>();
+			val mob = msg["mobs"];
+			for (int i = 0; i < nbr_mob; i++)
+			{
+				val monster = mob[i];
+				if (!monster.hasOwnProperty(std::string("deathsended").c_str()))
+				{
+					//gather all mob information from the message
+					int id = monster["mob_id"].as<int>();
+					float x = monster["mob_x"].as<float>();
+					float y = monster["mob_y"].as<float>();
+
+					if (monster["damaged"].as<int>() == 1)
+						mobs[id]->damaged(true);
+					if (monster["isdead"].as<int>() == 1)
+						mobs[id]->setIsDead(true);
+					mobs[id]->setPos(x, y);
+				}
+				else
+				{
+					int id = monster["mob_id"].as<int>();
+					mobs[id]->setIsDead(true);
+				}
+			}
+		}
+
+	}
+}
+
+std::shared_ptr<ARoomEvent>	initMobRush(val &r)
+{
+	std::shared_ptr<ARoomEvent> event = std::make_shared<MobRush>("MobRush");
+	MobRush	&rush = dynamic_cast<MobRush &>(*event);
+	int nbr_mob = r["nbr_mob"].as<int>();
+	if (nbr_mob != 0)
+	{
+		val mobs = r["mobs"];
+		for (int j = 0; j < nbr_mob; j++)
+		{
+			val mob = mobs[j];
+			int id = mob["mob_id"].as<int>();
+			float x = mob["mob_x"].as<float>();
+			float y = mob["mob_y"].as<float>();
+			rush.addMob(id, x, y, 3);
+		}
+	}
+	return (event);
+}
+
 void	fillMap(std::vector<Map> &maps, val &msg, std::string mapName)
 {
 	val mObj = msg[mapName];
@@ -88,7 +146,19 @@ void	fillMap(std::vector<Map> &maps, val &msg, std::string mapName)
 		int x = r["x"].as<int>();
 		int y = r["y"].as<int>();
 		int rot = r["rot"].as<int>();
-		maps.back().setRoomInNode(name, x, y, rot, maps.size() - 1);
+		if (r.hasOwnProperty("room_event"))
+		{
+			std::string event_type = r["room_event"].as<std::string>();
+			if (event_type == "MobRush")
+			{
+				auto mobrush = initMobRush(r);
+				maps.back().setRoomInNode(name, x, y, rot, maps.size() - 1, mobrush);
+			}
+			else
+				maps.back().setRoomInNode(name, x, y, rot, maps.size() - 1, NULL);
+		}
+		else
+			maps.back().setRoomInNode(name, x, y, rot, maps.size() - 1, NULL);
 	}
 }
 
@@ -138,8 +208,11 @@ void	parseJson(bool &init, Game &game)
 		game.getPlayer().setNode(game.getMaps()[0].getNodes()[0]);
 		EM_ASM_({onCppMessage({action: "connected"});});
 	}
-	else if (msg["action"].as<std::string>() == "player_state")
-		updatePlayerState(game, msg);
+	else if (msg["action"].as<std::string>() == "update")
+	{
+		updatePlayerState(game, msg["player_state"]);
+		updateRoomState(game, msg["room_state"]);
+	}
 	else if (msg["action"].as<std::string>() == "launch")
 		launchGame(game);
 	msgJson = val::undefined();
@@ -147,14 +220,15 @@ void	parseJson(bool &init, Game &game)
 
 void mainloopE(void)
 {
-	auto nodes = floor0.getNodes();
 	static Player player("505", "betaTester");
 	static Game	game(player);
 	static bool init = false;
 	parseJson(init, game);
 	if (!init)
 		return ;
-	game_loop(game);
+
+	int	ticksPerFrame = 1000 / 120;
+	gSdl.cap.startTimer();
 	while (SDL_PollEvent(&gSdl.event))
 	{
 		if (gSdl.event.type == SDL_KEYDOWN && gSdl.event.key.keysym.sym == SDLK_ESCAPE)
@@ -169,8 +243,13 @@ void mainloopE(void)
 		else if (gSdl.event.type == SDL_KEYUP)
 			key_up();
 	}
+	game_loop(game);
 	SDL_RenderPresent(gSdl.renderer);
 	SDL_RenderClear(gSdl.renderer);
+	int frameTicks = gSdl.cap.getTicks();
+	if (frameTicks < ticksPerFrame)
+		SDL_Delay(ticksPerFrame - frameTicks);
+
 }
 
 void mainloop(void)
@@ -212,6 +291,7 @@ int main(void)
 	{
 		Assets::importAssets("../assets/sprite/assets.bmp", 16);
 		PlayerAssets::importPlayersAssets(100);
+		Mob::importMobsAssets(100);
 		Room::importRooms();
 		//floor0.setWaitingRoom();
 		// floor0.fillMap();

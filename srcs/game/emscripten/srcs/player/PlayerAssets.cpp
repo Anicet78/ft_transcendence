@@ -1,8 +1,8 @@
 #include "PlayerAssets.hpp"
 
-std::map<int, SDL_Rect>	PlayerAssets::_playerWalk;
-std::map<int, SDL_Rect>	PlayerAssets::_playerAttack;
-std::map<int, SDL_Rect>	PlayerAssets::_playerIdle;
+std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerWalk;
+std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerAttack;
+std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerIdle;
 
 SDL_Texture				*PlayerAssets::_playerWalkText;
 SDL_Texture				*PlayerAssets::_playerAttackText;
@@ -32,25 +32,7 @@ PlayerAssets::~PlayerAssets(void) {
 
 void	PlayerAssets::importPlayersWalkAssets(int tile_size)
 {
-	SDL_Surface *image = SDL_LoadBMP("../assets/sprite/Soldier-Walk.bmp");
-	if (!image)
-	{
-		std::string error = "Error in image conversion to surface : ";
-		error += SDL_GetError();
-		throw std::runtime_error(error);
-	}
-	//convert it into texture
-	SDL_Texture	*text = SDL_CreateTextureFromSurface(gSdl.renderer, image);
-	if (!text)
-	{
-		std::string error = "Error in surface conversion to texture : ";
-		error += SDL_GetError();
-		throw std::runtime_error(error);
-	}
-	_walkImgW = image->w;
-	_walkImgH = image->h;
-	//dont need surface anymore after conversion
-	SDL_FreeSurface(image);
+	_playerWalkText = loadTexture("assets/sprite/Soldier-Walk.bmp", _walkImgW, _walkImgH);
 
 	//define every tile asset position and stock it in _mapAssets
 	int y = 0;
@@ -67,34 +49,13 @@ void	PlayerAssets::importPlayersWalkAssets(int tile_size)
 		}
 		y++;
 	}
-	_playerWalkText = text;
 }
 
 
 
 void	PlayerAssets::importPlayersAttackAssets(int tile_size) {
-		SDL_Surface *image = SDL_LoadBMP("../assets/sprite/Soldier-Attack01.bmp");
-	if (!image)
-	{
-		std::string error = "Error in image conversion to surface : ";
-		error += SDL_GetError();
-		throw std::runtime_error(error);
-	}
 
-	//convert it into texture
-	SDL_Texture	*text = SDL_CreateTextureFromSurface(gSdl.renderer, image);
-	if (!text)
-	{
-		std::string error = "Error in surface conversion to texture : ";
-		error += SDL_GetError();
-		throw std::runtime_error(error);
-	}
-
-	_atkImgW = image->w;
-	_atkImgH = image->h;
-
-	//dont need surface anymore after conversion
-	SDL_FreeSurface(image);
+	_playerAttackText = loadTexture("assets/sprite/Soldier-Attack01.bmp", _atkImgW, _atkImgH);
 
 	//define every tile asset position and stock it in _mapAssets
 	int y = 0;
@@ -111,32 +72,11 @@ void	PlayerAssets::importPlayersAttackAssets(int tile_size) {
 		}
 		y++;
 	}
-	_playerAttackText = text;
 }
 
 void	PlayerAssets::importPlayersIdleAssets(int tile_size) {
-		SDL_Surface *image = SDL_LoadBMP("../assets/sprite/Soldier-Idle.bmp");
-	if (!image)
-	{
-		std::string error = "Error in image conversion to surface : ";
-		error += SDL_GetError();
-		throw std::runtime_error(error);
-	}
 
-	//convert it into texture
-	SDL_Texture	*text = SDL_CreateTextureFromSurface(gSdl.renderer, image);
-	if (!text)
-	{
-		std::string error = "Error in surface conversion to texture : ";
-		error += SDL_GetError();
-		throw std::runtime_error(error);
-	}
-
-	_idleImgW = image->w;
-	_idleImgH = image->h;
-
-	//dont need surface anymore after conversion
-	SDL_FreeSurface(image);
+	_playerIdleText = loadTexture("assets/sprite/Soldier-Idle.bmp", _idleImgW, _idleImgH);
 
 	//define every tile asset position and stock it in _mapAssets
 	int y = 0;
@@ -153,7 +93,6 @@ void	PlayerAssets::importPlayersIdleAssets(int tile_size) {
 		}
 		y++;
 	}
-	_playerIdleText = text;
 }
 
 void	PlayerAssets::importPlayersAssets(int tile_size)

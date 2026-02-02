@@ -1,13 +1,13 @@
 #ifndef ASSETS_HPP
 # define ASSETS_HPP
 
-# include "Engine.hpp"
+#include"Engine.hpp"
 
 class Assets
 {
 private:
 //map param
-	static std::map<int, SDL_Rect>	_mapAssets;
+	static std::unordered_map<int, SDL_Rect>	_mapAssets;
 	static SDL_Texture				*_MapTexture;
 	static int						_MapImgW;
 	static int						_MapImgH;

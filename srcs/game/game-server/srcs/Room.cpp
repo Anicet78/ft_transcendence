@@ -17,6 +17,7 @@ Room &Room::operator=(Room const &rhs)
 	this->_exits = rhs._exits;
 	this->_roomPlan = rhs._roomPlan;
 	this->_exitsLoc = rhs._exitsLoc;
+	this->_event = rhs._event;
 	return *this;
 }
 
@@ -33,7 +34,7 @@ Room::Room(void)
 }
 
 Room::Room(Room const &rhs): _width(rhs._width), _height(rhs._height), _rotated(rhs._rotated),
-				_exits(rhs._exits), _exitsLoc(rhs._exitsLoc), _name(rhs._name), _roomPlan(rhs._roomPlan)
+				_exits(rhs._exits), _exitsLoc(rhs._exitsLoc), _name(rhs._name), _roomPlan(rhs._roomPlan), _event(rhs._event)
 {}
 
 Room::~Room()
@@ -290,6 +291,26 @@ void Room::importRooms()
 	Room::importFloor(path + "floor0/", _RoomsF0);
 	// for (auto &room : _RoomsF0)
 	// 	std::cout << *room.second.get() << std::endl;
+}
+
+void	Room::setEvent(void) {
+	if (!_event && (rand() % 100) < 60)
+	{
+		std::string	name(getName());
+		if (name != "start" && name != "stairs" && name != "waiting")
+		{
+			_event = std::make_shared<MobRush>(this->_roomPlan);
+		}
+	}
+	return ;
+}
+
+std::shared_ptr<ARoomEvent>	Room::getRoomEvent(void) const {
+	return (_event);
+}
+
+std::shared_ptr<ARoomEvent>	Room::getRoomEventRef(void) {
+	return (_event);
 }
 
 std::ostream &operator<<(std::ostream &o, Room const &obj)
