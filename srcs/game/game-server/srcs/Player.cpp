@@ -306,35 +306,28 @@ void	Player::move(std::map<std::string, std::string> &req) {
 	if (req["w_key"] == "true")
 	{
 		y -= 0.1;
-		if (y >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 0, *this))
-			this->setPos(x, y);
-		else
+		if (!(y >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 0, *this)))
 			y += 0.1;
 	}
 	if (req["a_key"] == "true")
 	{
 		x -= 0.1;
-		if (x >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 1, *this))
-			this->setPos(x, y);
-		else
+		if (!(x >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 1, *this)))
 			x += 0.1;
 	}
 	if (req["s_key"] == "true")
 	{
 		y += 0.1;
-		if (y < room.getHeight() && !checkWallHitBox(plan, this->_wallHitBox, 2, *this))
-			this->setPos(x, y);
-		else
+		if (!(y < room.getHeight() && !checkWallHitBox(plan, this->_wallHitBox, 2, *this)))
 			y -= 0.1;
 	}
 	if (req["d_key"] == "true")
 	{
 		x += 0.1;
-		if (x < room.getWidth() && !checkWallHitBox(plan, this->_wallHitBox, 3, *this))
-			this->setPos(x, y);
-		else
+		if (!(x < room.getWidth() && !checkWallHitBox(plan, this->_wallHitBox, 3, *this)))
 			x -= 0.1;
 	}
+	this->setPos(x, y);
     if (!req["last_dir"].empty())
 		this->setLastDir(std::atoi(req["last_dir"].c_str()));
 }

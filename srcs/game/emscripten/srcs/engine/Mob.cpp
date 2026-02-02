@@ -1,9 +1,9 @@
 #include "Mob.hpp"
 
-std::map<int, SDL_Rect>	Mob::_mobWalk;
-std::map<int, SDL_Rect>	Mob::_mobAttack;
-std::map<int, SDL_Rect>	Mob::_mobIdle;
-std::map<int, SDL_Rect>	Mob::_mobHurt;
+std::unordered_map<int, SDL_Rect>	Mob::_mobWalk;
+std::unordered_map<int, SDL_Rect>	Mob::_mobAttack;
+std::unordered_map<int, SDL_Rect>	Mob::_mobIdle;
+std::unordered_map<int, SDL_Rect>	Mob::_mobHurt;
 
 SDL_Texture	*Mob::_mobWalkText;
 SDL_Texture	*Mob::_mobAttackText;

@@ -1,6 +1,6 @@
 #include"Assets.hpp"
 
-std::map<int, SDL_Rect>	Assets::_mapAssets;
+std::unordered_map<int, SDL_Rect>	Assets::_mapAssets;
 SDL_Texture				*Assets::_MapTexture;
 int						Assets::_MapImgH;
 int						Assets::_MapImgW;

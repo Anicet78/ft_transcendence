@@ -22,7 +22,7 @@ class MobRush : public ARoomEvent
 {
 private:
 	std::vector<std::string>			&_roomPlan;
-	std::map<int, std::unique_ptr<Mob>>	_mobs;
+	std::unordered_map<int, std::unique_ptr<Mob>>	_mobs;
 	std::vector<int>					_mobsId;
 	int									_nbrMob;
 	int									_nbrDead;
@@ -42,7 +42,7 @@ public:
 
 	void	makeDie(int id);
 
-	std::map<int, std::unique_ptr<Mob>>	&getMobs(void);
+	std::unordered_map<int, std::unique_ptr<Mob>>	&getMobs(void);
 };
 
 class Room

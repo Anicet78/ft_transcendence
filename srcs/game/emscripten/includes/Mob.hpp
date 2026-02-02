@@ -6,10 +6,10 @@
 class Mob
 {
 private:
-	static std::map<int, SDL_Rect>	_mobWalk;
-	static std::map<int, SDL_Rect>	_mobAttack;
-	static std::map<int, SDL_Rect>	_mobIdle;
-	static std::map<int, SDL_Rect>	_mobHurt;
+	static std::unordered_map<int, SDL_Rect>	_mobWalk;
+	static std::unordered_map<int, SDL_Rect>	_mobAttack;
+	static std::unordered_map<int, SDL_Rect>	_mobIdle;
+	static std::unordered_map<int, SDL_Rect>	_mobHurt;
 
 	static SDL_Texture	*_mobWalkText;
 	static SDL_Texture	*_mobAttackText;

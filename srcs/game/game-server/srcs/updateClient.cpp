@@ -126,7 +126,7 @@ void	updateWorld(Player &player)
 	if (event && event->getType() == "MobRush")
 	{
 		MobRush &rush = dynamic_cast<MobRush &>(*event);
-		std::map<int, std::unique_ptr<Mob>> &mobs = rush.getMobs();
+		std::unordered_map<int, std::unique_ptr<Mob>> &mobs = rush.getMobs();
 		rush.checkCleared();
 		if (rush.isCleared() == false)
 		{

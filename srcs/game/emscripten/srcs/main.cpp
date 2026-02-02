@@ -79,32 +79,32 @@ void	updateRoomState(Game &game, val msg) {
 		MobRush &rush = dynamic_cast<MobRush &>(*game.getPlayer().getRoomRef().getRoomEvent());
 		if (rush.isCleared() == false && msg["cleared"].as<std::string>() == "true")
 			rush.setCleared(true);
-		std::map<int, std::unique_ptr<Mob>> &mobs = rush.getMobs();
+		std::unordered_map<int, std::unique_ptr<Mob>> &mobs = rush.getMobs();
 		if (msg.hasOwnProperty(std::string("mobs").c_str()))
 		{
 			int nbr_mob = msg["nbr_mob"].as<int>();
 			val mob = msg["mobs"];
 			for (int i = 0; i < nbr_mob; i++)
 			{
-				//gather all mob information from the message
-				int id = mob["mob_id"].as<int>();
-
-				float x = mob["mob_x"].as<float>();
-
-				float y = mob["mob_y"].as<float>();
-
-				if (mob["damaged"].as<int>() == 1)
+				val monster = mob[i];
+				if (!monster.hasOwnProperty(std::string("deathsended").c_str()))
 				{
-					std::cout << "damaged" << std::endl;
-					mobs[id]->damaged(true);
+					//gather all mob information from the message
+					int id = monster["mob_id"].as<int>();
+					float x = monster["mob_x"].as<float>();
+					float y = monster["mob_y"].as<float>();
+
+					if (monster["damaged"].as<int>() == 1)
+						mobs[id]->damaged(true);
+					if (monster["isdead"].as<int>() == 1)
+						mobs[id]->setIsDead(true);
+					mobs[id]->setPos(x, y);
 				}
-				if (mob["isdead"].as<int>() == 1)
+				else
 				{
-					std::cout << "dead" << std::endl;
+					int id = monster["mob_id"].as<int>();
 					mobs[id]->setIsDead(true);
 				}
-
-				mobs[id]->setPos(x, y);
 			}
 		}
 
@@ -227,7 +227,7 @@ void mainloopE(void)
 	if (!init)
 		return ;
 
-	int	ticksPerFrame = 1000 / 60;
+	int	ticksPerFrame = 1000 / 120;
 	gSdl.cap.startTimer();
 	while (SDL_PollEvent(&gSdl.event))
 	{
@@ -316,7 +316,7 @@ int main(void)
 	}
 	// printMap(floor0);
 	#ifdef __EMSCRIPTEN__
-		emscripten_set_main_loop(mainloopE, 60, true);
+		emscripten_set_main_loop(mainloopE, 120, true);
 	#else
 		mainloop();
 	#endif

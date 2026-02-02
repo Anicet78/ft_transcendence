@@ -1,8 +1,8 @@
 #include "PlayerAssets.hpp"
 
-std::map<int, SDL_Rect>	PlayerAssets::_playerWalk;
-std::map<int, SDL_Rect>	PlayerAssets::_playerAttack;
-std::map<int, SDL_Rect>	PlayerAssets::_playerIdle;
+std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerWalk;
+std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerAttack;
+std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerIdle;
 
 SDL_Texture				*PlayerAssets::_playerWalkText;
 SDL_Texture				*PlayerAssets::_playerAttackText;

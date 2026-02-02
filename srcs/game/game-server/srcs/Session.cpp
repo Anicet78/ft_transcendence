@@ -56,7 +56,7 @@ void	putRoomEvent(std::string &msg, std::shared_ptr<Room> room)
 	if (room->getRoomEvent()->getType() == "MobRush")
 	{
 		MobRush &event = dynamic_cast<MobRush &>(*room->getRoomEvent());
-		std::map<int, std::unique_ptr<Mob>> &mobs = event.getMobs();
+		std::unordered_map<int, std::unique_ptr<Mob>> &mobs = event.getMobs();
 		if (mobs.size())
 		{
 			msg += ", \"nbr_mob\": " + std::to_string(mobs.size());
