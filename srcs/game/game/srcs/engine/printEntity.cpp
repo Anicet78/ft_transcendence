@@ -47,7 +47,7 @@ void	update_mob(Mob &mob, float camX, float camY, int tile_size) {
 	mob.updateScreenPos(camX, camY, tile_size);
 	mob.getBox().updateHitBox();		
 	mob.printMob(camX, camY, tile_size);
-	// mob.getBox().printHitBox();
+	mob.getBox().printHitBox();
 }
 
 int		mob_interaction(Mob &mob, int mobId, Player &player) {

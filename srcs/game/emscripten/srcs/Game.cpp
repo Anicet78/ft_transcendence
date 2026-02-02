@@ -13,11 +13,6 @@ Game::~Game(void)
 //Member Functions--------------------------------------------------------
 
 
-void Game::setPlayer(Player &player)
-{
-	this->_player = player;
-}
-
 void Game::addMap(Map &map)
 {
 	this->_maps.push_back(map);

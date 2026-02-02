@@ -2,14 +2,6 @@
 #include <ctime>
 #include <sys/time.h>
 
-long	time_in_us(void)
-{
-	struct timeval	start;
-
-	gettimeofday(&start, NULL);
-	return (start.tv_usec);
-}
-
 void updateRoom(Game &game, Player &player, std::string dir)
 {
 	Room room = player.getRoom();
@@ -57,6 +49,8 @@ void	updatePlayerPosition(Player &player)
 {
 	static int isIdling = 1;
 	std::string w_key, a_key, s_key, d_key, anim = "idling", lastDir;
+
+	//player movement
 	if (gSdl.key.w_key)
 		w_key = "true";
 	if (gSdl.key.a_key)
@@ -65,10 +59,13 @@ void	updatePlayerPosition(Player &player)
 		s_key = "true";
 	if (gSdl.key.d_key)
 		d_key = "true";
-	if (gSdl.key.space)
+
+	//player attack
+	if (player.checkAtkState() == true)
 		anim = "attacking";
 	else if (gSdl.key.w_key || gSdl.key.a_key || gSdl.key.s_key || gSdl.key.d_key)
 		anim = "walking";
+	
 	player.updateLastDir();
 	lastDir = std::to_string(player.getLastDir());
 	if (!w_key.empty() || !a_key.empty() || !s_key.empty() || !d_key.empty() || anim != "idling")
@@ -103,13 +100,48 @@ void	updatePlayerPosition(Player &player)
 	}
 }
 
+static void print_mobs(MobRush &mobRush, Player &player)
+{
+	int		tile_s = gSdl.getMapTileSize() * 2;
+	Camera	&cam = player.getCamera();
+	for (auto &mob : mobRush.getMobs())
+	{
+		if (mob.second->isDead() == false)
+		{
+			if (mob.second->checkInvinsibleFrame() == true && mob.second->getFrame() >= 23)
+				mob.second->endInvinsibleFrame();
+			if (mob.second->isDamaged())
+				mob.second->startInvinsibleFrame();
+			mob.second->printMob(cam.getCamX(), cam.getCamY(), tile_s);
+		}
+	}
+}
+
+void	playerAction(Player &player)
+{
+	//manage player atk state
+	if (player.checkAtkState() == true && player.getFrame() >= 23)
+		player.endAtk();
+	if (gSdl.key.attacking() && player.checkAtkState() == false)
+		player.startAtk();
+}
 
 void	game_loop(Game &game)
 {
+	Player	&player = game.getPlayer();
 	//updateRoom(player);
+	playerAction(player);
+	
 	#ifdef __EMSCRIPTEN__
 
 	updatePlayerPosition(game.getPlayer());
 	#endif
-	print_map(game.getPlayer(), game.getOtherPlayers());
+	print_map(player);
+	if (player.getRoom().getRoomEvent())
+	{
+		MobRush &mobrush = dynamic_cast<MobRush &>(*player.getRoom().getRoomEvent());
+		print_mobs(mobrush, player);
+	}
+	print_others(player, game.getOtherPlayers());
+	player.printPlayer(player.getScreenX(), player.getScreenY());
 }

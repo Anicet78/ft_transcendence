@@ -1,7 +1,7 @@
 #ifndef ENGINE_HPP
 # define ENGINE_HPP
 
-# include "Key.hpp"
+# include "Camera.hpp"
 
 class Engine
 {
@@ -16,6 +16,7 @@ class Engine
 		SDL_Event		event;
 		SDL_Texture		*texture;
 		SDL_Texture		*texture2;
+		SDLTimer		cap;
 		Key				key;
 
 		Engine();
@@ -24,7 +25,9 @@ class Engine
 		int		getMapTileSize(void);
 
 		void	setPlayerSize(int tile_size);
-		int		getPlayerSize(void);
+		int		getPlayerSize(void);	
+
+		SDLTimer	&getTimer(void);
 };
 
 extern Engine	gSdl;

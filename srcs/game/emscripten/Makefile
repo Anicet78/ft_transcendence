@@ -24,11 +24,16 @@ SRCS		=	main.cpp \
 				engine/sdl_loop.cpp \
 				engine/load_image.cpp \
 				engine/init_sdl.cpp \
-				engine/key_action.cpp \
+				engine/keyAction.cpp \
 				engine/map_printer.cpp \
+				engine/SDLTimer.cpp \
+				engine/RoomEvent.cpp \
+				engine/Mob.cpp \
 				player/Player.cpp \
 				player/PlayerAssets.cpp \
 				mapGen/mapMain.cpp Room.cpp Map.cpp Game.cpp
+				player/Camera.cpp \
+				engine/printEntity.cpp 
 
 EMSRCS		= $(patsubst %, $(SRC_DIR)%, $(SRCS))
 

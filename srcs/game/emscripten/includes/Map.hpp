@@ -58,7 +58,7 @@ class Map
 		void					link(Map &up);
 		int						getWidth() const;
 		int						getHeight() const;
-		void					setRoomInNode(std::string &roomName, int x, int y, int rot, int roomSet);
+		void					setRoomInNode(std::string &roomName, int x, int y, int rot, int roomSet, std::shared_ptr<ARoomEvent> event);
 		void					setWaitingRoom();
 };
 

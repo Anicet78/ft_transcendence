@@ -30,3 +30,7 @@ void	Engine::setPlayerSize(int size)
 int		Engine::getPlayerSize(void) {
 	return (_player_size);
 }
+
+SDLTimer	&Engine::getTimer(void) {
+	return (this->cap);
+}

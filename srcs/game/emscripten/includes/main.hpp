@@ -30,5 +30,6 @@
 # define SCREEN_WIDTH 800
 # define SCREEN_HEIGHT 800
 
+SDL_Texture *loadTexture(std::string path, int &imgW, int &imgH);
 
 #endif

@@ -52,3 +52,7 @@ bool	MobRush::isCleared(void) {
 std::map<int, std::unique_ptr<Mob> >	&MobRush::getMobs(void) {
 	return (_mobs);
 }
+
+std::string const	&ARoomEvent::getType(void) const {
+	return (this->_type);
+}

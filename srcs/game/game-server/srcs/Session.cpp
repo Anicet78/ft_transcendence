@@ -1,6 +1,6 @@
 # include "Session.hpp"
 
-Session::Session(void): _maxNumPlayer(3), _running(0), _ended(0)
+Session::Session(void): _maxNumPlayer(2), _running(0), _ended(0)
 {
 	int size = 4 * _maxNumPlayer;
 	_maps.emplace_back(1, 1);
@@ -58,6 +58,31 @@ void	Session::linkMaps(Map &down, Map &up)
 	down.link(up);
 }
 
+void	putRoomEvent(std::string &msg, std::shared_ptr<Room> room)
+{
+	msg += ", \"room_event\": \"" + room->getRoomEvent()->getType() + '\"';
+	if (room->getRoomEvent()->getType() == "MobRush")
+	{
+		MobRush &event = dynamic_cast<MobRush &>(*room->getRoomEvent());
+		std::unordered_map<int, std::unique_ptr<Mob>> &mobs = event.getMobs();
+		if (mobs.size())
+		{
+			msg += ", \"nbr_mob\": " + std::to_string(mobs.size());
+			msg += ", \"mobs\": [";
+			for (auto it = mobs.begin(); it != mobs.end(); ++it)
+			{
+				Mob	&mob = *it->second;
+				msg += "{\"mob_id\": " + std::to_string(it->first) + ", "
+					+ "\"mob_x\": " + std::to_string(mob.getX()) + ", "
+					+ "\"mob_y\": " + std::to_string(mob.getY()) + "},";
+			}
+			if (*msg.rbegin() == ',')
+				msg.pop_back();
+			msg += "]";
+		}
+	}
+}
+
 std::string	Session::sendMaps(void)
 {
 	if (!this->_mapInfos.empty())
@@ -84,7 +109,12 @@ std::string	Session::sendMaps(void)
 			msg += "{\"name\": \"" + room->getName() + "\", "
 				+ "\"x\": " + std::to_string(node->getX()) + ", "
 				+ "\"y\": " + std::to_string(node->getY()) + ", "
-				+ "\"rot\": " + std::to_string(room->getRotated()) + '}';
+				+ "\"rot\": " + std::to_string(room->getRotated());
+			if (room->getRoomEvent())
+			{
+				putRoomEvent(msg, room);
+			}
+			msg += '}';
 			j++;
 		}
 		msg += "], \"nb_rooms\": " + std::to_string(j) + "}";

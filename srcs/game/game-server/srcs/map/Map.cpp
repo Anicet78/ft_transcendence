@@ -25,6 +25,9 @@ void chainedMap::addRoom(const Room &room)
 		*this->_room = room;
 	else
 		this->_room = std::make_shared<Room>(room);
+	
+	this->_room->setEvent();
+
 	auto exits = this->_room->getExits();
 
 	if (!exits[0] && !this->north.expired())

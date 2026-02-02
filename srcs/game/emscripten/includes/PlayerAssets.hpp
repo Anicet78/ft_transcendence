@@ -9,9 +9,9 @@ class PlayerAssets
 {
 	private:
 
-		static std::map<int, SDL_Rect>	_playerWalk;
-		static std::map<int, SDL_Rect>	_playerAttack;
-		static std::map<int, SDL_Rect>	_playerIdle;
+		static std::unordered_map<int, SDL_Rect>	_playerWalk;
+		static std::unordered_map<int, SDL_Rect>	_playerAttack;
+		static std::unordered_map<int, SDL_Rect>	_playerIdle;
 
 		static SDL_Texture	*_playerWalkText;
 		static SDL_Texture	*_playerAttackText;

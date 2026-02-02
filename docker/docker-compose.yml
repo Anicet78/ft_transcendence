@@ -1,62 +1,88 @@
 services:
-  nginx:
+  db:
+    image: postgres
+    container_name: postgre-c
+    restart: on-failure
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - postgres-v:/var/lib/postgresql
+      - ./postgre:/docker-entrypoint-initdb.d
+    networks:
+      - transcendence
+
+  node:
     build:
-      context: ./requirements/nginx
+      context: ../srcs/backend
       dockerfile: Dockerfile
+    container_name: node-c
+    restart: on-failure
+    env_file:
+      - .env
+    secrets:
+      - db_password
+    networks:
+      - transcendence
+    depends_on:
+      - db
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-c
+    restart: on-failure
+    ports:
+      - 5050:80
+    env_file:
+      - .env
+    environment:
+      - PGADMIN_DEFAULT_PASSWORD_FILE=/run/secrets/pgadmin_password
+    secrets:
+      - pgadmin_password
+    networks:
+      - transcendence
+    depends_on:
+      - db
+
+  emscripten:
+    image: emscripten/emsdk
+    container_name: emscripten-c
+    volumes:
+      - ../srcs/game:/src
+      - ../srcs/frontend/game:/build
+    networks:
+      - transcendence
+    entrypoint: ["make", "wasm"]
+
+  nginx:
+    image: nginx
     container_name: nginx-c
     restart: on-failure
     ports:
-      - 443:443
+      - 8080:80
+      - 8443:443
+    env_file:
+      - .env
     volumes:
-      - postgres:/var/lib/
-    env_file:
-      - .env
+      - ./nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./certs:/etc/nginx/certs
+    networks:
+      - transcendence
     depends_on:
-      - wordpress
-    networks:
-      - inception
-
-  backup:
-    build:
-      context: ./requirements/backup
-      dockerfile: Dockerfile
-    container_name: backup-c
-    restart: on-failure
-    env_file:
-      - .env
-    secrets:
-      - db_password
-    depends_on:
-      - mariadb
-      - wordpress
-    networks:
-      - inception
-
-  postgres:
-    build:
-      context: ./Postgres
-      dockerfile: Dockerfile
-    container_name: postgres-c
-    restart: on-failure
-    volumes:
-      -
-    env_file:
-      - .env
-    secrets:
-      - db_root_password
-      - db_password
-    networks:
-      - inception
+      - emscripten
 
 secrets:
-  db_root_password:
-    file: ./secrets/db_root_password.txt
   db_password:
     file: ./secrets/db_password.txt
+  pgadmin_password:
+    file: ./secrets/pgadmin_password.txt
 
 volumes:
-  postgres:
+  postgres-v:
 
 networks:
-  inception:
+  transcendence:
     driver: bridge

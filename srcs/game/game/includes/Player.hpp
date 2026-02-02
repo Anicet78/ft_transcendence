@@ -68,6 +68,7 @@ public:
 	void	setHp(int hp);
 	void	setAtk(int atk);
 	void	setDef(int def);
+
 	void	setWallHitBox(void);
 
 //player attacking action
