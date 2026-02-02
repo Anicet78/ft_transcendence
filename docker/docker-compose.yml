@@ -46,7 +46,7 @@ services:
       - ../srcs/backend:/app
     working_dir: /app
     entrypoint: ["/app/prisma_entrypoint.sh"]
-    command: ["sh", "-c", "npm install --legacy-peer-deps && npx prisma generate && sleep infinity"]
+    command: ["sh", "-c", "npm install --legacy-peer-deps && npx prisma generate && npx prisma db seed && sleep infinity"]
     networks:
       - transcendence
     depends_on:

@@ -50,12 +50,14 @@ CREATE TABLE app_user (
 	CHECK (trim(mail_address) <> '')
 );
 
+CREATE TYPE roles AS ENUM ('guest', 'user', 'admin');
+
 CREATE TABLE user_role (
 	user_role_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	attributed_to UUID,
 	attributed_by UUID,
 
-	"role" VARCHAR(20) NOT NULL DEFAULT 'guest',
+	"role" roles NOT NULL DEFAULT 'guest',
 
 	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
 	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
@@ -67,26 +69,6 @@ CREATE TABLE user_role (
 
 	CONSTRAINT fk_role_giver
 		FOREIGN KEY (attributed_by)
-		REFERENCES app_user(app_user_id),
-
-	CHECK ("role" IN ('guest', 'user', 'app_admin'))
-);
-
-CREATE TABLE ban_list (
-	ban_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-	user_id UUID,
-
-	banned_by UUID,
-	banned_at timestamptz DEFAULT CURRENT_TIMESTAMP,
-	reason TEXT,
-	expires_at timestamptz,
-	updated_at timestamptz,
-	deleted_at timestamptz,
-
-	FOREIGN KEY (user_id)
-		REFERENCES app_user(app_user_id),
-
-	FOREIGN KEY (banned_by)
 		REFERENCES app_user(app_user_id)
 );
 
@@ -169,8 +151,8 @@ CREATE TABLE game_session (
 
 	"status" VARCHAR(20) NOT NULL DEFAULT 'finished',
 
-    CONSTRAINT chk_game_status
-        CHECK (status IN ('pending', 'running', 'finished', 'aborted'))
+	CONSTRAINT chk_game_status
+		CHECK (status IN ('pending', 'running', 'finished', 'aborted'))
 );
 
 CREATE TABLE game_result (

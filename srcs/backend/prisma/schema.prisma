@@ -265,19 +265,6 @@ enum region_list {
   Deleted
 }
 
-model ban_list {
-  ban_id                                String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  user_id                               String?   @db.Uuid
-  banned_by                             String?   @db.Uuid
-  banned_at                             DateTime? @default(now()) @db.Timestamptz(6)
-  reason                                String?
-  expires_at                            DateTime? @db.Timestamptz(6)
-  updated_at                            DateTime? @db.Timestamptz(6)
-  deleted_at                            DateTime? @db.Timestamptz(6)
-  app_user_ban_list_banned_byToapp_user AppUser?  @relation("ban_list_banned_byToapp_user", fields: [banned_by], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
-  app_user_ban_list_user_idToapp_user   AppUser?  @relation("ban_list_user_idToapp_user", fields: [user_id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
-}
-
 enum chat_role_type {
   owner
   admin
@@ -296,4 +283,10 @@ enum message_status {
 enum type_list {
   private
   group
+}
+
+enum roles {
+  guest
+  user
+  admin
 }
