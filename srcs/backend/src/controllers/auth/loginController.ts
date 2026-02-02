@@ -30,7 +30,7 @@ export async function postLoginController(
 		email: dbUser.mail,
 		region: dbUser.region,
 		passwordHash: dbUser.passwordHash,
-		role: dbUser.
+		role: dbUser.rolesReceived[0]?.role || "user"
 	};
 
 	const token = await reply.jwtSign({ id: user.id, email: user.email, role: user.role });

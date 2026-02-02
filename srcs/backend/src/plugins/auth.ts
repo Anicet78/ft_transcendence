@@ -9,18 +9,12 @@ export type JWTPayload = {
 };
 
 export default fp(async (fastify) => {
+	// Authentication
 	const JWT_SECRET = fs.readFileSync("/run/secrets/jwt_secret", "utf8").trim();
 
 	await fastify.register(fastifyJwt, {
 		secret: JWT_SECRET,
 		sign: { expiresIn: "7d" }
-	});
-
-	fastify.decorate("verifyAdmin", async (request: FastifyRequest, reply: FastifyReply) => {
-		const user = request.user;
-
-		if (!user || user.role !== 'ADMIN')
-			return reply.code(403).send({ error: "Forbidden", message: "Not Admin" });
 	});
 
 	fastify.decorate("authenticate", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -38,11 +32,15 @@ export default fp(async (fastify) => {
 
 		if (currentRoute && publicRoutes.includes(currentRoute)) return;
 
-		try {
-			await request.jwtVerify();
-		} catch {
-			return reply.code(401).send({ error: "Not authenticated" });
-		}
+		await fastify.authenticate(request, reply);
+	});
+
+	// Authorization
+	fastify.decorate("verifyAdmin", async (request: FastifyRequest, reply: FastifyReply) => {
+		const user = request.user;
+
+		if (!user || user.role !== 'admin')
+			return reply.code(403).send({ error: "Forbidden", message: "Not Admin" });
 	});
 });
 

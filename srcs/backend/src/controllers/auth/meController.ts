@@ -17,7 +17,7 @@ export async function getMeController(
 
 	const room: Room | null = RoomService.find(request.user.id);
 
-	const response: MeResponseType = { user: { id: user.appUserId, email: user.mail, role:  }, roomId: room?.roomId || "" };
+	const response: MeResponseType = { user: { id: user.appUserId, email: user.mail, role: user.rolesReceived[0]?.role || "user" }, roomId: room?.roomId || "" };
 
 	return reply.status(200).send(response);
 }

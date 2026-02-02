@@ -26,7 +26,7 @@ export async function postRegisterController(
 		region: region,
 		email: email,
 		passwordHash: hash,
-		role: "User"
+		role: "user"
 	};
 
 	dbUser = await UserService.createUser(user);

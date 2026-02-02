@@ -10,5 +10,5 @@ export async function router(fastify: FastifyInstance) {
 	fastify.register(roomRoutes, { prefix: '/room' });
 	fastify.register(profileRoutes);
 	fastify.register(friendshipRoutes);
-	fastify.register(adminRouter, { prefix: '/admin', preHandler: fastify.verifyAdmin });
+	fastify.register(adminRouter, { prefix: '/admin' });
 }
