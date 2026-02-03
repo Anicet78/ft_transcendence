@@ -10,7 +10,12 @@ import {
 	ChatSchema,
 	ChatInvitationListResponseSchema,
 	ChatMessageParamsSchema,
-	ChatMessageListSchema
+	ChatMessageListSchema,
+	EditMessageParamsSchema,
+	EditMessageBodySchema,
+	EditMessageResponseSchema,
+	ModerateMessageParamsSchema,
+	ModerateMessageResponseSchema
 } from '../../schema/chatSchema.js';
 import {
 	listUserChatsController,
@@ -18,7 +23,9 @@ import {
 	deleteMessageController,
 	getChatInfoController,
 	listChatInvitationsController,
-	getChatMessagesController
+	getChatMessagesController,
+	editMessageController,
+	moderateMessageController
 } from '../../controllers/chat/chatController.js';
 
 import {
@@ -42,7 +49,14 @@ import {
 
 	UpdateChatRoleParamsSchema,
 	UpdateChatRoleBodySchema,
-	UpdateChatRoleResponseSchema
+	UpdateChatRoleResponseSchema,
+	BanChatMemberParamsSchema,
+	BanChatMemberBodySchema,
+	BanChatMemberResponseSchema,
+	UnbanChatMemberParamsSchema,
+	UnbanChatMemberResponseSchema,
+	BanListParamsSchema,
+	BanListResponseSchema
 } from '../../schema/groupChatSchema.js';
 
 import {
@@ -52,7 +66,10 @@ import {
 	disbandGroupChatController,
 	kickGroupMemberController,
 	quitGroupChatController,
-	updateChatMemberRoleController
+	updateChatMemberRoleController,
+	banChatMemberController,
+	unbanChatMemberController,
+	getChatBansController
 } from '../../controllers/chat/groupChatController.js';
 
 async function chatRoutes(fastify: FastifyInstance) {
@@ -154,8 +171,28 @@ async function chatRoutes(fastify: FastifyInstance) {
 		handler: getChatMessagesController
 	});
 
+	//EDIT MESSAGE
+	fastify.patch('/chat/:chatId/message/:messageId/edit', {
+		schema: {
+		params: EditMessageParamsSchema,
+		body: EditMessageBodySchema,
+		response: { 200: EditMessageResponseSchema }
+		},
+		handler: editMessageController
+	});
 
-	//GROUP CHATS ROUTES
+	//MODERATE MESSAGE
+	fastify.patch('/chat/:chatId/message/:messageId/moderate', {
+		schema: {
+		params: ModerateMessageParamsSchema,
+		response: { 200: ModerateMessageResponseSchema }
+		},
+		handler: moderateMessageController
+	});
+
+
+
+	//--------------------- GROUP CHATS ROUTES ---------------------//
 	//DISBAND GROUP CHAT
 	fastify.post('/group/:chatId/disband', {
 		schema: {
@@ -202,6 +239,39 @@ async function chatRoutes(fastify: FastifyInstance) {
 	handler: updateChatMemberRoleController
 	});
 
+	//BAN MEMBER FROM GROUP CHAT
+	fastify.post('/group/:chatId/ban/:memberId', {
+		schema: {
+			params: BanChatMemberParamsSchema,
+			body: BanChatMemberBodySchema,
+			response: {
+				200: BanChatMemberResponseSchema
+			}
+		},
+		handler: banChatMemberController
+	});
+
+	//UNBAN MEMBER FROM GROUP CHAT
+	fastify.patch('/group/:chatId/unban/:memberId', {
+		schema: {
+			params: UnbanChatMemberParamsSchema,
+			response: {
+				200: UnbanChatMemberResponseSchema
+			}
+		},
+		handler: unbanChatMemberController
+	});
+
+	//LIST CHAT BANS
+	fastify.get('/group/:chatId/bans', {
+		schema: {
+		params: BanListParamsSchema,
+		response: {
+			200: BanListResponseSchema
+		}
+		},
+		handler: getChatBansController
+	});
 } export default chatRoutes;
 
 

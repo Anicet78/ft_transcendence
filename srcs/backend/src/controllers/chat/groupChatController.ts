@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { AppError } from '../../schema/errorSchema.js';
 
-import { createGroupChat } from '../../services/db/groupChatService.js';
+import { createGroupChat, unbanChatMember } from '../../services/db/groupChatService.js';
 import type { CreateGroupChatBody } from '../../schema/groupChatSchema.js';
 
 import { inviteToGroupChat } from '../../services/db/groupChatService.js';
@@ -18,6 +18,7 @@ import { quitGroupChat } from '../../services/db/groupChatService.js';
 
 import { updateGroupMemberRole } from '../../services/db/groupChatService.js';
 
+import { banChatMember, getChatBans } from '../../services/db/groupChatService.js';
 
 //CREATE GROUP CHAT (we're not sending an invite here, members are part of conversation)
 function normalizeChat(chat: any) {
@@ -167,3 +168,73 @@ export async function updateChatMemberRoleController(
 
 	return reply.status(200).send(result);
 }
+
+//BAN MEMBER FROM GROUP CHAT
+export async function banChatMemberController(
+	req: FastifyRequest<{ Params: { chatId: string, memberId: string },
+							Body: { reason?: string, expiresAt?: string }}>,
+	reply: FastifyReply						
+){
+	const requesterId = req.user.id;
+	const { chatId, memberId } = req.params;
+	const { reason, expiresAt } = req.body;
+
+	if (!requesterId){
+		throw new AppError('Unauthorized', 401);
+	}
+
+	const result = await banChatMember(
+		chatId,
+		requesterId,
+		memberId,
+		reason ?? null,
+		expiresAt ? new Date(expiresAt) : null
+	);
+
+	return reply.status(200).send(result);
+}
+
+//UNBAN MEMBER FROM GROUP CHAT
+export async function unbanChatMemberController(
+	req: FastifyRequest<{ Params: { chatId: string, memberId: string}}>,
+	reply: FastifyReply
+){
+	const requesterId = req.user.id;
+	const { chatId, memberId } = req.params;
+
+	if (!requesterId){
+		throw new AppError('Unauthorized unbanning action', 401);
+	}
+
+	const result = await unbanChatMember(chatId, requesterId, memberId);
+
+	return reply.status(200).send(result);
+
+}
+
+//LIST CHAT BANS
+export async function getChatBansController(
+	req: FastifyRequest<{ Params: { chatId: string } }>,
+	reply: FastifyReply
+) {
+	const requesterId = req.user.id;
+	const { chatId } = req.params;
+
+	if (!requesterId) {
+	throw new AppError('Unauthorized', 401);
+	}
+
+	const bans = await getChatBans(chatId, requesterId);
+
+	return reply.status(200).send(
+	bans.map(b => ({
+		chatBanId: b.chatBanId,
+		reason: b.reason,
+		bannedAt: b.bannedAt?.toISOString() ?? null,
+		expiresAt: b.expiresAt?.toISOString() ?? null,
+		user: b.bannedUser,
+		bannedBy: b.bannedByUser
+	}))
+	);
+}
+
