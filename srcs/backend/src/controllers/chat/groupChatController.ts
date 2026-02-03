@@ -5,13 +5,13 @@ import { chat_role_type } from '@prisma/client';
 import { createGroupChat, unbanChatMember } from '../../services/db/chat/groupChatService.js';
 import type { CreateGroupChatBody } from '../../schema/chat/groupChatSchema.js';
 
-import { inviteToGroupChat } from '../../services/db/chat/groupChatService.js';
-import type { InviteToGroupParams } from '../../schema/chat/groupChatSchema.js';
+// import { inviteToGroupChat } from '../../services/db/chat/groupChatService.js';
+// import type { InviteToGroupParams } from '../../schema/chat/groupChatSchema.js';
 
-import { listUserChatInvitations } from '../../services/db/chat/groupChatService.js';
+// import { listUserChatInvitations } from '../../services/db/chat/groupChatService.js';
 
-import { acceptGroupInvitation } from '../../services/db/chat/groupChatService.js';
-import type { AcceptInvitationParams } from '../../schema/chat/groupChatSchema.js';
+// import { acceptGroupInvitation } from '../../services/db/chat/groupChatService.js';
+// import type { AcceptInvitationParams } from '../../schema/chat/groupChatSchema.js';
 
 import { disbandGroupChat } from '../../services/db/chat/groupChatService.js';
 
@@ -57,80 +57,81 @@ export async function createGroupChatController(
 	return reply.status(201).send(normalizeChat(chat));
 }
 
-//SEND GROUP CHAT INVITATION
-export async function inviteToGroupController(
-	req: FastifyRequest<{ Params: InviteToGroupParams }>,
-	reply: FastifyReply
-	) {
-	const senderId = req.user.id;
-	const { chatId, memberId: receiverId } = req.params;
+// //SEND GROUP CHAT INVITATION
+// export async function inviteToGroupController(
+// 	req: FastifyRequest<{ Params: InviteToGroupParams }>,
+// 	reply: FastifyReply
+// 	) {
+// 	const senderId = req.user.id;
+// 	const { chatId, memberId: receiverId } = req.params;
 
-	if (!senderId) {
-	throw new AppError('Unauthorized', 401);
-	}
+// 	if (!senderId) {
+// 	throw new AppError('Unauthorized', 401);
+// 	}
 
-	const invitation = await inviteToGroupChat(chatId, senderId, receiverId);
+// 	const invitation = await inviteToGroupChat(chatId, senderId, receiverId);
 
-	return reply.status(201).send({
-		chatInvitationId: invitation.chatInvitationId,
-		chatId: invitation.chatId,
-		senderId: invitation.senderId,
-		receiverId: invitation.receiverId,
-		status: invitation.status,
-		createdAt: invitation.createdAt ? invitation.createdAt.toISOString() : null
-	});
-}
+// 	return reply.status(201).send({
+// 		chatInvitationId: invitation.chatInvitationId,
+// 		chatId: invitation.chatId,
+// 		senderId: invitation.senderId,
+// 		receiverId: invitation.receiverId,
+// 		status: invitation.status,
+// 		createdAt: invitation.createdAt ? invitation.createdAt.toISOString() : null
+// 	});
+// }
 
 
-//RETURN USER'S CHAT INVITATIONS (send and received)
-export async function listChatInvitationsController(
-	req: FastifyRequest,
-	reply: FastifyReply
-) {
-	const userId = req.user.id;
+// //RETURN USER'S CHAT INVITATIONS (send and received)
+// export async function listChatInvitationsController(
+// 	req: FastifyRequest,
+// 	reply: FastifyReply
+// ) {
+// 	const userId = req.user.id;
 
-	if (!userId) {
-		throw new AppError('Unauthorized', 401);
-	}
+// 	if (!userId) {
+// 		throw new AppError('Unauthorized', 401);
+// 	}
 
-	const invitations = await listUserChatInvitations(userId);
+// 	const invitations = await listUserChatInvitations(userId);
 
-	return reply.status(200).send(
-	invitations.map(inv => ({
-		chatInvitationId: inv.chatInvitationId,
-		chatId: inv.chatId,
-		status: inv.status,
-		createdAt: inv.createdAt?.toISOString() ?? null,
-		sender: inv.sender,
-		receiver: inv.receiver,
-		chat: inv.chat
-	}))
-	);
-}
+// 	return reply.status(200).send(
+// 	invitations.map(inv => ({
+// 		chatInvitationId: inv.chatInvitationId,
+// 		chatId: inv.chatId,
+// 		status: inv.status,
+// 		createdAt: inv.createdAt?.toISOString() ?? null,
+// 		sender: inv.sender,
+// 		receiver: inv.receiver,
+// 		chat: inv.chat
+// 	}))
+// 	);
+// }
 
-//ANSWER PENDING GROUP CHAT INVITATION
-export async function acceptGroupInvitationController(
-	req: FastifyRequest<{ Params: AcceptInvitationParams }>,
-	reply: FastifyReply
-) {
-	const userId = req.user.id;
-	const { chatInvitationId } = req.params;
+// //ANSWER PENDING GROUP CHAT INVITATION
+// export async function acceptGroupInvitationController(
+// 	req: FastifyRequest<{ Params: AcceptInvitationParams }>,
+// 	reply: FastifyReply
+// ) {
+// 	const userId = req.user.id;
+// 	const { chatInvitationId } = req.params;
 
-	if (!userId) {
-	throw new AppError('Unauthorized', 401);
-	}
+// 	if (!userId) {
+// 	throw new AppError('Unauthorized', 401);
+// 	}
 
-	const member = await acceptGroupInvitation(chatInvitationId, userId);
+// 	const member = await acceptGroupInvitation(chatInvitationId, userId);
 
-	return reply.status(201).send({
-	chatMemberId: member.chatMemberId,
-	chatId: member.chatId,
-	userId: member.userId,
-	role: chat_role_type.member,
-	joinedAt: member.joinedAt ? member.joinedAt.toISOString() : null
-	});
-}
+// 	return reply.status(201).send({
+// 	chatMemberId: member.chatMemberId,
+// 	chatId: member.chatId,
+// 	userId: member.userId,
+// 	role: chat_role_type.member,
+// 	joinedAt: member.joinedAt ? member.joinedAt.toISOString() : null
+// 	});
+// }
 
+//DISBAND GROUP CHAT
 export async function disbandGroupChatController(
 	req: FastifyRequest<{ Params: { chatId: string } }>,
 	reply: FastifyReply

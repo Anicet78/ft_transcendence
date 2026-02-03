@@ -3,13 +3,13 @@ import {
 	CreateGroupChatBodySchema,
 	CreateGroupChatResponseSchema,
 
-	InviteToGroupParamsSchema,
-	ChatInvitationResponseSchema,
+	// InviteToGroupParamsSchema,
+	// ChatInvitationResponseSchema,
 
-	ChatInvitationListResponseSchema,
+	// ChatInvitationListResponseSchema,
 
-	AcceptInvitationParamsSchema,
-	ChatMemberResponseSchema,
+	// AcceptInvitationParamsSchema,
+	// ChatMemberResponseSchema,
 	
 	DisbandGroupParamsSchema,
 	DisbandGroupChatSchema,
@@ -34,9 +34,9 @@ import {
 
 import {
 	createGroupChatController,
-	inviteToGroupController,
-	listChatInvitationsController,
-	acceptGroupInvitationController,
+	// inviteToGroupController,
+	// listChatInvitationsController,
+	// acceptGroupInvitationController,
 	disbandGroupChatController,
 	kickGroupMemberController,
 	quitGroupChatController,
@@ -47,7 +47,8 @@ import {
 } from '../../controllers/chat/groupChatController.js';
 
 async function groupChatRoutes(fastify: FastifyInstance) {
-	//create group chat
+
+	//CREATE GROUP CHAT
 	fastify.post('/chat/group/new', {
 	schema: {
 		body: CreateGroupChatBodySchema,
@@ -56,38 +57,6 @@ async function groupChatRoutes(fastify: FastifyInstance) {
 		}
 	},
 	handler: createGroupChatController
-	});
-
-	//send group chat invitation
-	fastify.post('/group/:chatId/:memberId/invite', {
-		schema: {
-		params: InviteToGroupParamsSchema,
-		response: {
-			201: ChatInvitationResponseSchema
-		}
-		},
-		handler: inviteToGroupController
-	});
-
-	//GET USER'S INVITATION (send and received)
-	fastify.get('/group/invitations', {
-		schema: {
-		response: {
-			200: ChatInvitationListResponseSchema
-		}
-		},
-		handler: listChatInvitationsController
-	});
-
-	//answer group chat invitation
-	fastify.post('/group/:chatInvitationId', {
-		schema: {
-		params: AcceptInvitationParamsSchema,
-		response: {
-			201: ChatMemberResponseSchema
-		}
-		},
-		handler: acceptGroupInvitationController
 	});
 
 	//DISBAND GROUP CHAT
@@ -102,17 +71,6 @@ async function groupChatRoutes(fastify: FastifyInstance) {
 		handler: disbandGroupChatController
 	});
 
-	//KICK MEMBER FROM GROUP CHAT
-	fastify.post('/group/:chatId/kick/:memberId', {
-		schema: {
-			params: KickMemberParamsSchema,
-			response: {
-				200: KickMemberResponseSchema
-		}
-		},
-		handler: kickGroupMemberController
-	});
-
 	//QUIT GROUP (need to soft delete)
 	fastify.post('/group/:chatId/quit', {
 		schema: {
@@ -122,6 +80,51 @@ async function groupChatRoutes(fastify: FastifyInstance) {
 		}
 		},
 		handler: quitGroupChatController
+	});
+
+	// //send group chat invitation
+	// fastify.post('/group/:chatId/:memberId/invite', {
+	// 	schema: {
+	// 	params: InviteToGroupParamsSchema,
+	// 	response: {
+	// 		201: ChatInvitationResponseSchema
+	// 	}
+	// 	},
+	// 	handler: inviteToGroupController
+	// });
+
+	// //GET USER'S INVITATION (send and received)
+	// fastify.get('/group/invitations', {
+	// 	schema: {
+	// 	response: {
+	// 		200: ChatInvitationListResponseSchema
+	// 	}
+	// 	},
+	// 	handler: listChatInvitationsController
+	// });
+
+	// //answer group chat invitation
+	// fastify.post('/group/:chatInvitationId', {
+	// 	schema: {
+	// 	params: AcceptInvitationParamsSchema,
+	// 	response: {
+	// 		201: ChatMemberResponseSchema
+	// 	}
+	// 	},
+	// 	handler: acceptGroupInvitationController
+	// });
+
+
+
+	//KICK MEMBER FROM GROUP CHAT
+	fastify.post('/group/:chatId/kick/:memberId', {
+		schema: {
+			params: KickMemberParamsSchema,
+			response: {
+				200: KickMemberResponseSchema
+		}
+		},
+		handler: kickGroupMemberController
 	});
 
 	//UPDATE CHAT MEMBER ROLES
