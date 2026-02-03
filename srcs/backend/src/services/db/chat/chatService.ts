@@ -1,5 +1,10 @@
-import { prisma } from './prisma.js';
-import { AppError } from '../../schema/errorSchema.js';
+import { prisma } from '../prisma.js';
+import { chat_role_type } from '@prisma/client';
+import { AppError } from '../../../schema/errorSchema.js';
+import {
+	ROLE_RANK,
+	getRoleRank/*,
+	type ChatRole */} from '../../../utils/chatRoles.js';
 
 //shared chat infos model
 export const chatSelect = {
@@ -117,56 +122,6 @@ export async function listUserChats(userId: string) {
 	return chats;
 }
 
-//RETURN USER'S CHAT INVITATIONS (send and received)
-export async function listUserChatInvitations(userId: string) {
-  const invitations = await prisma.chatInvitation.findMany({
-    where: {
-      OR: [
-        { senderId: userId },
-        { receiverId: userId }
-      ]
-    },
-    orderBy: { createdAt: 'desc' },
-    select: {
-      chatInvitationId: true,
-      chatId: true,
-      senderId: true,
-      receiverId: true,
-      status: true,
-      createdAt: true,
-
-      sender: {
-        select: {
-          appUserId: true,
-          username: true,
-          avatarUrl: true,
-          availability: true
-        }
-      },
-
-      receiver: {
-        select: {
-          appUserId: true,
-          username: true,
-          avatarUrl: true,
-          availability: true
-        }
-      },
-
-      chat: {
-        select: {
-          chatId: true,
-          chatType: true,
-          chatName: true
-        }
-      }
-    }
-  });
-
-  return invitations;
-}
-
-
 //SEND MESSAGE
 export async function sendMessage(chatId: string, userId: string, content: string) {
 	// 1. check if chat exists
@@ -215,7 +170,8 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 		select: { role: true }
 	});
 	
-	const userRole = role?.role ?? 'member';//check user role, if dont exists, define as member by default
+	//const userRole = role?.role ?? 'member';//check user role, if dont exists, define as member by default
+	const userRole = role?.role ?? chat_role_type.member;
 	if (userRole == 'member') {
 		throw new AppError('You do not have permission to write in this chat', 403);
 	}
@@ -397,24 +353,24 @@ export async function moderateMessage(
 	}
 
 	// 2. Check moderator role
-	const role = await prisma.chatRole.findFirst({
+	const moderatorRole = await prisma.chatRole.findFirst({
 		where: { chatId, userId: moderatorId, deletedAt: null },
 		select: { role: true }
 		});
 
-		const roleRank = {
-			owner: 5,
-			admin: 4,
-			moderator: 3,
-			writer: 2,
-			member: 1
-		} as const;
+		// const roleRank = {
+		// 	owner: 5,
+		// 	admin: 4,
+		// 	moderator: 3,
+		// 	writer: 2,
+		// 	member: 1
+		// } as const;
 
-	type RoleName = keyof typeof roleRank;
+	// type RoleName = keyof typeof ROLE_RANK;
 
-	const moderatorRank = roleRank[(role?.role ?? 'member') as RoleName];
+	const moderatorRank = getRoleRank(moderatorRole?.role);
 
-	if (moderatorRank < roleRank['moderator']) {
+	if (moderatorRank < ROLE_RANK.moderator) {
 		throw new AppError('You do not have permission to moderate messages', 403);
 	}
 
@@ -464,24 +420,24 @@ export async function restoreMessage(
 	}
 
 	// 3. Check moderator role
-	const role = await prisma.chatRole.findFirst({
+	const moderatorRole = await prisma.chatRole.findFirst({
 		where: { chatId, userId: moderatorId, deletedAt: null },
 		select: { role: true }
 	});
 
-	const roleRank = {
-		owner: 5,
-		admin: 4,
-		moderator: 3,
-		writer: 2,
-		member: 1
-	} as const;
+	// const roleRank = {
+	// 	owner: 5,
+	// 	admin: 4,
+	// 	moderator: 3,
+	// 	writer: 2,
+	// 	member: 1
+	// } as const;
 
-	type RoleName = keyof typeof roleRank;
+	// type RoleName = keyof typeof roleRank;
 
-	const moderatorRank = roleRank[(role?.role ?? 'member') as RoleName];
+	const moderatorRank = getRoleRank(moderatorRole?.role);
 
-	if (moderatorRank < roleRank['moderator']) {
+	if (moderatorRank < ROLE_RANK.moderator) {
 		throw new AppError('You do not have permission to restore messages', 403);
 	}
 

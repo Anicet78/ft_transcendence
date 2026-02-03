@@ -8,7 +8,7 @@ import {
 	DeleteMessageResponseSchema,
 	ChatInfoParamsSchema,
 	ChatSchema,
-	ChatInvitationListResponseSchema,
+	// ChatInvitationListResponseSchema,
 	ChatMessageParamsSchema,
 	ChatMessageListSchema,
 	EditMessageParamsSchema,
@@ -18,98 +18,21 @@ import {
 	ModerateMessageResponseSchema,
 	RestoreMessageParamsSchema,
 	RestoreMessageResponseSchema
-} from '../../schema/chatSchema.js';
+} from '../../schema/chat/chatSchema.js';
 import {
 	listUserChatsController,
 	sendMessageController,
 	deleteMessageController,
 	getChatInfoController,
-	listChatInvitationsController,
+	// listChatInvitationsController,
 	getChatMessagesController,
 	editMessageController,
 	moderateMessageController,
 	restoreMessageController
 } from '../../controllers/chat/chatController.js';
 
-import {
-	CreateGroupChatBodySchema,
-	CreateGroupChatResponseSchema,
-
-	InviteToGroupParamsSchema,
-	ChatInvitationResponseSchema,
-
-	AcceptInvitationParamsSchema,
-	ChatMemberResponseSchema,
-	
-	DisbandGroupParamsSchema,
-	DisbandGroupChatSchema,
-
-	KickMemberParamsSchema,
-	KickMemberResponseSchema,
-
-	QuitGroupParamsSchema,
-	QuitGroupResponseSchema,
-
-	UpdateChatRoleParamsSchema,
-	UpdateChatRoleBodySchema,
-	UpdateChatRoleResponseSchema,
-	BanChatMemberParamsSchema,
-	BanChatMemberBodySchema,
-	BanChatMemberResponseSchema,
-	UnbanChatMemberParamsSchema,
-	UnbanChatMemberResponseSchema,
-	BanListParamsSchema,
-	BanListResponseSchema
-} from '../../schema/groupChatSchema.js';
-
-import {
-	createGroupChatController,
-	inviteToGroupController,
-	acceptGroupInvitationController,
-	disbandGroupChatController,
-	kickGroupMemberController,
-	quitGroupChatController,
-	updateChatMemberRoleController,
-	banChatMemberController,
-	unbanChatMemberController,
-	getChatBansController
-} from '../../controllers/chat/groupChatController.js';
-
 async function chatRoutes(fastify: FastifyInstance) {
-	//create group chat
-	fastify.post('/chat/group/new', {
-	schema: {
-		body: CreateGroupChatBodySchema,
-		response: {
-		201: CreateGroupChatResponseSchema
-		}
-	},
-	handler: createGroupChatController
-	});
-
-	//send group chat invitation
-	fastify.post('/group/:chatId/:memberId/invite', {
-		schema: {
-		params: InviteToGroupParamsSchema,
-		response: {
-			201: ChatInvitationResponseSchema
-		}
-		},
-		handler: inviteToGroupController
-	});
-
-	//answer group chat invitation
-	fastify.post('/group/:chatInvitationId', {
-		schema: {
-		params: AcceptInvitationParamsSchema,
-		response: {
-			201: ChatMemberResponseSchema
-		}
-		},
-		handler: acceptGroupInvitationController
-	});
-
-	//get infos about one specific chat
+	//GET CHAT INFOS + ACCESS CHAT
 	fastify.get('/chat/:chatId/info', {
 		schema: {
 		params: ChatInfoParamsSchema,
@@ -120,17 +43,17 @@ async function chatRoutes(fastify: FastifyInstance) {
 		handler: getChatInfoController
 	});
 
-	//get user's chat invitations (send and received)
-	fastify.get('/chat/invitations', {
-		schema: {
-		response: {
-			200: ChatInvitationListResponseSchema
-		}
-		},
-		handler: listChatInvitationsController
-	});
+	// //GET USER'S INVITATION (send and received)
+	// fastify.get('/group/invitations', {
+	// 	schema: {
+	// 	response: {
+	// 		200: ChatInvitationListResponseSchema
+	// 	}
+	// 	},
+	// 	handler: listChatInvitationsController
+	// });
 
-	//get user's chats list
+	//GET USER'S CHATS LIST
 	fastify.get('/chat/list', {
 		schema: {
 		response: {
@@ -140,7 +63,7 @@ async function chatRoutes(fastify: FastifyInstance) {
 		handler: listUserChatsController
 	});
 
-	//send message
+	//SEND MESSAGE
 	fastify.post('/chat/:chatId', {
 		schema: {
 		params: SendMessageParamsSchema,
@@ -150,17 +73,6 @@ async function chatRoutes(fastify: FastifyInstance) {
 		}
 		},
 		handler: sendMessageController
-	});
-
-	//DELETE MESSAGE INSIDE CHAT
-	fastify.delete('/chat/:messageId', {
-		schema: {
-		params: DeleteMessageParamsSchema,
-		response: {
-			204: DeleteMessageResponseSchema
-		}
-		},
-		handler: deleteMessageController
 	});
 
 	//GET MESSAGED FROM CHAT
@@ -204,88 +116,17 @@ async function chatRoutes(fastify: FastifyInstance) {
 		handler: restoreMessageController
 	});
 
-
-
-	//--------------------- GROUP CHATS ROUTES ---------------------//
-	//DISBAND GROUP CHAT
-	fastify.post('/group/:chatId/disband', {
+	//DELETE MESSAGE
+	fastify.delete('/chat/:messageId', {
 		schema: {
-			params: DisbandGroupParamsSchema,
-			response: {
-				200: DisbandGroupChatSchema,
-				// 200: Type.Object({ success: Type.Boolean() }),
-		}
-		},
-		handler: disbandGroupChatController
-	});
-
-	//KICK MEMBER FROM GROUP CHAT
-	fastify.post('/group/:chatId/kick/:memberId', {
-		schema: {
-			params: KickMemberParamsSchema,
-			response: {
-				200: KickMemberResponseSchema
-		}
-		},
-		handler: kickGroupMemberController
-	});
-
-	//QUIT GROUP (need to soft delete)
-	fastify.post('/group/:chatId/quit', {
-		schema: {
-		params: QuitGroupParamsSchema,
+		params: DeleteMessageParamsSchema,
 		response: {
-			200: QuitGroupResponseSchema
+			204: DeleteMessageResponseSchema
 		}
 		},
-		handler: quitGroupChatController
+		handler: deleteMessageController
 	});
 
-	//UPDATE CHAT MEMBER ROLES
-	fastify.patch('/group/:chatId/role/:memberId', {
-		schema: {
-		params: UpdateChatRoleParamsSchema,
-		body: UpdateChatRoleBodySchema,
-		response: {
-			200: UpdateChatRoleResponseSchema
-		}
-	},
-	handler: updateChatMemberRoleController
-	});
-
-	//BAN MEMBER FROM GROUP CHAT
-	fastify.post('/group/:chatId/ban/:memberId', {
-		schema: {
-			params: BanChatMemberParamsSchema,
-			body: BanChatMemberBodySchema,
-			response: {
-				200: BanChatMemberResponseSchema
-			}
-		},
-		handler: banChatMemberController
-	});
-
-	//UNBAN MEMBER FROM GROUP CHAT
-	fastify.patch('/group/:chatId/unban/:memberId', {
-		schema: {
-			params: UnbanChatMemberParamsSchema,
-			response: {
-				200: UnbanChatMemberResponseSchema
-			}
-		},
-		handler: unbanChatMemberController
-	});
-
-	//LIST CHAT BANS
-	fastify.get('/group/:chatId/bans', {
-		schema: {
-		params: BanListParamsSchema,
-		response: {
-			200: BanListResponseSchema
-		}
-		},
-		handler: getChatBansController
-	});
 } export default chatRoutes;
 
 

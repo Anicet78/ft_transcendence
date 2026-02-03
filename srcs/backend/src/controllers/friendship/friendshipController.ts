@@ -5,7 +5,7 @@ import {
   type RemoveFriendParams
 } from '../../schema/friendshipSchema.js';
 
-import { findOrCreatePrivateChat } from '../../services/db/privateChatService.js';
+import { findOrCreatePrivateChat } from '../../services/db/chat/privateChatService.js';
 
 
 function normalize<T extends Record<string, any>>(obj: T): T {

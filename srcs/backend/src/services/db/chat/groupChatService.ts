@@ -1,10 +1,10 @@
-import { prisma } from './prisma.js';
+import { prisma } from '../prisma.js';
 import { chat_role_type } from '@prisma/client';
-import { AppError } from '../../schema/errorSchema.js';
+import { AppError } from '../../../schema/errorSchema.js';
 import {
 	ROLE_RANK,
 	getRoleRank/*,
-	type ChatRole */} from '../../utils/chatRoles.js';
+	type ChatRole */} from '../../../utils/chatRoles.js';
 
 
 //GROUP CREATION
@@ -33,7 +33,7 @@ export async function createGroupChat(
 		roles: {
 			create: uniqueMembers.map((userId) => ({
 				userId,
-				role: userId === creatorId ? 'owner' : 'member',
+				role: userId === creatorId ? chat_role_type.owner : chat_role_type.member,
 				attributedBy: creatorId
 			}))
 		}
@@ -148,6 +148,56 @@ export async function inviteToGroupChat(chatId: string, senderId: string, receiv
 	return invitation;
 }
 
+
+//RETURN USER'S CHAT INVITATIONS (send and received)
+export async function listUserChatInvitations(userId: string) {
+  const invitations = await prisma.chatInvitation.findMany({
+    where: {
+      OR: [
+        { senderId: userId },
+        { receiverId: userId }
+      ]
+    },
+    orderBy: { createdAt: 'desc' },
+    select: {
+      chatInvitationId: true,
+      chatId: true,
+      senderId: true,
+      receiverId: true,
+      status: true,
+      createdAt: true,
+
+      sender: {
+        select: {
+          appUserId: true,
+          username: true,
+          avatarUrl: true,
+          availability: true
+        }
+      },
+
+      receiver: {
+        select: {
+          appUserId: true,
+          username: true,
+          avatarUrl: true,
+          availability: true
+        }
+      },
+
+      chat: {
+        select: {
+          chatId: true,
+          chatType: true,
+          chatName: true
+        }
+      }
+    }
+  });
+
+  return invitations;
+}
+
 //ANSWER PENDING GROUP CHAT INVITATION
 export async function acceptGroupInvitation( chatInvitationId: string, userId: string ) {
 	// 1. Load invitation
@@ -218,7 +268,7 @@ export async function acceptGroupInvitation( chatInvitationId: string, userId: s
 		data: {
 		chatId: invitation.chatId!,
 		userId,
-		role: 'member',
+		role: chat_role_type.member,
 		attributedBy: userId
 		}
 	});
@@ -347,7 +397,11 @@ export async function kickGroupMember(chatId: string, requesterId: string, targe
 
 	// 4. Load roles
 	const requesterRole = await prisma.chatRole.findFirst({
-	where: { chatId, userId: requesterId },
+	where: {
+		chatId,
+		userId:
+		requesterId
+	},
 	select: { role: true }
 	});
 
@@ -356,19 +410,21 @@ export async function kickGroupMember(chatId: string, requesterId: string, targe
 	select: { role: true }
 	});
 
-	const roleRank = {
-		owner: 5,
-		admin: 4,
-		moderator: 3,
-		writer: 2,
-		member: 1
-	};//make it a global enum (Nina)
+	// const roleRank = {
+	// 	owner: 5,
+	// 	admin: 4,
+	// 	moderator: 3,
+	// 	writer: 2,
+	// 	member: 1
+	// };//make it a global enum (Nina)
 
-	const requesterRank = roleRank[requesterRole?.role ?? 'member'];
-	const targetRank = roleRank[targetRole?.role ?? 'member'];
+	// const requesterRank = roleRank[requesterRole?.role ?? 'member'];
+	// const targetRank = roleRank[targetRole?.role ?? 'member'];
+	const requesterRank = getRoleRank(requesterRole?.role);
+	const targetRank = getRoleRank(targetRole?.role);
 
 	// 5. Permission check
-	if (requesterRank < roleRank['moderator']) {
+	if (requesterRank < ROLE_RANK.moderator) {
 	throw new AppError('You do not have permission to kick members', 403);
 	}
 
@@ -450,7 +506,11 @@ export async function quitGroupChat(chatId: string, userId: string) {
 }
 
 //UPDATE CHAT MEMBER ROLER
-export async function updateGroupMemberRole( chatId: string, requesterId: string, targetId: string, newRole: string
+export async function updateGroupMemberRole(
+	chatId: string,
+	requesterId: string,
+	targetId: string,
+	newRole: chat_role_type
 ) {
 	// 1. Load chat
 	const chat = await prisma.chat.findUnique({
@@ -495,26 +555,31 @@ export async function updateGroupMemberRole( chatId: string, requesterId: string
 	});
 
 	const targetRole = await prisma.chatRole.findFirst({
-	where: { chatId, userId: targetId, deletedAt: null },
-	select: { role: true }
+		where: {
+			chatId,
+			userId: targetId,
+			deletedAt: null },
+		select: { role: true }
 	});
 
-	const roleRank = {
-		owner: 5,
-		admin: 4,
-		moderator: 3,
-		writer: 2,
-		member: 1
-	};
+	// const roleRank = {
+	// 	owner: 5,
+	// 	admin: 4,
+	// 	moderator: 3,
+	// 	writer: 2,
+	// 	member: 1
+	// };
 
-	const requesterRank = roleRank[requesterRole?.role ?? 'member'];
-	const targetRank = roleRank[targetRole?.role ?? 'member'];
+	// const requesterRank = roleRank[requesterRole?.role ?? 'member'];
+	// const targetRank = roleRank[targetRole?.role ?? 'member'];
+	const requesterRank = getRoleRank(requesterRole?.role);
+	const targetRank = getRoleRank(targetRole?.role);
 
-	type RoleName = keyof typeof roleRank;
-	const newRank = roleRank[newRole as RoleName];
+	// type RoleName = keyof typeof ROLE_RANK;
+	const newRank = ROLE_RANK[newRole];
 
 	// 5. Permission checks
-	if (requesterRank < roleRank['admin']) {
+	if (requesterRank < ROLE_RANK.admin) {
 	throw new AppError('Only admins or owners can change roles', 403);
 	}
 
@@ -534,7 +599,7 @@ export async function updateGroupMemberRole( chatId: string, requesterId: string
 	await prisma.chatRole.updateMany({
 	where: { chatId, userId: targetId },
 	data: {
-		role: newRole as chat_role_type,
+		role: newRole,
 		modifiedAt: new Date()
 	}
 	});

@@ -1,4 +1,4 @@
-import { prisma } from './prisma.js';
+import { prisma } from '../prisma.js';
 // import { AppError } from '../../schema/errorSchema.js';
 
 export async function findOrCreatePrivateChat(userA: string, userB: string) {

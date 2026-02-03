@@ -1,6 +1,6 @@
 import Type, { type Static } from 'typebox';
-import { AppErrorSchema } from './errorSchema.js';
-import { UserPreviewSchema } from './friendshipSchema.js';
+import { AppErrorSchema } from '../errorSchema.js';
+import { UserPreviewSchema } from '../friendshipSchema.js';
 
 //GROUP CREATION
 export const CreateGroupChatBodySchema = Type.Object({
@@ -49,6 +49,25 @@ export const ChatInvitationResponseSchema = Type.Object({
 	status: Type.String(),
 	createdAt: Type.String()
 });
+
+
+//RETURN USER'S CHAT INVITATIONS (send and received)
+export const ChatInvitationPreviewSchema = Type.Object({
+  chatInvitationId: Type.String(),
+  chatId: Type.Union([Type.String(), Type.Null()]),
+  status: Type.String(),
+  createdAt: Type.String(),
+
+  sender: UserPreviewSchema,
+  receiver: UserPreviewSchema,
+
+  chat: Type.Object({
+	chatId: Type.String(),
+	chatType: Type.String(),
+	chatName: Type.Union([Type.String(), Type.Null()])
+  })
+});
+export const ChatInvitationListResponseSchema = ChatInvitationPreviewSchema;
 
 
 //ANSWER GROUP CHAT INVITATION

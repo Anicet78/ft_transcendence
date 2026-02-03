@@ -4,6 +4,8 @@ import { profileRoutes } from './profile/profileRoute.js';
 import friendshipRoutes from './friendship/friendshipRoute.js';
 import { roomRoutes } from './rooms/roomRoute.js';
 import chatRoutes from './chat/chatRoute.js';
+import groupChatRoutes from './chat/groupChatRoute.js';
+
 
 export async function router(fastify: FastifyInstance) {
 	fastify.register(authRouter, { prefix: '/auth' });
@@ -11,4 +13,5 @@ export async function router(fastify: FastifyInstance) {
 	fastify.register(profileRoutes);
 	fastify.register(friendshipRoutes);
 	fastify.register(chatRoutes);
+	fastify.register(groupChatRoutes);
 }

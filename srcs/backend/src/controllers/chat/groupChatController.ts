@@ -1,24 +1,27 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { AppError } from '../../schema/errorSchema.js';
+import { chat_role_type } from '@prisma/client';
 
-import { createGroupChat, unbanChatMember } from '../../services/db/groupChatService.js';
-import type { CreateGroupChatBody } from '../../schema/groupChatSchema.js';
+import { createGroupChat, unbanChatMember } from '../../services/db/chat/groupChatService.js';
+import type { CreateGroupChatBody } from '../../schema/chat/groupChatSchema.js';
 
-import { inviteToGroupChat } from '../../services/db/groupChatService.js';
-import type { InviteToGroupParams } from '../../schema/groupChatSchema.js';
+import { inviteToGroupChat } from '../../services/db/chat/groupChatService.js';
+import type { InviteToGroupParams } from '../../schema/chat/groupChatSchema.js';
 
-import { acceptGroupInvitation } from '../../services/db/groupChatService.js';
-import type { AcceptInvitationParams } from '../../schema/groupChatSchema.js';
+import { listUserChatInvitations } from '../../services/db/chat/groupChatService.js';
 
-import { disbandGroupChat } from '../../services/db/groupChatService.js';
+import { acceptGroupInvitation } from '../../services/db/chat/groupChatService.js';
+import type { AcceptInvitationParams } from '../../schema/chat/groupChatSchema.js';
 
-import { kickGroupMember } from '../../services/db/groupChatService.js';
+import { disbandGroupChat } from '../../services/db/chat/groupChatService.js';
 
-import { quitGroupChat } from '../../services/db/groupChatService.js';
+import { kickGroupMember } from '../../services/db/chat/groupChatService.js';
 
-import { updateGroupMemberRole } from '../../services/db/groupChatService.js';
+import { quitGroupChat } from '../../services/db/chat/groupChatService.js';
 
-import { banChatMember, getChatBans } from '../../services/db/groupChatService.js';
+import { updateGroupMemberRole } from '../../services/db/chat/groupChatService.js';
+
+import { banChatMember, getChatBans } from '../../services/db/chat/groupChatService.js';
 
 //CREATE GROUP CHAT (we're not sending an invite here, members are part of conversation)
 function normalizeChat(chat: any) {
@@ -29,7 +32,7 @@ function normalizeChat(chat: any) {
 		createdAt: chat.createdAt.toISOString(),
 		createdBy: chat.creator,
 		members: chat.members.map((m: any) => {
-			const role = chat.roles.find((r: any) => r.userId === m.user.appUserId)?.role ?? 'member';
+			const role = chat.roles.find((r: any) => r.userId === m.user.appUserId)?.role ?? chat_role_type.member;
 			return {
 				chatMemberId: m.chatMemberId,
 				joinedAt: m.joinedAt.toISOString(),
@@ -78,6 +81,33 @@ export async function inviteToGroupController(
 	});
 }
 
+
+//RETURN USER'S CHAT INVITATIONS (send and received)
+export async function listChatInvitationsController(
+	req: FastifyRequest,
+	reply: FastifyReply
+) {
+	const userId = req.user.id;
+
+	if (!userId) {
+		throw new AppError('Unauthorized', 401);
+	}
+
+	const invitations = await listUserChatInvitations(userId);
+
+	return reply.status(200).send(
+	invitations.map(inv => ({
+		chatInvitationId: inv.chatInvitationId,
+		chatId: inv.chatId,
+		status: inv.status,
+		createdAt: inv.createdAt?.toISOString() ?? null,
+		sender: inv.sender,
+		receiver: inv.receiver,
+		chat: inv.chat
+	}))
+	);
+}
+
 //ANSWER PENDING GROUP CHAT INVITATION
 export async function acceptGroupInvitationController(
 	req: FastifyRequest<{ Params: AcceptInvitationParams }>,
@@ -96,7 +126,7 @@ export async function acceptGroupInvitationController(
 	chatMemberId: member.chatMemberId,
 	chatId: member.chatId,
 	userId: member.userId,
-	role: 'member',
+	role: chat_role_type.member,
 	joinedAt: member.joinedAt ? member.joinedAt.toISOString() : null
 	});
 }
@@ -153,12 +183,17 @@ export async function quitGroupChatController(
 
 //UPDATE CHAT MEMBER ROLE
 export async function updateChatMemberRoleController(
-	req: FastifyRequest<{ Params: { chatId: string, memberId: string }, Body: { role: string } }>,
+	req: FastifyRequest<{ Params: { chatId: string, memberId: string },
+							Body: { role: chat_role_type } }>,
 	reply: FastifyReply
 ) {
 	const requesterId = req.user.id;
 	const { chatId, memberId } = req.params;
 	const { role } = req.body;
+
+	if (!(Object.values(chat_role_type).includes(role))) {
+		throw new AppError('Invalid role', 400);
+	}
 
 	if (!requesterId) {
 	throw new AppError('Unauthorized', 401);

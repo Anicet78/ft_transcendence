@@ -1,22 +1,22 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { AppError } from '../../schema/errorSchema.js';
 
-import { getChatByIdForUser } from '../../services/db/chatService.js';
-import type { ChatInfoParams } from '../../schema/chatSchema.js';
+import { getChatByIdForUser } from '../../services/db/chat/chatService.js';
+import type { ChatInfoParams } from '../../schema/chat/chatSchema.js';
 
-import { listUserChats } from '../../services/db/chatService.js';
+import { listUserChats } from '../../services/db/chat/chatService.js';
 
-import { sendMessage } from '../../services/db/chatService.js';
-import type { SendMessageParams, SendMessageBody } from '../../schema/chatSchema.js';
+import { sendMessage } from '../../services/db/chat/chatService.js';
+import type { SendMessageParams, SendMessageBody } from '../../schema/chat/chatSchema.js';
 
-import { deleteMessage } from '../../services/db/chatService.js';
-import type { DeleteMessageParams } from '../../schema/chatSchema.js';
+import { deleteMessage } from '../../services/db/chat/chatService.js';
+import type { DeleteMessageParams } from '../../schema/chat/chatSchema.js';
 
-import { listUserChatInvitations } from '../../services/db/chatService.js';
+// import { listUserChatInvitations } from '../../services/db/chat/chatService.js';
 
-import { getChatMessages } from '../../services/db/chatService.js';
+import { getChatMessages } from '../../services/db/chat/chatService.js';
 
-import { editMessage, moderateMessage, restoreMessage } from '../../services/db/chatService.js';
+import { editMessage, moderateMessage, restoreMessage } from '../../services/db/chat/chatService.js';
 
 
 // //CREATE GROUP CHAT (we're not sending an invite here, members are part of conversation)
@@ -56,31 +56,31 @@ export async function getChatInfoController(
 	return reply.status(200).send(normalizeChat(chat));
 }
 
-//RETURN USER'S CHAT INVITATIONS (send and received)
-export async function listChatInvitationsController(
-  req: FastifyRequest,
-  reply: FastifyReply
-) {
-  const userId = req.user.id;
+// //RETURN USER'S CHAT INVITATIONS (send and received)
+// export async function listChatInvitationsController(
+//   req: FastifyRequest,
+//   reply: FastifyReply
+// ) {
+//   const userId = req.user.id;
 
-  if (!userId) {
-    throw new AppError('Unauthorized', 401);
-  }
+//   if (!userId) {
+//     throw new AppError('Unauthorized', 401);
+//   }
 
-  const invitations = await listUserChatInvitations(userId);
+//   const invitations = await listUserChatInvitations(userId);
 
-  return reply.status(200).send(
-    invitations.map(inv => ({
-      chatInvitationId: inv.chatInvitationId,
-      chatId: inv.chatId,
-      status: inv.status,
-      createdAt: inv.createdAt?.toISOString() ?? null,
-      sender: inv.sender,
-      receiver: inv.receiver,
-      chat: inv.chat
-    }))
-  );
-}
+//   return reply.status(200).send(
+//     invitations.map(inv => ({
+//       chatInvitationId: inv.chatInvitationId,
+//       chatId: inv.chatId,
+//       status: inv.status,
+//       createdAt: inv.createdAt?.toISOString() ?? null,
+//       sender: inv.sender,
+//       receiver: inv.receiver,
+//       chat: inv.chat
+//     }))
+//   );
+// }
 
 
 //RETURN USER'S CHAT LIST

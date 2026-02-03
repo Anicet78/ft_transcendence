@@ -1,13 +1,6 @@
-export const CHAT_ROLES = [
-	'owner',
-	'admin',
-	'moderator',
-	'writer',
-	'member'
-] as const;
-export type ChatRole = typeof CHAT_ROLES[number];
+import { chat_role_type } from '@prisma/client';
 
-export const ROLE_RANK: Record<ChatRole, number> = {
+export const ROLE_RANK: Record<chat_role_type, number> = {
 	owner: 5,
 	admin: 4,
 	moderator: 3,
@@ -16,9 +9,8 @@ export const ROLE_RANK: Record<ChatRole, number> = {
 };
 
 //Safe helper: returns rank, defaults to member
-export function getRoleRank(role: string | null | undefined): number {
-	if (role && role in ROLE_RANK) {
-		return ROLE_RANK[role as ChatRole];
-	}
-	return ROLE_RANK.member;
+export function getRoleRank(
+	role: chat_role_type | null | undefined
+): number {
+	return role ? ROLE_RANK[role] : ROLE_RANK.member;
 }
