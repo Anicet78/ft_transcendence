@@ -192,18 +192,17 @@ bool	Mob::checkInvinsibleFrame(void) {
 
 //-------------printer and render----------------------------------------
 
-void	Mob::printMob(float camX, float camY, int tile_size) {
-
+void	Mob::printMob(float camX, float camY, int tile_size)
+{
 	if (this->_frame >= 24)
 		this->_frame = 0;
-
+	this->_frame++;
 	float x = ((this->_x - camX) * tile_size) - (0.5f * tile_size);
 	float y = ((this->_y - camY) * tile_size) - (0.5f * tile_size);
 	if (checkInvinsibleFrame())
 		this->rendMobHurt(x, y, this->_frame / 4, 2);
 	else
 		this->rendMobIdle(x, y, this->_frame / 4, 2);
-	this->_frame++;
 	return ;
 }
 

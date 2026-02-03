@@ -21,5 +21,9 @@ int	init_sdl(Engine &gSdl)
 	gSdl.renderer = SDL_CreateRenderer(gSdl.window, -1, SDL_RENDERER_ACCELERATED);
 	if (!gSdl.renderer)
 		std::cerr << "render/20 : " << SDL_GetError() << std::endl;
+	if (gSdl.game == NULL)
+		gSdl.game = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH * 16, GAME_HEIGHT * 16);
+	if (gSdl.hud == NULL)
+		gSdl.hud = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, (SCREEN_HEIGHT - GAME_HEIGHT));
 	return (1);
 }

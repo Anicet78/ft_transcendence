@@ -171,7 +171,7 @@ void	manage_wall2(int x, int y, Player &player, int iteration)
 	{
 		w = player.getRoom().getRoomPlan()[0].size();
 		node = player.getNode();
-		plan.assign(w * player.getRoom().getRoomPlan().size(), 0);
+		plan.assign(w * node->getRoom()->getRoomPlan().size(), 0);
 	}
 
 
@@ -184,7 +184,7 @@ void	manage_wall2(int x, int y, Player &player, int iteration)
 	else if (!iteration)
 		Assets::rendMap(x * tile_s, y * tile_s, 226, 1, 1);
 	else if (iteration && plan[y * w + x])
-	{
+	{	
 		if (x - 2 >= 0 && plan[y * w + x - 2])
 		{
 			Assets::rendMap((x - 1) * tile_s, (y - 1) * tile_s, 148, 1, 1);
@@ -226,25 +226,25 @@ void initAutoTileOffset(std::array<int, 256> &autoTileOffset)
 
 	// Coins opposés
 	autoTileOffset[36]  = 185;
-	autoTileOffset[129] = 186;
+	autoTileOffset[129] = 184;
 
 	// NW + around
-	int nwList[] = {10, 11, 12, 14, 15, 34, 38, 39, 42, 43, 44, 45, 47};
+	int nwList[] = {10, 11, 12, 13, 14, 15, 34, 35, 38, 39, 42, 43, 44, 45, 46, 47};
 	for (int m : nwList)
 		autoTileOffset[m] = -43;
 
 	// NE + around
-	int neList[] = {17, 18, 19, 22, 23, 130, 131, 135, 145, 146, 149, 150, 151};
+	int neList[] = {17, 18, 19, 21, 22, 23, 130, 131, 134, 135, 145, 146, 147, 149, 150, 151};
 	for (int m : neList)
 		autoTileOffset[m] = -42;
 
 	// SW + around
-	int swList[] = {65, 72, 73, 104, 105, 136, 137, 169, 193, 200, 225, 232, 233};
+	int swList[] = {65, 72, 73, 97, 104, 105, 136, 137, 168, 169, 193, 200, 201, 225, 232, 233};
 	for (int m : swList)
 		autoTileOffset[m] = 2;
 
 	// SE + around
-	int seList[] = {48, 52, 68, 80, 84, 100, 112, 180, 208, 212, 228, 240, 244};
+	int seList[] = {48, 52, 68, 80, 84, 100, 112, 116, 176, 180, 196, 208, 212, 228, 240, 244};
 	for (int m : seList)
 		autoTileOffset[m] = 3;
 
@@ -301,8 +301,7 @@ void	manageSoil(int x, int y, Player &player)
 void	manageFloorPrint(int x, int y, char c, Player &player, int iteration)
 {
 	int	tile_s = gSdl.getMapTileSize() * 2;
-	(void)iteration;
-	if (player.getFloor() == 0)
+	if (!player.getFloor())
 	{
 		if (c == '1' && !iteration)
 			manage_wall(x, y, player);
@@ -315,7 +314,7 @@ void	manageFloorPrint(int x, int y, char c, Player &player, int iteration)
 	{
 		if (c == '1'  || c == ' ')
 			manage_wall2(x, y, player, iteration);
-		else if (c == '0' || c == 'P')
+		else if (c == '0' || c == 'P' || c == 'E')
 			manageSoil(x, y, player);
 	}
 	
@@ -336,12 +335,12 @@ void	print_map(Player &player)
 
 		if (gSdl.texture == NULL)
 		{
-			gSdl.texture = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 800 * 16, 800 * 16);
+			gSdl.texture = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH * 16, GAME_HEIGHT * 16);
 			SDL_SetTextureBlendMode(gSdl.texture, SDL_BLENDMODE_BLEND);
 		}
 		if (gSdl.texture2 == NULL)
 		{
-			gSdl.texture2 = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 800 * 16, 800 * 16);
+			gSdl.texture2 = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH * 16, GAME_HEIGHT * 16);
 			SDL_SetTextureBlendMode(gSdl.texture2, SDL_BLENDMODE_BLEND);
 		}
 
@@ -359,21 +358,24 @@ void	print_map(Player &player)
 				manageFloorPrint(x, y, c, player, 0);
 			}
 		}
-		SDL_SetRenderTarget(gSdl.renderer, gSdl.texture2);
-		SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 0);
-		SDL_RenderClear(gSdl.renderer);
-		for (int y = 0; y < h; y++)
+		if (player.getFloor())
 		{
-			int w = player.getRoom().getRoomPlan()[y].size();
-			for (int x = 0; x < w; x++)
+			SDL_SetRenderTarget(gSdl.renderer, gSdl.texture2);
+			SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 0);
+			SDL_RenderClear(gSdl.renderer);
+			for (int y = 0; y < h; y++)
 			{
-				char c = player.getRoom().getRoomPlan()[y][x];
-				if (c != '1' && c != ' ')
-					continue ;
-				manageFloorPrint(x, y, c, player, 1);
+				int w = player.getRoom().getRoomPlan()[y].size();
+				for (int x = 0; x < w; x++)
+				{
+					char c = player.getRoom().getRoomPlan()[y][x];
+					if (c != '1' && c != ' ')
+						continue ;
+					manageFloorPrint(x, y, c, player, 1);
+				}
 			}
 		}
-		SDL_SetRenderTarget(gSdl.renderer, NULL);
+		SDL_SetRenderTarget(gSdl.renderer, gSdl.game);
 	}
 
 	int roomH = player.getRoom().getRoomPlan().size();
@@ -381,6 +383,6 @@ void	print_map(Player &player)
 	Camera	&camera = player.getCamera();
 	camera.updateCamera(tile_s, roomW, roomH);
 	player.updateScreenPos(tile_s);
-
-	SDL_RenderCopy(gSdl.renderer, gSdl.texture, &camera.getCamera(), NULL);
+	SDL_Rect dst = {0, 0, SCREEN_WIDTH, GAME_HEIGHT};
+	SDL_RenderCopy(gSdl.renderer, gSdl.texture, &camera.getCamera(), &dst);
 }

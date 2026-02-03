@@ -4,9 +4,29 @@
     <meta charset="UTF-8">
     <title>Test wasm</title>
     <style>
-        body { font-family: sans-serif; margin: 20px; }
-        #log { border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: auto; }
-        #msg { width: 300px; }
+        body
+        {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+
+        #game-canvas
+        {
+            display: block;
+            margin: 0 auto;
+        }
+
+        #log
+        {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            margin: 20px auto 0 auto;
+        }
+
+        #msg {width: 300px;}
+
     </style>
 </head>
 <body>
@@ -14,7 +34,7 @@
         <button id="connectBtn">Se connecter</button>
         <button id="disconnectBtn" disabled>Se déconnecter</button>
     </div>
-    <canvas id="game-canvas" width="800" height="800" tabindex="1"></canvas>
+    <canvas id="game-canvas" width="800" height="950" tabindex="1"></canvas>
     <div id="log"></div>
     <script>
         let socket = null;

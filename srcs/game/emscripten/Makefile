@@ -33,6 +33,7 @@ SRCS		=	main.cpp \
 				player/PlayerAssets.cpp \
 				mapGen/mapMain.cpp Room.cpp Map.cpp Game.cpp \
 				player/Camera.cpp \
+				Hud.cpp \
 				engine/printEntity.cpp 
 
 EMSRCS		= $(patsubst %, $(SRC_DIR)%, $(SRCS))

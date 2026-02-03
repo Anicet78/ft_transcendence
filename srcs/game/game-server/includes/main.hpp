@@ -22,6 +22,7 @@
 # include <random>
 # include <sstream>
 # include <list>
+# include <stack>
 
 typedef struct FRect
 {

@@ -49,7 +49,7 @@ void	Camera::cameraY(const int tile_size, const int roomH) {
 	if (idealMinY > idealMaxY)
 		idealMinY = idealMaxY;
 
-	if (roomH * tile_size <= SCREEN_HEIGHT)
+	if (roomH * tile_size <= GAME_HEIGHT)
 		idealMinY = 0;
 	_camY = idealMinY;
 }
@@ -61,7 +61,7 @@ void	Camera::updateCamera(int tile_s, int roomW, int roomH) {
 		static_cast<int>(_camX * tile_s),
 		static_cast<int>(_camY * tile_s),
 		SCREEN_WIDTH,
-		SCREEN_HEIGHT
+		GAME_HEIGHT
 	};
 }
 

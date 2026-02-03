@@ -191,6 +191,7 @@ void	launchGame(Game &game, val &msg)
 		}
 	}
 	game.getPlayer().setNode(start);
+	game.setLaunched(1);
 	EM_ASM_({onCppMessage({action: "launched"});});
 }
 
