@@ -2,7 +2,7 @@
 
 Player::Player(std::string uid, std::string name) : _uid(uid), _name(name), _x(0), _y(0),
 					_screenX(0), _screenY(0), _anim(0), _hp(3), _atk(1), _def(0), _atkState(false),
-					_camera(_x, _y), _floor(0), _last_dir(0), _frame(0), _prev_state(PLAYER_IDLE)
+					_camera(_x, _y, 12, 12, SCREEN_WIDTH, GAME_HEIGHT), _floor(0), _last_dir(0), _frame(0), _prev_state(PLAYER_IDLE)
 {}
 
 Player::~Player(void)
@@ -163,7 +163,8 @@ bool	Player::checkAtkState(void) const
 
 //----------------------------------------------------------------
 
-void	Player::updateScreenPos(int tile_s) {
+void	Player::updateScreenPos(int tile_s)
+{
 	_screenX = (_x - _camera.getCamX()) * tile_s;
 	_screenY = (_y - _camera.getCamY()) * tile_s;
 	return ;

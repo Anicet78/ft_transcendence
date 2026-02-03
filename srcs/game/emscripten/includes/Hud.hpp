@@ -8,10 +8,14 @@ class Hud
 {
 	private:
 		std::vector<int>	_minimap;
-		SDL_Texture		*_minimapText;
+		SDL_Texture			*_minimapText;
+		float				_x;
+		float				_y;
+		Camera				_minimapCamera;
 
 	private:
-		void	drawBox(int x, int y);
+		void	drawBox(int x, int y, int scale, int r, int g, int b, int t);
+		void	drawNode(quadList &node, int w, int r, int g, int b, int t);
 
 
 	public:
