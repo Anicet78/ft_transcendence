@@ -328,3 +328,176 @@ export async function getChatMessages(chatId: string, userId: string) {
   return messages;
 }
 
+//EDIT MESSAGE (for writer user only)
+export async function editMessage(
+	chatId: string,
+	messageId: string,
+	userId: string,
+	newContent: string
+){
+	// 1. Load message
+	const message = await prisma.chatMessage.findUnique({
+		where: { messageId },
+		select: {
+			messageId: true,
+			chatId: true,
+			userId: true,
+			status: true
+		}
+	});
+
+	if (!message || message.chatId !== chatId) {
+	throw new AppError('Message not found', 404);
+	}
+
+	// 2. Only author can edit
+	if (message.userId !== userId) {
+	throw new AppError('You do not have permission to edit this message', 403);
+	}
+
+	// 3. Update message
+	const updated = await prisma.chatMessage.update({
+		where: { messageId },
+		data: {
+			content: newContent,
+			status: 'edited',
+			editedAt: new Date()
+	},
+	select: {
+		messageId: true,
+		chatId: true,
+		userId: true,
+		content: true,
+		status: true,
+		editedAt: true
+	}
+	});
+
+	return updated;
+}
+
+//MODERATE MESSAGE
+export async function moderateMessage(
+	chatId: string,
+	messageId: string,
+	moderatorId: string
+){
+	// 1. Load message
+	const message = await prisma.chatMessage.findUnique({
+		where: { messageId },
+		select: {
+			messageId: true,
+			chatId: true,
+			userId: true
+		}
+	});
+
+	if (!message || message.chatId !== chatId) {
+	throw new AppError('Message not found', 404);
+	}
+
+	// 2. Check moderator role
+	const role = await prisma.chatRole.findFirst({
+		where: { chatId, userId: moderatorId, deletedAt: null },
+		select: { role: true }
+		});
+
+		const roleRank = {
+			owner: 5,
+			admin: 4,
+			moderator: 3,
+			writer: 2,
+			member: 1
+		} as const;
+
+	type RoleName = keyof typeof roleRank;
+
+	const moderatorRank = roleRank[(role?.role ?? 'member') as RoleName];
+
+	if (moderatorRank < roleRank['moderator']) {
+		throw new AppError('You do not have permission to moderate messages', 403);
+	}
+
+	// 3. Moderate message
+	const updated = await prisma.chatMessage.update({
+	where: { messageId },
+	data: {
+		status: 'moderated',
+		deletedAt: new Date(),
+		moderatedBy: moderatorId
+	},
+	select: {
+		messageId: true,
+		chatId: true,
+		status: true,
+		deletedAt: true
+	}
+	});
+
+	return updated;
+}
+
+//RESTORE MESSAGE
+export async function restoreMessage(
+	chatId: string,
+	messageId: string,
+	moderatorId: string
+){
+	// 1. Load message
+	const message = await prisma.chatMessage.findUnique({
+		where: { messageId },
+		select: {
+			messageId: true,
+			chatId: true,
+			status: true,
+			deletedAt: true
+		}
+	});
+
+	if (!message || message.chatId !== chatId) {
+		throw new AppError('Message not found', 404);
+	}
+
+	// 2. Only moderated messages can be restored
+	if (message.status !== 'moderated') {
+		throw new AppError('Only moderated messages can be restored', 400);
+	}
+
+	// 3. Check moderator role
+	const role = await prisma.chatRole.findFirst({
+		where: { chatId, userId: moderatorId, deletedAt: null },
+		select: { role: true }
+	});
+
+	const roleRank = {
+		owner: 5,
+		admin: 4,
+		moderator: 3,
+		writer: 2,
+		member: 1
+	} as const;
+
+	type RoleName = keyof typeof roleRank;
+
+	const moderatorRank = roleRank[(role?.role ?? 'member') as RoleName];
+
+	if (moderatorRank < roleRank['moderator']) {
+		throw new AppError('You do not have permission to restore messages', 403);
+	}
+
+	// 4. Restore message
+	const updated = await prisma.chatMessage.update({
+		where: { messageId },
+		data: {
+			status: 'posted',
+			deletedAt: null,
+			moderatedBy: null
+		},
+		select: {
+			messageId: true,
+			chatId: true,
+			status: true
+		}
+	});
+	return updated;
+}

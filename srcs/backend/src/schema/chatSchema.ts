@@ -115,3 +115,47 @@ export const ChatMessageSchema = Type.Object({
 });
 
 export const ChatMessageListSchema = Type.Array(ChatMessageSchema);
+
+//EDIT MESSAGE
+export const EditMessageParamsSchema = Type.Object({
+  chatId: Type.String({ format: 'uuid' }),
+  messageId: Type.String({ format: 'uuid' })
+});
+
+export const EditMessageBodySchema = Type.Object({
+  content: Type.String({ minLength: 1, maxLength: 2000 })
+});
+
+export const EditMessageResponseSchema = Type.Object({
+  messageId: Type.String(),
+  chatId: Type.String(),
+  userId: Type.String(),
+  content: Type.String(),
+  status: Type.String(),
+  editedAt: Type.String()
+});
+
+//MODERATE MESSAGE
+export const ModerateMessageParamsSchema = Type.Object({
+  chatId: Type.String({ format: 'uuid' }),
+  messageId: Type.String({ format: 'uuid' })
+});
+
+export const ModerateMessageResponseSchema = Type.Object({
+  messageId: Type.String(),
+  chatId: Type.String(),
+  status: Type.String(),
+  deletedAt: Type.String()
+});
+
+//RESTORE MESSAGE
+export const RestoreMessageParamsSchema = Type.Object({
+	chatId: Type.String({ format: 'uuid' }),
+	messageId: Type.String({ format: 'uuid' })
+});
+
+export const RestoreMessageResponseSchema = Type.Object({
+	messageId: Type.String(),
+	chatId: Type.String(),
+	status: Type.String()
+});

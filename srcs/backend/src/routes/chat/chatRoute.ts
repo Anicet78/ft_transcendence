@@ -15,7 +15,9 @@ import {
 	EditMessageBodySchema,
 	EditMessageResponseSchema,
 	ModerateMessageParamsSchema,
-	ModerateMessageResponseSchema
+	ModerateMessageResponseSchema,
+	RestoreMessageParamsSchema,
+	RestoreMessageResponseSchema
 } from '../../schema/chatSchema.js';
 import {
 	listUserChatsController,
@@ -25,7 +27,8 @@ import {
 	listChatInvitationsController,
 	getChatMessagesController,
 	editMessageController,
-	moderateMessageController
+	moderateMessageController,
+	restoreMessageController
 } from '../../controllers/chat/chatController.js';
 
 import {
@@ -188,6 +191,17 @@ async function chatRoutes(fastify: FastifyInstance) {
 		response: { 200: ModerateMessageResponseSchema }
 		},
 		handler: moderateMessageController
+	});
+
+	//RESTORE MESSAGE
+	fastify.patch('/chat/:chatId/message/:messageId/restore', {
+		schema: {
+		params: RestoreMessageParamsSchema,
+		response: {
+			200: RestoreMessageResponseSchema
+		}
+		},
+		handler: restoreMessageController
 	});
 
 

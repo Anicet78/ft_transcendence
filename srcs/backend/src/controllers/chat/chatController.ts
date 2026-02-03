@@ -16,6 +16,8 @@ import { listUserChatInvitations } from '../../services/db/chatService.js';
 
 import { getChatMessages } from '../../services/db/chatService.js';
 
+import { editMessage, moderateMessage, restoreMessage } from '../../services/db/chatService.js';
+
 
 // //CREATE GROUP CHAT (we're not sending an invite here, members are part of conversation)
 function normalizeChat(chat: any) {
@@ -171,5 +173,65 @@ export async function getChatMessagesController(
       author: m.author
     }))
   );
+}
+
+//EDIT MESSAGE
+export async function editMessageController(
+	req: FastifyRequest<{ Params: { chatId: string, messageId: string },
+							Body: { content: string } }>,
+	reply: FastifyReply
+){
+
+	const userId = req.user.id;
+	const { chatId, messageId } = req.params;
+	const { content } = req.body;
+
+	if (!userId) throw new AppError('Unauthorized', 401);
+
+	const result = await editMessage(chatId, messageId, userId, content);
+
+	return reply.status(200).send({
+	...result,
+	editedAt: result.editedAt?.toISOString() ?? null
+	});
+}
+
+//MODERATE MESSAGE
+export async function moderateMessageController(
+  req: FastifyRequest<{ Params: { chatId: string, messageId: string } }>,
+  reply: FastifyReply
+) {
+  const moderatorId = req.user.id;
+  const { chatId, messageId } = req.params;
+
+  if (!moderatorId) throw new AppError('Unauthorized', 401);
+
+  const result = await moderateMessage(chatId, messageId, moderatorId);
+
+  return reply.status(200).send({
+    ...result,
+    deletedAt: result.deletedAt?.toISOString() ?? null
+  });
+}
+
+//RESTORE SCHEMA
+export async function restoreMessageController(
+	req: FastifyRequest<{ Params: { chatId: string, messageId: string } }>,
+	reply: FastifyReply
+){
+	const moderatorId = req.user.id;
+	const { chatId, messageId } = req.params;
+
+	if (!moderatorId) {
+		throw new AppError('Unauthorized', 401);
+	}
+
+	const result = await restoreMessage(chatId, messageId, moderatorId);
+
+	return reply.status(200).send({
+		messageId: result.messageId,
+		chatId: result.chatId,
+		status: result.status
+	});
 }
 
