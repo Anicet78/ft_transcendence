@@ -2,6 +2,7 @@ import fp from "fastify-plugin";
 import fastifyJwt from "@fastify/jwt";
 import fs from "fs";
 import type { FastifyReply, FastifyRequest } from "fastify";
+import fastifyCors from "@fastify/cors";
 
 export type JWTPayload = {
 	id: string;
@@ -9,6 +10,13 @@ export type JWTPayload = {
 };
 
 export default fp(async (fastify) => {
+	// CORS
+	await fastify.register(fastifyCors, {
+		origin: "*", // will be changed to frontend URL later
+		methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+		credentials: true
+	});
+
 	// Authentication
 	const JWT_SECRET = fs.readFileSync("/run/secrets/jwt_secret", "utf8").trim();
 
