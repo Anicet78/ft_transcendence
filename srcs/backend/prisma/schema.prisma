@@ -264,16 +264,7 @@ enum message_status {
   edited
   deleted
   moderated
-}
-
-enum chat_role_type {
-  owner
-  admin
-  moderator
-  writer
-  member
-}
-
+ }
 enum region_list {
   EU
   NA
@@ -283,4 +274,12 @@ enum region_list {
   APAC
   SSA
   Deleted
+}
+
+enum chat_role_type {
+  owner
+  admin
+  moderator
+  writer
+  member
 }
