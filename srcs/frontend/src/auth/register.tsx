@@ -50,8 +50,7 @@ function Register() {
 				<InputName label="Last name" nameType="lastname"/>
 				<InputName label="User name" nameType="username"/>
 				<InputEmail label="Email" />
-				<InputPassword label="Password" id="first-pwd"/>
-				<InputPassword label="Confirm password" id="second-pwd" />
+				<InputPassword label="Password" id="pwd"/>
 			</div>
 			<div>
 				<SelectRegion />
