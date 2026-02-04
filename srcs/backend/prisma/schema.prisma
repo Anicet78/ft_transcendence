@@ -38,8 +38,8 @@ model AppUser {
   friendshipsSent                                       Friendship[]     @relation("FriendshipSender")
   gameProfile                                           GameProfile?
   gameResults                                           GameResult[]
-  private_chat_private_chat_user1_idToapp_user          PrivateChat[]    @relation("private_chat_user1_idToapp_user")
-  private_chat_private_chat_user2_idToapp_user          PrivateChat[]    @relation("private_chat_user2_idToapp_user")
+  privateChatsAsUser1                                   PrivateChat[]    @relation("PrivateChatUser1")
+  privateChatsAsUser2                                   PrivateChat[]    @relation("PrivateChatUser2")
   rolesGiven                                            UserRole[]       @relation("UserRoleAttributedBy")
   rolesReceived                                         UserRole[]       @relation("UserRoleAttributedTo")
 
@@ -124,12 +124,12 @@ model UserRole {
 }
 
 model BlockedList {
-  blockedListId                            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  blocker                                 String?   @db.Uuid
+  blockedListId                           String    @id @default(dbgenerated("uuid_generate_v4()")) @map("blocked_list_id") @db.Uuid
+  blocker                                 String?   @map("blocker") @db.Uuid
   blocked                                 String?   @db.Uuid
-  createdAt                              DateTime? @default(now()) @db.Timestamptz(6)
-  updatedAt                              DateTime? @default(now()) @db.Timestamptz(6)
-  deletedAt                              DateTime? @db.Timestamptz(6)
+  createdAt                               DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                               DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt                               DateTime? @map("deleted_at") @db.Timestamptz(6)
   app_user_blocked_list_blockedToapp_user AppUser?  @relation("blocked_list_blockedToapp_user", fields: [blocked], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
   app_user_blocked_list_blockerToapp_user AppUser?  @relation("blocked_list_blockerToapp_user", fields: [blocker], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
 
@@ -247,13 +247,24 @@ model PrivateChat {
   updatedAt     DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt     DateTime? @map("deleted_at") @db.Timestamptz(6)
   chat          Chat?     @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction)
-  user1         AppUser?  @relation("private_chat_user1_idToapp_user", fields: [user1Id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
-  user2         AppUser?  @relation("private_chat_user2_idToapp_user", fields: [user2Id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
+  user1         AppUser?  @relation("PrivateChatUser1", fields: [user1Id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_private_chat_user1")
+  user2         AppUser?  @relation("PrivateChatUser2", fields: [user2Id], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_private_chat_user2")
 
   @@unique([user1Id, user2Id], map: "chk_private_chat_unique_pair")
   @@map("private_chat")
 }
 
+enum type_list {
+  private
+  group
+}
+
+enum message_status {
+  posted
+  edited
+  deleted
+  moderated
+ }
 enum region_list {
   EU
   NA
@@ -271,16 +282,4 @@ enum chat_role_type {
   moderator
   writer
   member
-}
-
-enum message_status {
-  posted
-  edited
-  deleted
-  moderated
-}
-
-enum type_list {
-  private
-  group
 }

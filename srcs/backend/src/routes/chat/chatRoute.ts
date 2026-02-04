@@ -1,58 +1,28 @@
 import type { FastifyInstance } from 'fastify';
 import {
-	CreateGroupChatBodySchema,
-	CreateGroupChatResponseSchema,
-	InviteToGroupParamsSchema,
-	ChatInvitationResponseSchema,
-	AcceptInvitationParamsSchema,
-	ChatMemberResponseSchema,
 	ChatListResponseSchema,
-	SendMessageParamsSchema,
-	SendMessageBodySchema,
-	ChatMessageResponseSchema,
-	DeleteMessageParamsSchema,
-	DeleteMessageResponseSchema
-} from '../../schema/chatSchema.js';
+	ChatInfoParamsSchema,
+	ChatSchema
+} from '../../schema/chat/chatSchema.js';
+
 import {
-	createGroupChatController,
-	inviteToGroupController,
-	acceptGroupInvitationController,
 	listUserChatsController,
-	sendMessageController,
-	deleteMessageController
+	getChatInfoController
 } from '../../controllers/chat/chatController.js';
 
 async function chatRoutes(fastify: FastifyInstance) {
-	fastify.post('/chat/group/new', {
-	schema: {
-		body: CreateGroupChatBodySchema,
-		response: {
-		201: CreateGroupChatResponseSchema
-		}
-	},
-	handler: createGroupChatController
-	});
-
-	fastify.post('/group/:chatId/:memberId/invite', {
+	//GET CHAT INFOS + ACCESS CHAT
+	fastify.get('/chat/:chatId/info', {
 		schema: {
-		params: InviteToGroupParamsSchema,
+		params: ChatInfoParamsSchema,
 		response: {
-			201: ChatInvitationResponseSchema
+			200: ChatSchema
 		}
 		},
-		handler: inviteToGroupController
+		handler: getChatInfoController
 	});
 
-	fastify.post('/group/:chatInvitationId', {
-		schema: {
-		params: AcceptInvitationParamsSchema,
-		response: {
-			201: ChatMemberResponseSchema
-		}
-		},
-		handler: acceptGroupInvitationController
-	});
-
+	//GET USER'S CHATS LIST
 	fastify.get('/chat/list', {
 		schema: {
 		response: {
@@ -62,31 +32,7 @@ async function chatRoutes(fastify: FastifyInstance) {
 		handler: listUserChatsController
 	});
 
-	fastify.post('/chat/:chatId', {
-		schema: {
-		params: SendMessageParamsSchema,
-		body: SendMessageBodySchema,
-		response: {
-			201: ChatMessageResponseSchema
-		}
-		},
-		handler: sendMessageController
-	});
-
-	fastify.delete('/chat/:messageId', {
-		schema: {
-		params: DeleteMessageParamsSchema,
-		response: {
-			200: DeleteMessageResponseSchema
-		}
-		},
-		handler: deleteMessageController
-	});
-
-
-
 } export default chatRoutes;
-
 
 
 // curl -X POST http://localhost:3000/chat/group/new \

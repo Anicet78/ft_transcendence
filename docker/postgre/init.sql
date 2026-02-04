@@ -73,7 +73,7 @@ CREATE TABLE user_role (
 );
 
 CREATE TABLE blocked_list (
-	blocked_list UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+	blocked_list_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	blocker UUID,
 	blocked UUID,
 
@@ -179,9 +179,8 @@ CREATE TABLE game_result (
 	CONSTRAINT fk_game_result_user
 		FOREIGN KEY (player_id)
 		REFERENCES app_user(app_user_id)
-		-- ON DELETE CASCADE
+		-- -- ON DELETE CASCADE
 );
-
 
 CREATE TYPE type_list AS ENUM ('private', 'group');
 
