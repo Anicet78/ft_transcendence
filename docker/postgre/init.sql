@@ -50,6 +50,23 @@ CREATE TABLE app_user (
 	CHECK (trim(mail_address) <> '')
 );
 
+CREATE TABLE refresh_token (
+	token_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+	user_id UUID,
+
+	token_hash TEXT NOT NULL,
+	expires_at timestamptz NOT NULL,
+	revoked_at timestamptz,
+
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	deleted_at timestamptz,
+
+	CONSTRAINT fk_user_token
+		FOREIGN KEY (user_id)
+		REFERENCES app_user(app_user_id)
+);
+
 CREATE TYPE roles AS ENUM ('guest', 'user', 'admin');
 
 CREATE TABLE user_role (

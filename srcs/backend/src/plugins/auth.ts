@@ -3,6 +3,7 @@ import fastifyJwt from "@fastify/jwt";
 import fs from "fs";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import fastifyCors from "@fastify/cors";
+import cookies from "@fastify/cookie";
 
 export type JWTPayload = {
 	id: string;
@@ -19,10 +20,16 @@ export default fp(async (fastify) => {
 
 	// Authentication
 	const JWT_SECRET = fs.readFileSync("/run/secrets/jwt_secret", "utf8").trim();
+	const COOKIE_SECRET = fs.readFileSync("/run/secrets/cookie_secret", "utf8").trim();
 
 	await fastify.register(fastifyJwt, {
 		secret: JWT_SECRET,
-		sign: { expiresIn: "7d" }
+		sign: { expiresIn: "15min" }
+	});
+
+	await fastify.register(cookies, {
+		secret: COOKIE_SECRET,
+		parseOptions: {}
 	});
 
 	fastify.decorate("authenticate", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -36,7 +43,7 @@ export default fp(async (fastify) => {
 	fastify.addHook("onRequest", async (request: FastifyRequest, reply: FastifyReply) => {
 		const currentRoute = request.routeOptions.url;
 
-		const publicRoutes = ['/auth/register', '/auth/login', '/'];
+		const publicRoutes = ['/auth/register', '/auth/login', '/auth/refresh', '/'];
 
 		if (currentRoute && publicRoutes.includes(currentRoute)) return;
 
@@ -57,6 +64,7 @@ declare module "@fastify/jwt" {
 		user: {
 			id: string;
 			email: string;
+			role: string;
 		}
 	}
 }

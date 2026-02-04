@@ -19,7 +19,7 @@ export const UserService = {
 			}
 		});
 	},
-	async getUserByMail(email: string): Promise<AppUser | null> {
+	async getUserByMail(email: string) {
 		return prisma.appUser.findUnique({
 			where: { mail: email },
 			include: {

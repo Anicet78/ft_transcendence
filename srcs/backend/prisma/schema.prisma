@@ -40,6 +40,7 @@ model AppUser {
   gameResults                                           GameResult[]
   privateChatsAsUser1                                   PrivateChat[]    @relation("PrivateChatUser1")
   privateChatsAsUser2                                   PrivateChat[]    @relation("PrivateChatUser2")
+  refreshTokens                                         RefreshToken[]   @relation("UserToken")
   rolesGiven                                            UserRole[]       @relation("UserRoleAttributedBy")
   rolesReceived                                         UserRole[]       @relation("UserRoleAttributedTo")
 
@@ -252,6 +253,20 @@ model PrivateChat {
 
   @@unique([user1Id, user2Id], map: "chk_private_chat_unique_pair")
   @@map("private_chat")
+}
+
+model RefreshToken {
+  tokenId   String    @id @default(dbgenerated("uuid_generate_v4()")) @map("token_id") @db.Uuid
+  userId    String?   @map("user_id") @db.Uuid
+  tokenHash String    @map("token_hash")
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+  app_user  AppUser?  @relation("UserToken", fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_token")
+
+  @@map("refresh_token")
 }
 
 enum type_list {
