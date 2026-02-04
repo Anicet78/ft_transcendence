@@ -1,4 +1,5 @@
 import { Footer, Content } from '@allxsmith/bestax-bulma';
+import { NavLink } from 'react-router';
 
 const MyFooter = () => {
 	return (
@@ -16,8 +17,8 @@ const MyFooter = () => {
 			<Content textAlign="centered">
 				<p>
 					Find out about our{' '}
-					<a href="../policies/privacy-policy.html" aria-label='Privacy Policy link'>Privacy Policy</a>{' and '}
-					<a href="../policies/terms-of-service.html" aria-label='Terms of Service link'>Terms of Service</a>.
+					<NavLink to="/privacy_policy" aria-label='Privacy Policy link'>Privacy Policy</NavLink>{' and '}
+					<NavLink to="/terms_of_service" aria-label='Terms of Service link'>Terms of Service</NavLink>.
 				</p>
 			</Content>
 			<Content textAlign="centered">

@@ -21,6 +21,7 @@ export interface RegisterSchema {
 	lastname: string,
 	username: string,
 	email: string,
+	region: string,
 	password: string,
 }
 
@@ -61,8 +62,8 @@ export class Server {
 		)
 		return await response.json();
 	}
-	public async register(firstname: string, lastname: string, username: string, email: string, password: string): Promise<RegisterResponseSchema> {
-		const data: RegisterSchema = { "firstname":firstname, "lastname": lastname, "username": username, "email": email, "password": password };
+	public async register(firstname: string, lastname: string, username: string, email: string, region: string, password: string): Promise<RegisterResponseSchema> {
+		const data: RegisterSchema = { "firstname":firstname, "lastname": lastname, "username": username, "email": email, "region": region, "password": password };
 
 		//cree l'url a partir des arguments qu'on lui donne, l'appelle pour acceder au server backend et il renvoie la reponse du server backend
 		const response = await fetch(

@@ -1,24 +1,17 @@
-// import { useState } from 'react'
-// import { Button } from '@allxsmith/bestax-bulma'; // quand on exporte pas en default mettre des accolades
 import './App.css'
-import Banner from './components/Banner.tsx';
-import MyFooter from './components/Footer.tsx';
 import { Box } from '@allxsmith/bestax-bulma';
+import { NavLink } from 'react-router';
 
 const App = () => {
 	return (
-		<>
-			<h1><Banner /></h1>
-			<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between'>
-				<div>Welcome to the game TransDungeon</div>
-				<br/>
-				<div>
-					<a href="./auth/login.html" className="button is-dark is-medium is-outlined">Sign in</a>
-					<a href="./auth/register.html" className="button is-dark is-medium is-outlined">Sign up</a>
-				</div>
-			</Box>
-			<MyFooter />
-		</>
+		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between'>
+			<div>Welcome to the game TransDungeon</div>
+			<br/>
+			<div>
+				<NavLink to="/login" className="button is-dark is-medium is-outlined">Sign in</NavLink>
+				<NavLink to="/register" className="button is-dark is-medium is-outlined">Sign up</NavLink>
+			</div>
+		</Box>
 	)
 }
 

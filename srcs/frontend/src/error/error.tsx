@@ -2,14 +2,15 @@ import 'bulma/css/bulma.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../App.css'
 import '../index.css'
+
 import { Box } from '@allxsmith/bestax-bulma';
 
-const Privacy = () => {
+const Error = () => {
 	return (
 		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between'>
-			<h2>Privacy policies</h2>
+			<h1>This page doesn't exist</h1>
 		</Box>
 	)
 }
 
-export default Privacy
+export default Error

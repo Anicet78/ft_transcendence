@@ -1,5 +1,4 @@
-import { useState, StrictMode } from 'react'
-import { createRoot } from 'react-dom/client';
+import { useState } from 'react'
 import 'bulma/css/bulma.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './login.css'
@@ -7,11 +6,9 @@ import '../index.css'
 
 import { Button } from '@allxsmith/bestax-bulma';
 import { Server } from '../server.ts'
-import Banner from '../components/Banner.tsx';
 import ButtonSubmit from '../components/ButtonSubmit.tsx';
 import InputEmail from '../components/InputEmail.tsx';
 import InputPassword from '../components/InputPassword.tsx';
-import MyFooter from '../components/Footer.tsx';
 
 /**
  * composant principal
@@ -42,7 +39,6 @@ function Login() {
   return (
     <>
       {/* ce qui est entre les accolades ne sont pas des elements html, comme ce commentaire qui est en ts */}
-      <h1><Banner /></h1>
       <div className="card">
 		<div>
 			<Button color='primary' isOutlined className='login-button'>Login with Google</Button>
@@ -55,13 +51,8 @@ function Login() {
             <ButtonSubmit name='Sign in' />
         </form>
       </div>
-	  <MyFooter />
     </>
   )
 }
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <Login />
-  </StrictMode>,
-)
+export default Login

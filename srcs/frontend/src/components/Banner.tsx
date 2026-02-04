@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Navbar, Icon, Button } from '@allxsmith/bestax-bulma';
+import { NavLink } from 'react-router';
+import { Navbar, Icon } from '@allxsmith/bestax-bulma';
 import '../styles/Banner.css'
 
 const Banner = () => {
@@ -7,15 +8,13 @@ const Banner = () => {
 	return (
 		<Navbar color='dark' aria-label='navigation bar'>
 			<Navbar.Brand>
-				<Navbar.Item href="../index.html">
-					<Button color="primary" isOutlined display="flex" justifyContent="center" alignItems="center" size='large'>
-						<Icon
-						name="dragon"
-						ariaLabel="dragon logo"
-						/>
-						<span>TransDungeon</span>
-					</Button>
-				</Navbar.Item>
+				<NavLink to="/" aria-label='home button' className='button is-large is-primary is-outlined is-centered'>
+					<Icon
+					name="dragon"
+					ariaLabel="dragon logo"
+					/>
+					<span>TransDungeon</span>
+				</NavLink>
 				<Navbar.Burger
 				active={active}
 				onClick={() => setActive(a => !a)}
