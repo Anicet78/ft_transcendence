@@ -7,7 +7,7 @@ const SelectRegion = () => {
 					<div className="icon is-small is-left">
 					<i className="fas fa-globe"></i>
 					</div>
-					<select id='region' name='region'>
+					<select aria-label="region selection" id='region' name='region' required>
 					<option defaultValue='default'>Select your region</option>
 					<option value='EU'>EU</option>
 					<option value='NA'>NA</option>

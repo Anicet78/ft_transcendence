@@ -23,16 +23,16 @@ createRoot(document.getElementById('root')).render(
 		<Router>
 			<h1><Banner /></h1>
 			<Routes>
-			<Route path="/" element={<App />} />
-			<Route path="/login" element={<Login />} />
-			<Route path="/register" element={<Register />} />
-			<Route path="/profile/" element={<ProfilePrivate />} />
-			<Route path="/profile/:id" element={<ProfilePublic />} />
-			<Route path="/friends/" element={<ProfilePublic />} />
-			<Route path="/terms_of_service" element={<TermsService />} />
-			<Route path="/privacy_policy" element={<Privacy />} />
-			<Route path="*" element={<Error />} />
-			{/* <Route path="/profile" element={<Profile />} /> */}
+				<Route path="/" element={<App />} />
+				<Route path="/login" element={<Login />} />
+				<Route path="/register" element={<Register />} />
+				<Route path="/profile/" element={<ProfilePrivate />} />
+				<Route path="/profile/:id" element={<ProfilePublic />} />
+				<Route path="/friends/" element={<ProfilePublic />} />
+				<Route path="/terms_of_service" element={<TermsService />} />
+				<Route path="/privacy_policy" element={<Privacy />} />
+				<Route path="*" element={<Error />} />
+				{/* <Route path="/profile" element={<Profile />} /> */}
 			</Routes>
 			<MyFooter />
 		</Router>
