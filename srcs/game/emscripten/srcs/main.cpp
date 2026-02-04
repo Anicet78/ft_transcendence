@@ -247,12 +247,20 @@ void	parseJson(bool &init, Game &game)
 	}
 	else if (msg["action"].as<std::string>() == "launch")
 		launchGame(game, msg);
+	else if (msg["loop_action"].as<std::string>() == "update")
+	{
+		val loop = msg["loop"]
+		if (loop.hasOwnProperty("player_update"))
+			loopPlayerState(game, loop["player_update"]);
+		if (loop.hasOwnProperty("room_update"))
+			loopRoomState(game, loop["room_update"]);
+	}
 	// msgJson = val::undefined();
 }
 
 void mainloopE(void)
 {
-	static Player player("505", "betaTester");
+	static Player player(gSdl.getPlayerId(), gSdl.getPlayerName());
 	static Game	game(player);
 	static bool init = false;
 	parseJson(init, game);
@@ -305,6 +313,8 @@ int main(void)
 		#ifdef __EMSCRIPTEN__
 		std::string id = std::to_string(rand() % 500);
 		std::string name = "guest_" + id;
+		gSdl.setPlayerName(name);
+		gSdl.setPlayerId(id);
 		EM_ASM_({
 			onCppMessage({
 				action: "join_queue",

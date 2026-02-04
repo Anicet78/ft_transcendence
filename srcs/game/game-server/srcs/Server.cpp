@@ -162,18 +162,13 @@ Player	&Server::getPlayer(std::string &uid)
 	return *this->_players[0];
 }
 
-struct TimerData
-{
-	Server	*server;
-};
-
 void	moveMobs(std::vector<std::string> const &map, Mob &mob)
 {
 	float x = mob.getX();
 	float y = mob.getY();
 
 	y -= 0.1;
-	if (map[y][x] == '1')
+	if (map[y][x] == '1' || map[y][x] == 'E')
 		y += 0.1;
 	else
 	{
@@ -181,7 +176,7 @@ void	moveMobs(std::vector<std::string> const &map, Mob &mob)
 		return ;
 	}
 	y += 0.1;
-	if (map[y][x] == '1')
+	if (map[y][x] == '1' || map[y][x] == 'E')
 		y -= 0.1;
 	else
 	{
@@ -189,7 +184,7 @@ void	moveMobs(std::vector<std::string> const &map, Mob &mob)
 		return ;
 	}
 	x -= 0.1;
-	if (map[y][x] == '1')
+	if (map[y][x] == '1' || map[y][x] == 'E')
 		x += 0.1;
 	else
 	{
@@ -197,7 +192,7 @@ void	moveMobs(std::vector<std::string> const &map, Mob &mob)
 		return ;
 	}
 	x += 0.1;
-	if (map[y][x] == '1')
+	if (map[y][x] == '1' || map[y][x] == 'E')
 		x -= 0.1;
 	else
 	{
@@ -206,56 +201,160 @@ void	moveMobs(std::vector<std::string> const &map, Mob &mob)
 	}
 }
 
-void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer) {
-	(void)allPlayer;
+// void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app) {
+// 	(void)allPlayer;
+// 	std::shared_ptr<ARoomEvent> event = room.getRoomEvent();
+// 	std::vector<std::string> map = room.getRoomPlan();
+// 	if (event->getType() == "MobRush")
+// 	{
+// 		MobRush &rush = dynamic_cast<MobRush &>(*event);
+// 		std::unordered_map<int, std::unique_ptr<Mob>> &Mobs = rush.getMobs();
+// 		std::string	msg;
+// 		bool flag = false;
+// 		int	amount = 0;
+// 		for (auto& [key, value] : Mobs)
+// 		{
+// 			if (!value->isDead())
+// 			{
+// 				amount++;
+// 				if (flag == false)
+// 				{
+// 					flag = true;
+// 					msg +=  "{ \"action\" : \"update\", \"loop\": { \"mobs\": [";
+// 				}
+// 				moveMobs(map, *value);
+// 				msg += "{ \"mob_id\":" + std::to_string(key) + ", "
+// 					+ "\"mob_x\":" + std::to_string(value->getX()) + ", "
+// 					+ "\"mob_y\":" + std::to_string(value->getY()) + "},";
+// 			}
+// 		}
+// 		if (flag == true)
+// 		{
+// 			if (*msg.rbegin() == ',')
+// 				msg.pop_back();
+// 			msg += "], \"nbr_mobs\":" + std::to_string(amount) + "}}";
+// 			app->publish(room.getRoomId(), msg, uWS::OpCode::TEXT);
+// 		}
+// 	}
+// }
+
+void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app) {
+	std::string msg = "{\"loop_action\": \"update\", \"loop\": {";
+
+	//put player status in the msg
+	const int player_size = allPlayer.size();
+	if (player_size)
+	{
+		std::string player_update = "\"player_update\": { \"player_status\": [";
+		for (auto player : allPlayer)
+		{
+			std::string p = "{\"player_uid\":" + player->getUid()
+							+ ",\"player_name\":" + player->getName()
+							+ ",\"player_x\":" + std::to_string(player->getX())
+							+ ",\"player_y\":" + std::to_string(player->getY())
+							+ ",\"player_health\":" + std::to_string(player->getHp())
+							+ ",\"player_anim\":" + std::to_string(player->getAnim())
+							+ ",\"player_exit\":" + player->getExit() + "},";
+			player_update.append(p);
+		}
+		player_update.pop_back();
+		player_update.push_back(']');
+		player_update.append(",\"player_num\":" + std::to_string(player_size) + '}');
+
+		msg.append(player_update);
+	}
+
+	//put room_event status in the msg
 	std::shared_ptr<ARoomEvent> event = room.getRoomEvent();
 	std::vector<std::string> map = room.getRoomPlan();
+
 	if (event->getType() == "MobRush")
 	{
+		std::string room_update;
+
+		if (player_size)
+			room_update.append(",\"room_update\": {");
+		else
+			room_update.append("\"room_update\": {");
+
+		if (event->isCleared() == true)
+			room_update.append("\"room_event\":\"MobRush\", \"cleared\":\"true\"");
+		else
+			room_update.append("\"room_event\":\"MobRush\", \"cleared\":\"false\"");
 		MobRush &rush = dynamic_cast<MobRush &>(*event);
 		std::unordered_map<int, std::unique_ptr<Mob>> &Mobs = rush.getMobs();
-		std::string	msg;
-		bool flag = false;
 		int	amount = 0;
-		for (auto& [key, value] : Mobs)
+		const int mob_size = Mobs.size();
+		if (mob_size)
 		{
-			if (!value->isDead())
+			std::string mobs_update = ",\"nbr_mob\":" + std::to_string(mob_size)
+						+ ",\"mobs\": [";
+			for (auto& [id, mob] : Mobs)
 			{
-				amount++;
-				if (flag == false)
+				if (!mob->isDeathSend())
 				{
-					flag = true;
-					msg +=  "{ \"action\" : \"update\", \"loop\": { \"mobs\": [";
+					amount++;
+
+					int damaged = 0;
+					if (mob->isDamaged() == true)
+					{
+						damaged = 1;
+						mob->damaged(false);
+					}
+
+					int dead = 0;
+					if (mob->isDead() == true)
+					{
+						dead = 1;
+						mob->setSendDeath(true);
+					}
+
+					// if (!damaged && !dead)
+					// 	moveMobs(map, *mob);
+					std::string m = "{ \"mob_id\":" + std::to_string(id)
+							+ ",\"mob_x\":" + std::to_string(mob->getX())
+							+ ",\"mob_y\":" + std::to_string(mob->getY())
+							+ ",\"damaged\":" + std::to_string(damaged)
+							+ ",\"isdead\":" + std::to_string(dead) + "},";
+					mobs_update.append(m);
 				}
-				moveMobs(map, *value);
-				std::cout << "mob_id : " << key << " x : " << value->getX() << " y : " << value->getY() << std::endl;
-				msg += "{ \"mob_id\":" + std::to_string(key) + ", "
-					+ "\"mob_x\":" + std::to_string(value->getX()) + ", "
-					+ "\"mob_y\":" + std::to_string(value->getY()) + "},";
+				else
+				{
+					std::string m = "{ \"mob_id\":" + std::to_string(id) + ", "
+							+ "\"deathsended\":" + std::to_string(1) + "},";
+					mobs_update.append(m);
+				}
 			}
+			mobs_update.pop_back();
+			mobs_update.push_back(']');
+			room_update.append(mobs_update);
 		}
-		if (flag == true)
-		{
-			if (*msg.rbegin() == ',')
-				msg.pop_back();
-			msg += "], \"nbr_mobs\":" + std::to_string(amount) + "}}";
-			for (auto player : allPlayer)
-			{
-				player->getWs()->send(msg);
-			}
-		}
+		room_update.push_back('}');
+		msg.append(room_update);
 	}
+	else
+		msg.append(", \"room_state\": {\"room_event\":\"None\"}");
+
+	msg.append("}}");
+
+	app->publish(room.getRoomId(), msg, uWS::OpCode::TEXT);
 }
+
+struct TimerData
+{
+	Server		*server;
+	uWS::App	*app;
+};
 
 void	Server::run(void)
 {
+	uWS::App app;
 
 	auto loop = uWS::Loop::get();
-
 	struct us_timer_t *delayTimer = us_create_timer((struct us_loop_t *) loop, 0, sizeof(TimerData));
-	
 	auto *data = (TimerData *) us_timer_ext(delayTimer);
 	data->server = this;
+	data->app = &app;
 	us_timer_set(delayTimer, [](struct us_timer_t *t)
 	{
 		auto *data = (TimerData *) us_timer_ext(t);
@@ -284,13 +383,12 @@ void	Server::run(void)
 				}
 				for (auto i : PlayerPerRoom)
 				{
-					roomLoopUpdate(*i.first, i.second);
+					roomLoopUpdate(*i.first, i.second, data->app);
 				}
 			}
 		}
-	}, 64, 64);
+	}, 1000, 1000);
 
-	uWS::App app;
 	app.ws<PerSocketData>("/*", uWS::App::WebSocketBehavior<PerSocketData> {
 			.open = [](auto *ws) 
 			{

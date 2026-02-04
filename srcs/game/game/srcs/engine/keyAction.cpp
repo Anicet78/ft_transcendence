@@ -46,6 +46,7 @@ void	key_up(void)
 			break;
 		case SDLK_SPACE:
 			gSdl.key.space = 0;
+			break;
 		case SDLK_e:
 			gSdl.key.e_key = 1;
 			break;

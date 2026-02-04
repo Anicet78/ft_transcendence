@@ -14,9 +14,9 @@ class Player
 {
 	private:
 	//player info
-		std::string	_uid;
+		std::string _uid;
 		int			_numPlayer;	//joueur 1 ou joueur 2 etc
-		std::string	_name;
+		std::string _name;
 
 	//player pos
 		float		_x;

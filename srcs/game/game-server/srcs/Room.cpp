@@ -18,6 +18,7 @@ Room &Room::operator=(Room const &rhs)
 	this->_roomPlan = rhs._roomPlan;
 	this->_exitsLoc = rhs._exitsLoc;
 	this->_event = rhs._event;
+	this->_roomID = rhs._roomID;
 	return *this;
 }
 
@@ -31,9 +32,10 @@ Room::Room(void)
 	this->_exits = {0, 0, 0, 0};
 	this->_exitsLoc.fill({-1, -1});
 	this->_name = "Empty";
+	this->_roomID = "None";
 }
 
-Room::Room(Room const &rhs): _width(rhs._width), _height(rhs._height), _rotated(rhs._rotated),
+Room::Room(Room const &rhs): _roomID(rhs._roomID), _width(rhs._width), _height(rhs._height), _rotated(rhs._rotated),
 				_exits(rhs._exits), _exitsLoc(rhs._exitsLoc), _name(rhs._name), _roomPlan(rhs._roomPlan), _event(rhs._event)
 {}
 
@@ -60,6 +62,11 @@ int Room::getRotated(void) const
 std::string Room::getName() const
 {
 	return this->_name;
+}
+
+std::string	Room::getRoomId(void) const
+{
+	return this->_roomID;
 }
 
 std::vector<std::string> Room::getRoomPlan() const
@@ -277,6 +284,12 @@ void	Room::setEvent(void)
 			_event = std::make_shared<MobRush>(this->_roomPlan);
 		}
 	}
+	return ;
+}
+
+void	Room::setRoomId(std::string id)
+{
+	this->_roomID = id;
 	return ;
 }
 

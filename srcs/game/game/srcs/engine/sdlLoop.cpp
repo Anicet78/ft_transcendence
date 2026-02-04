@@ -5,7 +5,6 @@ void updateRoom(Player &player)
 	Room &room = player.getRoom();
 	auto plan = room.getRoomPlan();
 	float x = player.getX(), y = player.getY();
-	bool	roomChanged = false;
 
 	if (room.getRoomEvent().get() && room.getRoomEvent()->isCleared() == false)
 	{
@@ -21,7 +20,6 @@ void updateRoom(Player &player)
 			player.setNode(player.getNode()->south.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[0][0] + 0.5, exitsLoc[0][1] + 1);
-			roomChanged = true;
 		}
 		else if (exitsLoc[0][0] == static_cast<int>(x) && exitsLoc[0][1] == static_cast<int>(y)
 			&& !player.getNode()->north.expired())
@@ -29,7 +27,6 @@ void updateRoom(Player &player)
 			player.setNode(player.getNode()->north.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[2][0] + 0.5, exitsLoc[2][1] - 0.1);
-			roomChanged = true;
 		}
 		else if (exitsLoc[1][0] == static_cast<int>(x) && exitsLoc[1][1] == static_cast<int>(y)
 			&& !player.getNode()->east.expired())
@@ -37,7 +34,6 @@ void updateRoom(Player &player)
 			player.setNode(player.getNode()->east.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[3][0] + 1, exitsLoc[3][1] + 0.5);
-			roomChanged = true;
 		}
 		else if (exitsLoc[3][0] == static_cast<int>(x) && exitsLoc[3][1] == static_cast<int>(y)
 			&& !player.getNode()->west.expired())
@@ -45,7 +41,6 @@ void updateRoom(Player &player)
 			player.setNode(player.getNode()->west.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[1][0] - 0.1, exitsLoc[1][1] + 0.5);
-			roomChanged = true;
 		}
 	}
 }

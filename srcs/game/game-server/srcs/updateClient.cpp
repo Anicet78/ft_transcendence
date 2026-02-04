@@ -35,6 +35,10 @@ void updateRoom(Player &player)
 				player.setExit(' ');
 			return ;
 		}
+		else
+		{
+			player.getWs()->unsubscribe(room.getRoomId());
+		}
 		auto exitsLoc = room.getExitsLoc();
 
 		if (exitsLoc[2][0] == static_cast<int>(x) && exitsLoc[2][1] == static_cast<int>(y)
@@ -73,6 +77,7 @@ void updateRoom(Player &player)
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[1][0] - 0.1, exitsLoc[1][1] + 0.5);
 		}
+		player.getWs()->subscribe(player.getRoom().getRoomId());
 	}
 	else if (plan[y][x] == 'S')
 	{

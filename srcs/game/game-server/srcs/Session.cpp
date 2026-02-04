@@ -1,6 +1,6 @@
 # include "Session.hpp"
 
-Session::Session(void): _maxNumPlayer(2), _running(0), _ended(0)
+Session::Session(void): _maxNumPlayer(3), _running(0), _ended(0)
 {
 	int size = 4 * _maxNumPlayer;
 	_maps.emplace_back(1, 1);
@@ -37,6 +37,10 @@ void	Session::launch()
 		if (pos >= this->_players.size())
 			break ;
 		this->_players[pos]->setNode(node);
+		if (this->_players[pos]->getWs()->unsubscribe("waiting"))
+			std::cout << "unsubscribed from waiting room" << std::endl;
+		if (this->_players[pos]->getWs()->subscribe(node->getRoom()->getRoomId()))
+			std::cout << "added to " + node->getRoom()->getRoomId() << std::endl;
 		std::string msg = "{\"action\": \"launch\", \"start\": " + std::to_string(pos) + '}';
 		this->_players[pos]->getWs()->send(msg);
 		pos++;
@@ -130,6 +134,8 @@ void	Session::addParty(Party &newParty)
 	for (std::shared_ptr<Player> &player : newParty.getPlayers())
 	{
 		player->setNode(this->_maps[0].getNodes()[0]);
+		if (player->getWs()->subscribe("waiting"))
+			std::cout << "added to the waiting room" << std::endl;
 		this->_players.push_back(player);
 		msg = this->sendMaps();
 		player->getWs()->send(msg);

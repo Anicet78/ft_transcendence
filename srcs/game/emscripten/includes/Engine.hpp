@@ -8,7 +8,8 @@ class Engine
 	private:
 		int	_tile_size;
 		int	_player_size;
-
+		std::string	_playerId;
+		std::string	_playerName;
 
 	public:
 		SDL_Window		*window;
@@ -21,6 +22,12 @@ class Engine
 
 		Engine();
 		~Engine();
+
+		void	setPlayerId(std::string id);
+		void	setPlayerName(std::string name);
+
+		std::string	getPlayerId(void) const;
+		std::string	getPlayerName(void) const;
 		void	setMapTileSize(int tile_size);
 		int		getMapTileSize(void);
 

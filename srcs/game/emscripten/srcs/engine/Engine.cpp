@@ -12,6 +12,26 @@ Engine::~Engine(void) {
 	return ;
 }
 
+void	Engine::setPlayerId(std::string id)
+{
+	this->_playerId = id;
+}
+
+void	Engine::setPlayerName(std::string name)
+{
+	this->_playerName = name;
+}
+
+std::string Engine::getPlayerId(void) const
+{
+	return (this->_playerId);
+}
+
+std::string	Engine::getPlayerName(void) const
+{
+	return (this->_playerName);
+}
+
 void	Engine::setMapTileSize(int tile_size) {
 	_tile_size = tile_size;
 	return ;
