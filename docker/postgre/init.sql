@@ -73,7 +73,7 @@ CREATE TABLE user_role (
 );
 
 CREATE TABLE blocked_list (
-	blocked_list UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+	blocked_list_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	blocker UUID,
 	blocked UUID,
 
@@ -179,9 +179,8 @@ CREATE TABLE game_result (
 	CONSTRAINT fk_game_result_user
 		FOREIGN KEY (player_id)
 		REFERENCES app_user(app_user_id)
-		-- ON DELETE CASCADE
+		-- -- ON DELETE CASCADE
 );
-
 
 CREATE TYPE type_list AS ENUM ('private', 'group');
 
@@ -201,34 +200,6 @@ CREATE TABLE chat (
 		REFERENCES app_user(app_user_id)
 
 	-- CHECK (chat_type IN ('private', 'group'))
-);
-
-CREATE TABLE chat_invitation (
-	chat_invitation_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-	sender_id UUID,
-	receiver_id UUID,
-	chat_id UUID,
-	"status" VARCHAR(10) NOT NULL DEFAULT 'waiting',
-	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
-	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
-	deleted_at timestamptz,
-
-	CONSTRAINT fk_chat_ivitate_sender
-		FOREIGN KEY (sender_id)
-		REFERENCES app_user(app_user_id),
-
-	CONSTRAINT fk_chat_ivitate_receiver
-		FOREIGN KEY (receiver_id)
-		REFERENCES app_user(app_user_id),
-
-	CONSTRAINT fk_chat_id
-		FOREIGN KEY (chat_id)
-		REFERENCES chat(chat_id),
-
-	CONSTRAINT chk_chat_ivitate_not_self
-		CHECK (sender_id <> receiver_id),
-
-	CHECK ("status" IN ('waiting', 'accepted', 'rejected', 'cancelled', 'deleted'))
 );
 
 CREATE TABLE chat_invitation (

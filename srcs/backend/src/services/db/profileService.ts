@@ -33,31 +33,6 @@ export async function getProfile(userId: string) {
   return prisma.appUser.findUnique({
     where: { appUserId: userId },
     select: profileSelect
-    // select: {
-    //   appUserId: true,
-    //   firstName: true,
-    //   lastName: true,
-    //   username: true,
-    //   mail: true,
-    //   avatarUrl: true,
-    //   availability: true,
-    //   region: true,
-    //   createdAt: true,
-    //   updatedAt: true,
-    //   lastConnectedAt: true,
-    //   // I included game profile, we can separate the process if wanted
-    //   gameProfile: {
-    // 	select: {
-    // 	  totalGames: true,
-    // 	  totalWins: true,
-    // 	  totalLoses: true,
-    // 	  totalEnemiesKilled: true,
-    // 	  totalXp: true,
-    // 	  level: true,
-    // 	  bestTime: true,
-    // 	}
-    //   }
-    // }
   });
 }
 
@@ -67,24 +42,6 @@ export async function getPublicProfile(userId: string) {
   return prisma.appUser.findUnique({
     where: { appUserId: userId },
     select: profileSelect
-    // select: {
-    //   username: true,
-    //   avatarUrl: true,
-    //   availability: true,
-    //   region: true,
-    //   createdAt: true,
-    //   gameProfile: {
-    // 	select: {
-    // 	  totalGames: true,
-    // 	  totalWins: true,
-    // 	  totalLoses: true,
-    // 	  totalEnemiesKilled: true,
-    // 	  totalXp: true,
-    // 	  level: true,
-    // 	  bestTime: true,
-    // 	}
-    //   }
-    // }
   });
 }
 
@@ -97,17 +54,6 @@ export async function updateProfile(userId: string, data: Record<string, unknown
       updatedAt: new Date()
     },
     select: profileSelect
-    // select: {
-    //   appUserId: true,
-    //   firstName: true,
-    //   lastName: true,
-    //   username: true,
-    //   mail: true,
-    //   avatarUrl: true,
-    //   availability: true,
-    //   region: true,
-    //   updatedAt: true
-    // }
   });
 }
 
@@ -134,40 +80,63 @@ export async function softDeleteProfile(userId: string) {
 }
 
 export async function getLastBlock(userId: string, targetId: string): Promise<string | null> {
-  const lastblock: { blocked_list: string, deleted_at: Date | null } | null = await prisma.blocked_list.findFirst({
+  const lastblock: { blockedListId: string, deletedAt: Date | null } | null = 
+    await prisma.blockedList.findFirst({
     where: {
       blocker: userId,
       blocked: targetId,
-        deleted_at: null
+        deletedAt: null
     },
-    orderBy: { created_at: 'desc' },
+    orderBy: { createdAt: 'desc' },
     select: {
-      blocked_list: true,
-      deleted_at: true
+      blockedListId: true,
+      deletedAt: true
     }
   });
-  if (!lastblock || lastblock.deleted_at !== null)
+  if (!lastblock || lastblock.deletedAt !== null)
     return null;
-  return lastblock.blocked_list;
+  return lastblock.blockedListId;
 }
 
 export async function blockProfile(userId: string, targetId: string) {
-  return prisma.blocked_list.create({
+  return prisma.blockedList.create({
     data: {
       blocker: userId,
       blocked: targetId,
-      created_at: new Date(),
-      updated_at: new Date()
+      createdAt: new Date(),
+      updatedAt: new Date()
     }
   });
 }
 
 export async function unblockProfile(lastBlockId: string) {
-  return prisma.blocked_list.update({
-    where: { blocked_list: lastBlockId },
+  return prisma.blockedList.update({
+    where: { blockedListId: lastBlockId },
     data: {
-      updated_at: new Date(),
-      deleted_at: new Date()
+      updatedAt: new Date(),
+      deletedAt: new Date()
     }
   });
 }
+
+
+// export async function getLastBlock(
+//   userId: string,
+//   targetId: string
+// ): Promise<string | null> {
+//   const lastblock = await prisma.blockedList.findFirst({
+//     where: {
+//       blocker: userId,
+//       blocked: targetId,
+//       deletedAt: null
+//     },
+//     orderBy: {
+//       createdAt: 'desc'
+//     },
+//     select: {
+//       blockedListId: true
+//     }
+//   });
+
+//   return lastblock?.blockedListId ?? null;
+// }

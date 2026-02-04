@@ -35,8 +35,8 @@ services:
     image: node:25.2.1
     container_name: node-dev-c
     restart: on-failure
-    ports:
-      - 3000:3000
+    # ports:
+    #   - 3000:3000
     env_file:
       - .env
     secrets:
@@ -79,20 +79,20 @@ services:
   #     - transcendence
   #   entrypoint: ["make", "wasm"]
 
-  # nginx:
-  #   image: nginx:1.29.4
-  #   container_name: nginx-c
-  #   restart: on-failure
-  #   ports:
-  #     - 8080:80
-  #     - 8443:443
-  #   env_file:
-  #     - .env
-  #   volumes:
-  #     - ./nginx/conf/:/etc/nginx/conf.d/:ro
-  #     - ./certs:/etc/nginx/certs
-  #   networks:
-  #     - transcendence
+  nginx:
+    image: nginx:1.29.4
+    container_name: nginx-c
+    restart: on-failure
+    ports:
+      - 8080:80
+      - 8443:443
+    env_file:
+      - .env
+    volumes:
+      - ./nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./certs:/etc/nginx/certs
+    networks:
+      - transcendence
   #   depends_on:
   #     - emscripten
 
