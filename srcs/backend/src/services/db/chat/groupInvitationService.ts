@@ -25,7 +25,7 @@ export async function inviteToGroupChat(chatId: string, senderId: string, receiv
 	// }
 	// 2. Check sender is a member
 	const isMember = await prisma.chatMember.findFirst({
-	where: { chatId, userId: senderId }
+		where: { chatId, userId: senderId }
 	});
 
 	if (!isMember) {
@@ -34,7 +34,7 @@ export async function inviteToGroupChat(chatId: string, senderId: string, receiv
 
 	// 3. Check receiver is not already a member
 	const alreadyMember = await prisma.chatMember.findFirst({
-	where: { chatId, userId: receiverId }
+		where: { chatId, userId: receiverId }
 	});
 
 	if (alreadyMember) {
@@ -43,7 +43,7 @@ export async function inviteToGroupChat(chatId: string, senderId: string, receiv
 
 	// 4. Prevent duplicate invitations
 	const existingInvite = await prisma.chatInvitation.findFirst({
-	where: { chatId, receiverId, status: 'waiting' }
+		where: { chatId, receiverId, status: 'waiting' }
 	});
 
 	if (existingInvite) {
@@ -52,20 +52,20 @@ export async function inviteToGroupChat(chatId: string, senderId: string, receiv
 
 	// 5. Create invitation
 	const invitation = await prisma.chatInvitation.create({
-	data: {
-		chatId,
-		senderId,
-		receiverId,
-		status: 'waiting'
-	},
-	select: {
-		chatInvitationId: true,
-		chatId: true,
-		senderId: true,
-		receiverId: true,
-		status: true,
-		createdAt: true
-	}
+		data: {
+			chatId,
+			senderId,
+			receiverId,
+			status: 'waiting'
+		},
+		select: {
+			chatInvitationId: true,
+			chatId: true,
+			senderId: true,
+			receiverId: true,
+			status: true,
+			createdAt: true
+		}
 	});
 
 	return invitation;
@@ -74,50 +74,49 @@ export async function inviteToGroupChat(chatId: string, senderId: string, receiv
 
 //RETURN USER'S CHAT INVITATIONS (send and received)
 export async function listUserChatInvitations(userId: string) {
-  const invitations = await prisma.chatInvitation.findMany({
-    where: {
-      OR: [
-        { senderId: userId },
-        { receiverId: userId }
-      ]
-    },
-    orderBy: { createdAt: 'desc' },
-    select: {
-      chatInvitationId: true,
-      chatId: true,
-      senderId: true,
-      receiverId: true,
-      status: true,
-      createdAt: true,
+	const invitations = await prisma.chatInvitation.findMany({
+		where: {
+			OR: [
+			{ senderId: userId },
+			{ receiverId: userId }
+			]
+		},
+		orderBy: { createdAt: 'desc' },
+		select: {
+			chatInvitationId: true,
+			chatId: true,
+			senderId: true,
+			receiverId: true,
+			status: true,
+			createdAt: true,
 
-      sender: {
-        select: {
-          appUserId: true,
-          username: true,
-          avatarUrl: true,
-          availability: true
-        }
-      },
+			sender: {
+			select: {
+				appUserId: true,
+				username: true,
+				avatarUrl: true,
+				availability: true
+			}
+			},
 
-      receiver: {
-        select: {
-          appUserId: true,
-          username: true,
-          avatarUrl: true,
-          availability: true
-        }
-      },
+			receiver: {
+			select: {
+				appUserId: true,
+				username: true,
+				avatarUrl: true,
+				availability: true
+			}
+			},
 
-      chat: {
-        select: {
-          chatId: true,
-          chatType: true,
-          chatName: true
-        }
-      }
-    }
-  });
-
+			chat: {
+			select: {
+				chatId: true,
+				chatType: true,
+				chatName: true
+			}
+			}
+		}
+  	});
   return invitations;
 }
 
@@ -125,13 +124,13 @@ export async function listUserChatInvitations(userId: string) {
 export async function acceptGroupInvitation( chatInvitationId: string, userId: string ) {
 	// 1. Load invitation
 	const invitation = await prisma.chatInvitation.findUnique({
-	where: { chatInvitationId },
-	select: {
-		chatInvitationId: true,
-		chatId: true,
-		receiverId: true,
-		status: true
-	}
+		where: { chatInvitationId },
+		select: {
+			chatInvitationId: true,
+			chatId: true,
+			receiverId: true,
+			status: true
+		}
 	});
 
 	if (!invitation) {
@@ -154,8 +153,8 @@ export async function acceptGroupInvitation( chatInvitationId: string, userId: s
 
 	// 4. Chat must exist and be group
 	const chat = await prisma.chat.findUnique({
-	where: { chatId: invitation.chatId! },
-	select: { chatType: true }
+		where: { chatId: invitation.chatId! },
+		select: { chatType: true }
 	});
 
 	if (!chat || chat.chatType !== 'group') {
