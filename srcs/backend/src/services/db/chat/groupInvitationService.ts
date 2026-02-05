@@ -164,7 +164,7 @@ export async function acceptGroupInvitation( chatInvitationId: string, userId: s
 
 	// 5. Prevent duplicate membership
 	const alreadyMember = await prisma.chatMember.findFirst({
-	where: { chatId: invitation.chatId!, userId }
+		where: { chatId: invitation.chatId!, userId }
 	});
 
 	if (alreadyMember) {

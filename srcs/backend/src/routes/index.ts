@@ -8,6 +8,7 @@ import chatMessageRoutes from './chat/chatMessageRoute.js';
 import groupChatRoutes from './chat/groupChatRoute.js';
 import groupInvitationRoutes from './chat/groupInvitationRoute.js';
 import groupAdminRoutes from './chat/groupAdminRoute.js';
+import searchRoute from './search/searchRoute.js';
 
 export async function router(fastify: FastifyInstance) {
 	fastify.register(authRouter, { prefix: '/auth' });
@@ -19,4 +20,5 @@ export async function router(fastify: FastifyInstance) {
 	fastify.register(chatMessageRoutes);
 	fastify.register(groupInvitationRoutes);
 	fastify.register(groupAdminRoutes);
+	fastify.register(searchRoute);
 }
