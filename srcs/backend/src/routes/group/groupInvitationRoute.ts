@@ -13,7 +13,7 @@ import {
 	inviteToGroupController,
 	listChatInvitationsController,
 	acceptGroupInvitationController
-} from '../../controllers/chat/groupInvitationController.js';
+} from '../../controllers/group/groupInvitationController.js';
 
 async function groupInvitationRoutes(fastify: FastifyInstance) {
 

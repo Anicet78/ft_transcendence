@@ -6,7 +6,8 @@ import { AppErrorSchema } from "../../schema/errorSchema.js";
 export const MeResponseSchema = Type.Object({
 	user: Type.Object({
 		id: Type.String(),
-		email: Type.String()
+		email: Type.String(),
+		role: Type.String()
 	}),
 	roomId: Type.String()
 });

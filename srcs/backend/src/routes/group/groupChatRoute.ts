@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import {
 	CreateGroupChatBodySchema,
 	CreateGroupChatResponseSchema,
-	
+
 	DisbandGroupParamsSchema,
 	DisbandGroupChatSchema,
 
@@ -14,7 +14,7 @@ import {
 	createGroupChatController,
 	disbandGroupChatController,
 	quitGroupChatController
-} from '../../controllers/chat/groupChatController.js';
+} from '../../controllers/group/groupChatController.js';
 
 async function groupChatRoutes(fastify: FastifyInstance) {
 

@@ -15,8 +15,8 @@ type SocketIOOptions = {
 export default fp(async (fastify) => {
 	await fastify.register(socketio as unknown as FastifyPluginCallback<SocketIOOptions>, {
 		cors: {
-			origin: "*", // url du frontend plus tard
-			methods: ["GET", "POST"]
+			origin: "*", // will be changed to frontend URL later
+			methods: ["GET", "POST", "OPTIONS"]
 	}
 	});
 

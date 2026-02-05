@@ -10,7 +10,8 @@ export const UserSchema = Type.Object({
 	username: Type.String(),
 	region: RegionSchema,
 	email: Type.String({ format: 'email' }),
-	passwordHash: Type.String()
+	passwordHash: Type.String(),
+	role: Type.String()
 });
 
 export type User = Static<typeof UserSchema>

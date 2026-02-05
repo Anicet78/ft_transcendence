@@ -24,7 +24,7 @@ import {
 	banChatMemberController,
 	unbanChatMemberController,
 	getChatBansController
-} from '../../controllers/chat/groupAdminController.js';
+} from '../../controllers/group/groupAdminController.js';
 
 async function groupAdminRoutes(fastify: FastifyInstance) {
 

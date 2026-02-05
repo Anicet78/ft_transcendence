@@ -1,7 +1,7 @@
-import { postLoginController } from "../../controllers/auth/loginController.js";
 import Type, { type Static } from "typebox";
 import type { FastifyInstance } from "fastify";
 import { AppErrorSchema } from "../../schema/errorSchema.js";
+import { banController, unbanController } from "../../controllers/admin/banController.js";
 
 export const LoginSchema = Type.Object({
 	email: Type.String({ format: 'email', minLength: 3, maxLength: 80 }),
@@ -13,16 +13,15 @@ export const LoginResponseSchema = Type.Object({
 	token: Type.String(),
 	user: Type.Object({
 		id: Type.String(),
-		email: Type.String(),
-		role: Type.String()
+		email: Type.String()
 	}),
 	roomId: Type.String()
 });
 export type LoginResponseType = Static<typeof LoginResponseSchema>
 
-export async function loginRoutes(fastify: FastifyInstance) {
+export async function banRoutes(fastify: FastifyInstance) {
 
-fastify.post("/login", {
+fastify.post("/:id/ban", {
 	schema: {
 		body: LoginSchema,
 		response: {
@@ -33,6 +32,19 @@ fastify.post("/login", {
 			500: AppErrorSchema
 		}
 	}
-}, postLoginController);
+}, banController);
+
+fastify.post("/:id/unban", {
+	schema: {
+		body: LoginSchema,
+		response: {
+			200: LoginResponseSchema,
+			400: AppErrorSchema,
+			401: AppErrorSchema,
+			404: AppErrorSchema,
+			500: AppErrorSchema
+		}
+	}
+}, unbanController);
 
 }

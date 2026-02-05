@@ -40,6 +40,7 @@ model AppUser {
   gameResults                                           GameResult[]
   privateChatsAsUser1                                   PrivateChat[]    @relation("PrivateChatUser1")
   privateChatsAsUser2                                   PrivateChat[]    @relation("PrivateChatUser2")
+  refreshTokens                                         RefreshToken[]   @relation("UserToken")
   rolesGiven                                            UserRole[]       @relation("UserRoleAttributedBy")
   rolesReceived                                         UserRole[]       @relation("UserRoleAttributedTo")
 
@@ -113,7 +114,7 @@ model UserRole {
   userRoleId   String    @id @default(dbgenerated("uuid_generate_v4()")) @map("user_role_id") @db.Uuid
   attributedTo String?   @map("attributed_to") @db.Uuid
   attributedBy String?   @map("attributed_by") @db.Uuid
-  role         String    @default("guest") @db.VarChar(20)
+  role         roles     @default(guest)
   createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt    DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt    DateTime? @map("deleted_at") @db.Timestamptz(6)
@@ -254,6 +255,20 @@ model PrivateChat {
   @@map("private_chat")
 }
 
+model RefreshToken {
+  tokenId   String    @id @default(dbgenerated("uuid_generate_v4()")) @map("token_id") @db.Uuid
+  userId    String?   @map("user_id") @db.Uuid
+  tokenHash String    @map("token_hash")
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+  app_user  AppUser?  @relation("UserToken", fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_token")
+
+  @@map("refresh_token")
+}
+
 enum type_list {
   private
   group
@@ -283,4 +298,10 @@ enum chat_role_type {
   moderator
   writer
   member
+}
+
+enum roles {
+  guest
+  user
+  admin
 }
