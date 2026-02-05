@@ -1,19 +1,20 @@
 import Fastify from 'fastify';
 import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import errorPlugin from './plugins/error.js';
 import authPlugin from './plugins/auth.js';
 import socketPlugin from './plugins/socket.js';
 import { router } from './routes/index.js';
-import fastifyCors from '@fastify/cors';
 
 export const fastify = Fastify({
 	logger: true,
+	trustProxy: true
 });
 
 fastify.withTypeProvider<TypeBoxTypeProvider>();
 
 const start = async () => {
 	try {
-		await fastify.register(fastifyCors, {origin: 'http://localhost:5173', methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'], credentials: true});
+		fastify.register(errorPlugin);
 		fastify.register(authPlugin);
 		fastify.register(socketPlugin);
 		fastify.register(router);

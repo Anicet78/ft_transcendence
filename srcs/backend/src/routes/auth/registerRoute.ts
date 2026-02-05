@@ -3,7 +3,6 @@ import Type, { type Static } from "typebox";
 import type { FastifyInstance } from "fastify";
 import { AppErrorSchema } from "../../schema/errorSchema.js";
 import { RegionSchema } from "../../schema/userSchema.js";
-import { GlobalHeadersSchema } from "../../schema/globalHeadersSchema.js";
 
 export const RegisterSchema = Type.Object({
 	firstname: Type.String({ minLength: 1 }),
@@ -19,7 +18,8 @@ export const RegisterResponseSchema = Type.Object({
 	token: Type.String(),
 	user: Type.Object({
 		id: Type.String(),
-		email: Type.String()
+		email: Type.String(),
+		role: Type.String()
 	}),
 	roomId: Type.String()
 });
@@ -29,7 +29,6 @@ export async function registerRoutes(fastify: FastifyInstance) {
 
 fastify.post("/register", {
 	schema: {
-		headers: GlobalHeadersSchema,
 		body: RegisterSchema,
 		response: {
 			200: RegisterResponseSchema,
