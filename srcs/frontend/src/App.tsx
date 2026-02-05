@@ -4,7 +4,7 @@ import { NavLink } from 'react-router';
 
 const App = () => {
 	return (
-		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' textSize='2'>
+		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' textSize='2' textWeight='bold'>
 			<div>Welcome to the game TransDungeon</div>
 			<br/>
 			<div>

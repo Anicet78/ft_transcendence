@@ -16,6 +16,7 @@ import Privacy from './policies/PrivacyPolicy.tsx';
 import Error from './error/error.tsx';
 import Banner from './components/Banner.tsx';
 import MyFooter from './components/Footer.tsx';
+import FriendList from './friendship/FriendsList.tsx';
 
 // va chercher l'element avec l'ID 'root' dans le doc index.html et met App dedans
 createRoot(document.getElementById('root')).render(
@@ -37,9 +38,9 @@ createRoot(document.getElementById('root')).render(
 				<Route path="/chat/:messageId" element={} />
 				<Route path="/chat/:chatId/info" element={} />
 				<Route path="/chat/list" element={} /> */}
-				<Route path="/friends" element={<ProfilePublic />} />
-				{/* <Route path="/friends/requests" element={} />
-				<Route path="/friends/:id" element={} /> */}
+				<Route path="/friends" element={<FriendList />} />
+				{/* <Route path="/friends/requests" element={} /> */}
+				<Route path="/friends/:id" element={<ProfilePublic />} /> 
 				{/* <Route path="/group/:chatId/role/:memberId" element={} />
 				<Route path="/group/:chatId/kick/:memberId" element={} />
 				<Route path="/group/:chatId/ban/:memberId" element={} />

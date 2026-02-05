@@ -1,6 +1,6 @@
 import '../App.css'
 import './profile.css'
-import { Box } from '@allxsmith/bestax-bulma';
+import { Box, Button } from '@allxsmith/bestax-bulma';
 
 const ProfilePrivate = () => {
 	const username = 'My username'
@@ -30,7 +30,12 @@ const ProfilePrivate = () => {
 					</figure>
 				</Box>
 				<Box className='head-text'>
-					<p>{username}</p>
+					<span className="icon-text">
+						<span>{username}</span>
+						<span className="icon">
+							<i className="fas fa-pen"></i>
+						</span>
+					</span>
 					<p>Lvl {level}</p>
 					<p>{xp} XP</p>
 				</Box>
@@ -38,10 +43,24 @@ const ProfilePrivate = () => {
 			<Box className='info' bgColor="white" textSize='5'>
 				<p>First name: {firstname}</p>
 				<p>Last name: {lastname}</p>
-				<p>Email: {email}</p>
+				<p>
+					Email: {email}
+					<span className="icon-text">
+						<span className="icon">
+							<i className="fas fa-pen"></i>
+						</span>
+					</span>
+				</p>
 				<p>Login Google: {loginGoogle}</p>
 				<p>Login 42: {login42}</p>
-				<p>Password: {password}</p>
+				<p>
+					Password: {password}
+					<span className="icon-text">
+						<span className="icon">
+							<i className="fas fa-pen"></i>
+						</span>
+					</span>
+				</p>
 				<p>Best time: {bestTime}</p>
 				<p>Max ennemies killed: {maxKill}</p>
 				<p>Total games: {totalGames}</p>

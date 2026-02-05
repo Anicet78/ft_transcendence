@@ -2,46 +2,57 @@ import { useState } from 'react'
 import { NavLink } from 'react-router';
 import { Navbar, Icon } from '@allxsmith/bestax-bulma';
 import '../styles/Banner.css'
+import SearchBar from './SearchBar.tsx';
 
 const Banner = () => {
-	const [active, setActive] = useState(false);
+	const [active, setActive] = useState(true)
+	const connected = false
+	const username = 'My username'
+
 	return (
-		<Navbar color='dark' aria-label='navigation bar'>
+		<Navbar color='dark' role='navigation' aria-label='main navigation'>
 			<Navbar.Brand>
-				<NavLink to="/" aria-label='home button' className='button is-large is-primary is-outlined is-centered'>
-					<Icon
-					name="dragon"
-					ariaLabel="dragon logo"
-					/>
-					<span>TransDungeon</span>
-				</NavLink>
-				<Navbar.Burger
-				active={active}
-				onClick={() => setActive(a => !a)}
-				aria-label="menu"
-				aria-expanded={active}
-				/>
+				<Navbar.Item>
+					<NavLink to="/" aria-label='home button' className='button is-large is-primary is-outlined is-centered'>
+						<Icon
+						name="dragon"
+						ariaLabel="dragon logo"
+						/>
+						<span>TransDungeon</span>
+					</NavLink>
+				</Navbar.Item>
 			</Navbar.Brand>
 			<Navbar.Menu active={active}>
 				<Navbar.Start>
+					<Navbar.Item hidden={!connected}>
+						<SearchBar />
+					</Navbar.Item>
 				</Navbar.Start>
 				<Navbar.End>
-					<Navbar.Dropdown hoverable>
-						<Navbar.Item as="a" textColor='primary'>
-						<Icon
-						name="bars"
-						ariaLabel="Menu"
-						/>
-						<span>Menu</span>
-						</Navbar.Item>
-						<Navbar.DropdownMenu>
-							<Navbar.Item href="#">Language</Navbar.Item>
-							<Navbar.Item href="#">Dark mode</Navbar.Item>
-							<Navbar.Divider />
-							<Navbar.Item href="#">About the game</Navbar.Item>
-							<Navbar.Item href="#">Credentials</Navbar.Item>
-						</Navbar.DropdownMenu>
-					</Navbar.Dropdown>
+					<Navbar.Item hidden={!connected}>
+						<NavLink to='/profile' aria-label='profile button' className='button is-primary is-medium is-centered'>
+							<Icon name='user' ariaLabel='user icon'/>
+							<span>{username}</span>
+						</NavLink>
+					</Navbar.Item>
+					<Navbar.Item>
+						<Navbar.Dropdown hoverable>
+							<Navbar.Item as="a" textColor='primary'>
+							<Icon
+							name="bars"
+							ariaLabel="Menu"
+							/>
+							<span>Menu</span>
+							</Navbar.Item>
+							<Navbar.DropdownMenu>
+								<Navbar.Item href="#">Language</Navbar.Item>
+								<Navbar.Item href="#">Dark mode</Navbar.Item>
+								<Navbar.Divider />
+								<Navbar.Item href="#">About the game</Navbar.Item>
+								<Navbar.Item href="#">Credentials</Navbar.Item>
+							</Navbar.DropdownMenu>
+						</Navbar.Dropdown>
+					</Navbar.Item>
 				</Navbar.End>
 			</Navbar.Menu>
 		</Navbar>
