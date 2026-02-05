@@ -239,23 +239,24 @@ void	moveMobs(std::vector<std::string> const &map, Mob &mob)
 // }
 
 void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app) {
-	std::string msg = "{\"loop_action\": \"update\", \"loop\": {";
+	std::string msg = "{\"action\": \"loop_action\", \"loop\": {";
 
 	//put player status in the msg
 	const int player_size = allPlayer.size();
 	if (player_size)
 	{
 		std::string player_update = "\"player_update\": { \"player_status\": [";
-		for (auto player : allPlayer)
+		for (const auto &player : allPlayer)
 		{
-			std::string p = "{\"player_uid\":" + player->getUid()
-							+ ",\"player_name\":" + player->getName()
-							+ ",\"player_x\":" + std::to_string(player->getX())
-							+ ",\"player_y\":" + std::to_string(player->getY())
-							+ ",\"player_health\":" + std::to_string(player->getHp())
-							+ ",\"player_anim\":" + std::to_string(player->getAnim())
-							+ ",\"player_exit\":" + player->getExit() + "},";
-			player_update.append(p);
+			player_update += "{\"player_uid\":\"" + player->getUid() + '\"';
+			player_update += ",\"player_name\":\"" + player->getName() + '\"';
+			player_update += ",\"player_x\":" + std::to_string(player->getX());
+			player_update += ",\"player_y\":" + std::to_string(player->getY());
+			player_update += ",\"player_health\":" + std::to_string(player->getHp());
+			player_update += ",\"player_anim\":" + std::to_string(player->getAnim());
+			player_update += ",\"player_exit\":\"";
+			player_update.push_back(player->getExit());
+			player_update += "\"},";
 		}
 		player_update.pop_back();
 		player_update.push_back(']');
@@ -268,7 +269,7 @@ void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer,
 	std::shared_ptr<ARoomEvent> event = room.getRoomEvent();
 	std::vector<std::string> map = room.getRoomPlan();
 
-	if (event->getType() == "MobRush")
+	if (event && event->getType() == "MobRush")
 	{
 		std::string room_update;
 
@@ -367,19 +368,15 @@ void	Server::run(void)
 				for (auto player : session.getPlayers())
 				{
 					Room &room = player->getRoomRef();
-					std::shared_ptr<ARoomEvent> event = room.getRoomEvent();
-					if (room.getRoomEvent() && event->isCleared() == false)
+					auto i = PlayerPerRoom.find(&room);
+					if (i == PlayerPerRoom.end())
 					{
-						auto i = PlayerPerRoom.find(&room);
-						if (i == PlayerPerRoom.end())
-						{
-							std::vector<std::shared_ptr<Player>> lol;
-							lol.push_back(player);
-							PlayerPerRoom.emplace(&room, lol);
-						}
-						else
-							PlayerPerRoom[i->first].push_back(player);
+						std::vector<std::shared_ptr<Player>> lol;
+						lol.push_back(player);
+						PlayerPerRoom.emplace(&room, lol);
 					}
+					else
+						PlayerPerRoom[i->first].push_back(player);
 				}
 				for (auto i : PlayerPerRoom)
 				{
@@ -387,7 +384,7 @@ void	Server::run(void)
 				}
 			}
 		}
-	}, 1000, 1000);
+	}, 500, 100);
 
 	app.ws<PerSocketData>("/*", uWS::App::WebSocketBehavior<PerSocketData> {
 			.open = [](auto *ws) 

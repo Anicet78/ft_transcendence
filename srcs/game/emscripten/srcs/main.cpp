@@ -108,7 +108,6 @@ void	updateRoomState(Game &game, val msg) {
 				}
 			}
 		}
-
 	}
 }
 
@@ -236,20 +235,20 @@ void	parseJson(bool &init, Game &game)
 		game.getPlayer().setNode(game.getMaps()[0].getNodes()[0]);
 		EM_ASM_({onCppMessage({action: "connected"});});
 	}
-	else if (msg["action"].as<std::string>() == "update")
-	{
-		if (msg.hasOwnProperty("player_state"))
-			updatePlayerState(game, msg["player_state"]);
-		if (msg.hasOwnProperty("room_state"))
-			updateRoomState(game, msg["room_state"]);
-		if (msg.hasOwnProperty("loop"))
-			updateFromLoop(game, msg["loop"]);
-	}
+	// else if (msg["action"].as<std::string>() == "update")
+	// {
+	// 	if (msg.hasOwnProperty("player_state"))
+	// 		updatePlayerState(game, msg["player_state"]);
+	// 	if (msg.hasOwnProperty("room_state"))
+	// 		updateRoomState(game, msg["room_state"]);
+	// 	if (msg.hasOwnProperty("loop"))
+	// 		updateFromLoop(game, msg["loop"]);
+	// }
 	else if (msg["action"].as<std::string>() == "launch")
 		launchGame(game, msg);
-	else if (msg["loop_action"].as<std::string>() == "update")
+	else if (msg["action"].as<std::string>() == "loop_action")
 	{
-		val loop = msg["loop"]
+		val loop = msg["loop"];
 		if (loop.hasOwnProperty("player_update"))
 			loopPlayerState(game, loop["player_update"]);
 		if (loop.hasOwnProperty("room_update"))

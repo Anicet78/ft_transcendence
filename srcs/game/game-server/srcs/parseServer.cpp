@@ -181,16 +181,16 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
                     updateRoom(*player);
 					updateWorld(*player);
                 }
-                sendPlayerState(*player, session, "");
-                for (auto &oplayer : session.getPlayers())
-                {
-                    if (oplayer->getUid() == player->getUid())
-                        continue ;
-                    if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isConnected() && !session.isRunning())
-                        sendPlayerState(*oplayer, session, "");
-                    else if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isLaunched() && session.isRunning())
-                        sendPlayerState(*oplayer, session, "");
-                }
+                // sendPlayerState(*player, session, "");
+                // for (auto &oplayer : session.getPlayers())
+                // {
+                //     if (oplayer->getUid() == player->getUid())
+                //         continue ;
+                //     if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isConnected() && !session.isRunning())
+                //         sendPlayerState(*oplayer, session, "");
+                //     else if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isLaunched() && session.isRunning())
+                //         sendPlayerState(*oplayer, session, "");
+                // }
                 if (!session.getPlaceLeft() && session.doesAllPlayersConnected() && !session.isRunning())
                     session.launch();
                 break;

@@ -42,5 +42,7 @@ void	key_up(void);
 void	updateRoom(Game &game, Player &player, std::string dir);
 void	print_map(Player &player);
 void	print_others(Player &player, std::vector<Player> &otherPlayers);
+void	loopPlayerState(Game &game, val playerUpdate);
+void	loopRoomState(Game &game, val roomUpdate);
 
 #endif

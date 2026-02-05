@@ -41,14 +41,14 @@ void	loopPlayerState(Game &game, val playerUpdate)
 		}
 		else if (game.isInOtherPlayers(uid))
 		{
-			std::string leaved = pStatus["player_leave"].as<std::string>();
-			if (leaved == "true")
-				game.suppOtherPlayer(uid);
-			else
-			{
+			// std::string leaved = pStatus["player_leave"].as<std::string>();
+			// if (leaved == "true")
+			// 	game.suppOtherPlayer(uid);
+			// else
+			// {
 				Player &player = game.getOtherPlayer(uid);
 				setPlayerState(game, player, pStatus, 0);
-			}
+			// }
 		}
 		else
 		{
@@ -56,14 +56,50 @@ void	loopPlayerState(Game &game, val playerUpdate)
 			if (leaved == "false")
 			{
 				std::string name = pStatus["player_name"].as<std::string>();
-				Player &player = game.getOtherPlayers().emplace_back(uid, name);
+				Player player = Player(uid, name);
+				game.addOtherPlayer(player);
 				setPlayerState(game, player, pStatus, 0);
 			}
 		}
 	}
 }
 
-// void	loopRoomState(Game &game, val msg)
-// {
+void	loopRoomState(Game &game, val roomUpdate)
+{
+	if (roomUpdate["room_event"].as<std::string>() == "MobRush")
+	{
+		MobRush &rush = dynamic_cast<MobRush &>(*game.getPlayer().getRoomRef().getRoomEvent());
+		std::unordered_map<int, std::unique_ptr<Mob>> &mobs = rush.getMobs();
+		if (roomUpdate["cleared"].as<std::string>() == "false")
+		{
+			int nbrMob = roomUpdate["nbr_mob"].as<int>();
+			val horde = roomUpdate["mobs"];
+			for (int i = 0; i < nbrMob; i++)
+			{
+				val monster = horde[i];
 
-// }
+				int id = monster["mob_id"].as<int>();
+
+				if (!monster.hasOwnProperty(std::string("deathsended").c_str()))
+				{
+					float x = monster["mob_x"].as<float>();
+					float y = monster["mob_y"].as<float>();
+					// const int damaged = mob["damaged"].as<int>();
+					// const int isdead = mob["isdead"].as<int>();
+
+					if (monster["damaged"].as<int>() == 1)
+						mobs[id]->damaged(true);
+					
+					if (monster["isdead"].as<int>() == 1)
+						mobs[id]->setIsDead(true);
+					mobs[id]->setPos(x, y);
+				}
+				else
+				{
+					if (mobs[id]->isDead() != true)
+						mobs[id]->setIsDead(true);
+				}
+			}
+		}
+	}
+}
