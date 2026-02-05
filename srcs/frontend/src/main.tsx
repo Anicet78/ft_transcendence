@@ -25,14 +25,45 @@ createRoot(document.getElementById('root')).render(
 			<Routes>
 				<Route path="/" element={<App />} />
 				<Route path="/login" element={<Login />} />
+				{/* <Route path="/me" element={} />
+				<Route path="/offline" element={} />
+				<Route path="/refresh" element={} /> */}
 				<Route path="/register" element={<Register />} />
-				<Route path="/profile/" element={<ProfilePrivate />} />
+				{/* <Route path="/chat/:chatId" element={} />
+				<Route path="/chat/:chatId/messages" element={} />
+				<Route path="/chat/:chatId/message/:messageId/edit" element={} />
+				<Route path="/chat/:chatId/message/:messageId/moderate" element={} />
+				<Route path="/chat/:chatId/message/:messageId/restore" element={} />
+				<Route path="/chat/:messageId" element={} />
+				<Route path="/chat/:chatId/info" element={} />
+				<Route path="/chat/list" element={} /> */}
+				<Route path="/friends" element={<ProfilePublic />} />
+				{/* <Route path="/friends/requests" element={} />
+				<Route path="/friends/:id" element={} /> */}
+				{/* <Route path="/group/:chatId/role/:memberId" element={} />
+				<Route path="/group/:chatId/kick/:memberId" element={} />
+				<Route path="/group/:chatId/ban/:memberId" element={} />
+				<Route path="/group/:chatId/unban/:memberId" element={} />
+				<Route path="/group/:chatId/bans" element={} /> */}
+				{/* <Route path="/chat/group/new" element={} />
+				<Route path="/group/:chatId/disband" element={} />
+				<Route path="/group/:chatId/quit" element={} /> */}
+				{/* <Route path="/group/:chatId/:memberId/invite" element={} />
+				<Route path="/group/invitations" element={} />
+				<Route path="/group/:chatInvitationId" element={} /> */}
+				<Route path="/profile" element={<ProfilePrivate />} />
 				<Route path="/profile/:id" element={<ProfilePublic />} />
-				<Route path="/friends/" element={<ProfilePublic />} />
+				{/* <Route path="/profile/:id/block" element={} />
+				<Route path="/profile/:id/unblock" element={} /> */}
+				{/* <Route path="/:id" element={} />
+				<Route path="/new" element={} />
+				<Route path="/:id/join" element={} />
+				<Route path="/:id/host" element={} />
+				<Route path="/:id/kick" element={} />
+				<Route path="/verify" element={} /> */}
 				<Route path="/terms_of_service" element={<TermsService />} />
 				<Route path="/privacy_policy" element={<Privacy />} />
 				<Route path="*" element={<Error />} />
-				{/* <Route path="/profile" element={<Profile />} /> */}
 			</Routes>
 			<MyFooter />
 		</Router>
