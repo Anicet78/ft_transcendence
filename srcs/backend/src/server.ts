@@ -7,6 +7,7 @@ import { router } from './routes/index.js';
 
 export const fastify = Fastify({
 	logger: true,
+	trustProxy: true
 });
 
 fastify.withTypeProvider<TypeBoxTypeProvider>();

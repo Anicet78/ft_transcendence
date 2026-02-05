@@ -50,12 +50,31 @@ CREATE TABLE app_user (
 	CHECK (trim(mail_address) <> '')
 );
 
+CREATE TABLE refresh_token (
+	token_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+	user_id UUID,
+
+	token_hash TEXT NOT NULL,
+	expires_at timestamptz NOT NULL,
+	revoked_at timestamptz,
+
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	deleted_at timestamptz,
+
+	CONSTRAINT fk_user_token
+		FOREIGN KEY (user_id)
+		REFERENCES app_user(app_user_id)
+);
+
+CREATE TYPE roles AS ENUM ('guest', 'user', 'admin');
+
 CREATE TABLE user_role (
 	user_role_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	attributed_to UUID,
 	attributed_by UUID,
 
-	"role" VARCHAR(20) NOT NULL DEFAULT 'guest',
+	"role" roles NOT NULL DEFAULT 'guest',
 
 	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
 	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
@@ -67,9 +86,7 @@ CREATE TABLE user_role (
 
 	CONSTRAINT fk_role_giver
 		FOREIGN KEY (attributed_by)
-		REFERENCES app_user(app_user_id),
-
-	CHECK ("role" IN ('guest', 'user', 'app_admin', 'banned_user'))
+		REFERENCES app_user(app_user_id)
 );
 
 CREATE TABLE blocked_list (
@@ -151,8 +168,8 @@ CREATE TABLE game_session (
 
 	"status" VARCHAR(20) NOT NULL DEFAULT 'finished',
 
-    CONSTRAINT chk_game_status
-        CHECK (status IN ('pending', 'running', 'finished', 'aborted'))
+	CONSTRAINT chk_game_status
+		CHECK (status IN ('pending', 'running', 'finished', 'aborted'))
 );
 
 CREATE TABLE game_result (
@@ -200,34 +217,6 @@ CREATE TABLE chat (
 		REFERENCES app_user(app_user_id)
 
 	-- CHECK (chat_type IN ('private', 'group'))
-);
-
-CREATE TABLE chat_invitation (
-	chat_invitation_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-	sender_id UUID,
-	receiver_id UUID,
-	chat_id UUID,
-	"status" VARCHAR(10) NOT NULL DEFAULT 'waiting',
-	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
-	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
-	deleted_at timestamptz,
-
-	CONSTRAINT fk_chat_ivitate_sender
-		FOREIGN KEY (sender_id)
-		REFERENCES app_user(app_user_id),
-
-	CONSTRAINT fk_chat_ivitate_receiver
-		FOREIGN KEY (receiver_id)
-		REFERENCES app_user(app_user_id),
-
-	CONSTRAINT fk_chat_id
-		FOREIGN KEY (chat_id)
-		REFERENCES chat(chat_id),
-
-	CONSTRAINT chk_chat_ivitate_not_self
-		CHECK (sender_id <> receiver_id),
-
-	CHECK ("status" IN ('waiting', 'accepted', 'rejected', 'cancelled', 'deleted'))
 );
 
 CREATE TABLE chat_invitation (

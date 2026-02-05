@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
+    "@fastify/cors": "^11.2.0",
     "@fastify/jwt": "^10.0.0",
     "@fastify/type-provider-typebox": "^6.1.0",
     "@prisma/client": "^5.22.0",
@@ -35,5 +36,8 @@
     "socket.io": "^4.8.3",
     "typebox": "^1.0.77",
     "typescript": "^5.9.3"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }

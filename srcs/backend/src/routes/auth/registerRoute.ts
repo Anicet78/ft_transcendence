@@ -18,7 +18,8 @@ export const RegisterResponseSchema = Type.Object({
 	token: Type.String(),
 	user: Type.Object({
 		id: Type.String(),
-		email: Type.String()
+		email: Type.String(),
+		role: Type.String()
 	}),
 	roomId: Type.String()
 });

@@ -54,7 +54,7 @@ export async function updateChatMemberRoleController(
 export async function banChatMemberController(
 	req: FastifyRequest<{ Params: { chatId: string, memberId: string },
 							Body: { reason?: string, expiresAt?: string }}>,
-	reply: FastifyReply						
+	reply: FastifyReply
 ){
 	const requesterId = req.user.id;
 	const { chatId, memberId } = req.params;
@@ -118,4 +118,3 @@ export async function getChatBansController(
 	}))
 	);
 }
-

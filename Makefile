@@ -7,7 +7,7 @@ CERT_PATH = ./docker/certs
 DOMAIN = localhost
 
 SECRET_PATH = docker/secrets
-SECRET_NAMES = db_password.txt jwt_secret.txt pgadmin_password.txt
+SECRET_NAMES = db_password.txt jwt_secret.txt cookie_secret.txt pgadmin_password.txt
 SECRETS = $(patsubst %, $(SECRET_PATH)/%, $(SECRET_NAMES))
 
 INFO = @printf '\033[1;35m⮑ %s\033[0m\n'
@@ -27,10 +27,12 @@ cert:
 		-subj "/CN=$(DOMAIN)"
 	$(INFO) "Certificate created."
 
-$(SECRET_PATH)/jwt_secret.txt:
+$(SECRET_PATH)/%_secret.txt:
+	@mkdir -p $(SECRET_PATH)
 	@node -e "console.log(require('crypto').randomBytes(32).toString('hex'))" | cat > $@
 
 $(SECRET_PATH)/%.txt:
+	@mkdir -p $(SECRET_PATH)
 	@echo -n "passwd" > $@
 
 up: $(SECRETS)

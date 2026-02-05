@@ -3,14 +3,36 @@ import { prisma } from "./prisma.js";
 import type { User } from "../../schema/userSchema.js";
 
 export const UserService = {
-	async getUserById(userId: string): Promise<AppUser | null> {
+	async getUserById(userId: string) {
 		return prisma.appUser.findUnique({
-			where: { appUserId: userId }
+			where: { appUserId: userId },
+			include: {
+				rolesReceived: {
+					where: {
+						deletedAt: null,
+					},
+					orderBy: {
+						createdAt: 'desc',
+					},
+					take: 1,
+				},
+			}
 		});
 	},
-	async getUserByMail(email: string): Promise<AppUser | null> {
+	async getUserByMail(email: string) {
 		return prisma.appUser.findUnique({
-			where: { mail: email }
+			where: { mail: email },
+			include: {
+				rolesReceived: {
+					where: {
+						deletedAt: null,
+					},
+					orderBy: {
+						createdAt: 'desc',
+					},
+					take: 1,
+				},
+			}
 		});
 	},
 	async createUser(user: User): Promise<AppUser> {
@@ -21,8 +43,13 @@ export const UserService = {
 				username: user.username,
 				mail: user.email,
 				region: user.region,
-				passwordHash: user.passwordHash
-			}
+				passwordHash: user.passwordHash,
+				rolesReceived: {
+					create: {
+						role: "user"
+					}
+				}
+			},
 		});
 	},
 	async setAvailabality(userId: string, availabality: boolean): Promise<AppUser> {
