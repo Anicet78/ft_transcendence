@@ -17,7 +17,7 @@ export default fp(async (fastify) => {
 		cors: {
 			origin: "*", // will be changed to frontend URL later
 			methods: ["GET", "POST", "OPTIONS"]
-	}
+		}
 	});
 
 	SocketService.init(fastify);

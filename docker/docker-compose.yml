@@ -21,12 +21,16 @@ services:
       dockerfile: Dockerfile
     container_name: node-c
     restart: on-failure
+    ports:
+      - 5173:5173
     env_file:
       - .env
     secrets:
       - db_password
       - jwt_secret
       - cookie_secret
+    volumes:
+      - ../srcs/frontend:/front
     networks:
       - transcendence
     depends_on:

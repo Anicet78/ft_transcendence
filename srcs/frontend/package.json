@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -13,8 +13,12 @@
     "@allxsmith/bestax-bulma": "^2.6.2",
     "@hookform/resolvers": "^5.2.2",
     "@mdi/font": "^7.4.47",
+    "@tanstack/react-query": "^5.90.20",
+    "@tanstack/react-query-devtools": "^5.91.3",
+    "axios": "^1.13.4",
     "bulma": "^1.0.4",
     "material-icons": "^1.13.14",
+    "openapi-typescript": "^7.10.1",
     "prettier": "^3.8.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
