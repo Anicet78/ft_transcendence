@@ -42,19 +42,19 @@ export const SendRequestParamsSchema = Type.Object({
 export type SendRequestParams = Static<typeof SendRequestParamsSchema>;
 
 // PATCH /friends/:id
-export const UpdateRequestParamsSchema = Type.Object({
+export const updateFriendshipRequestParamsSchema = Type.Object({
   id: Type.String({ format: 'uuid' })
 });
-export type UpdateRequestParams = Static<typeof UpdateRequestParamsSchema>;
+export type updateFriendshipRequestParams = Static<typeof updateFriendshipRequestParamsSchema>;
 
-export const UpdateRequestBodySchema = Type.Object({
+export const updateFriendshipRequestBodySchema = Type.Object({
   action: Type.Union([
     Type.Literal('accept'),
     Type.Literal('reject'),
     Type.Literal('cancel')
   ])
 });
-export type UpdateRequestBody = Static<typeof UpdateRequestBodySchema>;
+export type updateFriendshipRequestBody = Static<typeof updateFriendshipRequestBodySchema>;
 
 // DELETE /friends/:id
 export const RemoveFriendParamsSchema = Type.Object({

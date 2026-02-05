@@ -1,40 +1,27 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { User } from "../../schema/userSchema.js";
 import type { LoginResponseType, LoginType } from "../../routes/auth/loginRoute.js";
+import "@fastify/cookie";
 import { verifyPassword } from "../../services/auth/password.js";
-import type { AppUser } from "@prisma/client";
 import { UserService } from "../../services/db/userService.js";
-import { RoomService } from "../../services/rooms/roomService.js";
-import type { Socket } from "socket.io";
-import type { GlobalHeaders } from "../../schema/globalHeadersSchema.js";
+import { createRefreshToken } from "../../services/auth/token.js";
 
 export async function postLoginController(
-	request: FastifyRequest<{ Headers: GlobalHeaders, Body: LoginType }>,
+	request: FastifyRequest<{ Body: LoginType }>,
 	reply: FastifyReply
 ) {
 	const {email, password} = request.body;
 
-	let dbUser: AppUser | null = null;
-
-	try {
-		dbUser = await UserService.getUserByMail(email);
-		if (dbUser?.availability === false)
-			await UserService.setAvailabality(dbUser.appUserId, true);
-	} catch (err) {
-		request.log.error(err);
-		return reply.code(500).send({ error: "Database issue" });
-	}
+	const dbUser = await UserService.getUserByMail(email);
 
 	if (!dbUser)
-		return reply.code(404).send({ error: "Email doesn't exist in db" });
+		return reply.code(404).send({ error: "Email not found" });
 
-	try {
-		if (!await verifyPassword(dbUser.passwordHash, password))
-			return reply.code(401).send({ error: "Incorrect password" });
-	} catch (err) {
-		request.log.error(err);
-		return reply.code(500).send({ error: "Password verification error" });
-	}
+	if (dbUser.availability === false)
+		await UserService.setAvailabality(dbUser.appUserId, true);
+
+	if (!await verifyPassword(dbUser.passwordHash, password))
+		return reply.code(401).send({ error: "Incorrect password" });
 
 	const user: User = {
 		id: dbUser.appUserId,
@@ -43,17 +30,20 @@ export async function postLoginController(
 		username: dbUser.username,
 		email: dbUser.mail,
 		region: dbUser.region,
-		passwordHash: dbUser.passwordHash
+		passwordHash: dbUser.passwordHash,
+		role: dbUser.rolesReceived[0]?.role || "user"
 	};
 
-	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.headers["x-socket-id"]);
-	if (!userSocket)
-		return reply.code(404).send({ error: "Socket not found" });
+	const jwt = await reply.jwtSign({ id: user.id, email: user.email, role: user.role });
+	const refresh = await createRefreshToken(user.id);
 
-	const token = await reply.jwtSign({ id: user.id, email: user.email });
-	const room = await RoomService.create(user.id, userSocket);
+	const response: LoginResponseType = { token: jwt, user: user, roomId: "" };
 
-	const response: LoginResponseType = {token: token, user: user, roomId: room.roomId };
-
-	return reply.status(200).send(response);
+	return reply.setCookie('refreshToken', refresh, {
+			path: '/',
+			httpOnly: true,
+			secure: true,
+			sameSite: 'strict',
+			maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in ms
+		}).status(200).send(response);
 }

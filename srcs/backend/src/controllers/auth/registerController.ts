@@ -3,37 +3,21 @@ import type { User } from "../../schema/userSchema.js";
 import type { RegisterResponseType, RegisterType } from "../../routes/auth/registerRoute.js";
 import { hashPassword } from "../../services/auth/password.js";
 import { UserService } from "../../services/db/userService.js";
-import { Prisma, type AppUser } from "@prisma/client";
-import { RoomService } from "../../services/rooms/roomService.js";
-import type { Socket } from "socket.io";
-import type { GlobalHeaders } from "../../schema/globalHeadersSchema.js";
+import { type AppUser } from "@prisma/client";
+import { createRefreshToken } from "../../services/auth/token.js";
 
 export async function postRegisterController(
-	request: FastifyRequest<{ Headers: GlobalHeaders, Body: RegisterType }>,
+	request: FastifyRequest<{ Body: RegisterType }>,
 	reply: FastifyReply
 ) {
 	const { firstname, lastname, username, region, email, password } = request.body;
 
-	let dbUser: AppUser | null = null;
-
-	try {
-		dbUser = await UserService.getUserByMail(email);
-	} catch (err) {
-		request.log.error(err);
-		return reply.code(500).send({ error: "Database issue" });
-	}
+	let dbUser: AppUser | null = await UserService.getUserByMail(email);
 
 	if (dbUser)
 		return reply.code(409).send({ error: "Already exist" });
 
-	let hash: string | null = null;
-
-	try {
-		hash = await hashPassword(password);
-	} catch (err) {
-		request.log.error(err);
-		return reply.code(500).send({ error: "Password hashing error" });
-	}
+	const hash: string | null = await hashPassword(password);
 
 	const user: User = {
 		id: "",
@@ -42,32 +26,25 @@ export async function postRegisterController(
 		username: username,
 		region: region,
 		email: email,
-		passwordHash: hash
+		passwordHash: hash,
+		role: "user"
 	};
 
-	try {
-		const dbUser: AppUser = await UserService.createUser(user);
-		user.id = dbUser.appUserId;
-		if (dbUser.availability === false)
-			await UserService.setAvailabality(user.id, true);
-	} catch (err) {
-		request.log.error(err);
-		if (err instanceof Prisma.PrismaClientKnownRequestError) {
-			if (err.code === 'P2002') {
-				return reply.code(409).send({ error: "Already taken", field: err.meta?.target });
-			}
-		}
-		return reply.code(500).send({ error: "Database issue" });
-	}
+	dbUser = await UserService.createUser(user);
+	user.id = dbUser.appUserId;
+	if (dbUser.availability === false)
+		await UserService.setAvailabality(user.id, true);
 
-	const userSocket: Socket | undefined = request.server.io.sockets.sockets.get(request.headers["x-socket-id"]);
-	if (!userSocket)
-		return reply.code(404).send({ error: "Socket not found" });
+	const jwt = await reply.jwtSign({ id: user.id, email: user.email, role: user.role });
+	const refresh = await createRefreshToken(user.id);
 
-	const token = await reply.jwtSign({ id: user.id, email: user.email });
-	const room = await RoomService.create(user.id, userSocket);
+	const response: RegisterResponseType = {token: jwt, user: user, roomId: "" };
 
-	const response: RegisterResponseType = {token: token, user: user, roomId: room.roomId };
-
-	return reply.status(200).send(response);
+	return reply.setCookie('refreshToken', refresh, {
+			path: '/',
+			httpOnly: true,
+			secure: true,
+			sameSite: 'strict',
+			maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in ms
+		}).status(200).send(response);
 }
