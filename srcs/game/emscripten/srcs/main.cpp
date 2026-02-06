@@ -52,8 +52,7 @@ void updatePlayerState(Game &game, val msg)
 			if (msg.hasOwnProperty(std::string(key + "_name").c_str()))
 			{
 				std::string name = msg[key + "_name"].as<std::string>();
-				Player oplayer = Player(uid, name);
-				game.addOtherPlayer(oplayer);
+				game.addOtherPlayer(uid, name);
 			}
 		}
 		if (msg.hasOwnProperty(std::string(key + "_leave").c_str()))
@@ -229,7 +228,7 @@ void	parseJson(bool &init, Game &game)
 
 void mainloopE(void)
 {
-	static Player player("505", "betaTester");
+	static Player player("505", "betaTester", (SDL_Color){0, 255, 0, 255});
 	static Game	game(player);
 	static bool init = false;
 	parseJson(init, game);

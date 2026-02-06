@@ -290,7 +290,6 @@ void	manageSoil(int x, int y, Player &player)
 			break ;
 		}
 	}
-	//std::cout << "x = " << x << ", y = " << y << ", mask = " << (int)mask << ", depth = " << depth << std::endl;
 	int color = 541 + depth * 9;
 	int color2 = (depth == 2) ? color : color + 9;
 	int offset = autoTileOffset[mask];

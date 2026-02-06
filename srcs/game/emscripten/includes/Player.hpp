@@ -15,8 +15,9 @@ class Player
 	private:
 	//player info
 		std::string	_uid;
-		int			_numPlayer;	//joueur 1 ou joueur 2 etc
+		int			_numPlayer;
 		std::string	_name;
+		SDL_Texture	*_nameTexture;
 
 	//player pos
 		float		_x;
@@ -50,7 +51,7 @@ class Player
 		int				_prev_state;
 
 	public:
-		Player(std::string uid, std::string name);
+		Player(std::string uid, std::string name, SDL_Color color);
 		~Player();
 
 	//getter

@@ -3,7 +3,7 @@ CXXFLAGS = -Wall -Werror -Wextra -std=c++20
 LDFLAGS  = $(shell sdl2-config --libs)
 
 EMSCRIPTEN	= emcc
-EMFLAGS =	-s WASM=1 -s USE_SDL=2 -lembind \
+EMFLAGS =	-s WASM=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -lembind \
 			-s EXPORTED_FUNCTIONS='["_main"]' \
 			-s EXPORTED_RUNTIME_METHODS='["callMain"]' \
 			-s NO_EXIT_RUNTIME=1 \
@@ -34,6 +34,7 @@ SRCS		=	main.cpp \
 				mapGen/mapMain.cpp Room.cpp Map.cpp Game.cpp \
 				player/Camera.cpp \
 				Hud.cpp \
+				Minimap.cpp \
 				engine/printEntity.cpp 
 
 EMSRCS		= $(patsubst %, $(SRC_DIR)%, $(SRCS))

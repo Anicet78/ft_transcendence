@@ -26,11 +26,11 @@ class Game
 		Player				&getOtherPlayer(std::string &uid);
 		int					getLaunched() const;
 		void				setLaunched(int nb);
-		void				drawMinimap();
+		void				drawHud();
 		void				addMap(Map &map);
 		void				clearOtherPlayers();
 		bool				isInOtherPlayers(std::string &uid) const;
-		void				addOtherPlayer(Player &player);
+		void				addOtherPlayer(std::string &uid, std::string &name);
 		void				suppOtherPlayer(std::string &uid);
 };
 

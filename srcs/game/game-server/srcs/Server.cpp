@@ -84,7 +84,7 @@ static void addPartySolo(int &sumSolo, std::list<Party> &matchMakingQueue, std::
 		}
 		if (placed)
 			it = matchMakingQueue.erase(it);
-		else if (sumSolo >= 2)
+		else if (sumSolo >= 1)
 		{
 			party.setPlayerSession();
 			sessions.emplace_back();

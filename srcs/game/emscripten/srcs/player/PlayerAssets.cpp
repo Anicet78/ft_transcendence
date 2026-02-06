@@ -124,7 +124,6 @@ void	PlayerAssets::rendPlayerWalk(int playerNum, int x, int y, int assetIndex, f
 
 	SDL_Rect	renderRect = {x - 84, y - 84, _walkImgW, _walkImgH};
 	SDL_Rect	*rect = &_playerWalk[assetIndex];
-
 	if (rect != NULL)
 	{
 		renderRect.w = rect->w * scale;
@@ -153,7 +152,6 @@ void	PlayerAssets::rendPlayerAttack(int playerNum, int x, int y, int assetIndex,
 
 	SDL_Rect	renderRect = {x - 84, y - 84, _atkImgW, _atkImgH};
 	SDL_Rect	*rect = &_playerAttack[assetIndex];
-
 	if (rect != NULL)
 	{
 		renderRect.w = rect->w * scale;

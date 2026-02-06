@@ -18,6 +18,7 @@ class Engine
 		SDL_Texture		*hud;
 		SDL_Texture		*texture;
 		SDL_Texture		*texture2;
+		TTF_Font		*font;
 		SDLTimer		cap;
 		Key				key;
 

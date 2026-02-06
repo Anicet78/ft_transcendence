@@ -130,8 +130,7 @@ void	drawHud(Game &game)
 {
 	SDL_SetRenderTarget(gSdl.renderer, gSdl.hud);
 	SDL_RenderClear(gSdl.renderer);
-	if (game.getLaunched())
-		game.drawMinimap();
+	game.drawHud();
 	SDL_SetRenderTarget(gSdl.renderer, NULL);
 	SDL_Rect dstHud = {0, GAME_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT - GAME_HEIGHT};
 	SDL_RenderCopy(gSdl.renderer, gSdl.hud, NULL, &dstHud);

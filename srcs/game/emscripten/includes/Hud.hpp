@@ -4,7 +4,7 @@
 
 # include "Player.hpp"
 
-class Hud
+class Minimap
 {
 	private:
 		std::vector<int>	_minimap;
@@ -12,18 +12,31 @@ class Hud
 		float				_x;
 		float				_y;
 		Camera				_minimapCamera;
-
 	private:
-		void	drawBox(int x, int y, int scale, int r, int g, int b, int t);
-		void	drawNode(quadList &node, int w, int r, int g, int b, int t);
+		void	drawBox(int x, int y, int scale, SDL_Color &color);
+		void	drawNode(quadList &node, int w, SDL_Color color);
+	
+	
+	public:
+		Minimap(void);
+		~Minimap();
+	
+	public:
+		void	printMinimap(std::vector<Map> const &maps, Player const  &player);
+};
 
+class Hud
+{
+	private:
+		Minimap		_minimap;
+		SDL_Texture	*_placeHolderTexture;
 
 	public:
 		Hud(void);
 		~Hud();
 	
 	public:
-		void	printMinimap(std::vector<Map> const &maps, Player const  &player);
+		void	print(std::vector<Map> const &maps, Player const  &player, int launched);
 
 };
 

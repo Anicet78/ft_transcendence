@@ -296,8 +296,8 @@ void Map::preparePathMap(int numPlayers, int depth)
 {
 	std::vector<quadList> stairs;
 	std::vector<quadList> starts;
-	int numStart = (numPlayers / (depth + 1) > 0) ? numPlayers / (depth + 1) : 1;
-	int numStairs = (numPlayers / (depth + 2) > 0) ? numPlayers / (depth + 2) : 1;
+	int numStart = (std::ceil(numPlayers / (depth + 1.f)) > 0) ? std::ceil(numPlayers / (depth + 1.f)) : 1;
+	int numStairs = (std::ceil(numPlayers / (depth + 2.f)) > 0) ? std::ceil(numPlayers / (depth + 2.f)) : 1;
 	for (int i = 0; i < numStart; i++)
 		starts.emplace_back(this->chooseRoom("start", depth + 1));
 	for (int i = 0; i < numStairs; i++)

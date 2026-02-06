@@ -1,6 +1,7 @@
 #include "Game.hpp"
 
-void	print_others(Player &player, std::vector<Player> &otherPlayers) {
+void	print_others(Player &player, std::vector<Player> &otherPlayers)
+{
 
 	if (otherPlayers.size())
 	{

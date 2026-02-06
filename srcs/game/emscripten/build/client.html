@@ -56,7 +56,7 @@
 
         function log(text)
         {
-            if (logDiv.childElementCount > 50) {
+            if (logDiv.childElementCount > 25) {
                 logDiv.removeChild(logDiv.firstChild);
             }
 
@@ -76,7 +76,7 @@
 		}
 
         connectBtn.onclick = () => {
-            socket = new WebSocket('ws://localhost:3000');
+            socket = new WebSocket('ws://f6r11s6:3000');
 
             socket.onopen = () => {
                 log('✅ Connecté au serveur');
@@ -89,7 +89,6 @@
             socket.onmessage = async (event) => {
                 let data = event.data;
 
-                // Si le serveur envoie un Blob → on convertit en texte
                 if (data instanceof Blob)
                 {
                     data = await data.text();
