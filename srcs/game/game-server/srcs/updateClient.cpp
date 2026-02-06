@@ -21,7 +21,18 @@ void updatePlayer(Player &player, std::map<std::string, std::string> &req)
     }
 }
 
-void updateRoom(Player &player)
+void	sendLeaveUpdate(Player &player, uWS::App &app, std::string &topic)
+{
+	std::string roomUpdate = "{\"action\": \"room_change\", \"player_leave\": {";
+	roomUpdate += "\"player_uid\":\"" + player.getUid() + '\"';
+	roomUpdate += ",\"player_exit\":\"";
+	roomUpdate.push_back(player.getExit());
+	roomUpdate += "\"}}";
+
+	app.publish(topic, roomUpdate, uWS::OpCode::TEXT);
+}
+
+void updateRoom(Player &player, uWS::App &app)
 {
     Room room = player.getRoom();
 	auto plan = room.getRoomPlan();
@@ -35,12 +46,10 @@ void updateRoom(Player &player)
 				player.setExit(' ');
 			return ;
 		}
-		else
-		{
-			player.getWs()->unsubscribe(room.getRoomId());
-		}
 		auto exitsLoc = room.getExitsLoc();
 
+		std::string	oldTopic = room.getRoomId();
+ 
 		if (exitsLoc[2][0] == static_cast<int>(x) && exitsLoc[2][1] == static_cast<int>(y)
 			&& !player.getNode()->south.expired())
 		{
@@ -77,6 +86,8 @@ void updateRoom(Player &player)
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[1][0] - 0.1, exitsLoc[1][1] + 0.5);
 		}
+		sendLeaveUpdate(player, app, oldTopic);
+		player.getWs()->unsubscribe(oldTopic);
 		player.getWs()->subscribe(player.getRoom().getRoomId());
 	}
 	else if (plan[y][x] == 'S')

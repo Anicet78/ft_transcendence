@@ -39,6 +39,7 @@ class Player
 
 		bool		_atkState;
 
+		SDL_FRect	_wallHitBox;
 	//camera
 
 		Camera		_camera;
@@ -98,7 +99,8 @@ class Player
 		bool	checkAtkState(void) const;
 
 	//action
-		void		move(void);
+		void		setWallHitBox(void);
+		void		movePrediction(void);
 		void		attack(void);
 		void		takeDamage(int amount);
 		void		heal(int amount);

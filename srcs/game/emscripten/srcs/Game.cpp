@@ -56,6 +56,15 @@ void Game::addOtherPlayer(Player &player)
 	this->_otherPlayers.push_back(player);
 }
 
+void Game::deleteLeavedUid(std::vector<std::string> &remaining_uid)
+{
+	for (auto it = this->_otherPlayers.begin(); it != this->_otherPlayers.end(); it++)
+	{
+		if (std::find(remaining_uid.begin(), remaining_uid.end(), it->getUid()) == remaining_uid.end())
+			this->_otherPlayers.erase(it);
+	}
+}
+
 void Game::suppOtherPlayer(std::string &uid)
 {
 	for (auto it = this->_otherPlayers.begin(); it != this->_otherPlayers.end(); it++)

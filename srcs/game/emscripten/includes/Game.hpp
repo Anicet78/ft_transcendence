@@ -27,6 +27,7 @@ class Game
 		bool				isInOtherPlayers(std::string &uid) const;
 		void				addOtherPlayer(Player &player);
 		void				suppOtherPlayer(std::string &uid);
+		void				deleteLeavedUid(std::vector<std::string> &remaining_uid);
 };
 
 

@@ -193,24 +193,15 @@ void	launchGame(Game &game, val &msg)
 	EM_ASM_({onCppMessage({action: "launched"});});
 }
 
-void	updateFromLoop(Game &game, val msg)
+void	changeRoom(Game &game, val playerLeave)
 {
-	MobRush &rush = dynamic_cast<MobRush &>(*game.getPlayer().getRoomRef().getRoomEvent());
-	std::unordered_map<int, std::unique_ptr<Mob>> &mobs = rush.getMobs();
-	int nbr_mob = msg["nbr_mobs"].as<int>();
-	std::cout << "here" << std::endl;
-	val mob = msg["mobs"];
-	std::cout << "mob here" << std::endl;
-	for (int i = 0; i < nbr_mob; i++)
-	{
-		val monster = mob[i];
-		//gather all mob information from the message
-		int id = monster["mob_id"].as<int>();
-		float x = monster["mob_x"].as<float>();
-		float y = monster["mob_y"].as<float>();
-		std::cout << "mob_id : " << id << " x : " << x << " y : " << y << std::endl;
-		mobs[id]->setPos(x, y);
-	}
+	std::string uid = playerLeave["player_uid"].as<std::string>();
+
+	Player &player = game.getPlayer();
+	if (player.getUid() == uid)
+		updateRoom(game, player, playerLeave["player_exit"].as<std::string>());
+	else
+		game.suppOtherPlayer(uid);
 }
 
 void	parseJson(bool &init, Game &game)
@@ -228,25 +219,17 @@ void	parseJson(bool &init, Game &game)
 		// msgJson = val::undefined();
 		return;
 	}
-	if (msg["action"].as<std::string>() == "waiting")
+	std::string action = msg["action"].as<std::string>();
+	if (action == "waiting")
 	{
 		init = true;
 		fillMapInfos(msg, game);
 		game.getPlayer().setNode(game.getMaps()[0].getNodes()[0]);
 		EM_ASM_({onCppMessage({action: "connected"});});
 	}
-	// else if (msg["action"].as<std::string>() == "update")
-	// {
-	// 	if (msg.hasOwnProperty("player_state"))
-	// 		updatePlayerState(game, msg["player_state"]);
-	// 	if (msg.hasOwnProperty("room_state"))
-	// 		updateRoomState(game, msg["room_state"]);
-	// 	if (msg.hasOwnProperty("loop"))
-	// 		updateFromLoop(game, msg["loop"]);
-	// }
-	else if (msg["action"].as<std::string>() == "launch")
+	else if (action == "launch")
 		launchGame(game, msg);
-	else if (msg["action"].as<std::string>() == "loop_action")
+	else if (action == "loop_action")
 	{
 		val loop = msg["loop"];
 		if (loop.hasOwnProperty("player_update"))
@@ -254,6 +237,8 @@ void	parseJson(bool &init, Game &game)
 		if (loop.hasOwnProperty("room_update"))
 			loopRoomState(game, loop["room_update"]);
 	}
+	else if (action == "room_change")
+		changeRoom(game, msg["player_leave"]);
 	// msgJson = val::undefined();
 }
 

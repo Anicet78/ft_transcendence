@@ -3,7 +3,10 @@
 Player::Player(std::string uid, std::string name) : _uid(uid), _name(name), _x(0), _y(0),
 					_screenX(0), _screenY(0), _anim(0), _hp(3), _atk(1), _def(0), _atkState(false),
 					_camera(_x, _y), _floor(0), _last_dir(0), _frame(0), _prev_state(PLAYER_IDLE)
-{}
+{
+	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
+	return ;
+}
 
 Player::~Player(void)
 {}
@@ -200,4 +203,109 @@ void	Player::printPlayer(float px, float py)
 	}
 
 	this->_frame = this->_frame + 1;
+}
+
+static bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect const &rect, int const flag, Player &player) {
+	if (flag == 0)
+	{
+		float y = rect.y - 0.1;
+		if (plan[y][rect.x] == '1' || plan[y][rect.x + rect.h] == '1')
+			return (true);
+
+		//if the event in the room is not cleared, player cant go on 'E' tiles
+		std::weak_ptr<ARoomEvent> event = player.getRoomRef().getRoomEvent();
+
+		if (!event.expired() && event.lock()->isCleared() == false)
+		{
+			if (plan[y][rect.x] == 'E' || plan[y][rect.x + rect.h] == 'E')
+				return (true);
+		}
+	}
+	if (flag == 1)
+	{
+		float x = rect.x - 0.1;
+		if (plan[rect.y][x] == '1' || plan[rect.y + rect.h][x] == '1')
+			return (true);
+
+		//if the event in the room is not cleared, player cant go on 'E' tiles
+		std::weak_ptr<ARoomEvent> event = player.getRoomRef().getRoomEvent();
+
+		if (!event.expired() && event.lock()->isCleared() == false)
+		{
+			if (plan[rect.y][x] == 'E' || plan[rect.y + rect.h][x] == 'E')
+				return (true);
+		}
+	}
+	if (flag == 2)
+	{
+		float y = rect.y + 0.1;
+		if (plan[y + rect.h][rect.x] == '1' || plan[y + rect.h][rect.x + rect.w] == '1')
+			return (true);
+		
+		//if the event in the room is not cleared, player cant go on 'E' tiles
+		std::weak_ptr<ARoomEvent> event = player.getRoomRef().getRoomEvent();
+
+		if (!event.expired() && event.lock()->isCleared() == false)
+		{
+			if (plan[y + rect.h][rect.x] == 'E' || plan[y + rect.h][rect.x + rect.w] == 'E')
+				return (true);
+		}
+	}
+	if (flag == 3)
+	{
+		float x = rect.x + 0.1;
+		if (plan[rect.y][x + rect.h] == '1' || plan[rect.y + rect.h][x + rect.w] == '1')
+			return (true);
+		
+		//if the event in the room is not cleared, player cant go on 'E' tiles
+		std::weak_ptr<ARoomEvent> event = player.getRoomRef().getRoomEvent();
+
+		if (!event.expired() && event.lock()->isCleared() == false)
+		{
+			if (plan[rect.y][x + rect.h] == 'E' || plan[rect.y + rect.h][x + rect.w] == 'E')
+				return (true);
+		}
+	}
+	
+	return (false);
+}
+
+void	Player::setWallHitBox(void) {
+	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
+	return ;
+}
+
+void	Player::movePrediction(void)
+{
+	Room room = this->getRoom();
+	float x = this->_x;
+	float y = this->_y;
+	auto plan = room.getRoomPlan();
+	this->setWallHitBox();
+
+	if (gSdl.key.w_key)
+	{
+		y -= 0.1;
+		if (!(y >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 0, *this)))
+			y += 0.1;
+	}
+	if (gSdl.key.a_key)
+	{
+		x -= 0.1;
+		if (!(x >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 1, *this)))
+			x += 0.1;
+	}
+	if (gSdl.key.s_key)
+	{
+		y += 0.1;
+		if (!(y < room.getHeight() && !checkWallHitBox(plan, this->_wallHitBox, 2, *this)))
+			y -= 0.1;
+	}
+	if (gSdl.key.d_key)
+	{
+		x += 0.1;
+		if (!(x < room.getWidth() && !checkWallHitBox(plan, this->_wallHitBox, 3, *this)))
+			x -= 0.1;
+	}
+	this->setPos(x, y);
 }

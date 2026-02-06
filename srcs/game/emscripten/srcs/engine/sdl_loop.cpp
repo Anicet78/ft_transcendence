@@ -51,6 +51,9 @@ void	updatePlayerPosition(Player &player)
 	std::string w_key, a_key, s_key, d_key, anim = "idling", lastDir;
 
 	//player movement
+
+	player.movePrediction();
+
 	if (gSdl.key.w_key)
 		w_key = "true";
 	if (gSdl.key.a_key)

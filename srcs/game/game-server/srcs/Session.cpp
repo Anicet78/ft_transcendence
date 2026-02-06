@@ -37,7 +37,8 @@ void	Session::launch()
 		if (pos >= this->_players.size())
 			break ;
 		this->_players[pos]->setNode(node);
-		this->_players[pos]->getWs()->unsubscribe("waiting");
+		if (this->_players[pos]->getWs()->unsubscribe("waiting"))
+			std::cout << "unsubscribe from waiting room" << std::endl;
 		this->_players[pos]->getWs()->subscribe(node->getRoom()->getRoomId());
 		std::string msg = "{\"action\": \"launch\", \"start\": " + std::to_string(pos) + '}';
 		this->_players[pos]->getWs()->send(msg);

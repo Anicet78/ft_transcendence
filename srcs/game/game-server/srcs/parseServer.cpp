@@ -148,7 +148,7 @@ void sendPlayerState(Player &player, Session &session, std::string uid_leave)
 	player.getWs()->send(msg);
 }
 
-int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSocketData> *ws)
+int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSocketData> *ws, uWS::App &app)
 {
 	std::map<std::string, std::string> &req = data->jsonMsg;
 		
@@ -178,19 +178,9 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
                 if (req["action"] == "player_move")
                 {
                     updatePlayer(*player, req);
-                    updateRoom(*player);
+                    updateRoom(*player, app);
 					updateWorld(*player);
                 }
-                // sendPlayerState(*player, session, "");
-                // for (auto &oplayer : session.getPlayers())
-                // {
-                //     if (oplayer->getUid() == player->getUid())
-                //         continue ;
-                //     if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isConnected() && !session.isRunning())
-                //         sendPlayerState(*oplayer, session, "");
-                //     else if ((oplayer->getNode() == player->getNode() || (oplayer->getNode() == player->getPrevNode() && player->getExit() > 32)) && oplayer->isLaunched() && session.isRunning())
-                //         sendPlayerState(*oplayer, session, "");
-                // }
                 if (!session.getPlaceLeft() && session.doesAllPlayersConnected() && !session.isRunning())
                     session.launch();
                 break;

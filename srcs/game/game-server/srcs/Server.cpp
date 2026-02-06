@@ -113,7 +113,7 @@ void	Server::manageQueue()
 
 }
 
-void	Server::removePlayer(std::string &uid)
+void	Server::removePlayer(std::string &uid, uWS::App &app)
 {
     for (auto it = _players.begin(); it != _players.end(); it++)
     {
@@ -140,7 +140,9 @@ void	Server::removePlayer(std::string &uid)
                 {
                     if (itS->isPlayerInSession(uid))
                     {
-                        itS->sendToAll(*(*it).get());
+						std::string topic = (*it)->getRoom().getRoomId();
+						sendLeaveUpdate(*(*it).get(), app, topic);
+                        // itS->sendToAll(*(*it).get());
                         itS->removePlayer(*it);
                         if (itS->isRunning() && itS->getNumPlayers() < 1)
                             this->_sessions.erase(itS);
@@ -201,43 +203,6 @@ void	moveMobs(std::vector<std::string> const &map, Mob &mob)
 	}
 }
 
-// void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app) {
-// 	(void)allPlayer;
-// 	std::shared_ptr<ARoomEvent> event = room.getRoomEvent();
-// 	std::vector<std::string> map = room.getRoomPlan();
-// 	if (event->getType() == "MobRush")
-// 	{
-// 		MobRush &rush = dynamic_cast<MobRush &>(*event);
-// 		std::unordered_map<int, std::unique_ptr<Mob>> &Mobs = rush.getMobs();
-// 		std::string	msg;
-// 		bool flag = false;
-// 		int	amount = 0;
-// 		for (auto& [key, value] : Mobs)
-// 		{
-// 			if (!value->isDead())
-// 			{
-// 				amount++;
-// 				if (flag == false)
-// 				{
-// 					flag = true;
-// 					msg +=  "{ \"action\" : \"update\", \"loop\": { \"mobs\": [";
-// 				}
-// 				moveMobs(map, *value);
-// 				msg += "{ \"mob_id\":" + std::to_string(key) + ", "
-// 					+ "\"mob_x\":" + std::to_string(value->getX()) + ", "
-// 					+ "\"mob_y\":" + std::to_string(value->getY()) + "},";
-// 			}
-// 		}
-// 		if (flag == true)
-// 		{
-// 			if (*msg.rbegin() == ',')
-// 				msg.pop_back();
-// 			msg += "], \"nbr_mobs\":" + std::to_string(amount) + "}}";
-// 			app->publish(room.getRoomId(), msg, uWS::OpCode::TEXT);
-// 		}
-// 	}
-// }
-
 void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app) {
 	std::string msg = "{\"action\": \"loop_action\", \"loop\": {";
 
@@ -254,6 +219,7 @@ void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer,
 			player_update += ",\"player_y\":" + std::to_string(player->getY());
 			player_update += ",\"player_health\":" + std::to_string(player->getHp());
 			player_update += ",\"player_anim\":" + std::to_string(player->getAnim());
+			player_update += ",\"player_dir\":" + std::to_string(player->getLastDir());
 			player_update += ",\"player_exit\":\"";
 			player_update.push_back(player->getExit());
 			player_update += "\"},";
@@ -384,7 +350,7 @@ void	Server::run(void)
 				}
 			}
 		}
-	}, 500, 100);
+	}, 500, 1000);
 
 	app.ws<PerSocketData>("/*", uWS::App::WebSocketBehavior<PerSocketData> {
 			.open = [](auto *ws) 
@@ -392,14 +358,14 @@ void	Server::run(void)
 				(void)ws;
 				std::cout << "Client connecté\n";
 			},
-			.message = [this](auto *ws, std::string_view msg, uWS::OpCode opCode)
+			.message = [this, &app](auto *ws, std::string_view msg, uWS::OpCode opCode)
 			{
 				(void)opCode;
 				auto *data = (PerSocketData *)ws->getUserData();
 				try
 				{
 					parseJson(data->jsonMsg, std::string(msg));
-					if (!executeJson(data, ws))
+					if (!executeJson(data, ws, app))
 						this->manageQueue();
 				}
 				catch(const std::exception& e)
@@ -408,11 +374,11 @@ void	Server::run(void)
 					ws->send(e.what());
 				}
 			},
-			.close = [this](auto *ws, int code, std::string_view msg)
+			.close = [this, &app](auto *ws, int code, std::string_view msg)
 			{
 				(void)ws, (void)code, (void)msg;
 				auto *data = (PerSocketData *)ws->getUserData();
-				this->removePlayer(data->playerId);
+				this->removePlayer(data->playerId, app);
 				std::cout << "Client déconnecté\n";
 			}
 		})
