@@ -1,23 +1,38 @@
 import '../App.css'
 import './profile.css'
-import { Box, Button } from '@allxsmith/bestax-bulma';
+import { Box } from '@allxsmith/bestax-bulma';
+
+import { useQuery } from '@tanstack/react-query';
+import api, { getAccessToken } from '../serverApi.ts';
+import type { GetResponse } from '../types/GetType.ts';
+
+type ProfileResponseType = GetResponse<"/profile", "get">;
 
 const ProfilePrivate = () => {
-	const username = 'My username'
-	const avatar = '../assets/skull.svg'
-	const level = '0'
-	const xp = '0'
-	const firstname = 'My first name'
-	const lastname = 'My last name'
-	const email = 'My email'
-	const loginGoogle = 'My Google login'
-	const login42 = 'My 42 login'
+
+	const { data, isLoading, isError, error } = useQuery({
+		queryKey: ['profile', getAccessToken()],
+		queryFn: () => api.get("/profile"),
+	});
+
+	if (isLoading) return <div>Chargement...</div>;
+	if (isError || !data) return <div>Erreur: {error?.message || 'unknown'}</div>;
+
+	const userData: ProfileResponseType = data.data;
+
+	const username = userData.username;
+	const avatar = userData.avatarUrl || '../assets/skull.svg';
+	const level = userData.gameProfile?.level || '0';
+	const xp = userData.gameProfile?.totalXp || '0';
+	const firstname = userData.firstName;
+	const lastname = userData.lastName;
+	const email = userData.mail;
 	const password = '**********'
-	const bestTime = 0
-	const maxKill = 0
-	const totalGames = 0
-	const totalWins = 0
-	const totalLoses = 0
+	const bestTime = userData.gameProfile?.bestTime || '0';
+	const totalKills = userData.gameProfile?.totalEnemiesKilled || '0';
+	const totalGames = userData.gameProfile?.totalGames || '0';
+	const totalWins = userData.gameProfile?.totalWins || '0';
+	const totalLoses = userData.gameProfile?.totalLoses || '0';
 
 	return (
 		<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' alignItems='center'>
@@ -51,8 +66,6 @@ const ProfilePrivate = () => {
 						</span>
 					</span>
 				</p>
-				<p>Login Google: {loginGoogle}</p>
-				<p>Login 42: {login42}</p>
 				<p>
 					Password: {password}
 					<span className="icon-text">
@@ -62,7 +75,7 @@ const ProfilePrivate = () => {
 					</span>
 				</p>
 				<p>Best time: {bestTime}</p>
-				<p>Max ennemies killed: {maxKill}</p>
+				<p>Total ennemies killed: {totalKills}</p>
 				<p>Total games: {totalGames}</p>
 				<p>Total wins: {totalWins}</p>
 				<p>Total loses: {totalLoses}</p>
