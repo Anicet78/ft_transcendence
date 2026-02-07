@@ -61,6 +61,9 @@ services:
       - 5050:80
     env_file:
       - .env
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./pgadmin/servers.json:/pgadmin4/servers.json
     environment:
       - PGADMIN_DEFAULT_PASSWORD_FILE=/run/secrets/pgadmin_password
     secrets:
@@ -109,6 +112,7 @@ secrets:
 
 volumes:
   postgres-v:
+  pgadmin_data:
 
 networks:
   transcendence:
