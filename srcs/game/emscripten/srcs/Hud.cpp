@@ -5,7 +5,7 @@
 
 Hud::Hud(): _minimap()
 {
-	int w = 800, h = 268;
+	int w = 800, h = 150;
 	this->_placeHolderTexture = loadTexture("assets/sprite/hud/hud.bmp", w, h);
 }
 

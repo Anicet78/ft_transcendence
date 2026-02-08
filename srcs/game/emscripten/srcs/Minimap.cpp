@@ -15,6 +15,9 @@ void	Minimap::drawBox(int x, int y, int scale, SDL_Color &color)
 	SDL_Rect rect = {x + scale / 4, y + scale / 4, scale / 2, scale / 2};
 	SDL_SetRenderDrawColor(gSdl.renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderFillRect(gSdl.renderer, &rect);
+	SDL_SetRenderDrawColor(gSdl.renderer, 95, 168, 255, 255);
+	rect = {x + (scale / 4) - 1, y + (scale / 4) - 1, (scale / 2) + 1, (scale / 2) + 1};
+	SDL_RenderDrawRect(gSdl.renderer, &rect);
 }
 
 void	drawStart(int x, int y, int scale, SDL_Color &color)
@@ -56,8 +59,7 @@ void	drawLinks(int x, int y, const std::array<bool, 4>& exits, int scale)
 	int cx = x + (scale / 2) - 2;
 	int cy = y + (scale / 2) - 2;
 
-	SDL_SetRenderDrawColor(gSdl.renderer, 0, 255, 0, 255);
-	SDL_Color color = {0, 255, 0, 255};
+	SDL_Color color = {127, 227, 255, 255};
 	// Nord
 	if (exits[0])
 	{
@@ -127,7 +129,7 @@ void	Minimap::printMinimap(std::vector<Map> const &maps, Player const &player)
 
 		if (player.getFloor() != lastFloor)
 		{
-			SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 255);
+			SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 0);
 			SDL_RenderClear(gSdl.renderer);
 			lastFloor = player.getFloor();
 			Map const &map = maps[lastFloor + 1];
@@ -138,18 +140,18 @@ void	Minimap::printMinimap(std::vector<Map> const &maps, Player const &player)
 		}
 	
 		if (lastNode)
-			this->drawNode(lastNode, w, (SDL_Color){80, 80, 80, 255});
+			this->drawNode(lastNode, w, (SDL_Color){168, 180, 200, 255});
 		lastNode = player.getNode();
 		this->_x = lastNode->getX();
 		this->_y = lastNode->getY();
-		this->drawNode(lastNode, w, (SDL_Color){255, 255, 0, 200});
+		this->drawNode(lastNode, w, (SDL_Color){255, 255, 0, 255});
 
 		SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 255);
 		SDL_SetRenderTarget(gSdl.renderer, NULL);
 		this->_minimapCamera.updateCamera(30, w, h);
 	}
 
-	SDL_Rect dst = {9, 9, 114 * 2, 125};
+	SDL_Rect dst = {3, 3, 144, 144};
 	
 	SDL_RenderCopy(gSdl.renderer, this->_minimapText, &this->_minimapCamera.getCamera(), &dst);
 }
