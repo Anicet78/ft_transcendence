@@ -151,8 +151,9 @@ void sendPlayerState(Player &player, Session &session, std::string uid_leave)
 int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSocketData> *ws, uWS::App &app)
 {
 	std::map<std::string, std::string> &req = data->jsonMsg;
-		
-	if (req["action"] == "join_queue")
+
+	std::string &action = req["action"];
+	if (action == "join_queue")
 	{
 		data->pseudo = req["player_name"];
         data->playerId = req["player_id"];
@@ -164,18 +165,18 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
         data->jsonMsg.clear();
         return 0;
     }
-    else if (req["action"] == "player_move" || req["action"] == "connected" || req["action"] == "launched")
+    else if (action == "player_move" || action == "connected" || action == "launched")
     {
         for (Session &session : _sessions)
         {
             if (session.isPlayerInSession(ws->getUserData()->playerId))
             {
                 std::shared_ptr<Player> player = session.getPlayer(ws->getUserData()->playerId);
-                if (req["action"] == "connected")
+                if (action == "connected")
                     player->setConnexion(1);
-                if (req["action"] == "launched")
+                if (action == "launched")
                     player->setLaunched(1);
-                if (req["action"] == "player_move")
+                if (action == "player_move")
                 {
                     updatePlayer(*player, req);
                     updateRoom(*player, app);

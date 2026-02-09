@@ -45,14 +45,14 @@ void updateRoom(Game &game, Player &player, std::string dir)
 	}
 }
 
-void	updatePlayerPosition(Player &player)
+void	updatePlayerPosition(Player &player, float deltaTime)
 {
 	static int isIdling = 1;
 	std::string w_key, a_key, s_key, d_key, anim = "idling", lastDir;
 
 	//player movement
 
-	player.movePrediction();
+	player.movePrediction(deltaTime);
 
 	if (gSdl.key.w_key)
 		w_key = "true";
@@ -81,9 +81,10 @@ void	updatePlayerPosition(Player &player)
 				s_key: UTF8ToString($2),
 				d_key: UTF8ToString($3),
 				anim: UTF8ToString($4),
-				last_dir: UTF8ToString($5)
+				last_dir: UTF8ToString($5),
+				deltaTime: $6
 			});
-		}, w_key.c_str(), a_key.c_str(), s_key.c_str(), d_key.c_str(), anim.c_str(), lastDir.c_str());
+		}, w_key.c_str(), a_key.c_str(), s_key.c_str(), d_key.c_str(), anim.c_str(), lastDir.c_str(), deltaTime);
 		isIdling = 0;
 	}
 	else if (!isIdling)
@@ -129,17 +130,43 @@ void	playerAction(Player &player)
 		player.startAtk();
 }
 
-void	game_loop(Game &game)
+void	updateOtherPlayer(std::vector<Player> &others, float deltaTime, float servLoopTime)
+{
+	if (others.size())
+	{
+		for (auto &player : others)
+		{
+			float prevX = player.getPrevX();
+			float prevY = player.getPrevY();
+
+			player.setTimer(player.getTimer() + deltaTime);
+			float alpha = player.getTimer() / servLoopTime;
+			alpha = std::clamp(alpha, 0.0f, 1.0f);
+			
+			float x = prevX + (player.getTargetX() - prevX) * alpha;
+			float y = prevY + (player.getTargetY() - prevY) * alpha;
+
+			player.setPrevPos(x, y);
+			player.setPos(x, y);
+		}
+	}
+	return ;
+}
+
+void	game_loop(Game &game, float deltaTime)
 {
 	Player	&player = game.getPlayer();
 	Camera	&camera = player.getCamera();
 	//updateRoom(player);
 	playerAction(player);
-	
+
 	#ifdef __EMSCRIPTEN__
 
-	updatePlayerPosition(game.getPlayer());
+	updatePlayerPosition(game.getPlayer(), deltaTime); 
 	#endif
+	//-----------t'es la dessus
+	updateOtherPlayer(game.getOtherPlayers(), deltaTime, 50);
+	//--------------------------
 	print_map(player);
 	if (player.getRoom().getRoomEvent())
 	{

@@ -11,9 +11,20 @@ void	setPlayerState(Player &player, val &pStatus, int flag)
 	{
 		int dir = pStatus["player_dir"].as<int>();
 		player.setDir(dir);
+		player.setPrevPos(player.getX(), player.getY());
+		player.setTargetPos(x, y);
+		player.setTimer(0);
 	}
-
-	player.setPos(x, y);
+	else
+	{
+		float pX = player.getX();
+		float pY = player.getY();
+		float dist = SDL_sqrtf(SDL_powf(x - pX, 2) + SDL_powf(y - pY, 2));
+		if (dist > 1.0f)
+			player.setPos(x, y);
+		else
+			player.setPos(pX + (x - pX) * 0.1f, pY + (y - pY) * 0.1f);
+	}
 	player.setHp(hp);
 	player.setAnim(anim);
 }

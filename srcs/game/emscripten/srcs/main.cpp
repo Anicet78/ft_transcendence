@@ -242,8 +242,16 @@ void	parseJson(bool &init, Game &game)
 	// msgJson = val::undefined();
 }
 
+float	fps(Uint32 frame) {
+	float 	fps = frame / (gSdl.timer.getTicks() / 1000.f);
+	if (fps > MAX_FPS)
+		fps = MAX_FPS;
+	return (fps);
+}
+
 void mainloopE(void)
 {
+	static Uint32 frame = 0;
 	static Player player(gSdl.getPlayerId(), gSdl.getPlayerName());
 	static Game	game(player);
 	static bool init = false;
@@ -251,7 +259,7 @@ void mainloopE(void)
 	if (!init)
 		return ;
 
-	int	ticksPerFrame = 1000 / 120;
+	int	ticksPerFrame = 1000 / MAX_FPS;
 	gSdl.cap.startTimer();
 	while (SDL_PollEvent(&gSdl.event))
 	{
@@ -267,13 +275,13 @@ void mainloopE(void)
 		else if (gSdl.event.type == SDL_KEYUP)
 			key_up();
 	}
-	game_loop(game);
+	game_loop(game, 1 / fps(frame));
 	SDL_RenderPresent(gSdl.renderer);
 	SDL_RenderClear(gSdl.renderer);
+	frame++;
 	int frameTicks = gSdl.cap.getTicks();
 	if (frameTicks < ticksPerFrame)
 		SDL_Delay(ticksPerFrame - frameTicks);
-
 }
 
 int main(void)
@@ -317,7 +325,7 @@ int main(void)
 	}
 	// printMap(floor0);
 	#ifdef __EMSCRIPTEN__
-		emscripten_set_main_loop(mainloopE, 120, true);
+		emscripten_set_main_loop(mainloopE, MAX_FPS, true);
 	#endif
 	return (0);
 }

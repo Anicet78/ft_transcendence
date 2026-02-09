@@ -21,6 +21,19 @@ class Player
 	//player pos
 		float		_x;
 		float		_y;
+	
+	//player previous pos
+
+		float		_prevX;
+		float		_prevY;
+
+	//player target pos
+		float		_targetX;
+		float		_targetY;
+
+	//player timer
+
+		float		_timer;
 
 	//player pos on screen
 		float	_screenX;
@@ -64,6 +77,14 @@ class Player
 		float		getX(void) const;
 		float		getY(void) const;
 
+		float		getPrevX(void) const;
+		float		getPrevY(void) const;
+
+		float		getTargetX(void) const;
+		float		getTargetY(void) const;
+
+		float		getTimer(void) const;
+
 		float		getScreenX(void) const;
 		float		getScreenY(void) const;
 
@@ -81,6 +102,9 @@ class Player
 	//setter
 		void	setNode(const quadList &node);
 		void	setPos(float x, float y);
+		void	setPrevPos(float x, float y);
+		void	setTargetPos(float x, float y);
+		void	setTimer(float time);
 		void	setHp(int hp);
 		void	setAtk(int atk);
 		void	setDef(int def);
@@ -100,7 +124,7 @@ class Player
 
 	//action
 		void		setWallHitBox(void);
-		void		movePrediction(void);
+		void		movePrediction(float deltaTime);
 		void		attack(void);
 		void		takeDamage(int amount);
 		void		heal(int amount);

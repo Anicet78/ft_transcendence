@@ -32,6 +32,31 @@ float	Player::getY(void) const
 	return (_y);
 }
 
+float	Player::getPrevX(void) const
+{
+	return(_prevX);
+}
+
+float	Player::getPrevY(void) const
+{
+	return(_prevY);
+}
+
+float	Player::getTargetX(void) const
+{
+	return(_targetX);
+}
+
+float	Player::getTargetY(void) const
+{
+	return(_targetY);
+}
+
+float	Player::getTimer(void) const
+{
+	return(_timer);
+}
+
 float	Player::getScreenX(void) const {
 	return (_screenX);
 }
@@ -113,6 +138,26 @@ void	Player::setPos(float x, float y)
 {
 	_x = x;
 	_y = y;
+	return ;
+}
+
+void	Player::setPrevPos(float x, float y)
+{
+	_prevX = x;
+	_prevY = y;
+	return ;
+}
+
+void	Player::setTargetPos(float x, float y)
+{
+	_targetX = x;
+	_targetY = y;
+	return ;
+}
+
+void	Player::setTimer(float time)
+{
+	_timer = time;
 	return ;
 }
 
@@ -275,7 +320,7 @@ void	Player::setWallHitBox(void) {
 	return ;
 }
 
-void	Player::movePrediction(void)
+void	Player::movePrediction(float deltaTime)
 {
 	Room room = this->getRoom();
 	float x = this->_x;
@@ -285,27 +330,27 @@ void	Player::movePrediction(void)
 
 	if (gSdl.key.w_key)
 	{
-		y -= 0.1;
+		y -= 6.0f * deltaTime;
 		if (!(y >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 0, *this)))
-			y += 0.1;
+			y += 6.0f * deltaTime;
 	}
 	if (gSdl.key.a_key)
 	{
-		x -= 0.1;
+		x -= 6.0f * deltaTime;
 		if (!(x >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 1, *this)))
-			x += 0.1;
+			x += 6.0f * deltaTime;
 	}
 	if (gSdl.key.s_key)
 	{
-		y += 0.1;
+		y += 6.0f * deltaTime;
 		if (!(y < room.getHeight() && !checkWallHitBox(plan, this->_wallHitBox, 2, *this)))
-			y -= 0.1;
+			y -= 6.0f * deltaTime;
 	}
 	if (gSdl.key.d_key)
 	{
-		x += 0.1;
+		x += 6.0f * deltaTime;
 		if (!(x < room.getWidth() && !checkWallHitBox(plan, this->_wallHitBox, 3, *this)))
-			x -= 0.1;
+			x -= 6.0f * deltaTime;
 	}
 	this->setPos(x, y);
 }

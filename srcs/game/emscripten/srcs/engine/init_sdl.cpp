@@ -19,7 +19,14 @@ int	init_sdl(Engine &gSdl)
 
 	//need a renderer for the texture in general
 	gSdl.renderer = SDL_CreateRenderer(gSdl.window, -1, SDL_RENDERER_ACCELERATED);
-	if (!gSdl.renderer)
+	if (!gSdl.renderer) {
 		std::cerr << "render/20 : " << SDL_GetError() << std::endl;
+		SDL_DestroyWindow(gSdl.window);
+		SDL_Quit();
+		return (0);
+	}
+
+	if (!gSdl.timer.getStarted())
+		gSdl.timer.startTimer();
 	return (1);
 }

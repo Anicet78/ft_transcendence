@@ -350,7 +350,7 @@ void	Server::run(void)
 				}
 			}
 		}
-	}, 500, 1000);
+	}, 500, 50);
 
 	app.ws<PerSocketData>("/*", uWS::App::WebSocketBehavior<PerSocketData> {
 			.open = [](auto *ws) 

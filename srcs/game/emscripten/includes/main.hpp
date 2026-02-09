@@ -20,6 +20,7 @@
 # include <queue>
 # include <unordered_map>
 # include <algorithm>
+# include <cmath>
 #ifdef __EMSCRIPTEN__
 	#include <emscripten/val.h>
 	#include <emscripten.h>
@@ -29,7 +30,7 @@
 
 # define SCREEN_WIDTH 800
 # define SCREEN_HEIGHT 800
-
+# define MAX_FPS 60
 SDL_Texture *loadTexture(std::string path, int &imgW, int &imgH);
 
 #endif

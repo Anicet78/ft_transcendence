@@ -18,6 +18,7 @@ class Engine
 		SDL_Texture		*texture;
 		SDL_Texture		*texture2;
 		SDLTimer		cap;
+		SDLTimer		timer;
 		Key				key;
 
 		Engine();

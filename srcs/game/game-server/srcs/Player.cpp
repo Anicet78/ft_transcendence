@@ -320,30 +320,31 @@ void	Player::move(std::map<std::string, std::string> &req) {
 	float x = this->_x, y = this->_y;
 	auto plan = room.getRoomPlan();
     this->setWallHitBox();
+	float deltaTime = std::atof(req["deltaTime"].c_str());
 
 	if (req["w_key"] == "true")
 	{
-		y -= 0.1;
+		y -= 6.0f * deltaTime;
 		if (!(y >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 0, *this)))
-			y += 0.1;
+			y += 6.0f * deltaTime;
 	}
 	if (req["a_key"] == "true")
 	{
-		x -= 0.1;
+		x -= 6.0f * deltaTime;
 		if (!(x >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 1, *this)))
-			x += 0.1;
+			x += 6.0f * deltaTime;
 	}
 	if (req["s_key"] == "true")
 	{
-		y += 0.1;
+		y += 6.0f * deltaTime;
 		if (!(y < room.getHeight() && !checkWallHitBox(plan, this->_wallHitBox, 2, *this)))
-			y -= 0.1;
+			y -= 6.0f * deltaTime;
 	}
 	if (req["d_key"] == "true")
 	{
-		x += 0.1;
+		x += 6.0f * deltaTime;
 		if (!(x < room.getWidth() && !checkWallHitBox(plan, this->_wallHitBox, 3, *this)))
-			x -= 0.1;
+			x -= 6.0f * deltaTime;
 	}
 	this->setPos(x, y);
     if (!req["last_dir"].empty())
