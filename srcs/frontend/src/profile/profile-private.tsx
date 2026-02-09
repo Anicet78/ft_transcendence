@@ -15,8 +15,8 @@ const ProfilePrivate = () => {
 		queryFn: () => api.get("/profile"),
 	});
 
-	if (isLoading) return <div>Chargement...</div>;
-	if (isError || !data) return <div>Erreur: {error?.message || 'unknown'}</div>;
+	if (isLoading) return <div>Loading...</div>;
+	if (isError || !data) return <div>Error: {error?.message || 'unknown'}</div>;
 
 	const userData: ProfileResponseType = data.data;
 

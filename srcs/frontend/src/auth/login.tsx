@@ -3,6 +3,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import './login.css'
 import '../index.css'
 
+import { useNavigate } from 'react-router';
 import { Button } from '@allxsmith/bestax-bulma';
 import ButtonSubmit from '../components/ButtonSubmit.tsx';
 import InputEmail from '../components/InputEmail.tsx';
@@ -17,49 +18,50 @@ type LoginResponseType = GetResponse<"/auth/login", "post">;
 
 function Login() {
 
-  const mutation = useMutation({
-    mutationFn: (data: LoginBodyType) => api.post("/auth/login", data),
-    onSuccess: (data) => {
-      const response: LoginResponseType = data.data;
-      console.log("Connecté !", response);
-      // redirect to home/room page
-    },
-  });
+	let navigate = useNavigate();
 
-  const loginAction = (formData: FormData) => {
-    let email = formData.get("email");
-    let password = formData.get("pwd");
+	const mutation = useMutation({
+		mutationFn: (data: LoginBodyType) => api.post("/auth/login", data),
+		onSuccess: (data) => {
+		const response: LoginResponseType = data.data;
+		console.log("Connecté !", response);
+		navigate("/"); // how to go to new room?
+		},
+	});
 
-    if (!email || !password) return ;
+	const loginAction = (formData: FormData) => {
+		let email = formData.get("email");
+		let password = formData.get("pwd");
 
-    mutation.mutate({ email: email.toString(), password: password.toString() });
-  };
+		if (!email || !password) return ;
 
-  return (
-    <>
-      {/* ce qui est entre les accolades ne sont pas des elements html, comme ce commentaire qui est en ts */}
-      <div className="card">
-        <div>
-          <Button color='primary' isOutlined className='login-button'>Login with Google</Button>
-          <Button color='primary' isOutlined className='login-button'>Login with 42</Button>
-        </div>
-        <br />
-        <form action={loginAction}>
-          <InputEmail label="Email"/>
-          <InputPassword label="Password" id="pwd"/>
+		mutation.mutate({ email: email.toString(), password: password.toString() });
+	};
 
-          {mutation.isError && (
-            <div style={{ color: 'red' }}>
-              Erreur : {mutation.error instanceof Error ? mutation.error.message : 'Inconnue'}
-            </div>
-          )}
-          <ButtonSubmit
-            name={mutation.isPending ? 'Chargement...' : 'Sign in'}
-          />
-        </form>
-      </div>
-    </>
-  )
+	return (
+		<>
+			<div className="card">
+				<div>
+				<Button color='primary' isOutlined className='login-button'>Login with Google</Button>
+				<Button color='primary' isOutlined className='login-button'>Login with 42</Button>
+				</div>
+				<br />
+				<form action={loginAction}>
+				<InputEmail label="Email"/>
+				<InputPassword label="Password" id="pwd"/>
+
+				{mutation.isError && (
+					<div style={{ color: 'red' }}>
+					Erreur : {mutation.error instanceof Error ? mutation.error.message : 'Unknown'}
+					</div>
+				)}
+				<ButtonSubmit
+					name={mutation.isPending ? 'Loading...' : 'Sign in'}
+				/>
+				</form>
+			</div>
+		</>
+	)
 }
 
 export default Login
