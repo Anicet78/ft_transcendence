@@ -54,7 +54,7 @@ export async function getChatByIdForUser(chatId: string, userId: string) {
 	});
 
 	if (!isMember) {
-	throw new AppError('You are not a member of this chat', 403);
+		throw new AppError('You are not a member of this chat', 403);
 	}
 
 	// Fetch chat with full details
@@ -64,7 +64,7 @@ export async function getChatByIdForUser(chatId: string, userId: string) {
 	});
 
 	if (!chat) {
-	throw new AppError('Chat not found', 404);
+		throw new AppError('Chat not found', 404);
 	}
 
 	return chat;

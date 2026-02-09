@@ -22,8 +22,8 @@ model AppUser {
   updatedAt                                             DateTime         @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt                                             DateTime?        @map("deleted_at") @db.Timestamptz(6)
   lastConnectedAt                                       DateTime         @default(now()) @map("last_connected_at") @db.Timestamptz(6)
-  blocked_list_blocked_list_blockedToapp_user           BlockedList[]    @relation("blocked_list_blockedToapp_user")
-  blocked_list_blocked_list_blockerToapp_user           BlockedList[]    @relation("blocked_list_blockerToapp_user")
+  usersWhoBlockedYou                                    BlockedList[]    @relation("blocked_list_blockedToapp_user")
+  usersYouBlocked                                       BlockedList[]    @relation("blocked_list_blockerToapp_user")
   chat                                                  Chat[]
   chat_ban_chat_ban_banned_byToapp_user                 ChatBan[]        @relation("chat_ban_banned_byToapp_user")
   chat_ban_chat_ban_user_idToapp_user                   ChatBan[]        @relation("chat_ban_user_idToapp_user")

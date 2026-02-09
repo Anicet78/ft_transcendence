@@ -1,9 +1,19 @@
 import type { FastifyInstance } from 'fastify';
 import * as controller from '../../controllers/friendship/friendshipController.js';
 import { Type } from 'typebox';
-import { FriendsListResponseSchema, FriendRequestsListSchema, SendRequestParamsSchema, updateFriendshipRequestParamsSchema, updateFriendshipRequestBodySchema, RemoveFriendParamsSchema } from '../../schema/friendshipSchema.js';
+import {
+  FriendsListResponseSchema,
+  FriendRequestsListSchema,
+  SendRequestParamsSchema,
+  updateFriendshipRequestParamsSchema,
+  updateFriendshipRequestBodySchema,
+  RemoveFriendParamsSchema,
+  FriendshipStatusSchema
+} from '../../schema/friendshipSchema.js';
 
 async function friendshipRoutes(fastify: FastifyInstance) {
+
+  //GET FRIENDS LIST
   fastify.get('/friends', {
     schema: {
       response: {
@@ -13,6 +23,7 @@ async function friendshipRoutes(fastify: FastifyInstance) {
     handler: controller.getFriends
   });
 
+  //GET PENDING FRIENDSHIP REQUEST
   fastify.get('/friends/requests', {
     schema: {
       response: {
@@ -22,6 +33,17 @@ async function friendshipRoutes(fastify: FastifyInstance) {
     handler: controller.getRequests
   });
 
+  //GET FRIENDSHIP'S STATUS WITH A SPECIFIC USER (Nina)
+  fastify.get('/friends/status/:userId', {
+    schema: {
+      response: {
+        200: FriendshipStatusSchema
+      }
+    },
+    handler: controller.getFriendshipStatusController
+  });
+
+  //SEND FRIENDSHIP REQUEST
   fastify.post('/friends/:id', {
     schema: {
       params: SendRequestParamsSchema,
@@ -32,6 +54,7 @@ async function friendshipRoutes(fastify: FastifyInstance) {
     handler: controller.sendRequest
   });
 
+  //ACCEPT, REJECT, DELETE FRIENDSHIP REQUEST
   fastify.patch('/friends/:id', {
     schema: {
       params: updateFriendshipRequestParamsSchema,
@@ -43,6 +66,7 @@ async function friendshipRoutes(fastify: FastifyInstance) {
     handler: controller.updateFriendshipRequest
   });
 
+  //DELETE FRIENDSHIP by friend ID
   fastify.delete('/friends/:id', {
     schema: {
       params: RemoveFriendParamsSchema,
