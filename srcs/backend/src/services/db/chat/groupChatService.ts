@@ -95,17 +95,17 @@ export async function disbandGroupChat(chatId: string, userId: string) {
 	});
 
 	if (!chat) {
-	throw new AppError('Chat not found', 404);
+		throw new AppError('Chat not found', 404);
 	}
 
 	// 2. Must be a group
 	if (chat.chatType !== 'group') {
-	throw new AppError('Only group chats can be disbanded', 400);
+		throw new AppError('Only group chats can be disbanded', 400);
 	}
 
 	// 3. Only owner can disband
 	if (chat.createdBy !== userId) {
-	throw new AppError('Only the group owner can disband this chat', 403);
+		throw new AppError('Only the group owner can disband this chat', 403);
 	}
 
 	// 4. Soft-delete everything in a transaction
