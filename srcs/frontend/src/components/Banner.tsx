@@ -12,7 +12,7 @@ const Banner = () => {
 	return (
 		<Navbar color='dark' role='navigation' aria-label='main navigation'>
 			<Navbar.Brand>
-				<Navbar.Item>
+			
 					<NavLink to="/" aria-label='home button' className='button is-large is-primary is-outlined is-centered'>
 						<Icon
 						name="dragon"
@@ -20,7 +20,7 @@ const Banner = () => {
 						/>
 						<span>TransDungeon</span>
 					</NavLink>
-				</Navbar.Item>
+
 			</Navbar.Brand>
 			<Navbar.Menu active={active}>
 				<Navbar.Start>
@@ -29,13 +29,10 @@ const Banner = () => {
 					</Navbar.Item>
 				</Navbar.Start>
 				<Navbar.End>
-					<Navbar.Item hidden={!connected}>
 						<NavLink to='/profile' aria-label='profile button' className='button is-primary is-medium is-centered'>
 							<Icon name='user' ariaLabel='user icon'/>
 							<span>{username}</span>
 						</NavLink>
-					</Navbar.Item>
-					<Navbar.Item>
 						<Navbar.Dropdown hoverable>
 							<Navbar.Item as="a" textColor='primary'>
 							<Icon
@@ -52,7 +49,6 @@ const Banner = () => {
 								<Navbar.Item href="#">Credentials</Navbar.Item>
 							</Navbar.DropdownMenu>
 						</Navbar.Dropdown>
-					</Navbar.Item>
 				</Navbar.End>
 			</Navbar.Menu>
 		</Navbar>
