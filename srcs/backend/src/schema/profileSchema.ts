@@ -20,7 +20,7 @@ export const UpdateProfileBodySchema = Type.Object({
   region: Type.Optional(Type.String()),
   availability: Type.Optional(Type.Boolean())
 });
-export type UpdateProfileBody = Static<typeof UpdateProfileBodySchema>; 
+export type UpdateProfileBody = Static<typeof UpdateProfileBodySchema>;
 
 
 export const ProfileResponseSchema = Type.Object({
@@ -55,5 +55,11 @@ export const ProfileIdParamsSchema = Type.Object({
   id: Type.String()
 });
 export type ProfileIdParams = Static<typeof ProfileIdParamsSchema>;
+
+export const ProfileUsernameParamsSchema = Type.Object({
+  username: Type.String()
+});
+export type ProfileUsernameParams = Static<typeof ProfileUsernameParamsSchema>;
+
 
 export const DeleteProfileResponseSchema = Type.Null();
