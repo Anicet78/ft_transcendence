@@ -109,6 +109,10 @@ void	Player::updateLastDir(void)
 		_last_dir = 0;
 	else if (gSdl.key.a_key)
 		_last_dir = 1;
+	if (gSdl.key.w_key)
+		_last_dir = 2;
+	if (gSdl.key.s_key)
+		_last_dir = 3;
 }
 
 void Player::setNode(const quadList &node)
@@ -193,21 +197,36 @@ void	Player::printPlayer(float px, float py)
 		if (this->_prev_state != PLAYER_ATTACKING)
 			this->_frame = 0;
 		this->_prev_state = PLAYER_ATTACKING;
-		PlayerAssets::rendPlayerAttack(0, x, y, this->_frame / 4, 2, this->_last_dir);
+		if (this->_last_dir < 2)
+			PlayerAssets::rendPlayerAttack(0, x, y, this->_frame / 4, 2, this->_last_dir);
+		else if (this->_last_dir == 3)
+			PlayerAssets::rendPlayerAttackFront(0, x, y, this->_frame / 4, 2);
+		else if (this->_last_dir == 2)
+			PlayerAssets::rendPlayerAttackBack(0, x, y, this->_frame / 4, 2);
 	}
 	else if (this->_anim == 1)
 	{
 		if (this->_prev_state != PLAYER_WALKING)
 			this->_frame = 0;
 		this->_prev_state = PLAYER_WALKING;
-		PlayerAssets::rendPlayerWalk(0, x, y, this->_frame / 4, 2, this->_last_dir);
+		if (this->_last_dir < 2)
+			PlayerAssets::rendPlayerWalk(0, x, y, this->_frame / 4, 2, this->_last_dir);
+		else if (this->_last_dir == 3)
+			PlayerAssets::rendPlayerWalkFront(0, x, y, this->_frame / 4, 2);
+		else if (this->_last_dir == 2)
+			PlayerAssets::rendPlayerWalkBack(0, x, y, this->_frame / 4, 2);
 	}
 	else
 	{
 		if (this->_prev_state != PLAYER_IDLE)
 			this->_frame = 0;
 		this->_prev_state = PLAYER_IDLE;
-		PlayerAssets::rendPlayerIdle(0, x, y, this->_frame / 4, 2, this->_last_dir);
+		if (this->_last_dir < 2)
+			PlayerAssets::rendPlayerIdle(0, x, y, this->_frame / 4, 2, this->_last_dir);
+		else if (this->_last_dir == 3)
+			PlayerAssets::rendPlayerIdleFront(0, x, y, this->_frame / 4, 2);
+		else if (this->_last_dir == 2)
+			PlayerAssets::rendPlayerIdleBack(0, x, y, this->_frame / 4, 2);
 	}
 
 	this->_frame = this->_frame + 1;
