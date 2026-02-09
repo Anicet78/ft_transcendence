@@ -1269,9 +1269,11 @@ export interface paths {
                     };
                     content: {
                         "application/json": {
+                            appUserId: string;
                             username: string;
                             avatarUrl: string | null;
                             availability: boolean;
+                            playing: boolean;
                             region: string;
                             /** Format: date-time */
                             createdAt: string;

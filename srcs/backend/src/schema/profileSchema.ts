@@ -41,9 +41,11 @@ export type ProfileResponse = Static<typeof ProfileResponseSchema>;
 
 
 export const PublicProfileResponseSchema = Type.Object({
+  appUserId: Type.String(),
   username: Type.String(),
   avatarUrl: Type.Union([Type.String(), Type.Null()]),
   availability: Type.Boolean(),
+  playing: Type.Boolean(),
   region: Type.String(),
   createdAt: Type.String({ format: 'date-time' }),
   gameProfile: Type.Union([GameProfileSchema, Type.Null()])

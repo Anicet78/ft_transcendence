@@ -32,7 +32,8 @@ const ProfilePublic = () => {
 	const avatar = userData.avatarUrl || '../assets/skull.svg';
 	const level = userData.gameProfile?.level || '0';
 	const xp = userData.gameProfile?.totalXp || '0';
-	const isConnected = userData.availability || '0';
+	const isConnected = userData.availability || false;
+	const isPlaying = userData.playing || false;
 	const friendshipStatus = friendshipQuery.isSuccess ? friendshipData.status : friendshipQuery.isLoading ? '<p>Chargement...</p>' : friendshipQuery.isError ? `<div>Erreur: ${friendshipQuery.error?.message}` : 'unknown';
 	let buttonText = ''
 	let disable = false
