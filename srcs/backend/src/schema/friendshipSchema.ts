@@ -35,6 +35,16 @@ export type FriendRequest = Static<typeof FriendRequestSchema>;
 export const FriendRequestsListSchema = Type.Array(FriendRequestSchema);
 export type FriendRequestsList = Static<typeof FriendRequestsListSchema>;
 
+
+//GET FRIENDSHIP'S STATUS WITH A SPECIFIC USER
+export const FriendshipStatusSchema = {
+  params: Type.Object({
+    userId: Type.String({ format: 'uuid' })
+  })
+};
+
+
+
 // POST /friends/:id
 export const SendRequestParamsSchema = Type.Object({
   id: Type.String({ format: 'uuid' })

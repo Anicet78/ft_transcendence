@@ -1,5 +1,6 @@
 import { prisma } from './prisma.js';
 
+//GET FRIENDS LIST
 export async function getFriends(userId: string) {
   return prisma.friendship.findMany({
     where: {
@@ -33,6 +34,7 @@ export async function getFriends(userId: string) {
   });
 }
 
+//GET PENDING FRIENDSHIP REQUEST
 export async function getRequests(userId: string) {
   return prisma.friendship.findMany({
     where: {
@@ -88,6 +90,27 @@ export async function getFriendshipById(friendshipId: string) {
   });
 }
 
+//GET FRIENDSHIP'S STATUS WITH A SPECIFIC USER 
+export async function getFriendshipStatus(userA: string, userB: string) {
+  const friendship = await findExistingFriendship(userA, userB);
+
+  if (!friendship)
+    return 'none';
+
+  if (friendship.status === 'accepted')
+    return 'friends';
+
+  if (friendship.status === 'waiting') {
+    if (friendship.senderId === userA)
+      return 'sent';
+    if (friendship.receiverId === userA)
+      return 'received';
+  }
+
+  return 'none';
+}
+
+//SEND FRIENDSHIP REQUEST
 export async function sendRequest(senderId: string, receiverId: string) {
   return prisma.friendship.create({
     data: {
@@ -98,6 +121,7 @@ export async function sendRequest(senderId: string, receiverId: string) {
   });
 }
 
+//ACCEPT, REJECT, DELETE FRIENDSHIP REQUEST
 export async function updateFriendshipRequestStatus(friendshipId: string, status: string) {
   return prisma.friendship.updateMany({
     where: {
@@ -111,6 +135,7 @@ export async function updateFriendshipRequestStatus(friendshipId: string, status
   });
 }
 
+//DELETE FRIENDSHIP 
 export async function removeFriend(userId: string, otherId: string) {
   return prisma.friendship.deleteMany({
     where: {
