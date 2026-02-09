@@ -34,7 +34,7 @@ const ProfilePublic = () => {
 	const xp = userData.gameProfile?.totalXp || '0';
 	const isConnected = userData.availability || false;
 	const isPlaying = userData.playing || false;
-	const friendshipStatus = friendshipQuery.isSuccess ? friendshipData.status : friendshipQuery.isLoading ? '<p>Chargement...</p>' : friendshipQuery.isError ? `<div>Erreur: ${friendshipQuery.error?.message}` : 'unknown';
+	const friendshipStatus = friendshipQuery.isSuccess ? friendshipData.status : 'unknown';
 	let buttonText = ''
 	let disable = false
 	let inverted = true
@@ -62,7 +62,7 @@ const ProfilePublic = () => {
 		inverted = false
 		mycolor = 'danger'
 	}
-	else
+	else if (friendshipStatus !== 'self')
 	{
 		buttonText = "Friend request"
 		disable = false
@@ -91,14 +91,18 @@ const ProfilePublic = () => {
 				<p>Total wins: {totalWins}</p>
 				<p>Total loses: {totalLoses}</p>
 			</Box>
-			<div>
-				<Button color={mycolor} isInverted={inverted} disabled={disable} size='large'>{buttonText}</Button>
-			</div>
-			<div>
-				<Button color='primary' isInverted aria-label='join button' size='medium'>Join / decline</Button>
-				<br />
-				<Button color='primary' isInverted aria-label='spectate button' size='medium'>Spectate</Button>
-			</div>
+			{friendshipStatus !== 'self' &&
+				<>
+					<div>
+						<Button color={mycolor} isInverted={inverted} disabled={disable} size='large'>{buttonText}</Button>
+					</div>
+					<div>
+						<Button color='primary' isInverted aria-label='join button' size='medium'>Join / decline</Button>
+						<br />
+						<Button color='primary' isInverted aria-label='spectate button' size='medium'>Spectate</Button>
+					</div>
+				</>
+			}
 		</Box>
 	)
 }
