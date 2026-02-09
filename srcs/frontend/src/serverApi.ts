@@ -33,32 +33,38 @@ api.interceptors.request.use(
 	}
 );
 
+const logoutAndRedirect = () => {
+	accessToken = null;
+	SocketClient.disconnect();
+	// navigate to home page
+};
+
 api.interceptors.response.use(
 	(response) => {
-		if (response.data.token)
-			accessToken = response.data.token;
+		if (response.data.token) accessToken = response.data.token;
 		return response;
-	}, async (error) => {
+	},
+	async (error) => {
 		const originalRequest = error.config;
 
-		if (error.response.status === 401 && !originalRequest._retry) {
+		if (error.response && error.response.status === 401 && !originalRequest._retry) {
 			originalRequest._retry = true;
 
 			try {
-				const res = await axios.post('/auth/refresh', {});
-				accessToken = res.data.accessToken;
+				const res = await axios.post(`${ServerUrl}/api/auth/refresh`, {}, { withCredentials: true });
+
+				accessToken = res.data.token || res.data.accessToken;
 				originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
 
 				return api(originalRequest);
-			} catch {
-				SocketClient.disconnect();
-				// Use the router to go to the home page
+			} catch (refreshError) {
+				logoutAndRedirect();
+				return Promise.reject(refreshError);
 			}
 		}
 
-		error.message ??= error.error;
-
-		return Promise.reject(error);
+		const errorMessage = error.response?.data?.error || error.message;
+		return Promise.reject(new Error(errorMessage));
 	}
 );
 

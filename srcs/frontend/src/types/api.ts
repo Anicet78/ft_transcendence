@@ -1244,7 +1244,7 @@ export interface paths {
         };
         trace?: never;
     };
-    "/profile/{id}": {
+    "/profile/{username}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1256,7 +1256,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    id: string;
+                    username: string;
                 };
                 cookie?: never;
             };

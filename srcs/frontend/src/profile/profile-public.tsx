@@ -1,25 +1,48 @@
+import { useQuery } from '@tanstack/react-query';
 import '../App.css'
 import './profile.css'
 import { Box, Button } from '@allxsmith/bestax-bulma';
 import { useParams } from 'react-router';
+import type { GetResponse } from '../types/GetType';
+import api from '../serverApi';
+
+type ProfileResponseType = GetResponse<"/profile/{username}", "get">;
+// type FriendshipResponseType = GetResponse<"/friends/status/{id}", "get">;
 
 const ProfilePublic = () => {
-	const id = useParams() // friend request and remove friend: path="/friends/:id"
-	const username = 'Username'
-	const avatar = '../assets/skull.svg'
-	const level = '0'
-	const xp = '0'
-	const isConnected = true // for the person viewing the public profile
-	const friendshipStatus = 'accepted' // between the person viewing and the profile owner
+	const username = useParams().username;
+
+	const userQuery = useQuery({
+		queryKey: ['profile', username],
+		queryFn: () => api.get(`/profile/${username}`),
+	});
+
+	const friendshipQuery = useQuery({
+		queryKey: ['friendship', username],
+		queryFn: () => api.get(`/friends/status/${userQuery.data?.data.appUserId}`),
+		enabled: !!userQuery.data?.data.appUserId,
+	});
+
+	if (userQuery.isLoading) return <p>Chargement...</p>;
+	if (userQuery.isError || !userQuery.data) return <div>Erreur: {userQuery.error?.message || 'unknown'}</div>;
+
+	const userData: ProfileResponseType = userQuery.data.data;
+	const friendshipData: any = friendshipQuery.data?.data;
+
+	const avatar = userData.avatarUrl || '../assets/skull.svg';
+	const level = userData.gameProfile?.level || '0';
+	const xp = userData.gameProfile?.totalXp || '0';
+	const isConnected = userData.availability || '0';
+	const friendshipStatus = friendshipQuery.isSuccess ? friendshipData.status : friendshipQuery.isLoading ? '<p>Chargement...</p>' : friendshipQuery.isError ? `<div>Erreur: ${friendshipQuery.error?.message}` : 'unknown';
 	let buttonText = ''
 	let disable = false
 	let inverted = true
 	let mycolor = 'primary'
-	const bestTime = 0
-	const maxKill = 0
-	const totalGames = 0
-	const totalWins = 0
-	const totalLoses = 0
+	const bestTime = userData.gameProfile?.bestTime || '0';
+	const totalKills = userData.gameProfile?.totalEnemiesKilled || '0';
+	const totalGames = userData.gameProfile?.totalGames || '0';
+	const totalWins = userData.gameProfile?.totalWins || '0';
+	const totalLoses = userData.gameProfile?.totalLoses || '0';
 
 	if (friendshipStatus === 'waiting')
 	{
@@ -62,7 +85,7 @@ const ProfilePublic = () => {
 			</Box>
 			<Box className='info' bgColor="white" textSize='5'>
 				<p>Best time: {bestTime}</p>
-				<p>Max ennemies killed: {maxKill}</p>
+				<p>Max ennemies killed: {totalKills}</p>
 				<p>Total games: {totalGames}</p>
 				<p>Total wins: {totalWins}</p>
 				<p>Total loses: {totalLoses}</p>
