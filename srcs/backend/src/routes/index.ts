@@ -16,5 +16,5 @@ export async function router(fastify: FastifyInstance) {
 	fastify.register(chatRouter);
 	fastify.register(groupRouter);
 	fastify.register(adminRouter, { prefix: '/admin' });
-  fastify.register(searchRoute);
+	fastify.register(searchRoute);
 }

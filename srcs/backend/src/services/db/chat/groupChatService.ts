@@ -9,8 +9,8 @@ import { AppError } from '../../../schema/errorSchema.js';
 
 //GROUP CREATION
 export async function createGroupChat(
-	creatorId: string, 
-	name: string | null, 
+	creatorId: string,
+	name: string | null,
 	memberIds: string[]
 ) {
 	const uniqueMembers = Array.from(new Set([...memberIds, creatorId]));

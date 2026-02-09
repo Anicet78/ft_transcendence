@@ -90,7 +90,7 @@ export async function getFriendshipById(friendshipId: string) {
   });
 }
 
-//GET FRIENDSHIP'S STATUS WITH A SPECIFIC USER 
+//GET FRIENDSHIP'S STATUS WITH A SPECIFIC USER
 export async function getFriendshipStatus(userA: string, userB: string) {
   const friendship = await findExistingFriendship(userA, userB);
 
@@ -121,8 +121,7 @@ export async function sendRequest(senderId: string, receiverId: string) {
   });
 }
 
-//ACCEPT, REJECT, DELETE FRIENDSHIP REQUEST
-export async function updateFriendshipRequestStatus(friendshipId: string, status: string) {
+export async function updateRequestStatus(friendshipId: string, status: string) {
   return prisma.friendship.updateMany({
     where: {
       friendshipId,
@@ -135,7 +134,7 @@ export async function updateFriendshipRequestStatus(friendshipId: string, status
   });
 }
 
-//DELETE FRIENDSHIP 
+//DELETE FRIENDSHIP
 export async function removeFriend(userId: string, otherId: string) {
   return prisma.friendship.deleteMany({
     where: {

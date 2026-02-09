@@ -54,7 +54,7 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 		where: { chatId, userId },
 		select: { role: true }
 	});
-	
+
 	//check user role, if dont exists, define as member by default
 	const userRole = role?.role ?? chat_role_type.member;
 	if (userRole == 'member') {
@@ -105,7 +105,7 @@ export async function deleteMessage(messageId: string, userId: string) {
 	// select: { role: true }
 	// });
 	// const userRole = role?.role ?? 'member';
-	// const isModeratorOrAbove = ; 
+	// const isModeratorOrAbove = ;
 	//NEED to add check if user is moderator
 
 	const isAuthor = message.userId === userId;
