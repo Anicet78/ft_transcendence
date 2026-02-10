@@ -2,17 +2,28 @@ import React, { createContext, useState, useContext, useEffect, useCallback } fr
 import { useNavigate } from 'react-router';
 import api, { setAccessToken, setOnLogout, setOnRefreshSuccess } from '../serverApi';
 import { useQuery } from '@tanstack/react-query';
+import type { GetResponse } from '../types/GetType';
 
-const AuthContext = createContext<any>(null);
+export type User = GetResponse<"/auth/refresh", "post">["user"];
+
+export type AuthContextValue = {
+	user: User | null;
+	token: string | null;
+	login: (userData: User, userToken: string) => void;
+	logout: () => void;
+};
+
+const AuthContext = createContext<AuthContextValue | null>(null);
+
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const navigate = useNavigate();
 
-	const [user, setUser] = useState(null);
+	const [user, setUser] = useState< User | null>(null);
 	const [token, setToken] = useState<string | null>(null);
 	const [isInitializing, setIsInitializing] = useState(true);
 
-	const login = useCallback((userData: any, userToken: string) => {
+	const login = useCallback((userData: User, userToken: string) => {
 		setUser(userData);
 		setToken(userToken);
 		setAccessToken(userToken);
@@ -71,4 +82,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	);
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = (): AuthContextValue => {
+	const ctx = useContext(AuthContext);
+	if (!ctx) throw new Error("useAuth must be used within an AuthProvider");
+	return ctx;
+};

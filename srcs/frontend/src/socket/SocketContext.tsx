@@ -5,7 +5,7 @@ import { useAuth } from '../auth/AuthContext';
 
 export let globalSocketId: string | null = null;
 
-const SocketContext = createContext<any>(null);
+const SocketContext = createContext<Socket | null>(null);
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 	const { token } = useAuth();
@@ -51,4 +51,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 	);
 };
 
-export const useSocket = () => useContext(SocketContext);
+export const useSocket = (): Socket => {
+	const ctx = useContext(SocketContext);
+	if (!ctx) throw new Error("useSocket must be used within an SocketProvider");
+	return ctx;
+};

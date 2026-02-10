@@ -12,7 +12,7 @@ export type Room = GetResponse<"/room/new", "post">;
 
 const Home = () => {
 	const socket = useSocket();
-	const [room, setRoom] = useState<any>(null);
+	const [room, setRoom] = useState<Room | null>(null);
 
 	const mutation = useMutation({
 		mutationFn: () => api.post(room?.roomId ? `/room/${room?.roomId}` : "/room/new"),
