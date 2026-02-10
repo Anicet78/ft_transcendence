@@ -84,7 +84,7 @@ static void addPartySolo(int &sumSolo, std::list<Party> &matchMakingQueue, std::
 		}
 		if (placed)
 			it = matchMakingQueue.erase(it);
-		else if (sumSolo >= 2)
+		else if (sumSolo >= 1)
 		{
 			party.setPlayerSession();
 			sessions.emplace_back();
@@ -206,7 +206,8 @@ void	moveMobs(std::vector<std::string> const &map, Mob &mob)
 	}
 }
 
-void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer) {
+void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer)
+{
 	(void)allPlayer;
 	std::shared_ptr<ARoomEvent> event = room.getRoomEvent();
 	std::vector<std::string> map = room.getRoomPlan();

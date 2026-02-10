@@ -34,7 +34,7 @@ Mob::~Mob(void) {
 
 void	Mob::importMobsWalkAssets(int tile_size) {
 
-	_mobWalkText = loadTexture("assets/sprite/Orc-Walk.bmp", _walkImgW, _walkImgH);
+	_mobWalkText = loadTexture("assets/sprite/mobs/Orc-Walk.bmp", _walkImgW, _walkImgH);
 
 	//define every tile asset position and stock it in _mapAssets
 	int y = 0;
@@ -55,7 +55,7 @@ void	Mob::importMobsWalkAssets(int tile_size) {
 
 void	Mob::importMobsIdleAssets(int tile_size) {
 
-	_mobIdleText = loadTexture("assets/sprite/Orc-Idle.bmp", _idleImgW, _idleImgH);
+	_mobIdleText = loadTexture("assets/sprite/mobs/Orc-Idle.bmp", _idleImgW, _idleImgH);
 
 	//define every tile asset position and stock it in _mapAssets
 	int y = 0;
@@ -76,7 +76,7 @@ void	Mob::importMobsIdleAssets(int tile_size) {
 
 void	Mob::importMobsAttackAssets(int tile_size) {
 
-	_mobAttackText = loadTexture("assets/sprite/Orc-Attack01.bmp", _atkImgW, _atkImgH);
+	_mobAttackText = loadTexture("assets/sprite/mobs/Orc-Attack01.bmp", _atkImgW, _atkImgH);
 
 	//define every tile asset position and stock it in _mapAssets
 	int y = 0;
@@ -97,7 +97,7 @@ void	Mob::importMobsAttackAssets(int tile_size) {
 
 void	Mob::importMobsHurtAssets(int tile_size) {
 
-	_mobHurtText = loadTexture("assets/sprite/Orc-Hurt.bmp", _hurtImgW, _hurtImgH);
+	_mobHurtText = loadTexture("assets/sprite/mobs/Orc-Hurt.bmp", _hurtImgW, _hurtImgH);
 
 	//define every tile asset position and stock it in _mapAssets
 	int y = 0;
@@ -192,18 +192,17 @@ bool	Mob::checkInvinsibleFrame(void) {
 
 //-------------printer and render----------------------------------------
 
-void	Mob::printMob(float camX, float camY, int tile_size) {
-
-	if (this->_frame >= 24)
+void	Mob::printMob(float camX, float camY, int tile_size)
+{
+	if (this->_frame >= 20)
 		this->_frame = 0;
-
+	this->_frame++;
 	float x = ((this->_x - camX) * tile_size) - (0.5f * tile_size);
 	float y = ((this->_y - camY) * tile_size) - (0.5f * tile_size);
 	if (checkInvinsibleFrame())
 		this->rendMobHurt(x, y, this->_frame / 4, 2);
 	else
 		this->rendMobIdle(x, y, this->_frame / 4, 2);
-	this->_frame++;
 	return ;
 }
 

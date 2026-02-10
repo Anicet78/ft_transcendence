@@ -4,9 +4,29 @@
     <meta charset="UTF-8">
     <title>Test wasm</title>
     <style>
-        body { font-family: sans-serif; margin: 20px; }
-        #log { border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: auto; }
-        #msg { width: 300px; }
+        body
+        {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+
+        #game-canvas
+        {
+            display: block;
+            margin: 0 auto;
+        }
+
+        #log
+        {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            margin: 20px auto 0 auto;
+        }
+
+        #msg {width: 300px;}
+
     </style>
 </head>
 <body>
@@ -14,29 +34,32 @@
         <button id="connectBtn">Se connecter</button>
         <button id="disconnectBtn" disabled>Se déconnecter</button>
     </div>
-    <canvas id="game-canvas" width="800" height="800" tabindex="1"></canvas>
+    <canvas id="game-canvas" width="800" height="950" tabindex="1"></canvas>
     <div id="log"></div>
+    <script src="game.js"></script>
     <script>
         let socket = null;
         const connectBtn = document.getElementById('connectBtn');
         const disconnectBtn = document.getElementById('disconnectBtn');
         const logDiv = document.getElementById('log');
 
+        let Module = null;
 
-        var Module =
+        function startGame()
         {
-			canvas: document.getElementById("game-canvas"),
-            noInitialRun: true,
-            // empêche main() de se lancer automatiquement
-            onRuntimeInitialized()
-            {
-                console.log("WASM prêt, en attente du bouton…");
-            }
-		};
+            createModule({
+                canvas: document.getElementById("game-canvas"),
+                noInitialRun: true
+            }).then(mod => {
+                Module = mod;
+                Module.callMain(["bonjour"]);
+            });
+        }
 
+        
         function log(text)
         {
-            if (logDiv.childElementCount > 50) {
+            if (logDiv.childElementCount > 25) {
                 logDiv.removeChild(logDiv.firstChild);
             }
 
@@ -58,33 +81,36 @@
         connectBtn.onclick = () => {
             socket = new WebSocket('ws://localhost:3000');
 
-            socket.onopen = () => {
+           socket.onopen = () => {
                 log('✅ Connecté au serveur');
                 connectBtn.disabled = true;
                 disconnectBtn.disabled = false;
-                console.log("coucou");
-                Module.callMain([]);
+
+                startGame();
             };
+
 
             socket.onmessage = async (event) => {
                 let data = event.data;
 
-                // Si le serveur envoie un Blob → on convertit en texte
                 if (data instanceof Blob)
-                {
                     data = await data.text();
-                }
-                try
-                {
+
+                try {
                     const json = JSON.parse(data);
                     log('📥 Reçu JSON : ' + JSON.stringify(json, null, 2));
-                    Module.getMessage(json);
+
+                    if (Module && Module.getMessage) {
+                        Module.getMessage(json);
+                    } else {
+                        log("⚠️ Module pas encore prêt, message ignoré");
+                    }
                 }
-                catch
-                {
+                catch {
                     log('📥 Reçu (non-JSON) : ' + data);
                 }
             };
+
 
             socket.onclose = () => {
                 log('❌ Déconnecté du serveur');
@@ -106,8 +132,31 @@
                 socket.close();
                 socket = null;
             }
+
+            if (Module)
+            {
+                if (Module.finishGame)
+                    Module.finishGame();
+
+                if (Module.ctx)
+                {
+                    const ext = Module.ctx.getExtension('WEBGL_lose_context');
+                    if (ext)
+                        ext.loseContext();
+                }
+
+                Module = null;
+            }
+
+            const oldCanvas = document.getElementById("game-canvas");
+            const newCanvas = oldCanvas.cloneNode(true);
+            oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
         };
+
+
+
+
+
     </script>
-    <script src="game.js"></script>
 </body>
 </html>
