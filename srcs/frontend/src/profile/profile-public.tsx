@@ -80,13 +80,14 @@ const ProfilePublic = () => {
 				</Box>
 				<Box className='head-text'>
 					<p>{username}</p>
+					<p>Status: {isPlaying ? 'playing' : isConnected ? 'online' : 'offline'}</p>
 					<p>Lvl {level}</p>
 					<p>{xp} XP</p>
 				</Box>
 			</Box>
 			<Box className='info' bgColor="white" textSize='5'>
 				<p>Best time: {bestTime}</p>
-				<p>Max ennemies killed: {totalKills}</p>
+				<p>Total ennemies killed: {totalKills}</p>
 				<p>Total games: {totalGames}</p>
 				<p>Total wins: {totalWins}</p>
 				<p>Total loses: {totalLoses}</p>
