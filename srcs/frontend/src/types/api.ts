@@ -1244,7 +1244,7 @@ export interface paths {
         };
         trace?: never;
     };
-    "/profile/{id}": {
+    "/profile/{username}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1256,7 +1256,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    id: string;
+                    username: string;
                 };
                 cookie?: never;
             };
@@ -1269,9 +1269,11 @@ export interface paths {
                     };
                     content: {
                         "application/json": {
+                            appUserId: string;
                             username: string;
                             avatarUrl: string | null;
                             availability: boolean;
+                            playing: boolean;
                             region: string;
                             /** Format: date-time */
                             createdAt: string;

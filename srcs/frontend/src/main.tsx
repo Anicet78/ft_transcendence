@@ -20,7 +20,13 @@ import Banner from './components/Banner.tsx';
 import MyFooter from './components/Footer.tsx';
 import FriendList from './friendship/FriendsList.tsx';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			retry: 0,
+		},
+	},
+});
 
 // va chercher l'element avec l'ID 'root' dans le doc index.html et met App dedans
 createRoot(document.getElementById('root')).render(
@@ -58,7 +64,7 @@ createRoot(document.getElementById('root')).render(
 					<Route path="/group/invitations" element={} />
 					<Route path="/group/:chatInvitationId" element={} /> */}
 					<Route path="/profile" element={<ProfilePrivate />} />
-					<Route path="/profile/:id" element={<ProfilePublic />} />
+					<Route path="/profile/:username" element={<ProfilePublic />} />
 					{/* <Route path="/profile/:id/block" element={} />
 					<Route path="/profile/:id/unblock" element={} /> */}
 					{/* <Route path="/:id" element={} />
