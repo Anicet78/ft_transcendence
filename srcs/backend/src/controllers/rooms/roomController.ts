@@ -15,7 +15,7 @@ export async function getRoomController(
 }
 
 export async function newRoomController(
-	request: FastifyRequest<{ Headers: GlobalHeaders, Body: RoomBodyType }>,
+	request: FastifyRequest<{ Headers: GlobalHeaders }>,
 	reply: FastifyReply
 ) {
 	const userSocket: Socket = request.getSocket();
@@ -28,7 +28,7 @@ export async function newRoomController(
 }
 
 export async function joinRoomController(
-	request: FastifyRequest<{ Headers: GlobalHeaders, Params: RoomParamsType, Body: RoomBodyType }>,
+	request: FastifyRequest<{ Headers: GlobalHeaders, Params: RoomParamsType }>,
 	reply: FastifyReply
 ) {
 	const userSocket: Socket = request.getSocket();

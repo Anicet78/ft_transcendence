@@ -32,7 +32,6 @@ fastify.get("/:id", {
 fastify.post("/new", {
 	schema: {
 		headers: GlobalHeadersSchema,
-		body: RoomBodySchema,
 		response: {
 			200: RoomSchema,
 			400: AppErrorSchema,
@@ -46,7 +45,6 @@ fastify.post("/:id/join", {
 	schema: {
 		headers: GlobalHeadersSchema,
 		params: RoomParamsSchema,
-		body: RoomBodySchema,
 		response: {
 			200: RoomSchema,
 			400: AppErrorSchema,
