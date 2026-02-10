@@ -4,9 +4,11 @@ LDFLAGS  = $(shell sdl2-config --libs)
 
 EMSCRIPTEN	= emcc
 EMFLAGS =	-s WASM=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -lembind \
+			-s MODULARIZE=1 -s ALLOW_MEMORY_GROWTH=1 \
 			-s EXPORTED_FUNCTIONS='["_main"]' \
 			-s EXPORTED_RUNTIME_METHODS='["callMain"]' \
-			-s NO_EXIT_RUNTIME=1 \
+			-s EXIT_RUNTIME=1 \
+			-s EXPORT_NAME="createModule" \
 			$(CXXFLAGS) -O3
 
 

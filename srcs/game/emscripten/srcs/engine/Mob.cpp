@@ -194,7 +194,7 @@ bool	Mob::checkInvinsibleFrame(void) {
 
 void	Mob::printMob(float camX, float camY, int tile_size)
 {
-	if (this->_frame >= 24)
+	if (this->_frame >= 20)
 		this->_frame = 0;
 	this->_frame++;
 	float x = ((this->_x - camX) * tile_size) - (0.5f * tile_size);
