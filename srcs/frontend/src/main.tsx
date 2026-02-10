@@ -19,6 +19,8 @@ import Error from './error/error.tsx';
 import Banner from './components/Banner.tsx';
 import MyFooter from './components/Footer.tsx';
 import FriendList from './friendship/FriendsList.tsx';
+import ChatList from './chat/ChatList.tsx';
+import ChatView from './chat/ChatView.tsx';
 
 const queryClient = new QueryClient();
 
@@ -35,14 +37,14 @@ createRoot(document.getElementById('root')).render(
 					<Route path="/offline" element={} />
 					<Route path="/refresh" element={} /> */}
 					<Route path="/register" element={<Register />} />
-					{/* <Route path="/chat/:chatId" element={} />
-					<Route path="/chat/:chatId/messages" element={} />
+					<Route path="/chat/:chatId/info" element={<ChatView />} />
+					{/*<Route path="/chat/:chatId/messages" element={} />
 					<Route path="/chat/:chatId/message/:messageId/edit" element={} />
 					<Route path="/chat/:chatId/message/:messageId/moderate" element={} />
 					<Route path="/chat/:chatId/message/:messageId/restore" element={} />
 					<Route path="/chat/:messageId" element={} />
-					<Route path="/chat/:chatId/info" element={} />
-					<Route path="/chat/list" element={} /> */}
+					<Route path="/chat/:chatId/info" element={} />*/}
+					<Route path="/chat/list" element={<ChatList />} />
 					<Route path="/friends" element={<FriendList />} />
 					{/* <Route path="/friends/requests" element={} /> */}
 					{/* <Route path="/friends/:id" element={<ProfilePublic />} /> */}

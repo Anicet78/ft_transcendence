@@ -63,3 +63,23 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+// // CHAT LIST
+// export function apiGetChatList() {
+//   return api.get("/chat/list");
+// }
+
+// // CHAT INFO
+// export function apiGetChatInfo(chatId: string) {
+//   return api.get(`/chat/${chatId}/info`);
+// }
+
+// // CHAT MESSAGES
+// export function apiGetChatMessages(chatId: string) {
+//   return api.get(`/chat/${chatId}/messages`);
+// }
+
+// // SEND MESSAGE
+// export function apiSendMessage(chatId: string, content: string) {
+//   return api.post(`/chat/${chatId}`, { content });
+// }
