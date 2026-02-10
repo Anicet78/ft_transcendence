@@ -2,7 +2,7 @@
 
 #define GAME_HPP
 
-# include "Player.hpp"
+# include "Hud.hpp"
 
 
 class Game
@@ -11,6 +11,8 @@ class Game
 		std::vector<Map>	_maps;
 		Player				&_player;
 		std::vector<Player>	_otherPlayers;
+		Hud					_hud;
+		int					_launched;
 
 
 	public:
@@ -22,12 +24,14 @@ class Game
 		Player				&getPlayer();
 		std::vector<Player> &getOtherPlayers();
 		Player				&getOtherPlayer(std::string &uid);
+		int					getLaunched() const;
+		void				setLaunched(int nb);
+		void				drawHud();
 		void				addMap(Map &map);
 		void				clearOtherPlayers();
 		bool				isInOtherPlayers(std::string &uid) const;
-		void				addOtherPlayer(Player &player);
+		void				addOtherPlayer(std::string &uid, std::string &name);
 		void				suppOtherPlayer(std::string &uid);
-		void				deleteLeavedUid(std::vector<std::string> &remaining_uid);
 };
 
 

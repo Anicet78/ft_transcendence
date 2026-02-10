@@ -1,6 +1,7 @@
 #include"Game.hpp"
 
-SDL_Texture *loadTexture(std::string path, int &imgW, int &imgH) {
+SDL_Texture *loadTexture(std::string path, int &imgW, int &imgH)
+{
 
 	//we firs need to load the image into a surface
 	SDL_Surface *image = SDL_LoadBMP(path.c_str());
@@ -14,6 +15,7 @@ SDL_Texture *loadTexture(std::string path, int &imgW, int &imgH) {
 	SDL_Texture *texture = SDL_CreateTextureFromSurface(gSdl.renderer, image);
 	if (!texture)
 	{
+		SDL_FreeSurface(image);
 		std::string error = "Texture " + path + " conversion failed ! SDL_Error:" + SDL_GetError();
 		throw std::runtime_error(error);
 	}

@@ -3,6 +3,7 @@
 # define MAIN_HPP
 
 # include <SDL2/SDL.h>
+# include <SDL2/SDL_ttf.h>
 # include <iostream>
 # include <array>
 # include <string>
@@ -30,8 +31,12 @@
 #endif
 
 # define SCREEN_WIDTH 800
-# define SCREEN_HEIGHT 800
+# define SCREEN_HEIGHT 950
+
 # define MAX_FPS 60
+
+# define GAME_HEIGHT 800
+
 SDL_Texture *loadTexture(std::string path, int &imgW, int &imgH);
 
 #endif

@@ -27,14 +27,14 @@ static int checkRoomBorders(quadList const &place, Room const &room, Map const &
 			&& place->west.lock()->getRoom() && place->west.lock()->getRoom()->getExits()[1])
 		return 0;
 
-	int x = place->getX() - 3;
-	int y = place->getY() - 3;
+	int x = place->getX() - 2;
+	int y = place->getY() - 2;
 	auto nodes = map.getNodes();
 	int maxX, maxY;
 	x = (x < 0) ? 0 : x;
 	y = (y < 0) ? 0 : y;
-	maxX = place->getX() + 3;
-	maxY = place->getY() + 3;
+	maxX = place->getX() + 2;
+	maxY = place->getY() + 2;
 	maxX = (maxX >= map.getWidth()) ? map.getWidth() - 1 : maxX;
 	maxY = (maxY >= map.getHeight()) ? map.getHeight() - 1 : maxY;
 	for (int j = y; j <= maxY; j++)
@@ -54,8 +54,11 @@ quadList Map::chooseRoom(std::string mapName, int lvl)
 	auto floor = Room::getFloor(lvl);
 	Room temp;
 
+	int j = 0;
 	while (true)
 	{
+		if (j == 10)
+			throw std::runtime_error("could not find a place for " + mapName);
 		int x = rand() % this->_width;
 		int y = rand() % this->_height;
 
@@ -64,7 +67,6 @@ quadList Map::chooseRoom(std::string mapName, int lvl)
 			x = rand() % this->_width;
 			y = rand() % this->_height;
 		}
-
 		quadList tmp = this->_nodes[y * _width + x];
 
 		temp = *floor[mapName];
@@ -75,8 +77,11 @@ quadList Map::chooseRoom(std::string mapName, int lvl)
 			temp.turnMapLeft();
 			i++;
 		}
-		if (i == 4)	
+		if (i == 4)
+		{
+			j++;
 			continue;
+		}
 
 		tmp->addRoom(temp);
 		return tmp;
@@ -232,65 +237,78 @@ int Map::checkObs(quadList &node)
 }
 
 
-bool randomDFS(quadList node, quadList end,
-               std::unordered_set<quadList> &visited,
-               std::vector<quadList> &path)
+bool randomDFS(quadList start, quadList end,
+						 std::unordered_set<quadList> &visited,
+						 std::vector<quadList> &path)
 {
-	if (node == end)
+	std::unordered_map<quadList, quadList> parent;
+	std::stack<quadList> stack;
+
+	stack.push(start);
+	parent[start] = nullptr;
+
+	while (!stack.empty())
 	{
-		path.push_back(node);
-		return true;
-	}
+		quadList node = stack.top();
+		stack.pop();
 
-	visited.insert(node);
-
-	std::vector<quadList> neighbors;
-	if (!node->north.expired())
-		neighbors.push_back(node->north.lock());
-	if (!node->east.expired())
-		neighbors.push_back(node->east.lock());
-	if (!node->south.expired())
-		neighbors.push_back(node->south.lock());
-	if (!node->west.expired())
-		neighbors.push_back(node->west.lock());
-
-	// Mélanger pour l’aléatoire
-	std::shuffle(neighbors.begin(), neighbors.end(),
-				 std::mt19937(std::random_device{}()));
-
-	for (auto &next : neighbors)
-	{
-		if (!next || visited.count(next))
+		if (visited.count(node))
 			continue;
 
-		if (randomDFS(next, end, visited, path))
+		visited.insert(node);
+
+		if (node == end)
 		{
-			path.push_back(node);
+			quadList cur = end;
+			while (cur)
+			{
+				path.push_back(cur);
+				cur = parent[cur];
+			}
+			std::reverse(path.begin(), path.end());
 			return true;
+		}
+
+		std::vector<quadList> neighbors;
+		if (!node->north.expired()) neighbors.push_back(node->north.lock());
+		if (!node->east.expired())  neighbors.push_back(node->east.lock());
+		if (!node->south.expired()) neighbors.push_back(node->south.lock());
+		if (!node->west.expired())  neighbors.push_back(node->west.lock());
+
+		std::shuffle(neighbors.begin(), neighbors.end(),
+					 std::mt19937(std::random_device{}()));
+
+		for (auto &next : neighbors)
+		{
+			if (next && !visited.count(next))
+			{
+				parent[next] = node;
+				stack.push(next);
+			}
 		}
 	}
 
 	return false;
 }
 
+
 void Map::preparePathMap(int numPlayers, int depth)
 {
 	std::vector<quadList> stairs;
 	std::vector<quadList> starts;
-	int numStart = (numPlayers - depth > 0) ? numPlayers - depth : 1;
-	int numStairs = (numPlayers - depth - 1 > 0) ? numPlayers - depth - 1 : 1;
+	int numStart = (std::ceil(numPlayers / (depth + 1.f)) > 0) ? std::ceil(numPlayers / (depth + 1.f)) : 1;
+	int numStairs = (std::ceil(numPlayers / (depth + 2.f)) > 0) ? std::ceil(numPlayers / (depth + 2.f)) : 1;
 	for (int i = 0; i < numStart; i++)
 		starts.emplace_back(this->chooseRoom("start", depth + 1));
 	for (int i = 0; i < numStairs; i++)
 		stairs.emplace_back(this->chooseRoom("stairs", depth + 1));
-
 	for (int i = 0; i < numStart; i++)
 	{
 		quadList start;
 		quadList goal = starts[i];
 	
-		if (i == numStairs && i > 0)
-			start = stairs[i - 1];
+		if (i >= numStairs && i > 0)
+			start = stairs[numStairs - 1];
 		else
 			start = stairs[i];
 		quadList tmp = start, end = goal;

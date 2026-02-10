@@ -84,7 +84,7 @@ static void addPartySolo(int &sumSolo, std::list<Party> &matchMakingQueue, std::
 		}
 		if (placed)
 			it = matchMakingQueue.erase(it);
-		else if (sumSolo >= 2)
+		else if (sumSolo >= 1)
 		{
 			party.setPlayerSession();
 			sessions.emplace_back();
@@ -305,12 +305,6 @@ void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer,
 	msg.append("}}");
 	app->publish(room.getRoomId(), msg, uWS::OpCode::TEXT);
 }
-
-// struct TimerData
-// {
-// 	Server		*server;
-// 	uWS::App	*app;
-// };
 
 void	Server::run(void)
 {

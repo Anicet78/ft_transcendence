@@ -17,6 +17,18 @@ int	init_sdl(Engine &gSdl)
 		return (0);
 	}
 
+	if(TTF_Init() == -1 )
+	{
+		return false;
+	}
+
+	gSdl.font = TTF_OpenFont("assets/fonts/Pixeloid_Font/PixeloidMono.ttf", 32);
+	if (!gSdl.font)
+	{
+		SDL_Log("TTF_OpenFont error: %s", TTF_GetError());
+		return false;
+	}
+
 	//need a renderer for the texture in general
 	gSdl.renderer = SDL_CreateRenderer(gSdl.window, -1, SDL_RENDERER_ACCELERATED);
 	if (!gSdl.renderer) {
@@ -28,5 +40,13 @@ int	init_sdl(Engine &gSdl)
 
 	if (!gSdl.timer.getStarted())
 		gSdl.timer.startTimer();
+	if (gSdl.game == NULL)
+		gSdl.game = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH * 16, GAME_HEIGHT * 16);
+	if (gSdl.hud == NULL)
+		gSdl.hud = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, (SCREEN_HEIGHT - GAME_HEIGHT));
+
+	SDL_EventState(SDL_KEYDOWN, SDL_ENABLE);
+	SDL_EventState(SDL_KEYUP, SDL_ENABLE);
+	
 	return (1);
 }

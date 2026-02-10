@@ -71,7 +71,6 @@ void Assets::importAssets(std::string path, int tile_size)
 // scale is supposed to be > 0
 void		Assets::rendMap(int x, int y, int assetIndex, float scale, int floor)
 {
-
 	if (assetIndex < 0)
 	{
 		std::cerr << "Invalid index" << std::endl;
@@ -83,14 +82,13 @@ void		Assets::rendMap(int x, int y, int assetIndex, float scale, int floor)
 		return ;
 	}
 
-	SDL_Rect	renderRect = {x, y, _MapImgW[floor], _MapImgH[floor]};
 	SDL_Rect	*rect = &_mapAssets[floor][assetIndex];
-
-	if (rect != NULL)
-	{
-		renderRect.w = rect->w * scale;
-		renderRect.h = rect->h * scale;
-	}
+	SDL_Rect	renderRect = {x, y, static_cast<int>(rect->w * scale), static_cast<int>(rect->h * scale)};
+	// if (rect != NULL)
+	// {
+	// 	renderRect.w = rect->w * scale;
+	// 	renderRect.h = rect->h * scale;
+	// }
 
 	SDL_RenderCopy(gSdl.renderer, _MapTexture[floor], rect, &renderRect);
 }

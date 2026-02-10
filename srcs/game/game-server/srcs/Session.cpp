@@ -2,12 +2,12 @@
 
 Session::Session(void): _maxNumPlayer(3), _running(0), _ended(0)
 {
-	int size = 4 * _maxNumPlayer;
+	int size = static_cast<int>(2 * sqrt(8 + 6 * (_maxNumPlayer - 1)));
 	_maps.emplace_back(1, 1);
 	_maps.back().setWaitingRoom();
 	_maps.emplace_back(size, size);
 	_maps.back().fillMap(_maxNumPlayer, 0);
-	_maps.emplace_back(size * 0.7, size * 0.7);
+	_maps.emplace_back(size * 0.8, size * 0.8);
 	_maps.back().fillMap(_maxNumPlayer, 1);
 	printMap(_maps[1]);
 	printMap(_maps[2]);
@@ -15,10 +15,7 @@ Session::Session(void): _maxNumPlayer(3), _running(0), _ended(0)
 }
 
 Session::Session(int numPLayer): _maxNumPlayer(numPLayer), _running(0), _ended(0)
-{
-	(void)_ended;
-
-}
+{}
 
 Session::~Session(void)
 {}

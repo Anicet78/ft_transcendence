@@ -4,7 +4,7 @@
 //Constructors/Destructors------------------------------------------------
 
 
-Game::Game(Player &player): _player(player)
+Game::Game(Player &player): _player(player), _launched(0)
 {}
 
 Game::~Game(void)
@@ -46,23 +46,24 @@ Player &Game::getOtherPlayer(std::string &uid)
 	return _otherPlayers[0];
 }
 
-void Game::clearOtherPlayers()
+int		Game::getLaunched() const
+{
+	return this->_launched;
+}
+
+void	Game::setLaunched(int nb)
+{
+	this->_launched = nb;
+}
+
+void	Game::clearOtherPlayers()
 {
 	this->_otherPlayers.clear();
 }
 
-void Game::addOtherPlayer(Player &player)
+void	Game::addOtherPlayer(std::string &uid, std::string &name)
 {
-	this->_otherPlayers.push_back(player);
-}
-
-void Game::deleteLeavedUid(std::vector<std::string> &remaining_uid)
-{
-	for (auto it = this->_otherPlayers.begin(); it != this->_otherPlayers.end(); it++)
-	{
-		if (std::find(remaining_uid.begin(), remaining_uid.end(), it->getUid()) == remaining_uid.end())
-			this->_otherPlayers.erase(it);
-	}
+	this->_otherPlayers.emplace_back(uid, name, (SDL_Color){255, 127, 0, 255});
 }
 
 void Game::suppOtherPlayer(std::string &uid)
@@ -75,6 +76,11 @@ void Game::suppOtherPlayer(std::string &uid)
 			return ;
 		}
 	}
+}
+
+void	Game::drawHud()
+{
+	this->_hud.print(_maps, _player, this->_launched);
 }
 
 bool Game::isInOtherPlayers(std::string &uid) const

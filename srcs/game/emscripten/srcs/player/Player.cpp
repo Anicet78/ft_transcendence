@@ -1,15 +1,24 @@
 #include"Player.hpp"
 
-Player::Player(std::string uid, std::string name) : _uid(uid), _name(name), _x(0), _y(0),
+Player::Player(std::string uid, std::string name, SDL_Color color) : _uid(uid), _name(name), _x(0), _y(0),
 					_screenX(0), _screenY(0), _anim(0), _hp(3), _atk(1), _def(0), _atkState(false),
-					_camera(_x, _y), _floor(0), _last_dir(0), _frame(0), _prev_state(PLAYER_IDLE)
+					_camera(_x, _y, 12, 12, SCREEN_WIDTH, GAME_HEIGHT), _floor(0), _last_dir(0), _frame(0), _prev_state(PLAYER_IDLE)
 {
+	SDL_Surface* surf = TTF_RenderText_Blended(gSdl.font, name.c_str(), color);
+	if (!surf)
+		SDL_Log("RenderText error: %s", TTF_GetError());
+	this->_nameTexture = SDL_CreateTextureFromSurface(gSdl.renderer, surf);
+	int w, h;
+	SDL_QueryTexture(this->_nameTexture, nullptr, nullptr, &w, &h);
+	SDL_FreeSurface(surf);
 	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
 	return ;
 }
 
 Player::~Player(void)
-{}
+{
+	SDL_DestroyTexture(_nameTexture);
+}
 
 //get player value
 std::string	Player::getUid(void) const
@@ -117,6 +126,10 @@ void	Player::updateLastDir(void)
 		_last_dir = 0;
 	else if (gSdl.key.a_key)
 		_last_dir = 1;
+	if (gSdl.key.w_key)
+		_last_dir = 2;
+	if (gSdl.key.s_key)
+		_last_dir = 3;
 }
 
 void Player::setNode(const quadList &node)
@@ -194,7 +207,8 @@ bool	Player::checkAtkState(void) const
 
 //----------------------------------------------------------------
 
-void	Player::updateScreenPos(int tile_s) {
+void	Player::updateScreenPos(int tile_s)
+{
 	_screenX = (_x - _camera.getCamX()) * tile_s;
 	_screenY = (_y - _camera.getCamY()) * tile_s;
 	return ;
@@ -213,24 +227,43 @@ void	Player::printPlayer(float px, float py)
 		if (this->_prev_state != PLAYER_ATTACKING)
 			this->_frame = 0;
 		this->_prev_state = PLAYER_ATTACKING;
-		PlayerAssets::rendPlayerAttack(0, x, y, this->_frame / 4, 2, this->_last_dir);
+		if (this->_last_dir < 2)
+			PlayerAssets::rendPlayerAttack(0, x, y, this->_frame / 4, 2, this->_last_dir);
+		else if (this->_last_dir == 3)
+			PlayerAssets::rendPlayerAttackFront(0, x, y, this->_frame / 4, 2);
+		else if (this->_last_dir == 2)
+			PlayerAssets::rendPlayerAttackBack(0, x, y, this->_frame / 4, 2);
 	}
 	else if (this->_anim == 1)
 	{
 		if (this->_prev_state != PLAYER_WALKING)
 			this->_frame = 0;
 		this->_prev_state = PLAYER_WALKING;
-		PlayerAssets::rendPlayerWalk(0, x, y, this->_frame / 4, 2, this->_last_dir);
+		if (this->_last_dir < 2)
+			PlayerAssets::rendPlayerWalk(0, x, y, this->_frame / 4, 2, this->_last_dir);
+		else if (this->_last_dir == 3)
+			PlayerAssets::rendPlayerWalkFront(0, x, y, this->_frame / 4, 2);
+		else if (this->_last_dir == 2)
+			PlayerAssets::rendPlayerWalkBack(0, x, y, this->_frame / 4, 2);
 	}
 	else
 	{
 		if (this->_prev_state != PLAYER_IDLE)
 			this->_frame = 0;
 		this->_prev_state = PLAYER_IDLE;
-		PlayerAssets::rendPlayerIdle(0, x, y, this->_frame / 4, 2, this->_last_dir);
+		if (this->_last_dir < 2)
+			PlayerAssets::rendPlayerIdle(0, x, y, this->_frame / 4, 2, this->_last_dir);
+		else if (this->_last_dir == 3)
+			PlayerAssets::rendPlayerIdleFront(0, x, y, this->_frame / 4, 2);
+		else if (this->_last_dir == 2)
+			PlayerAssets::rendPlayerIdleBack(0, x, y, this->_frame / 4, 2);
 	}
 
 	this->_frame = this->_frame + 1;
+	int w, h;
+	SDL_QueryTexture(this->_nameTexture, nullptr, nullptr, &w, &h);
+	SDL_Rect dst = {static_cast<int>(x + 16 - (w / 6)), static_cast<int>(y - 16 - (h / 6)), w / 3, h / 3};
+	SDL_RenderCopy(gSdl.renderer, this->_nameTexture, nullptr, &dst);
 }
 
 static bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect const &rect, int const flag, Player &player) {

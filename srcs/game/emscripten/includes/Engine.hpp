@@ -16,8 +16,11 @@ class Engine
 		SDL_Window		*window;
 		SDL_Renderer	*renderer;
 		SDL_Event		event;
+		SDL_Texture		*game;
+		SDL_Texture		*hud;
 		SDL_Texture		*texture;
 		SDL_Texture		*texture2;
+		TTF_Font		*font;
 		SDLTimer		cap;
 		SDLTimer		timer;
 		Key				key;

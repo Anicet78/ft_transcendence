@@ -51,9 +51,8 @@ void	loopPlayerState(Game &game, val playerUpdate)
 		else
 		{
 			std::string name = pStatus["player_name"].as<std::string>();
-			Player player = Player(uid, name);
-			game.addOtherPlayer(player);
-			setPlayerState(player, pStatus, 1);
+			game.addOtherPlayer(uid, name);
+			setPlayerState(game.getOtherPlayers().back(), pStatus, 1);
 		}
 	}
 }

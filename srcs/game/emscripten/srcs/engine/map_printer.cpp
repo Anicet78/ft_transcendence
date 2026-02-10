@@ -85,7 +85,7 @@ void	manage_wall(int x, int y, Player &player)
 }
 
 
-int checkTileWall(int x, int y, Player &player)
+int checkTileWall(int x, int y, Player &player, int &isMud)
 {
 	int h = player.getRoom().getRoomPlan().size();
 	if (y < 0 || y >= h)
@@ -95,10 +95,15 @@ int checkTileWall(int x, int y, Player &player)
 		return (1);
 	if (player.getRoom().getRoomPlan()[y][x] == '1')
 		return (1);
+	if (player.getRoom().getRoomPlan()[y][x] == '2')
+	{
+		isMud = 1;
+		return (1);
+	}
 	return (0);
 }
 
-uint8_t	checkWall(int x, int y, Player &player, int depth)
+uint8_t	checkWall(int x, int y, Player &player, int depth, int &isMud)
 {
 	uint8_t res = 0;
 	
@@ -109,7 +114,7 @@ uint8_t	checkWall(int x, int y, Player &player, int depth)
 	{
 		for (int j = minX; j <= maxX; j++)
 		{
-			if (checkTileWall(j, i, player))
+			if (checkTileWall(j, i, player, isMud))
 			{
 				if (i < y && j == x) //North
 					res |= 1 << 1;
@@ -171,7 +176,7 @@ void	manage_wall2(int x, int y, Player &player, int iteration)
 	{
 		w = player.getRoom().getRoomPlan()[0].size();
 		node = player.getNode();
-		plan.assign(w * player.getRoom().getRoomPlan().size(), 0);
+		plan.assign(w * node->getRoom()->getRoomPlan().size(), 0);
 	}
 
 
@@ -184,7 +189,7 @@ void	manage_wall2(int x, int y, Player &player, int iteration)
 	else if (!iteration)
 		Assets::rendMap(x * tile_s, y * tile_s, 226, 1, 1);
 	else if (iteration && plan[y * w + x])
-	{
+	{	
 		if (x - 2 >= 0 && plan[y * w + x - 2])
 		{
 			Assets::rendMap((x - 1) * tile_s, (y - 1) * tile_s, 148, 1, 1);
@@ -218,33 +223,36 @@ void initAutoTileOffset(std::array<int, 256> &autoTileOffset)
 	autoTileOffset[24]  = 0;
 	autoTileOffset[68]  = 0;
 
-	// Coins simples
+	// NW
 	autoTileOffset[1]   = 46;
+	// NE
 	autoTileOffset[4]   = 44;
+	// SW
 	autoTileOffset[32]  = -44;
+	// SE
 	autoTileOffset[128] = -46;
 
 	// Coins opposés
 	autoTileOffset[36]  = 185;
-	autoTileOffset[129] = 186;
+	autoTileOffset[129] = 184;
 
 	// NW + around
-	int nwList[] = {10, 11, 12, 14, 15, 34, 38, 39, 42, 43, 44, 45, 47};
+	int nwList[] = {10, 11, 12, 13, 14, 15, 34, 35, 38, 39, 42, 43, 44, 45, 46, 47};
 	for (int m : nwList)
 		autoTileOffset[m] = -43;
 
 	// NE + around
-	int neList[] = {17, 18, 19, 22, 23, 130, 131, 135, 145, 146, 149, 150, 151};
+	int neList[] = {17, 18, 19, 21, 22, 23, 130, 131, 134, 135, 145, 146, 147, 149, 150, 151};
 	for (int m : neList)
 		autoTileOffset[m] = -42;
 
 	// SW + around
-	int swList[] = {65, 72, 73, 104, 105, 136, 137, 169, 193, 200, 225, 232, 233};
+	int swList[] = {65, 72, 73, 97, 104, 105, 136, 137, 168, 169, 193, 200, 201, 225, 232, 233};
 	for (int m : swList)
 		autoTileOffset[m] = 2;
 
 	// SE + around
-	int seList[] = {48, 52, 68, 80, 84, 100, 112, 180, 208, 212, 228, 240, 244};
+	int seList[] = {48, 52, 68, 80, 84, 100, 112, 116, 176, 180, 196, 208, 212, 228, 240, 244};
 	for (int m : seList)
 		autoTileOffset[m] = 3;
 
@@ -269,31 +277,130 @@ void initAutoTileOffset(std::array<int, 256> &autoTileOffset)
 		autoTileOffset[m] = -45;
 }
 
+void initAutoTileOffset2(std::array<int, 256> &autoTileOffset)
+{
+	// Cas neutres
+	autoTileOffset[0]   = 0;
+	autoTileOffset[24]  = 0;
+	autoTileOffset[68]  = 0;
+
+	// NW
+	autoTileOffset[1]   = 3;
+	// NE
+	autoTileOffset[4]   = 2;
+	// SW
+	autoTileOffset[32]  = -42;
+	// SE
+	autoTileOffset[128] = -43;
+
+	// Coins opposés
+	autoTileOffset[36]  = 185;
+	autoTileOffset[129] = 184;
+
+	// NW + around
+	int nwList[] = {10, 11, 12, 13, 14, 15, 34, 35, 38, 39, 42, 43, 44, 45, 46, 47};
+	for (int m : nwList)
+		autoTileOffset[m] = -46;
+
+	// NE + around
+	int neList[] = {17, 18, 19, 21, 22, 23, 130, 131, 134, 135, 145, 146, 147, 149, 150, 151};
+	for (int m : neList)
+		autoTileOffset[m] = -44;
+
+	// SW + around
+	int swList[] = {65, 72, 73, 97, 104, 105, 136, 137, 168, 169, 193, 200, 201, 225, 232, 233};
+	for (int m : swList)
+		autoTileOffset[m] = 44;
+
+	// SE + around
+	int seList[] = {48, 52, 68, 80, 84, 100, 112, 116, 176, 180, 196, 208, 212, 228, 240, 244};
+	for (int m : seList)
+		autoTileOffset[m] = 46;
+
+	// N group
+	int nList[] = {2, 3, 5, 6, 7};
+	for (int m : nList)
+		autoTileOffset[m] = -45;
+
+	// W group
+	int wList[] = {8, 9, 33, 40, 41};
+	for (int m : wList)
+		autoTileOffset[m] = -1;
+
+	// E group
+	int eList[] = {16, 20, 132, 144, 148};
+	for (int m : eList)
+		autoTileOffset[m] = 1;
+
+	// S group
+	int sList[] = {64, 96, 160, 192, 224};
+	for (int m : sList)
+		autoTileOffset[m] = 45;
+}
 
 void	manageSoil(int x, int y, Player &player)
 {
 	static std::array<int, 256>	autoTileOffset = {0};
+	static std::array<int, 256>	autoTileOffset2 = {0};
 	int	tile_s = gSdl.getMapTileSize() * 2;
 	int depth = -1;
+	int fDepth = -1;
+	int isMud = 0;
 	uint8_t	mask = 0;
+	uint8_t	fMask = 0;
 
 	if (!autoTileOffset[1])
 		initAutoTileOffset(autoTileOffset);
+	if (!autoTileOffset2[1])
+		initAutoTileOffset2(autoTileOffset2);
 
 	while (!mask)
 	{
 		depth++;
-		mask = checkWall(x, y, player, depth);
+		mask = checkWall(x, y, player, depth, isMud);
+		if (mask && !isMud && depth <= 2)
+		{
+			if (fDepth == -1)
+			{
+				fDepth = depth;
+				fMask = mask;
+			}
+			continue ;
+		}
 		if (depth > 2)
 		{
 			depth = 2;
 			break ;
 		}
 	}
-	//std::cout << "x = " << x << ", y = " << y << ", mask = " << (int)mask << ", depth = " << depth << std::endl;
-	int color = 541 + depth * 9;
-	int color2 = (depth == 2) ? color : color + 9;
-	int offset = autoTileOffset[mask];
+	if (fDepth != -1)
+	{
+		depth = fDepth;
+		mask = fMask;
+	}
+	int color;
+	int offset;
+	int color2 = 0;
+	if (!isMud || (isMud && depth == 2))
+	{
+		if (isMud)
+			depth--;
+		color = 541 + depth * 9;
+		offset = autoTileOffset[mask];
+		color2 = (depth == 2) ? color : color + 9;
+	}
+	else if(isMud && depth == 1)
+	{
+		color = 676;
+		offset = autoTileOffset[mask];
+		color2 = 550;
+	}
+	else
+	{
+		color = 874 -18;
+		offset = autoTileOffset2[mask];
+		color2 = color + 9;
+	}
 	Assets::rendMap(x * tile_s, y * tile_s, color2, 1, 1);
 	Assets::rendMap(x * tile_s, y * tile_s, color + offset, 1, 1);
 }
@@ -301,8 +408,7 @@ void	manageSoil(int x, int y, Player &player)
 void	manageFloorPrint(int x, int y, char c, Player &player, int iteration)
 {
 	int	tile_s = gSdl.getMapTileSize() * 2;
-	(void)iteration;
-	if (player.getFloor() == 0)
+	if (player.getFloor() == 1)
 	{
 		if (c == '1' && !iteration)
 			manage_wall(x, y, player);
@@ -311,11 +417,13 @@ void	manageFloorPrint(int x, int y, char c, Player &player, int iteration)
 		else if (c == 'E')
 			Assets::rendMap(x * tile_s, y * tile_s, Assets::DOOR_FRONT, 2, 0);
 	}
-	else if (player.getFloor() == 1)
+	else if (player.getFloor() == 0)
 	{
 		if (c == '1'  || c == ' ')
 			manage_wall2(x, y, player, iteration);
-		else if (c == '0' || c == 'P')
+		if (c == '2')
+			Assets::rendMap(x * tile_s, y * tile_s, 865, 1, 1);
+		else if (c == '0' || c == 'P' || c == 'E')
 			manageSoil(x, y, player);
 	}
 	
@@ -336,12 +444,12 @@ void	print_map(Player &player)
 
 		if (gSdl.texture == NULL)
 		{
-			gSdl.texture = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 800 * 16, 800 * 16);
+			gSdl.texture = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH * 16, GAME_HEIGHT * 16);
 			SDL_SetTextureBlendMode(gSdl.texture, SDL_BLENDMODE_BLEND);
 		}
 		if (gSdl.texture2 == NULL)
 		{
-			gSdl.texture2 = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 800 * 16, 800 * 16);
+			gSdl.texture2 = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH * 16, GAME_HEIGHT * 16);
 			SDL_SetTextureBlendMode(gSdl.texture2, SDL_BLENDMODE_BLEND);
 		}
 
@@ -359,21 +467,24 @@ void	print_map(Player &player)
 				manageFloorPrint(x, y, c, player, 0);
 			}
 		}
-		SDL_SetRenderTarget(gSdl.renderer, gSdl.texture2);
-		SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 0);
-		SDL_RenderClear(gSdl.renderer);
-		for (int y = 0; y < h; y++)
+		if (!player.getFloor())
 		{
-			int w = player.getRoom().getRoomPlan()[y].size();
-			for (int x = 0; x < w; x++)
+			SDL_SetRenderTarget(gSdl.renderer, gSdl.texture2);
+			SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 0);
+			SDL_RenderClear(gSdl.renderer);
+			for (int y = 0; y < h; y++)
 			{
-				char c = player.getRoom().getRoomPlan()[y][x];
-				if (c != '1' && c != ' ')
-					continue ;
-				manageFloorPrint(x, y, c, player, 1);
+				int w = player.getRoom().getRoomPlan()[y].size();
+				for (int x = 0; x < w; x++)
+				{
+					char c = player.getRoom().getRoomPlan()[y][x];
+					if (c != '1' && c != ' ')
+						continue ;
+					manageFloorPrint(x, y, c, player, 1);
+				}
 			}
 		}
-		SDL_SetRenderTarget(gSdl.renderer, NULL);
+		SDL_SetRenderTarget(gSdl.renderer, gSdl.game);
 	}
 
 	int roomH = player.getRoom().getRoomPlan().size();
@@ -381,6 +492,6 @@ void	print_map(Player &player)
 	Camera	&camera = player.getCamera();
 	camera.updateCamera(tile_s, roomW, roomH);
 	player.updateScreenPos(tile_s);
-
-	SDL_RenderCopy(gSdl.renderer, gSdl.texture, &camera.getCamera(), NULL);
+	SDL_Rect dst = {0, 0, SCREEN_WIDTH, GAME_HEIGHT};
+	SDL_RenderCopy(gSdl.renderer, gSdl.texture, &camera.getCamera(), &dst);
 }

@@ -13,6 +13,13 @@ Engine gSdl;
 		info.set("age", a);
 	}
 
+	void finishGame()
+	{
+		SDL_EventState(SDL_KEYDOWN, SDL_DISABLE);
+		SDL_EventState(SDL_KEYUP, SDL_DISABLE);
+		emscripten_cancel_main_loop();
+	}
+
 	void getMessage(val obj)
 	{
 		msgJson.push(obj);
@@ -27,6 +34,7 @@ Engine gSdl;
 	{
 		emscripten::function("getMessage", &getMessage);
 		emscripten::function("testIncrement", &testIncrement);
+		emscripten::function("finishGame", &finishGame);
 	}
 #endif
 
@@ -52,8 +60,7 @@ void updatePlayerState(Game &game, val msg)
 			if (msg.hasOwnProperty(std::string(key + "_name").c_str()))
 			{
 				std::string name = msg[key + "_name"].as<std::string>();
-				Player oplayer = Player(uid, name);
-				game.addOtherPlayer(oplayer);
+				game.addOtherPlayer(uid, name);
 			}
 		}
 		if (msg.hasOwnProperty(std::string(key + "_leave").c_str()))
@@ -74,7 +81,8 @@ void updatePlayerState(Game &game, val msg)
 	}
 }
 
-void	updateRoomState(Game &game, val msg) {
+void	updateRoomState(Game &game, val msg)
+{
 	if (msg["room_event"].as<std::string>() == "MobRush")
 	{
 		MobRush &rush = dynamic_cast<MobRush &>(*game.getPlayer().getRoomRef().getRoomEvent());
@@ -190,6 +198,7 @@ void	launchGame(Game &game, val &msg)
 		}
 	}
 	game.getPlayer().setNode(start);
+	game.setLaunched(1);
 	EM_ASM_({onCppMessage({action: "launched"});});
 }
 
@@ -242,13 +251,12 @@ void	parseJson(bool &init, Game &game)
 	// msgJson = val::undefined();
 }
 
-void mainloopE(void)
+void mainloopE(void *arg)
 {
-	static Player player(gSdl.getPlayerId(), gSdl.getPlayerName());
-	static Game	game(player);
 	static bool init = false;
 	static double frameTime = gSdl.getActualTime();
-	parseJson(init, game);
+	Game *game = static_cast<Game *>(arg);
+	parseJson(init, *game);
 	if (!init)
 		return ;
 
@@ -258,9 +266,7 @@ void mainloopE(void)
 	{
 		if (gSdl.event.type == SDL_KEYDOWN && gSdl.event.key.keysym.sym == SDLK_ESCAPE)
 		{
-			#ifdef __EMSCRIPTEN__
 			emscripten_cancel_main_loop();
-			#endif
 			return ;
 		}
 		else if (gSdl.event.type == SDL_KEYDOWN)
@@ -268,7 +274,7 @@ void mainloopE(void)
 		else if (gSdl.event.type == SDL_KEYUP)
 			key_up();
 	}
-	game_loop(game, gSdl.getActualTime() - frameTime);
+	game_loop(*game, gSdl.getActualTime() - frameTime);
 	frameTime = gSdl.getActualTime();
 	SDL_RenderPresent(gSdl.renderer);
 	SDL_RenderClear(gSdl.renderer);
@@ -277,9 +283,11 @@ void mainloopE(void)
 		SDL_Delay(ticksPerFrame - frameTicks);
 }
 
-int main(void)
+int main(int ac, char **av)
 {
 	srand(time(0));
+	std::string name, id;
+	(void)ac, (void)av;
 	if (!init_sdl(gSdl))
 	{
 		std::cerr << "Error in sdl init" << std::endl;
@@ -293,11 +301,9 @@ int main(void)
 		PlayerAssets::importPlayersAssets(100);
 		Mob::importMobsAssets(100);
 		Room::importRooms();
-		//floor0.setWaitingRoom();
-		// floor0.fillMap();
 		#ifdef __EMSCRIPTEN__
-		std::string id = std::to_string(rand() % 500);
-		std::string name = "guest_" + id;
+		id = std::to_string(rand() % 500);
+		name = "guest_" + id;
 		gSdl.setPlayerName(name);
 		gSdl.setPlayerId(id);
 		EM_ASM_({
@@ -316,9 +322,10 @@ int main(void)
 		std::cerr << e.what() << '\n';
 		return (0);
 	}
-	// printMap(floor0);
+	Player player(id, name, (SDL_Color){0, 255, 0, 255});
+	Game	game(player);
 	#ifdef __EMSCRIPTEN__
-		emscripten_set_main_loop(mainloopE, MAX_FPS, true);
+		emscripten_set_main_loop_arg(mainloopE, &game, MAX_FPS, true);
 	#endif
 	return (0);
 }

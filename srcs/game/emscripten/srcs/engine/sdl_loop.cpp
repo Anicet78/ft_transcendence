@@ -153,6 +153,15 @@ void	updateOtherPlayer(std::vector<Player> &others, double deltaTime)
 	}
 	return ;
 }
+void	drawHud(Game &game)
+{
+	SDL_SetRenderTarget(gSdl.renderer, gSdl.hud);
+	SDL_RenderClear(gSdl.renderer);
+	game.drawHud();
+	SDL_SetRenderTarget(gSdl.renderer, NULL);
+	SDL_Rect dstHud = {0, GAME_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT - GAME_HEIGHT};
+	SDL_RenderCopy(gSdl.renderer, gSdl.hud, NULL, &dstHud);
+}
 
 void	game_loop(Game &game, double deltaTime)
 {
@@ -164,9 +173,11 @@ void	game_loop(Game &game, double deltaTime)
 
 	updatePlayerPosition(game.getPlayer(), deltaTime); 
 	#endif
-	//-----------t'es la dessus
 	updateOtherPlayer(game.getOtherPlayers(), deltaTime);
-	//--------------------------
+
+	SDL_SetRenderTarget(gSdl.renderer, gSdl.game);
+	SDL_RenderClear(gSdl.renderer);
+
 	print_map(player);
 	if (player.getRoom().getRoomEvent())
 	{
@@ -175,5 +186,10 @@ void	game_loop(Game &game, double deltaTime)
 	}
 	print_others(player, game.getOtherPlayers());
 	player.printPlayer(player.getScreenX(), player.getScreenY());
-	SDL_RenderCopy(gSdl.renderer, gSdl.texture2, &camera.getCamera(), NULL);
+	SDL_Rect dst = {0, 0, SCREEN_WIDTH, GAME_HEIGHT};
+	SDL_RenderCopy(gSdl.renderer, gSdl.texture2, &camera.getCamera(), &dst);
+	SDL_SetRenderTarget(gSdl.renderer, NULL);
+	SDL_Rect dstGame = {0, 0, SCREEN_WIDTH, GAME_HEIGHT};
+	SDL_RenderCopy(gSdl.renderer, gSdl.game, &dstGame, &dstGame);
+	drawHud(game);
 }

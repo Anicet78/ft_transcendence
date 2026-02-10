@@ -258,8 +258,6 @@ void	Room::importFloor(std::string fullPath, std::map<std::string, std::shared_p
 
 Room Room::getWatingRoom()
 {
-	// if (!_WatingRooms.size())
-	// 	throw std::runtime_error("No wating room available");
 	return *_WaitingRooms["waiting"].get();
 }
 
@@ -270,8 +268,6 @@ void Room::importRooms()
 	Room::importFloor(path + "waitingRooms/", _WaitingRooms);
 	Room::importFloor(path + "floor0/", _RoomsF0);
 	Room::importFloor(path + "floor1/", _RoomsF1);
-	// for (auto &room : _RoomsF1)
-	// 	std::cout << *room.second.get() << std::endl;
 }
 
 void	Room::setEvent(void)
