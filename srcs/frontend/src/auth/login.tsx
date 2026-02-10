@@ -25,7 +25,7 @@ function Login() {
 		onSuccess: (data) => {
 		const response: LoginResponseType = data.data;
 		console.log("Connecté !", response);
-		navigate("/"); // how to go to new room?
+		navigate("/home", {state: {id: response.user.id}});
 		},
 	});
 

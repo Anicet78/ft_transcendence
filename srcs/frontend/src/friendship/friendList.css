@@ -1,0 +1,22 @@
+.wrapbox {
+	display: grid;
+	place-items: center;
+}
+
+.friendbox {
+	width: 50%;
+	margin:auto;
+}
+
+ul {
+	list-style-type: none;
+	padding: 0;
+	align-items: center;
+}
+
+li {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+}

@@ -19,6 +19,8 @@ import Error from './error/error.tsx';
 import Banner from './components/Banner.tsx';
 import MyFooter from './components/Footer.tsx';
 import FriendList from './friendship/FriendsList.tsx';
+import FriendRequest from './friendship/FriendRequests.tsx';
+import CancelRequest from './friendship/UpdateRequest.tsx';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -36,6 +38,7 @@ createRoot(document.getElementById('root')).render(
 				<h1><Banner /></h1>
 				<Routes>
 					<Route path="/" element={<App />} />
+					<Route path="/home" element={<App />} />
 					<Route path="/login" element={<Login />} />
 					{/* <Route path="/me" element={} />
 					<Route path="/offline" element={} />
@@ -50,8 +53,9 @@ createRoot(document.getElementById('root')).render(
 					<Route path="/chat/:chatId/info" element={} />
 					<Route path="/chat/list" element={} /> */}
 					<Route path="/friends" element={<FriendList />} />
-					{/* <Route path="/friends/requests" element={} /> */}
-					{/* <Route path="/friends/:id" element={<ProfilePublic />} /> */}
+					<Route path="/friends/requests" element={<FriendRequest />} />
+					<Route path="/friends/requests/update/:id" element={<CancelRequest />} />
+					<Route path="/friends/:id" element={<ProfilePublic />} />
 					{/* <Route path="/group/:chatId/role/:memberId" element={} />
 					<Route path="/group/:chatId/kick/:memberId" element={} />
 					<Route path="/group/:chatId/ban/:memberId" element={} />

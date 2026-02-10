@@ -1,4 +1,14 @@
-import { Button } from "@allxsmith/bestax-bulma"
+function SearchResults() {
+  let [searchParams] = useSearchParams();
+  return (
+    <div>
+      <p>
+        You searched for <i>{searchParams.get("q")}</i>
+      </p>
+      <FakeSearchResults />
+    </div>
+  );
+}
 
 const SearchBar = () => {
 	return (
