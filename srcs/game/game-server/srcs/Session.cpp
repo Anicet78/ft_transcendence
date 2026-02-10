@@ -36,8 +36,9 @@ void	Session::launch()
 			continue ;
 		if (pos >= this->_players.size())
 			break ;
+		std::string roomId = this->_players[pos]->getRoom().getRoomId();
 		this->_players[pos]->setNode(node);
-		if (this->_players[pos]->getWs()->unsubscribe("waiting"))
+		if (this->_players[pos]->getWs()->unsubscribe(roomId))
 			std::cout << "unsubscribe from waiting room" << std::endl;
 		this->_players[pos]->getWs()->subscribe(node->getRoom()->getRoomId());
 		std::string msg = "{\"action\": \"launch\", \"start\": " + std::to_string(pos) + '}';
@@ -133,7 +134,7 @@ void	Session::addParty(Party &newParty)
 	for (std::shared_ptr<Player> &player : newParty.getPlayers())
 	{
 		player->setNode(this->_maps[0].getNodes()[0]);
-		if (player->getWs()->subscribe("waiting"))
+		if (player->getWs()->subscribe(player->getRoom().getRoomId()))
 			std::cout << "added to the waiting room" << std::endl;
 		this->_players.push_back(player);
 		msg = this->sendMaps();

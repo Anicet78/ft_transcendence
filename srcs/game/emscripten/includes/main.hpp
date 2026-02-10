@@ -21,6 +21,7 @@
 # include <unordered_map>
 # include <algorithm>
 # include <cmath>
+# include <chrono>
 #ifdef __EMSCRIPTEN__
 	#include <emscripten/val.h>
 	#include <emscripten.h>

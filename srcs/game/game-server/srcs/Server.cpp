@@ -1,5 +1,5 @@
 #include "Server.hpp"
-Server::Server(void)
+Server::Server(void) : _startTime(std::chrono::steady_clock::now())
 {}
 
 Server::~Server(void)
@@ -203,9 +203,9 @@ void	moveMobs(std::vector<std::string> const &map, Mob &mob)
 	}
 }
 
-void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app) {
-	std::string msg = "{\"action\": \"loop_action\", \"loop\": {";
-
+void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app, Server *server) {
+	std::string msg = "{\"action\": \"loop_action\"";
+	msg += ",\"server_timer\":" + std::to_string(server->getActualTime()) + ",\"loop\": {";
 	//put player status in the msg
 	const int player_size = allPlayer.size();
 	if (player_size)
@@ -303,20 +303,24 @@ void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer,
 		msg.append(", \"room_state\": {\"room_event\":\"None\"}");
 
 	msg.append("}}");
-
 	app->publish(room.getRoomId(), msg, uWS::OpCode::TEXT);
 }
 
-struct TimerData
-{
-	Server		*server;
-	uWS::App	*app;
-};
+// struct TimerData
+// {
+// 	Server		*server;
+// 	uWS::App	*app;
+// };
 
 void	Server::run(void)
 {
 	uWS::App app;
 
+	struct TimerData
+	{
+		Server		*server;
+		uWS::App	*app;
+	};
 	auto loop = uWS::Loop::get();
 	struct us_timer_t *delayTimer = us_create_timer((struct us_loop_t *) loop, 0, sizeof(TimerData));
 	auto *data = (TimerData *) us_timer_ext(delayTimer);
@@ -325,29 +329,25 @@ void	Server::run(void)
 	us_timer_set(delayTimer, [](struct us_timer_t *t)
 	{
 		auto *data = (TimerData *) us_timer_ext(t);
-
 		for(auto session : data->server->_sessions)
 		{
-			if (session.isRunning())
+			std::unordered_map<Room *, std::vector<std::shared_ptr<Player>> > PlayerPerRoom;
+			for (auto player : session.getPlayers())
 			{
-				std::unordered_map<Room *, std::vector<std::shared_ptr<Player>> > PlayerPerRoom;
-				for (auto player : session.getPlayers())
+				Room &room = player->getRoomRef();
+				auto i = PlayerPerRoom.find(&room);
+				if (i == PlayerPerRoom.end())
 				{
-					Room &room = player->getRoomRef();
-					auto i = PlayerPerRoom.find(&room);
-					if (i == PlayerPerRoom.end())
-					{
-						std::vector<std::shared_ptr<Player>> lol;
-						lol.push_back(player);
-						PlayerPerRoom.emplace(&room, lol);
-					}
-					else
-						PlayerPerRoom[i->first].push_back(player);
+					std::vector<std::shared_ptr<Player>> lol;
+					lol.push_back(player);
+					PlayerPerRoom.emplace(&room, lol);
 				}
-				for (auto i : PlayerPerRoom)
-				{
-					roomLoopUpdate(*i.first, i.second, data->app);
-				}
+				else
+					PlayerPerRoom[i->first].push_back(player);
+			}
+			for (auto i : PlayerPerRoom)
+			{
+				roomLoopUpdate(*i.first, i.second, data->app, data->server);
 			}
 		}
 	}, 500, 50);
@@ -391,4 +391,9 @@ void	Server::run(void)
 		});
 
 		app.run();
+}
+
+double Server::getActualTime(void) const
+{
+	return std::chrono::duration<double>(std::chrono::steady_clock::now() - this->_startTime).count();
 }

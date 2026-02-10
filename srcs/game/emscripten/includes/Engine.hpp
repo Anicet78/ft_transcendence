@@ -10,6 +10,7 @@ class Engine
 		int	_player_size;
 		std::string	_playerId;
 		std::string	_playerName;
+		const std::chrono::steady_clock::time_point	_startTime;
 
 	public:
 		SDL_Window		*window;
@@ -33,7 +34,9 @@ class Engine
 		int		getMapTileSize(void);
 
 		void	setPlayerSize(int tile_size);
-		int		getPlayerSize(void);	
+		int		getPlayerSize(void);
+
+		double	getActualTime(void) const;
 
 		SDLTimer	&getTimer(void);
 };

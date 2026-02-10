@@ -7,11 +7,12 @@ void	setPlayerState(Player &player, val &pStatus, int flag)
 	int hp = pStatus["player_health"].as<int>();
 	int	anim = pStatus["player_anim"].as<int>();
 
+	player.setHp(hp);
+	player.setAnim(anim);
 	if (flag == 1)
 	{
 		int dir = pStatus["player_dir"].as<int>();
 		player.setDir(dir);
-		player.setPrevPos(player.getX(), player.getY());
 		player.setTargetPos(x, y);
 		player.setTimer(0);
 	}
@@ -25,8 +26,6 @@ void	setPlayerState(Player &player, val &pStatus, int flag)
 		else
 			player.setPos(pX + (x - pX) * 0.1f, pY + (y - pY) * 0.1f);
 	}
-	player.setHp(hp);
-	player.setAnim(anim);
 }
 
 void	loopPlayerState(Game &game, val playerUpdate)

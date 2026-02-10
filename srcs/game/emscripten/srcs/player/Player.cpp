@@ -32,16 +32,6 @@ float	Player::getY(void) const
 	return (_y);
 }
 
-float	Player::getPrevX(void) const
-{
-	return(_prevX);
-}
-
-float	Player::getPrevY(void) const
-{
-	return(_prevY);
-}
-
 float	Player::getTargetX(void) const
 {
 	return(_targetX);
@@ -138,13 +128,6 @@ void	Player::setPos(float x, float y)
 {
 	_x = x;
 	_y = y;
-	return ;
-}
-
-void	Player::setPrevPos(float x, float y)
-{
-	_prevX = x;
-	_prevY = y;
 	return ;
 }
 
@@ -320,13 +303,14 @@ void	Player::setWallHitBox(void) {
 	return ;
 }
 
-void	Player::movePrediction(float deltaTime)
+void	Player::movePrediction(double deltaTime)
 {
 	Room room = this->getRoom();
 	float x = this->_x;
 	float y = this->_y;
 	auto plan = room.getRoomPlan();
 	this->setWallHitBox();
+	(void)deltaTime;
 
 	if (gSdl.key.w_key)
 	{

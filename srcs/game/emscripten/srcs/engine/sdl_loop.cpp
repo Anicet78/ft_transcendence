@@ -45,7 +45,12 @@ void updateRoom(Game &game, Player &player, std::string dir)
 	}
 }
 
-void	updatePlayerPosition(Player &player, float deltaTime)
+float	lerp(float a, float b, float t)
+{
+	return (a + (b - a)* t);
+}
+
+void	updatePlayerPosition(Player &player, double deltaTime)
 {
 	static int isIdling = 1;
 	std::string w_key, a_key, s_key, d_key, anim = "idling", lastDir;
@@ -130,42 +135,37 @@ void	playerAction(Player &player)
 		player.startAtk();
 }
 
-void	updateOtherPlayer(std::vector<Player> &others, float deltaTime, float servLoopTime)
+void	updateOtherPlayer(std::vector<Player> &others, double deltaTime)
 {
+	const float smoothing = 10;
+
 	if (others.size())
 	{
 		for (auto &player : others)
 		{
-			float prevX = player.getPrevX();
-			float prevY = player.getPrevY();
+			float x = player.getX();
+			float y = player.getY();
 
-			player.setTimer(player.getTimer() + deltaTime);
-			float alpha = player.getTimer() / servLoopTime;
-			alpha = std::clamp(alpha, 0.0f, 1.0f);
-			
-			float x = prevX + (player.getTargetX() - prevX) * alpha;
-			float y = prevY + (player.getTargetY() - prevY) * alpha;
-
-			player.setPrevPos(x, y);
+			x += (player.getTargetX() - x) * smoothing * deltaTime;
+			y += (player.getTargetY() - y) * smoothing * deltaTime;
 			player.setPos(x, y);
 		}
 	}
 	return ;
 }
 
-void	game_loop(Game &game, float deltaTime)
+void	game_loop(Game &game, double deltaTime)
 {
 	Player	&player = game.getPlayer();
 	Camera	&camera = player.getCamera();
 	//updateRoom(player);
 	playerAction(player);
-
 	#ifdef __EMSCRIPTEN__
 
 	updatePlayerPosition(game.getPlayer(), deltaTime); 
 	#endif
 	//-----------t'es la dessus
-	updateOtherPlayer(game.getOtherPlayers(), deltaTime, 50);
+	updateOtherPlayer(game.getOtherPlayers(), deltaTime);
 	//--------------------------
 	print_map(player);
 	if (player.getRoom().getRoomEvent())

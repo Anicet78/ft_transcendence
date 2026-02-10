@@ -36,7 +36,7 @@ class Game
 #endif
 
 int	init_sdl(Engine &gSdl);
-void	game_loop(Game &game, float fps);
+void	game_loop(Game &game, double fps);
 
 void	key_down(void);
 void	key_up(void);

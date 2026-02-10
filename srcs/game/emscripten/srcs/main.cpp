@@ -242,19 +242,12 @@ void	parseJson(bool &init, Game &game)
 	// msgJson = val::undefined();
 }
 
-float	fps(Uint32 frame) {
-	float 	fps = frame / (gSdl.timer.getTicks() / 1000.f);
-	if (fps > MAX_FPS)
-		fps = MAX_FPS;
-	return (fps);
-}
-
 void mainloopE(void)
 {
-	static Uint32 frame = 0;
 	static Player player(gSdl.getPlayerId(), gSdl.getPlayerName());
 	static Game	game(player);
 	static bool init = false;
+	static double frameTime = gSdl.getActualTime();
 	parseJson(init, game);
 	if (!init)
 		return ;
@@ -275,10 +268,10 @@ void mainloopE(void)
 		else if (gSdl.event.type == SDL_KEYUP)
 			key_up();
 	}
-	game_loop(game, 1 / fps(frame));
+	game_loop(game, gSdl.getActualTime() - frameTime);
+	frameTime = gSdl.getActualTime();
 	SDL_RenderPresent(gSdl.renderer);
 	SDL_RenderClear(gSdl.renderer);
-	frame++;
 	int frameTicks = gSdl.cap.getTicks();
 	if (frameTicks < ticksPerFrame)
 		SDL_Delay(ticksPerFrame - frameTicks);

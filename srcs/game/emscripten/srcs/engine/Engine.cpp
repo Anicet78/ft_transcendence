@@ -1,6 +1,6 @@
 #include"Engine.hpp"
 
-Engine::Engine(void) :  _tile_size(0), window(NULL), renderer(NULL), texture(NULL) {
+Engine::Engine(void) :  _tile_size(0), _startTime(std::chrono::steady_clock::now()), window(NULL), renderer(NULL), texture(NULL) {
 	return ;
 }
 
@@ -53,4 +53,9 @@ int		Engine::getPlayerSize(void) {
 
 SDLTimer	&Engine::getTimer(void) {
 	return (this->cap);
+}
+
+double Engine::getActualTime(void) const
+{
+	return std::chrono::duration<double>(std::chrono::steady_clock::now() - this->_startTime).count();
 }

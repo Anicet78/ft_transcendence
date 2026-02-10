@@ -321,6 +321,7 @@ void	Player::move(std::map<std::string, std::string> &req) {
 	auto plan = room.getRoomPlan();
     this->setWallHitBox();
 	float deltaTime = std::atof(req["deltaTime"].c_str());
+	(void)deltaTime;
 
 	if (req["w_key"] == "true")
 	{
