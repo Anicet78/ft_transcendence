@@ -1,5 +1,5 @@
 // sert a faire le rendu de la page (details dans App.tsx)
-import { StrictMode, useEffect } from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -53,7 +53,7 @@ const AppEntryPoint = () => {
 };
 
 createRoot(document.getElementById('root') as HTMLElement).render(
-	<StrictMode>
+	// <StrictMode>
 		<QueryClientProvider client={queryClient}>
 			<Router>
 				<AuthProvider>
@@ -64,5 +64,5 @@ createRoot(document.getElementById('root') as HTMLElement).render(
 			</Router>
 		<ReactQueryDevtools initialIsOpen={false} />
 		</QueryClientProvider>
-	</StrictMode>,
+	// </StrictMode>,
 )

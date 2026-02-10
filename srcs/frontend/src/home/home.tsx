@@ -1,5 +1,6 @@
+import './home.css'
 import '../App.css'
-import { Box } from '@allxsmith/bestax-bulma';
+import { Box, Button } from '@allxsmith/bestax-bulma';
 
 import { useMutation } from '@tanstack/react-query';
 import api from '../serverApi.ts';
@@ -44,9 +45,14 @@ const Home = () => {
 		</p>
 	);
 
+	if (!room) return <p>Room not ready...</p>;
+
 	return (
-		<Box>
-			<p>content</p>
+		<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' alignItems='center'>
+			{room.playersId.map((name: string) => (
+				<p>{name}</p>
+			))}
+			<Button color='primary' isInverted aria-label='spectate button' size='medium'>Launch game</Button>
 		</Box>
 	)
 }
