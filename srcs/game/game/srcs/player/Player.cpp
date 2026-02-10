@@ -205,35 +205,35 @@ void	Player::move(float timeStep) {
 	(void)timeStep;
 	if (gSdl.key.w_key)
 	{
-		y -= 0.1;
+		y -= 6.0f * timeStep;
 		if (y >= 0 && !checkWallHitBox(plan, _wallHitBox, 0, *this))
 			this->setPos(x, y);
 		else
-			y += 0.1;
+			y += 6.0f * timeStep;
 	}
 	if (gSdl.key.a_key)
 	{
-		x -= 0.1;
+		x -= 6.0f * timeStep;
 		if (x >= 0 && !checkWallHitBox(plan, _wallHitBox, 1, *this))
 			this->setPos(x, y);
 		else
-			x += 0.1;
+			x += 6.0f * timeStep;
 	}
 	if (gSdl.key.s_key)
 	{
-		y += 0.1;
+		y += 6.0f * timeStep;
 		if (y < room.getHeight() && !checkWallHitBox(plan, _wallHitBox, 2, *this))
 			this->setPos(x, y);
 		else
-			y -= 0.1;
+			y -= 6.0f * timeStep;
 	}
 	if (gSdl.key.d_key)
 	{
-		x += 0.1;
+		x += 6.0f * timeStep;
 		if (x < room.getWidth() && !checkWallHitBox(plan, _wallHitBox, 3, *this))
 			this->setPos(x, y);
 		else
-			x -= 0.1;
+			x -= 6.0f * timeStep;
 	}
 }
 

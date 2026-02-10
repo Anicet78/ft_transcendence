@@ -35,6 +35,7 @@ SRCS		=	main.cpp \
 				player/PlayerAssets.cpp \
 				mapGen/mapMain.cpp Room.cpp Map.cpp Game.cpp \
 				player/Camera.cpp \
+				parseLoop.cpp \
 				Hud.cpp \
 				Minimap.cpp \
 				engine/printEntity.cpp 

@@ -40,12 +40,14 @@ class Game
 #endif
 
 int	init_sdl(Engine &gSdl);
-void	game_loop(Game &game);
+void	game_loop(Game &game, double fps);
 
 void	key_down(void);
 void	key_up(void);
 void	updateRoom(Game &game, Player &player, std::string dir);
 void	print_map(Player &player);
 void	print_others(Player &player, std::vector<Player> &otherPlayers);
+void	loopPlayerState(Game &game, val playerUpdate);
+void	loopRoomState(Game &game, val roomUpdate);
 
 #endif

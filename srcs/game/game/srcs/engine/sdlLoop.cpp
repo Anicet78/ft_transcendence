@@ -5,7 +5,6 @@ void updateRoom(Player &player)
 	Room &room = player.getRoom();
 	auto plan = room.getRoomPlan();
 	float x = player.getX(), y = player.getY();
-	bool	roomChanged = false;
 
 	if (room.getRoomEvent().get() && room.getRoomEvent()->isCleared() == false)
 	{
@@ -21,7 +20,6 @@ void updateRoom(Player &player)
 			player.setNode(player.getNode()->south.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[0][0] + 0.5, exitsLoc[0][1] + 1);
-			roomChanged = true;
 		}
 		else if (exitsLoc[0][0] == static_cast<int>(x) && exitsLoc[0][1] == static_cast<int>(y)
 			&& !player.getNode()->north.expired())
@@ -29,7 +27,6 @@ void updateRoom(Player &player)
 			player.setNode(player.getNode()->north.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[2][0] + 0.5, exitsLoc[2][1] - 0.1);
-			roomChanged = true;
 		}
 		else if (exitsLoc[1][0] == static_cast<int>(x) && exitsLoc[1][1] == static_cast<int>(y)
 			&& !player.getNode()->east.expired())
@@ -37,7 +34,6 @@ void updateRoom(Player &player)
 			player.setNode(player.getNode()->east.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[3][0] + 1, exitsLoc[3][1] + 0.5);
-			roomChanged = true;
 		}
 		else if (exitsLoc[3][0] == static_cast<int>(x) && exitsLoc[3][1] == static_cast<int>(y)
 			&& !player.getNode()->west.expired())
@@ -45,16 +41,14 @@ void updateRoom(Player &player)
 			player.setNode(player.getNode()->west.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[1][0] - 0.1, exitsLoc[1][1] + 0.5);
-			roomChanged = true;
 		}
 	}
 }
 
-void	player_action(Player &player, SDLTimer &cap) {
-	float	timeStep = cap.getTicks() / 1000.f;
+void	player_action(Player &player, float deltaTime) {
 	player.setWallHitBox();
 	if (gSdl.key.walking())
-		player.move(timeStep);
+		player.move(deltaTime);
 	if (gSdl.key.attacking() && player.checkAtkState() == false)
 	{
 		std::cout << "je commence a attaquer" << std::endl;
@@ -64,12 +58,12 @@ void	player_action(Player &player, SDLTimer &cap) {
 
 }
 
-void	game_loop(Player &player, SDLTimer &cap)
+void	game_loop(Player &player, float deltaTime)
 {
 	int tile_s = gSdl.getMapTileSize() * 2;
 	updateRoom(player);
 
-	player_action(player, cap);
+	player_action(player, deltaTime);
 
 	print_map(player);
 
@@ -80,12 +74,12 @@ void	game_loop(Player &player, SDLTimer &cap)
 	player.getBox().printHitBox();
 }
 
-void	fps(Uint32 frame) {
+float	fps(Uint32 frame) {
 	float 	fps = frame / (gSdl.timer.getTicks() / 1000.f);
-	if (fps > 2000000)
-		fps = 0;
+	if (fps > 60)
+		fps = 60;
 	std::cout << fps << std::endl;
-	return ;
+	return (fps);
 }
 
 int mainloop(Engine &sdl, Map &floor0)
@@ -120,8 +114,7 @@ int mainloop(Engine &sdl, Map &floor0)
 			else if (sdl.event.type == SDL_KEYUP)
 				key_up();
 		}
-		game_loop(player, cap);
-		// fps(frame);
+		game_loop(player, 1 / fps(frame));
 		SDL_RenderPresent(sdl.renderer);
 		SDL_RenderClear(gSdl.renderer);
 		frame++;

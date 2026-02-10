@@ -21,6 +21,8 @@
 # include <queue>
 # include <unordered_map>
 # include <algorithm>
+# include <cmath>
+# include <chrono>
 #ifdef __EMSCRIPTEN__
 	#include <emscripten/val.h>
 	#include <emscripten.h>
@@ -29,8 +31,11 @@
 #endif
 
 # define SCREEN_WIDTH 800
-# define GAME_HEIGHT 800
 # define SCREEN_HEIGHT 950
+
+# define MAX_FPS 60
+
+# define GAME_HEIGHT 800
 
 SDL_Texture *loadTexture(std::string path, int &imgW, int &imgH);
 

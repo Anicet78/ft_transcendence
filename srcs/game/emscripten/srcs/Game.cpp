@@ -66,7 +66,7 @@ void	Game::addOtherPlayer(std::string &uid, std::string &name)
 	this->_otherPlayers.emplace_back(uid, name, (SDL_Color){255, 127, 0, 255});
 }
 
-void	Game::suppOtherPlayer(std::string &uid)
+void Game::suppOtherPlayer(std::string &uid)
 {
 	for (auto it = this->_otherPlayers.begin(); it != this->_otherPlayers.end(); it++)
 	{

@@ -45,12 +45,20 @@ void updateRoom(Game &game, Player &player, std::string dir)
 	}
 }
 
-void	updatePlayerPosition(Player &player)
+float	lerp(float a, float b, float t)
+{
+	return (a + (b - a)* t);
+}
+
+void	updatePlayerPosition(Player &player, double deltaTime)
 {
 	static int isIdling = 1;
 	std::string w_key, a_key, s_key, d_key, anim = "idling", lastDir;
 
 	//player movement
+
+	player.movePrediction(deltaTime);
+
 	if (gSdl.key.w_key)
 		w_key = "true";
 	if (gSdl.key.a_key)
@@ -78,9 +86,10 @@ void	updatePlayerPosition(Player &player)
 				s_key: UTF8ToString($2),
 				d_key: UTF8ToString($3),
 				anim: UTF8ToString($4),
-				last_dir: UTF8ToString($5)
+				last_dir: UTF8ToString($5),
+				deltaTime: $6
 			});
-		}, w_key.c_str(), a_key.c_str(), s_key.c_str(), d_key.c_str(), anim.c_str(), lastDir.c_str());
+		}, w_key.c_str(), a_key.c_str(), s_key.c_str(), d_key.c_str(), anim.c_str(), lastDir.c_str(), deltaTime);
 		isIdling = 0;
 	}
 	else if (!isIdling)
@@ -126,6 +135,24 @@ void	playerAction(Player &player)
 		player.startAtk();
 }
 
+void	updateOtherPlayer(std::vector<Player> &others, double deltaTime)
+{
+	const float smoothing = 10;
+
+	if (others.size())
+	{
+		for (auto &player : others)
+		{
+			float x = player.getX();
+			float y = player.getY();
+
+			x += (player.getTargetX() - x) * smoothing * deltaTime;
+			y += (player.getTargetY() - y) * smoothing * deltaTime;
+			player.setPos(x, y);
+		}
+	}
+	return ;
+}
 void	drawHud(Game &game)
 {
 	SDL_SetRenderTarget(gSdl.renderer, gSdl.hud);
@@ -136,19 +163,21 @@ void	drawHud(Game &game)
 	SDL_RenderCopy(gSdl.renderer, gSdl.hud, NULL, &dstHud);
 }
 
-void	game_loop(Game &game)
+void	game_loop(Game &game, double deltaTime)
 {
 	Player	&player = game.getPlayer();
 	Camera	&camera = player.getCamera();
 	//updateRoom(player);
 	playerAction(player);
-	
 	#ifdef __EMSCRIPTEN__
 
-	updatePlayerPosition(game.getPlayer());
+	updatePlayerPosition(game.getPlayer(), deltaTime); 
 	#endif
+	updateOtherPlayer(game.getOtherPlayers(), deltaTime);
+
 	SDL_SetRenderTarget(gSdl.renderer, gSdl.game);
 	SDL_RenderClear(gSdl.renderer);
+
 	print_map(player);
 	if (player.getRoom().getRoomEvent())
 	{

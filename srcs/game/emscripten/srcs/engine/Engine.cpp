@@ -1,6 +1,6 @@
 #include"Engine.hpp"
 
-Engine::Engine(void) :  _tile_size(0), window(NULL), renderer(NULL), texture(NULL) {
+Engine::Engine(void) :  _tile_size(0), _startTime(std::chrono::steady_clock::now()), window(NULL), renderer(NULL), texture(NULL) {
 	return ;
 }
 
@@ -16,6 +16,26 @@ Engine::~Engine(void)
 	TTF_Quit();
 	SDL_Quit();
 	return ;
+}
+
+void	Engine::setPlayerId(std::string id)
+{
+	this->_playerId = id;
+}
+
+void	Engine::setPlayerName(std::string name)
+{
+	this->_playerName = name;
+}
+
+std::string Engine::getPlayerId(void) const
+{
+	return (this->_playerId);
+}
+
+std::string	Engine::getPlayerName(void) const
+{
+	return (this->_playerName);
 }
 
 void	Engine::setMapTileSize(int tile_size)
@@ -43,4 +63,9 @@ int		Engine::getPlayerSize(void)
 SDLTimer	&Engine::getTimer(void)
 {
 	return (this->cap);
+}
+
+double Engine::getActualTime(void) const
+{
+	return std::chrono::duration<double>(std::chrono::steady_clock::now() - this->_startTime).count();
 }

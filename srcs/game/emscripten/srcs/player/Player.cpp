@@ -11,6 +11,8 @@ Player::Player(std::string uid, std::string name, SDL_Color color) : _uid(uid), 
 	int w, h;
 	SDL_QueryTexture(this->_nameTexture, nullptr, nullptr, &w, &h);
 	SDL_FreeSurface(surf);
+	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
+	return ;
 }
 
 Player::~Player(void)
@@ -37,6 +39,21 @@ float	Player::getX(void) const
 float	Player::getY(void) const
 {
 	return (_y);
+}
+
+float	Player::getTargetX(void) const
+{
+	return(_targetX);
+}
+
+float	Player::getTargetY(void) const
+{
+	return(_targetY);
+}
+
+float	Player::getTimer(void) const
+{
+	return(_timer);
 }
 
 float	Player::getScreenX(void) const {
@@ -124,6 +141,19 @@ void	Player::setPos(float x, float y)
 {
 	_x = x;
 	_y = y;
+	return ;
+}
+
+void	Player::setTargetPos(float x, float y)
+{
+	_targetX = x;
+	_targetY = y;
+	return ;
+}
+
+void	Player::setTimer(float time)
+{
+	_timer = time;
 	return ;
 }
 
@@ -234,4 +264,110 @@ void	Player::printPlayer(float px, float py)
 	SDL_QueryTexture(this->_nameTexture, nullptr, nullptr, &w, &h);
 	SDL_Rect dst = {static_cast<int>(x + 16 - (w / 6)), static_cast<int>(y - 16 - (h / 6)), w / 3, h / 3};
 	SDL_RenderCopy(gSdl.renderer, this->_nameTexture, nullptr, &dst);
+}
+
+static bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect const &rect, int const flag, Player &player) {
+	if (flag == 0)
+	{
+		float y = rect.y - 0.1;
+		if (plan[y][rect.x] == '1' || plan[y][rect.x + rect.h] == '1')
+			return (true);
+
+		//if the event in the room is not cleared, player cant go on 'E' tiles
+		std::weak_ptr<ARoomEvent> event = player.getRoomRef().getRoomEvent();
+
+		if (!event.expired() && event.lock()->isCleared() == false)
+		{
+			if (plan[y][rect.x] == 'E' || plan[y][rect.x + rect.h] == 'E')
+				return (true);
+		}
+	}
+	if (flag == 1)
+	{
+		float x = rect.x - 0.1;
+		if (plan[rect.y][x] == '1' || plan[rect.y + rect.h][x] == '1')
+			return (true);
+
+		//if the event in the room is not cleared, player cant go on 'E' tiles
+		std::weak_ptr<ARoomEvent> event = player.getRoomRef().getRoomEvent();
+
+		if (!event.expired() && event.lock()->isCleared() == false)
+		{
+			if (plan[rect.y][x] == 'E' || plan[rect.y + rect.h][x] == 'E')
+				return (true);
+		}
+	}
+	if (flag == 2)
+	{
+		float y = rect.y + 0.1;
+		if (plan[y + rect.h][rect.x] == '1' || plan[y + rect.h][rect.x + rect.w] == '1')
+			return (true);
+		
+		//if the event in the room is not cleared, player cant go on 'E' tiles
+		std::weak_ptr<ARoomEvent> event = player.getRoomRef().getRoomEvent();
+
+		if (!event.expired() && event.lock()->isCleared() == false)
+		{
+			if (plan[y + rect.h][rect.x] == 'E' || plan[y + rect.h][rect.x + rect.w] == 'E')
+				return (true);
+		}
+	}
+	if (flag == 3)
+	{
+		float x = rect.x + 0.1;
+		if (plan[rect.y][x + rect.h] == '1' || plan[rect.y + rect.h][x + rect.w] == '1')
+			return (true);
+		
+		//if the event in the room is not cleared, player cant go on 'E' tiles
+		std::weak_ptr<ARoomEvent> event = player.getRoomRef().getRoomEvent();
+
+		if (!event.expired() && event.lock()->isCleared() == false)
+		{
+			if (plan[rect.y][x + rect.h] == 'E' || plan[rect.y + rect.h][x + rect.w] == 'E')
+				return (true);
+		}
+	}
+	
+	return (false);
+}
+
+void	Player::setWallHitBox(void) {
+	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
+	return ;
+}
+
+void	Player::movePrediction(double deltaTime)
+{
+	Room room = this->getRoom();
+	float x = this->_x;
+	float y = this->_y;
+	auto plan = room.getRoomPlan();
+	this->setWallHitBox();
+	(void)deltaTime;
+
+	if (gSdl.key.w_key)
+	{
+		y -= 6.0f * deltaTime;
+		if (!(y >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 0, *this)))
+			y += 6.0f * deltaTime;
+	}
+	if (gSdl.key.a_key)
+	{
+		x -= 6.0f * deltaTime;
+		if (!(x >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 1, *this)))
+			x += 6.0f * deltaTime;
+	}
+	if (gSdl.key.s_key)
+	{
+		y += 6.0f * deltaTime;
+		if (!(y < room.getHeight() && !checkWallHitBox(plan, this->_wallHitBox, 2, *this)))
+			y -= 6.0f * deltaTime;
+	}
+	if (gSdl.key.d_key)
+	{
+		x += 6.0f * deltaTime;
+		if (!(x < room.getWidth() && !checkWallHitBox(plan, this->_wallHitBox, 3, *this)))
+			x -= 6.0f * deltaTime;
+	}
+	this->setPos(x, y);
 }

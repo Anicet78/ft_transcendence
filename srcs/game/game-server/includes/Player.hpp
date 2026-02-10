@@ -29,7 +29,6 @@ class Player
 		bool		_connected;
 		char		_exit;
 		uWS::WebSocket<false, true, PerSocketData> *_ws;
-		
 
 	//player pos
 		float		_x;

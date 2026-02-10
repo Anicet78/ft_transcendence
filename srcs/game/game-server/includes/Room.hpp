@@ -48,6 +48,7 @@ public:
 class Room
 {
 	private:
+		std::string	_roomID;
 		//Width of the room
 		int _width;
 		//Height of the room
@@ -99,12 +100,14 @@ class Room
 		std::array<std::array<int, 2>, 4>					getExitsLoc() const;
 		std::array<bool, 4>									getExits() const;
 		std::string											getName() const;
+		std::string											getRoomId() const;
 		std::vector<std::string>							getRoomPlan() const;
 		static std::map<std::string, std::shared_ptr<Room>>	getFloor(int nb);
 		static void											importRooms();
 		void												randomizeRoom();
 		void												turnMapLeft(void);
 		void												setEvent(void);
+		void												setRoomId(std::string id);
 		std::shared_ptr<ARoomEvent>							getRoomEvent(void) const;
 		std::shared_ptr<ARoomEvent>							getRoomEventRef(void);
 };

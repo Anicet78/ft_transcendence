@@ -23,7 +23,7 @@ Engine gSdl;
 	void getMessage(val obj)
 	{
 		msgJson.push(obj);
-		if (msgJson.size() > 5)
+		if (msgJson.size() > 7)
 			msgJson.pop();
 	}
 
@@ -81,7 +81,8 @@ void updatePlayerState(Game &game, val msg)
 	}
 }
 
-void	updateRoomState(Game &game, val msg) {
+void	updateRoomState(Game &game, val msg)
+{
 	if (msg["room_event"].as<std::string>() == "MobRush")
 	{
 		MobRush &rush = dynamic_cast<MobRush &>(*game.getPlayer().getRoomRef().getRoomEvent());
@@ -115,7 +116,6 @@ void	updateRoomState(Game &game, val msg) {
 				}
 			}
 		}
-
 	}
 }
 
@@ -202,6 +202,17 @@ void	launchGame(Game &game, val &msg)
 	EM_ASM_({onCppMessage({action: "launched"});});
 }
 
+void	changeRoom(Game &game, val playerLeave)
+{
+	std::string uid = playerLeave["player_uid"].as<std::string>();
+
+	Player &player = game.getPlayer();
+	if (player.getUid() == uid)
+		updateRoom(game, player, playerLeave["player_exit"].as<std::string>());
+	else
+		game.suppOtherPlayer(uid);
+}
+
 void	parseJson(bool &init, Game &game)
 {
 	if (!msgJson.size())
@@ -217,33 +228,39 @@ void	parseJson(bool &init, Game &game)
 		// msgJson = val::undefined();
 		return;
 	}
-	if (msg["action"].as<std::string>() == "waiting")
+	std::string action = msg["action"].as<std::string>();
+	if (action == "waiting")
 	{
 		init = true;
 		fillMapInfos(msg, game);
 		game.getPlayer().setNode(game.getMaps()[0].getNodes()[0]);
 		EM_ASM_({onCppMessage({action: "connected"});});
 	}
-	else if (msg["action"].as<std::string>() == "update")
-	{
-		updatePlayerState(game, msg["player_state"]);
-		updateRoomState(game, msg["room_state"]);
-	}
-	else if (msg["action"].as<std::string>() == "launch")
+	else if (action == "launch")
 		launchGame(game, msg);
+	else if (action == "loop_action")
+	{
+		val loop = msg["loop"];
+		if (loop.hasOwnProperty("player_update"))
+			loopPlayerState(game, loop["player_update"]);
+		if (loop.hasOwnProperty("room_update"))
+			loopRoomState(game, loop["room_update"]);
+	}
+	else if (action == "room_change")
+		changeRoom(game, msg["player_leave"]);
 	// msgJson = val::undefined();
 }
 
 void mainloopE(void *arg)
 {
 	static bool init = false;
-
+	static double frameTime = gSdl.getActualTime();
 	Game *game = static_cast<Game *>(arg);
 	parseJson(init, *game);
 	if (!init)
 		return ;
 
-	int	ticksPerFrame = 1000 / 120;
+	int	ticksPerFrame = 1000 / MAX_FPS;
 	gSdl.cap.startTimer();
 	while (SDL_PollEvent(&gSdl.event))
 	{
@@ -257,7 +274,8 @@ void mainloopE(void *arg)
 		else if (gSdl.event.type == SDL_KEYUP)
 			key_up();
 	}
-	game_loop(*game);
+	game_loop(*game, gSdl.getActualTime() - frameTime);
+	frameTime = gSdl.getActualTime();
 	SDL_RenderPresent(gSdl.renderer);
 	SDL_RenderClear(gSdl.renderer);
 	int frameTicks = gSdl.cap.getTicks();
@@ -286,6 +304,8 @@ int main(int ac, char **av)
 		#ifdef __EMSCRIPTEN__
 		id = std::to_string(rand() % 500);
 		name = "guest_" + id;
+		gSdl.setPlayerName(name);
+		gSdl.setPlayerId(id);
 		EM_ASM_({
 			onCppMessage({
 				action: "join_queue",
@@ -305,7 +325,7 @@ int main(int ac, char **av)
 	Player player(id, name, (SDL_Color){0, 255, 0, 255});
 	Game	game(player);
 	#ifdef __EMSCRIPTEN__
-		emscripten_set_main_loop_arg(mainloopE, &game, 120, true);
+		emscripten_set_main_loop_arg(mainloopE, &game, MAX_FPS, true);
 	#endif
 	return (0);
 }

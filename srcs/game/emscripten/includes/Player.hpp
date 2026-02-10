@@ -23,6 +23,14 @@ class Player
 		float		_x;
 		float		_y;
 
+	//player target pos
+		float		_targetX;
+		float		_targetY;
+
+	//player timer
+
+		float		_timer;
+
 	//player pos on screen
 		float	_screenX;
 		float	_screenY;
@@ -40,6 +48,7 @@ class Player
 
 		bool		_atkState;
 
+		SDL_FRect	_wallHitBox;
 	//camera
 
 		Camera		_camera;
@@ -64,6 +73,11 @@ class Player
 		float		getX(void) const;
 		float		getY(void) const;
 
+		float		getTargetX(void) const;
+		float		getTargetY(void) const;
+
+		float		getTimer(void) const;
+
 		float		getScreenX(void) const;
 		float		getScreenY(void) const;
 
@@ -81,6 +95,8 @@ class Player
 	//setter
 		void	setNode(const quadList &node);
 		void	setPos(float x, float y);
+		void	setTargetPos(float x, float y);
+		void	setTimer(float time);
 		void	setHp(int hp);
 		void	setAtk(int atk);
 		void	setDef(int def);
@@ -99,7 +115,8 @@ class Player
 		bool	checkAtkState(void) const;
 
 	//action
-		void		move(void);
+		void		setWallHitBox(void);
+		void		movePrediction(double deltaTime);
 		void		attack(void);
 		void		takeDamage(int amount);
 		void		heal(int amount);
