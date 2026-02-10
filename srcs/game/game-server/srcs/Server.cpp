@@ -164,43 +164,46 @@ Player	&Server::getPlayer(std::string &uid)
 	return *this->_players[0];
 }
 
-void	moveMobs(std::vector<std::string> const &map, Mob &mob)
+void	moveMobs(std::vector<std::string> const &map, Mob &mob, int destX, int destY)
 {
 	float x = mob.getX();
 	float y = mob.getY();
+	(void)x;
+	(void)y;
+	(void)map, (void)destX, (void)destY;
 
-	y -= 0.1;
-	if (map[y][x] == '1' || map[y][x] == 'E')
-		y += 0.1;
-	else
-	{
-		mob.setPos(x,y);
-		return ;
-	}
-	y += 0.1;
-	if (map[y][x] == '1' || map[y][x] == 'E')
-		y -= 0.1;
-	else
-	{
-		mob.setPos(x,y);
-		return ;
-	}
-	x -= 0.1;
-	if (map[y][x] == '1' || map[y][x] == 'E')
-		x += 0.1;
-	else
-	{
-		mob.setPos(x,y);
-		return ;
-	}
-	x += 0.1;
-	if (map[y][x] == '1' || map[y][x] == 'E')
-		x -= 0.1;
-	else
-	{
-		mob.setPos(x,y);
-		return ;
-	}
+	// y -= 0.1;
+	// if (map[y][x] == '1' || map[y][x] == 'E')
+	// 	y += 0.1;
+	// else
+	// {
+	// 	mob.setPos(x,y);
+	// 	return ;
+	// }
+	// y += 0.1;
+	// if (map[y][x] == '1' || map[y][x] == 'E')
+	// 	y -= 0.1;
+	// else
+	// {
+	// 	mob.setPos(x,y);
+	// 	return ;
+	// }
+	// x -= 0.1;
+	// if (map[y][x] == '1' || map[y][x] == 'E')
+	// 	x += 0.1;
+	// else
+	// {
+	// 	mob.setPos(x,y);
+	// 	return ;
+	// }
+	// x += 0.1;
+	// if (map[y][x] == '1' || map[y][x] == 'E')
+	// 	x -= 0.1;
+	// else
+	// {
+	// 	mob.setPos(x,y);
+	// 	return ;
+	// }
 }
 
 void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app, Server *server) {
@@ -220,6 +223,7 @@ void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer,
 			player_update += ",\"player_health\":" + std::to_string(player->getHp());
 			player_update += ",\"player_anim\":" + std::to_string(player->getAnim());
 			player_update += ",\"player_dir\":" + std::to_string(player->getLastDir());
+			player_update += ",\"player_kills\":" + std::to_string(player->getKills());
 			player_update += ",\"player_exit\":\"";
 			player_update.push_back(player->getExit());
 			player_update += "\"},";
@@ -276,8 +280,6 @@ void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer,
 						mob->setSendDeath(true);
 					}
 
-					// if (!damaged && !dead)
-					// 	moveMobs(map, *mob);
 					std::string m = "{ \"mob_id\":" + std::to_string(id)
 							+ ",\"mob_x\":" + std::to_string(mob->getX())
 							+ ",\"mob_y\":" + std::to_string(mob->getY())

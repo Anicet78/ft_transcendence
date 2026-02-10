@@ -58,6 +58,9 @@ class Player
 		int				_last_dir;
 		int				_frame;
 		int				_prev_state;
+	
+	//player kills
+		int		_kills;
 
 	public:
 		Player(std::string uid, std::string name, SDL_Color color);
@@ -90,6 +93,9 @@ class Player
 		int			getAnim(void) const;
 		int			getFrame(void) const;
 		int			getLastDir(void) const;
+
+		int		getKills(void) const;
+
 		int			getFloor(void) const;
 
 	//setter
@@ -102,6 +108,7 @@ class Player
 		void	setDef(int def);
 		void	setAnim(int anim);
 		void	setDir(int dir);
+		void	setKills(int kills);
 
 		void	updateLastDir(void);
 		void	incrementFloor(void);

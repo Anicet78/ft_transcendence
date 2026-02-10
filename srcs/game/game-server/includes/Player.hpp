@@ -53,6 +53,9 @@ class Player
 	//atk state
 		bool		_isAttacking;
 		int			_atkFrame;
+
+	//nbr kill
+		int			_kills;
 	public:
 		Player(std::string uid, int partySize, std::string partyName, std::string name,
 				uWS::WebSocket<false, true, PerSocketData> *ws);
@@ -84,6 +87,7 @@ class Player
 		FRect		&getWallHitBox(void);
 		Room		&getRoomRef(void);
 		HitBox		&getHitBox(void);
+		int			getKills(void) const;
 
 	//setter
 		void		setConnexion(bool c);
@@ -100,6 +104,8 @@ class Player
 		void		setInSession(bool flag);
 		void		setAnim(int anim);
 		void		setLastDir(int dir);
+
+		void		addKills(void);
 
 	//action
 		void		findP(void);

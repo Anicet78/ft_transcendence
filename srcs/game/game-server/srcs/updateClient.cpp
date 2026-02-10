@@ -94,10 +94,16 @@ void updateRoom(Player &player, uWS::App &app)
 	{
 		if (player.getNode()->up.expired())
 			return ;
+		std::string oldTopic = player.getRoomRef().getRoomId();
 		player.setExit('U');
 		player.setPrevNode(player.getNode());
 		player.setNode(player.getNode()->up.lock());
 		player.findP();
+		sendLeaveUpdate(player, app, oldTopic);
+		if (player.getWs()->unsubscribe(oldTopic))
+			std::cout << "unsubscribe from " << oldTopic << std::endl;
+		if (player.getWs()->subscribe(player.getRoomRef().getRoomId()))
+			std::cout << "subscribed to " << player.getRoomRef().getRoomId() << std::endl;
 	}
     else if (player.getExit() > 32)
     {
@@ -136,6 +142,7 @@ static void    mobInteraction(MobRush &rush, int id, Mob &mob, Player &player)
 				if (mob.getHp() <= 0)
 				{
 					rush.makeDie(id);
+					player.addKills();
 					return ;
 				}
 				mob.startInvinsibleFrame();

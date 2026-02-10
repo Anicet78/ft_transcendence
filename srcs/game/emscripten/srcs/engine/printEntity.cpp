@@ -17,3 +17,20 @@ void	print_others(Player &player, std::vector<Player> &otherPlayers)
 		}
 	}
 }
+
+void print_mobs(MobRush &mobRush, Player &player)
+{
+	int		tile_s = gSdl.getMapTileSize() * 2;
+	Camera	&cam = player.getCamera();
+	for (auto &mob : mobRush.getMobs())
+	{
+		if (mob.second->isDead() == false)
+		{
+			if (mob.second->checkInvinsibleFrame() == true && mob.second->getFrame() >= 23)
+				mob.second->endInvinsibleFrame();
+			if (mob.second->isDamaged())
+				mob.second->startInvinsibleFrame();
+			mob.second->printMob(cam.getCamX(), cam.getCamY(), tile_s);
+		}
+	}
+}

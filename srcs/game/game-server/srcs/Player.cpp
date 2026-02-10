@@ -3,7 +3,7 @@
 Player::Player(std::string uid, int partySize, std::string partyName, std::string name, uWS::WebSocket<false, true, PerSocketData> *ws)
 				: _uid(uid), _partySize(partySize),  _partyName(partyName), _name(name), _inQueue(true), _inSession(false),
 					_launched(0), _connected(0), _exit(' '), _ws(ws), _x(0), _y(0), _anim(0), _last_dir(0), _hp(3), _atk(1), _def(0), _box(_x, _y, _last_dir),
-					_isAttacking(false), _atkFrame(0)
+					_isAttacking(false), _atkFrame(0), _kills(0)
 {
 	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
 	return ;
@@ -90,6 +90,10 @@ HitBox	&Player::getHitBox(void) {
 
 FRect	&Player::getWallHitBox(void) {
 	return (this->_wallHitBox);
+}
+
+int		Player::getKills(void) const {
+	return (this->_kills);
 }
 
 bool Player::isInQueue(void) const
@@ -218,6 +222,11 @@ void	Player::setInQueue(bool flag)
 void	Player::setInSession(bool flag)
 {
 	this->_inSession = flag;
+}
+
+void	Player::addKills(void)
+{
+	this->_kills++;
 }
 
 void	Player::findP(void)

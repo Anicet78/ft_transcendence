@@ -6,15 +6,24 @@ void	setPlayerState(Player &player, val &pStatus, int flag)
 	float y = pStatus["player_y"].as<float>();
 	int hp = pStatus["player_health"].as<int>();
 	int	anim = pStatus["player_anim"].as<int>();
+	int kills = pStatus["player_kills"].as<int>();
 
 	player.setHp(hp);
 	player.setAnim(anim);
+	player.setKills(kills);
 	if (flag == 1)
 	{
 		int dir = pStatus["player_dir"].as<int>();
 		player.setDir(dir);
 		player.setTargetPos(x, y);
 		player.setTimer(0);
+	}
+	else if (flag == 2)
+	{
+		int dir = pStatus["player_dir"].as<int>();
+		player.setDir(dir);
+		player.setPos(x, y);
+		player.setTargetPos(x, y);
 	}
 	else
 	{
@@ -52,7 +61,7 @@ void	loopPlayerState(Game &game, val playerUpdate)
 		{
 			std::string name = pStatus["player_name"].as<std::string>();
 			game.addOtherPlayer(uid, name);
-			setPlayerState(game.getOtherPlayers().back(), pStatus, 1);
+			setPlayerState(game.getOtherPlayers().back(), pStatus, 2);
 		}
 	}
 }
@@ -63,33 +72,30 @@ void	loopRoomState(Game &game, val roomUpdate)
 	{
 		MobRush &rush = dynamic_cast<MobRush &>(*game.getPlayer().getRoomRef().getRoomEvent());
 		std::unordered_map<int, std::unique_ptr<Mob>> &mobs = rush.getMobs();
-		if (roomUpdate["cleared"].as<std::string>() == "false")
+		int nbrMob = roomUpdate["nbr_mob"].as<int>();
+		val horde = roomUpdate["mobs"];
+		for (int i = 0; i < nbrMob; i++)
 		{
-			int nbrMob = roomUpdate["nbr_mob"].as<int>();
-			val horde = roomUpdate["mobs"];
-			for (int i = 0; i < nbrMob; i++)
+			val monster = horde[i];
+
+			int id = monster["mob_id"].as<int>();
+
+			if (!monster.hasOwnProperty(std::string("deathsended").c_str()))
 			{
-				val monster = horde[i];
+				float x = monster["mob_x"].as<float>();
+				float y = monster["mob_y"].as<float>();
 
-				int id = monster["mob_id"].as<int>();
-
-				if (!monster.hasOwnProperty(std::string("deathsended").c_str()))
-				{
-					float x = monster["mob_x"].as<float>();
-					float y = monster["mob_y"].as<float>();
-
-					if (monster["damaged"].as<int>() == 1)
-						mobs[id]->damaged(true);
-					
-					if (monster["isdead"].as<int>() == 1)
-						mobs[id]->setIsDead(true);
-					mobs[id]->setPos(x, y);
-				}
-				else
-				{
-					if (mobs[id]->isDead() != true)
-						mobs[id]->setIsDead(true);
-				}
+				if (monster["damaged"].as<int>() == 1)
+					mobs[id]->damaged(true);
+				
+				if (monster["isdead"].as<int>() == 1)
+					mobs[id]->setIsDead(true);
+				mobs[id]->setPos(x, y);
+			}
+			else
+			{
+				if (mobs[id]->isDead() != true)
+					mobs[id]->setIsDead(true);
 			}
 		}
 	}
