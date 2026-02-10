@@ -113,7 +113,7 @@ export async function updateFriendshipRequest(
 
   // Create or reuse private chat
   if (action === 'accept') {
-    await Service.updateRequestStatus(friendshipId, 'accepted');
+    await Service.updateFriendshipRequestStatus(friendshipId, 'accepted');
     await findOrCreatePrivateChat(senderId, receiverId);
   }
 
@@ -126,7 +126,7 @@ export async function updateFriendshipRequest(
       ? 'rejected'
       : 'cancelled';
 
-  await Service.updateRequestStatus(friendshipId, newStatus);
+  await Service.updateFriendshipRequestStatus(friendshipId, newStatus);
 
   return reply.send({ success: true });
 }

@@ -26,13 +26,16 @@ const FriendRequest = () => {
 		return (
 		<li key={friend.friendshipId}>
 			{friend.sender.username !== myUsername && 
-				<NavLink to={"/profile/" + friend.sender.appUserId}>{friend.sender.username}</NavLink>}
+				<NavLink to={"/profile/" + friend.sender.username}>{friend.sender.username}</NavLink>}
 			{friend.receiver.username !== myUsername && 
-				<NavLink to={"/profile/" + friend.receiver.appUserId}>{friend.receiver.username}</NavLink>}
+				<NavLink to={"/profile/" + friend.receiver.username}>{friend.receiver.username}</NavLink>}
 			{friend.sender.username === myUsername && 
 				<Button onClick={() => {navigate("/friends/requests/update/" + friend.friendshipId), {state: {requestedAction: "cancel"}}}}>Cancel Request</Button>}
 			{friend.sender.username !== myUsername && 
-				<Button onClick={() => {navigate("/friends/requests/update/" + friend.friendshipId), {state: {requestedAction: "accept"}}}}>Accept request</Button>}
+				<div>
+					<Button onClick={() => {navigate("/friends/requests/update/" + friend.friendshipId), {state: {requestedAction: "accept"}}}}>Accept request</Button>
+					<Button onClick={() => {navigate("/friends/requests/update/" + friend.friendshipId), {state: {requestedAction: "reject"}}}}>Reject request</Button>
+				</div>}
 		</li>
 		)
 	})

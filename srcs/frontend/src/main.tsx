@@ -21,6 +21,7 @@ import MyFooter from './components/Footer.tsx';
 import FriendList from './friendship/FriendsList.tsx';
 import FriendRequest from './friendship/FriendRequests.tsx';
 import CancelRequest from './friendship/UpdateRequest.tsx';
+import RemoveFriend from './friendship/RemoveFriend.tsx';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -55,6 +56,7 @@ createRoot(document.getElementById('root')).render(
 					<Route path="/friends" element={<FriendList />} />
 					<Route path="/friends/requests" element={<FriendRequest />} />
 					<Route path="/friends/requests/update/:id" element={<CancelRequest />} />
+					<Route path="/friends/remove/:id" element={<RemoveFriend />} />
 					<Route path="/friends/:id" element={<ProfilePublic />} />
 					{/* <Route path="/group/:chatId/role/:memberId" element={} />
 					<Route path="/group/:chatId/kick/:memberId" element={} />

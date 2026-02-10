@@ -23,8 +23,8 @@ const FriendList = () => {
 	const listItems = userData.map(friend => {
 		return (
 		<li key={friend.friendshipId}>
-			{friend.sender.username !== myUsername && <NavLink to={"/profile/" + friend.sender.appUserId}>{friend.sender.username}</NavLink>}
-			{friend.receiver.username !== myUsername && <NavLink to={"/profile/" + friend.receiver.appUserId}>{friend.receiver.username}</NavLink>}
+			{friend.sender.username !== myUsername && <NavLink to={"/profile/" + friend.sender.username}>{friend.sender.username}</NavLink>}
+			{friend.receiver.username !== myUsername && <NavLink to={"/profile/" + friend.receiver.username}>{friend.receiver.username}</NavLink>}
 			<Button>Join</Button>
 			<Button>Spectate</Button>
 		</li>
