@@ -1,6 +1,7 @@
 import '../App.css'
 import './profile.css'
 import { Box } from '@allxsmith/bestax-bulma';
+import { NavLink } from 'react-router';
 
 import { useQuery } from '@tanstack/react-query';
 import api, { getAccessToken } from '../serverApi.ts';
@@ -80,6 +81,7 @@ const ProfilePrivate = () => {
 				<p>Total wins: {totalWins}</p>
 				<p>Total loses: {totalLoses}</p>
 			</Box>
+			<NavLink to="/friends" className="button is-large">Friends list</NavLink>
 		</Box>
 	)
 }

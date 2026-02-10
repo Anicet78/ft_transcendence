@@ -4,7 +4,7 @@ import { Box, Button } from '@allxsmith/bestax-bulma';
 import { useParams } from 'react-router';
 
 const ProfilePublic = () => {
-	const id = useParams() // friend request and remove friend: path="/friends/:id"
+	const id = useParams() // friend request and remove friend: path="/friends/${id}"
 	const username = 'Username'
 	const avatar = '../assets/skull.svg'
 	const level = '0'
