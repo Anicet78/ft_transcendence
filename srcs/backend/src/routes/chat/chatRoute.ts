@@ -11,6 +11,7 @@ import {
 } from '../../controllers/chat/chatController.js';
 
 async function chatRoutes(fastify: FastifyInstance) {
+
 	//GET CHAT INFOS + ACCESS CHAT
 	fastify.get('/chat/:chatId/info', {
 		schema: {

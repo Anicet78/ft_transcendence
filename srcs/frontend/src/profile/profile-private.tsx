@@ -3,7 +3,7 @@ import './profile.css'
 import { Box } from '@allxsmith/bestax-bulma';
 
 import { useQuery } from '@tanstack/react-query';
-import api, { getAccessToken } from '../serverApi.ts';
+import api from '../serverApi.ts';
 import type { GetResponse } from '../types/GetType.ts';
 import { NavLink } from 'react-router';
 
@@ -12,7 +12,7 @@ type ProfileResponseType = GetResponse<"/profile", "get">;
 const ProfilePrivate = () => {
 
 	const { data, isLoading, isError, error } = useQuery({
-		queryKey: ['profile', getAccessToken()],
+		queryKey: ['profile', 'private'],
 		queryFn: () => api.get("/profile"),
 	});
 

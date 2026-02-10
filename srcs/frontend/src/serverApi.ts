@@ -1,10 +1,40 @@
 import axios from 'axios';
-import { SocketClient } from './socket';
+import { globalSocketId } from './socket/SocketContext';
 
 export const ServerUrl= "https://localhost:8443"
 
 let accessToken: string | null = null;
 export const getAccessToken = () => accessToken;
+export const setAccessToken = (token: string | null) => accessToken = token;
+
+let onLogoutCallback: (() => void) | null = null;
+
+export const setOnLogout = (callback: () => void) => {
+	onLogoutCallback = callback;
+};
+
+let onRefreshSuccessCallback: ((token: string) => void) | null = null;
+
+export const setOnRefreshSuccess = (callback: (token: string) => void) => {
+	onRefreshSuccessCallback = callback;
+};
+
+const waitForSocketId = (): Promise<string | null> => {
+	return new Promise((resolve) => {
+		let attempts = 0;
+		const interval = setInterval(() => {
+			if (globalSocketId) {
+				clearInterval(interval);
+				resolve(globalSocketId);
+			}
+			if (attempts > 20) {
+				clearInterval(interval);
+				resolve(null);
+			}
+			attempts++;
+		}, 50);
+	});
+};
 
 const api = axios.create({
 	baseURL: `${ServerUrl}/api`,
@@ -17,14 +47,12 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(
-	(config) => {
+	async (config) => {
 		const publicRoutes = ['/auth/login', '/auth/register', '/auth/refresh', '/'];
-		if ((!config.url || !publicRoutes.includes(config.url)) && accessToken)
+		if (config.url && !publicRoutes.includes(config.url) && accessToken) {
 			config.headers.Authorization = `Bearer ${accessToken}`;
-
-		const socketRoutes = ['/room/new', '/room/:id/join', '/room/:id/kick'];
-		if ((!config.url || !socketRoutes.includes(config.url)) && SocketClient.getSocketId())
-			config.headers['x-socket-id'] = SocketClient.getSocketId();
+			config.headers['x-socket-id'] = await waitForSocketId();
+		}
 
 		return config;
 	},
@@ -34,31 +62,29 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-	(response) => {
-		if (response.data.token)
-			accessToken = response.data.token;
-		return response;
-	}, async (error) => {
+	(response) => { return response },
+	async (error) => {
 		const originalRequest = error.config;
 
-		if (error.response.status === 401 && !originalRequest._retry) {
+		if (error.response && error.response.status === 401 && !originalRequest._retry) {
 			originalRequest._retry = true;
 
 			try {
-				const res = await axios.post('/auth/refresh', {});
-				accessToken = res.data.accessToken;
+				const res = await axios.post(`${ServerUrl}/api/auth/refresh`, {}, { withCredentials: true });
+
+				accessToken = res.data.token;
+				if (onRefreshSuccessCallback) onRefreshSuccessCallback(accessToken!);
 				originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
 
 				return api(originalRequest);
-			} catch {
-				SocketClient.disconnect();
-				// Use the router to go to the home page
+			} catch (refreshError) {
+				if (onLogoutCallback) onLogoutCallback();
+				return Promise.reject(refreshError);
 			}
 		}
 
-		error.message ??= error.error;
-
-		return Promise.reject(error);
+		const errorMessage = error.response?.data?.error || error.message;
+		return Promise.reject(new Error(errorMessage));
 	}
 );
 

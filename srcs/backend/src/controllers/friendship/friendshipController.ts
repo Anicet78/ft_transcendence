@@ -15,7 +15,7 @@ function normalize<T extends Record<string, any>>(obj: T): T {
   };
 }
 
-
+//GET FRIENDS LIST
 export async function getFriends(req: FastifyRequest, reply: FastifyReply) {
   const userId = req.user.id;
   const friends = await Service.getFriends(userId);
@@ -23,7 +23,26 @@ export async function getFriends(req: FastifyRequest, reply: FastifyReply) {
   return reply.send(friends.map(normalize));
 }
 
+// //GET FRIENDSHIP'S STATUS WITH A SPECIFIC USER
+export async function getFriendshipStatusController(
+  req: FastifyRequest<{ Params: { userId: string } }>,
+  reply: FastifyReply
+) {
+  const userId = req.user.id;
+  const otherId = req.params.userId;
 
+  if (userId === otherId) {
+    return reply.send({ status: 'self' });
+  }
+
+  const status = await Service.getFriendshipStatus(userId, otherId);
+
+  return reply.send({ status });
+}
+
+
+
+//GET PENDING FRIENDSHIP REQUEST
 export async function getRequests(req: FastifyRequest, reply: FastifyReply) {
   const userId = req.user.id;
   const requests = await Service.getRequests(userId);
@@ -31,7 +50,10 @@ export async function getRequests(req: FastifyRequest, reply: FastifyReply) {
   return reply.send(requests.map(normalize));
 }
 
+//GET FRIEND'S STATUS WITH A SPECIFIC USER
 
+
+//SEND FRIENDSHIP REQUEST
 export async function sendRequest(
   req: FastifyRequest<{ Params: SendRequestParams }>,
   reply: FastifyReply
@@ -53,6 +75,7 @@ export async function sendRequest(
   return reply.status(201).send({ success: true });
 }
 
+//ACCEPT, REJECT, DELETE FRIENDSHIP REQUEST
 //updated by friendship request ID
 export async function updateFriendshipRequest(
   req: FastifyRequest<{ Params: { id: string }, Body: { action: 'accept' | 'reject' | 'cancel' } }>,
@@ -90,7 +113,7 @@ export async function updateFriendshipRequest(
 
   // Create or reuse private chat
   if (action === 'accept') {
-    await Service.updateFriendshipRequestStatus(friendshipId, 'accepted');
+    await Service.updateRequestStatus(friendshipId, 'accepted');
     await findOrCreatePrivateChat(senderId, receiverId);
   }
 
@@ -103,12 +126,12 @@ export async function updateFriendshipRequest(
       ? 'rejected'
       : 'cancelled';
 
-  await Service.updateFriendshipRequestStatus(friendshipId, newStatus);
+  await Service.updateRequestStatus(friendshipId, newStatus);
 
   return reply.send({ success: true });
 }
 
-//removed by friend ID
+//DELETE FRIENDSHIP by friend ID
 export async function removeFriend(
   req: FastifyRequest<{ Params: RemoveFriendParams }>,
   reply: FastifyReply
@@ -122,4 +145,4 @@ export async function removeFriend(
     return reply.status(404).send({ error: 'Friendship not found' });
 
   return reply.status(204).send();
-}//should I leave it like that, or use friendshipId like for updateFriendshipRequest ?
+}
