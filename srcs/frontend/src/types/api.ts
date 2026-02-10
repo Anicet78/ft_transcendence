@@ -557,13 +557,7 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody: {
-                content: {
-                    "application/json": {
-                        userId: string;
-                    };
-                };
-            };
+            requestBody?: never;
             responses: {
                 /** @description Default Response */
                 200: {
@@ -645,13 +639,7 @@ export interface paths {
                 };
                 cookie?: never;
             };
-            requestBody: {
-                content: {
-                    "application/json": {
-                        userId: string;
-                    };
-                };
-            };
+            requestBody?: never;
             responses: {
                 /** @description Default Response */
                 200: {
@@ -1571,6 +1559,43 @@ export interface paths {
                                 availability?: boolean;
                             };
                         }[];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/friends/status/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    userId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": unknown;
                     };
                 };
             };
@@ -2577,6 +2602,86 @@ export interface paths {
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    searchBar?: string;
+                    region?: "EU" | "NA" | "SAM" | "MENA" | "OCE" | "APAC" | "SSA" | "Deleted";
+                    availability?: boolean;
+                    playing?: boolean;
+                    minLevel?: number;
+                    maxLevel?: number;
+                    minGames?: number;
+                    maxGames?: number;
+                    minWins?: number;
+                    maxWins?: number;
+                    minEnemiesKilled?: number;
+                    maxEnemiesKilled?: number;
+                    minBestTime?: number;
+                    maxBestTime?: number;
+                    alreadyFriends?: boolean;
+                    page?: number;
+                    pageSize?: number;
+                    sortBy?: "level" | "totalGames" | "totalWins" | "totalEnemiesKilled" | "totalXp" | "bestTime" | "createdAt";
+                    sortOrder?: "asc" | "desc";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                            items: {
+                                appUserId: string;
+                                username: string;
+                                firstName: string;
+                                lastName: string;
+                                region: unknown;
+                                availability: boolean;
+                                playing: boolean;
+                                avatarUrl?: string;
+                                gameProfile?: {
+                                    gameProfileId: string;
+                                    level: number;
+                                    totalGames: number;
+                                    totalWins: number;
+                                    totalLoses: number;
+                                    totalEnemiesKilled: number;
+                                    totalXp: number;
+                                    bestTime: number;
+                                };
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;

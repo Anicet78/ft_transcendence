@@ -11,18 +11,19 @@ import { useMutation } from '@tanstack/react-query';
 import api from '../serverApi.ts';
 
 import type { GetBody, GetResponse } from '../types/GetType.ts';
+import { useAuth } from './AuthContext.tsx';
 
 type LoginBodyType = GetBody<"/auth/login", "post">;
 type LoginResponseType = GetResponse<"/auth/login", "post">;
 
 function Login() {
+  const { login } = useAuth();
 
   const mutation = useMutation({
     mutationFn: (data: LoginBodyType) => api.post("/auth/login", data),
     onSuccess: (data) => {
       const response: LoginResponseType = data.data;
-      console.log("Connecté !", response);
-      // redirect to home/room page
+      login(response.user, response.token);
     },
   });
 

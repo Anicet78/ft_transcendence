@@ -12,18 +12,19 @@ import SelectRegion from '../components/SelectRegion.tsx';
 import type { GetBody, GetResponse } from '../types/GetType.ts';
 import api from '../serverApi.ts';
 import { useMutation } from '@tanstack/react-query';
+import { useAuth } from './AuthContext.tsx';
 
 type RegisterBodyType = GetBody<"/auth/register", "post">;
 type RegisterResponseType = GetResponse<"/auth/register", "post">;
 
 function Register() {
+  const { login } = useAuth();
 
   const mutation = useMutation({
     mutationFn: (data: RegisterBodyType) => api.post("/auth/register", data),
     onSuccess: (data) => {
       const response: RegisterResponseType = data.data;
-      console.log("Connecté !", response);
-      // redirect to home/room page
+      login(response.user, response.token);
     },
   });
 
