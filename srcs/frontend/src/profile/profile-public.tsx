@@ -2,15 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 import '../App.css'
 import './profile.css'
 import { Box, Button } from '@allxsmith/bestax-bulma';
-import { useNavigate, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import type { GetResponse } from '../types/GetType';
 import api from '../serverApi';
+import { NavLink } from 'react-router';
 
 type ProfileResponseType = GetResponse<"/profile/{username}", "get">;
 // type FriendshipResponseType = GetResponse<"/friends/status/{id}", "get">;
 
 const ProfilePublic = () => {
-	const navigate = useNavigate()
 	const username = useParams().username;
 
 	const userQuery = useQuery({
@@ -36,7 +36,6 @@ const ProfilePublic = () => {
 	const isConnected = userData.availability || false;
 	const isPlaying = userData.playing || false;
 	const friendshipStatus = friendshipQuery.isSuccess ? friendshipData.status : 'unknown';
-	let mycolor = 'primary'
 	const bestTime = userData.gameProfile?.bestTime || '0';
 	const totalKills = userData.gameProfile?.totalEnemiesKilled || '0';
 	const totalGames = userData.gameProfile?.totalGames || '0';
@@ -76,10 +75,7 @@ const ProfilePublic = () => {
 						</Button>}
 						{friendshipStatus === 'friends' &&
 						<div>
-							<Button color={mycolor} isInverted size='large' aria-label='remove friend button'
-								onClick={() => {navigate("/friends/remove/" + userData.appUserId)}}>
-								Remove friend
-							</Button>
+							<NavLink to={"/friends/remove/" + userData.appUserId} className="button is-medium">Remove friend</NavLink>
 							<br />
 							<Button color='primary' isInverted aria-label='join button' size='medium'>Join / decline</Button>
 							<br />
@@ -87,14 +83,16 @@ const ProfilePublic = () => {
 						</div>}
 						{friendshipStatus === 'received' && 
 						<div>
-							<Button color={mycolor} isInverted size='large' aria-label='accept invitation button'
-								onClick={() => {navigate("/friends/requests/update/" + friendshipData.friendshipId), {state: {requestedAction: "accept"}}}}>
-								Accept invitation
-							</Button>
-							<Button color={mycolor} isInverted size='large' aria-label='reject invitation button'
-								onClick={() => {navigate("/friends/requests/update/" + friendshipData.friendshipId), {state: {requestedAction: "reject"}}}}>
-								Reject invitation
-							</Button>
+							<NavLink to={"/friends/requests/update/" + friendshipId} state={{requestedAction: "accept"}} className="button is-medium">Accept request</NavLink>
+							<NavLink to={"/friends/requests/update/" + friendshipId} state={{requestedAction: "reject"}} className="button is-medium">Reject request</NavLink>
+						</div>}
+						{friendshipStatus === 'none' &&
+						<div>
+							<NavLink to={"/friends/remove/" + userData.appUserId} className="button is-medium">Send friendship request</NavLink>
+							<br />
+							<Button color='primary' isInverted aria-label='join button' size='medium'>Join / decline</Button>
+							<br />
+							<Button color='primary' isInverted aria-label='spectate button' size='medium'>Spectate</Button>
 						</div>}
 					</div>
 				</>
