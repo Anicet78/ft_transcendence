@@ -2,7 +2,7 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { RoomService } from "../../services/rooms/roomService.js";
 import type { Room } from "../../schema/roomSchema.js";
 import type { RoomBodyType, RoomParamsType } from "../../routes/rooms/roomRoute.js";
-import type { Socket } from "socket.io";
+import { Socket } from "socket.io";
 import { SocketService } from "../../services/socket/SocketService.js";
 import type { GlobalHeaders } from "../../schema/globalHeadersSchema.js";
 
@@ -12,6 +12,21 @@ export async function getRoomController(
 ) {
 	const response: Room = RoomService.get(request.params.id, request.user.id);
 	return reply.status(200).send(response);
+}
+
+export async function getMyRoomController(
+	request: FastifyRequest<{ Params: RoomParamsType }>,
+	reply: FastifyReply
+) {
+	const userSocket: Socket = request.getSocket();
+
+	let room: Room | null = RoomService.find(request.user.id);
+	if (room)
+		await SocketService.addInRoom(room.roomId, userSocket);
+	else
+		room = await RoomService.create(request.user.id, userSocket);
+
+	return reply.status(200).send(room);
 }
 
 export async function newRoomController(
@@ -35,6 +50,16 @@ export async function joinRoomController(
 
 	const response: Room = await RoomService.join(request.params.id, request.user.id, userSocket);
 	return reply.status(200).send(response);
+}
+
+export async function quitRoomController(
+	request: FastifyRequest<{ Headers: GlobalHeaders, Params: RoomParamsType }>,
+	reply: FastifyReply
+) {
+	const userSocket: Socket = request.getSocket();
+
+	await RoomService.leave(request.params.id, userSocket);
+	return reply.status(204).send();
 }
 
 export async function hostRoomController(

@@ -52,6 +52,10 @@ export const RoomService = {
 		await this.leave(userId, userSocket);
 		await SocketService.addInRoom(roomId, userSocket);
 
+		SocketService.send(roomId, "player_joined", {
+			playerId: userId
+		});
+
 		room.playersId.push(userId);
 		return room;
 	},
