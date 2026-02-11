@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import '../App.css'
 import './profile.css'
 import { Box, Button } from '@allxsmith/bestax-bulma';
-import { useNavigate, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import type { GetResponse } from '../types/GetType';
 import api from '../serverApi';
 import { NavLink } from 'react-router';
@@ -11,7 +11,6 @@ type ProfileResponseType = GetResponse<"/profile/{username}", "get">;
 // type FriendshipResponseType = GetResponse<"/friends/status/{id}", "get">;
 
 const ProfilePublic = () => {
-	const navigate = useNavigate()
 	const username = useParams().username;
 
 	const userQuery = useQuery({
