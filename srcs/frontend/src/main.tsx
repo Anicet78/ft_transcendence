@@ -47,8 +47,8 @@ const AppEntryPoint = () => {
 				<Route path="/friends" element={<FriendList />} />
 				<Route path="/friends/requests/" element={<UpdateRequest />} />
 				<Route path="/friends/requests/update/" element={<FriendRequest />} />
-				<Route path="/friends/remove/" element={<RemoveFriend />} />
-				<Route path="/friends/add/" element={<AddFriend />} />
+				<Route path="/friends/remove/:id" element={<RemoveFriend />} />
+				<Route path="/friends/add/:id" element={<AddFriend />} />
 				<Route path="/profile" element={<ProfilePrivate />} />
 				<Route path="/profile/:username" element={<ProfilePublic />} />
 				<Route path="/terms_of_service" element={<TermsService />} />
