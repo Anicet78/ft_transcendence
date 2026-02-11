@@ -5,15 +5,7 @@ Session::Session(void): _maxNumPlayer(2), _running(0), _ended(0), _startTime(std
 {
 	static std::string set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	int size = static_cast<int>(2 * sqrt(8 + 6 * (_maxNumPlayer - 1)));
-	_maps.emplace_back(1, 1);
-	_maps.back().setWaitingRoom();
-	_maps.emplace_back(size, size);
-	_maps.back().fillMap(_maxNumPlayer, 0);
-	_maps.emplace_back(size * 0.8, size * 0.8);
-	_maps.back().fillMap(_maxNumPlayer, 1);
-	printMap(_maps[1]);
-	printMap(_maps[2]);
-	this->linkMaps(_maps[1], _maps[2]);
+
 
 	for (int i = 0; i < 25; i++)
 	{
@@ -21,6 +13,15 @@ Session::Session(void): _maxNumPlayer(2), _running(0), _ended(0), _startTime(std
 		this->_sessionId.push_back(set[nb]);
 	}
 
+	_maps.emplace_back(1, 1, this->_sessionId);
+	_maps.back().setWaitingRoom();
+	_maps.emplace_back(size, size, this->_sessionId);
+	_maps.back().fillMap(_maxNumPlayer, 0);
+	_maps.emplace_back(size * 0.8, size * 0.8, this->_sessionId);
+	_maps.back().fillMap(_maxNumPlayer, 1);
+	printMap(_maps[1]);
+	printMap(_maps[2]);
+	this->linkMaps(_maps[1], _maps[2]);
 }
 
 Session::Session(int numPLayer):	_maxNumPlayer(numPLayer), _running(0), _ended(0), _startTime(std::chrono::steady_clock::time_point{}),
@@ -28,21 +29,22 @@ Session::Session(int numPLayer):	_maxNumPlayer(numPLayer), _running(0), _ended(0
 {
 	static std::string set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	int size = static_cast<int>(2 * sqrt(8 + 6 * (_maxNumPlayer - 1)));
-	_maps.emplace_back(1, 1);
-	_maps.back().setWaitingRoom();
-	_maps.emplace_back(size, size);
-	_maps.back().fillMap(_maxNumPlayer, 0);
-	_maps.emplace_back(size * 0.8, size * 0.8);
-	_maps.back().fillMap(_maxNumPlayer, 1);
-	printMap(_maps[1]);
-	printMap(_maps[2]);
-	this->linkMaps(_maps[1], _maps[2]);
 
 	for (int i = 0; i < 25; i++)
 	{
 		int nb = rand() % 63;
 		this->_sessionId.push_back(set[nb]);
 	}
+
+	_maps.emplace_back(1, 1, this->_sessionId);
+	_maps.back().setWaitingRoom();
+	_maps.emplace_back(size, size, this->_sessionId);
+	_maps.back().fillMap(_maxNumPlayer, 0);
+	_maps.emplace_back(size * 0.8, size * 0.8, this->_sessionId);
+	_maps.back().fillMap(_maxNumPlayer, 1);
+	printMap(_maps[1]);
+	printMap(_maps[2]);
+	this->linkMaps(_maps[1], _maps[2]);
 }
 
 Session::~Session(void)

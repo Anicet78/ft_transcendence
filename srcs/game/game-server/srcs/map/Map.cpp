@@ -19,14 +19,15 @@ void chainedMap::resetRoom()
 	this->_room.reset();
 }
 
-void chainedMap::addRoom(const Room &room)
+void chainedMap::addRoom(const Room &room, std::string sessionId)
 {
 	if (this->_room)
 		*this->_room = room;
 	else
 		this->_room = std::make_shared<Room>(room);
 
-	this->_room->setRoomId(room.getName() + "_" + std::to_string(this->getX()) + std::to_string(this->getY()));
+	this->_room->setRoomId(sessionId + ":" + room.getName() + "_" + std::to_string(this->getX()) + std::to_string(this->getY()));
+	std::cout << this->_room->getRoomId() << std::endl;
 	this->_room->setEvent();
 
 	auto exits = this->_room->getExits();
@@ -96,7 +97,7 @@ void chainedMap::setY(int nb)
 
 //Constructors/Destructors------------------------------------------------
 
-Map::Map(void)
+Map::Map(std::string sessionId) : _sessionId(sessionId)
 {
 	for (int i = 0; i < 25; i++)
 	{
@@ -125,7 +126,7 @@ Map::Map(void)
 	}
 }
 
-Map::Map(int width, int height)
+Map::Map(int width, int height, std::string sessionId) : _sessionId(sessionId)
 {
 	for (int i = 0; i < width * height; i++)
 	{
@@ -202,7 +203,7 @@ void	Map::link(Map &up)
 
 void	Map::setWaitingRoom()
 {
-	this->_nodes[0]->addRoom(Room::getWatingRoom());
+	this->_nodes[0]->addRoom(Room::getWatingRoom(), this->_sessionId);
 }
 
 quadList &Map::getHead()
