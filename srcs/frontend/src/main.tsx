@@ -19,9 +19,14 @@ import Error from './error/error.tsx';
 import Banner from './components/Banner.tsx';
 import MyFooter from './components/Footer.tsx';
 import FriendList from './friendship/FriendsList.tsx';
+<<<<<<< HEAD
 import Home from './home/home.tsx';
 import { AuthProvider } from './auth/AuthContext.tsx';
 import { SocketProvider } from './socket/SocketContext.tsx';
+=======
+import FriendRequest from './friendship/FriendRequests.tsx';
+import CancelRequest from './friendship/UpdateRequest.tsx';
+>>>>>>> 4cc40fa (rebase from main front-end branch)
 
 const queryClient = new QueryClient({
 	defaultOptions: {

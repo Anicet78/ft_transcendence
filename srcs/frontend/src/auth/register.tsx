@@ -28,51 +28,60 @@ function Register() {
     },
   });
 
-  function registerAction(formData: FormData) {
+	const mutation = useMutation({
+		mutationFn: (data: RegisterBodyType) => api.post("/auth/register", data),
+		onSuccess: (data) => {
+		const response: RegisterResponseType = data.data;
+		console.log("Connecté !", response);
+		navigate("/home");
+		},
+	});
 
-    const fname = formData.get("firstname");
-    const lname = formData.get("lastname");
-    const uname = formData.get("username");
-    const email = formData.get("email");
-    const region = formData.get("region")
-    const pwd = formData.get("pwd");
+	function registerAction(formData: FormData) {
 
-    if (!fname || !lname || !uname || !email || !region || !pwd) return ;
+		const fname = formData.get("firstname");
+		const lname = formData.get("lastname");
+		const uname = formData.get("username");
+		const email = formData.get("email");
+		const region = formData.get("region");
+		const pwd = formData.get("pwd");
 
-    mutation.mutate({
-      firstname: fname.toString(),
-      lastname: lname.toString(),
-      username: uname.toString(),
-      email: email.toString(),
-      region: region.toString() as RegisterBodyType['region'],
-      password: pwd.toString()
-    });
-  }
+		if (!fname || !lname || !uname || !email || !region || !pwd) return ;
 
-  return (
-    <>
-      <div className="card">
-        <div>
-          <Button color='primary' isOutlined className='login-button'>Login with Google</Button>
-          <Button color='primary' isOutlined className='login-button'>Login with 42</Button>
-        </div>
-        <br />
-        <form action={registerAction}>
-          <div className='inputs'>
-            <InputName label="First name" nameType="firstname" />
-            <InputName label="Last name" nameType="lastname"/>
-            <InputName label="User name" nameType="username"/>
-            <InputEmail label="Email" />
-            <InputPassword label="Password" id="pwd"/>
-          </div>
-          <div>
-            <SelectRegion />
-            <ButtonSubmit name='Sign up' />
-          </div>
-        </form>
-      </div>
-    </>
-  )
+		mutation.mutate({
+		firstname: fname.toString(),
+		lastname: lname.toString(),
+		username: uname.toString(),
+		email: email.toString(),
+		region: region.toString() as RegisterBodyType['region'],
+		password: pwd.toString()
+		});
+	}
+
+	return (
+		<>
+		<div className="card">
+			<div>
+			<Button color='primary' isOutlined className='login-button'>Login with Google</Button>
+			<Button color='primary' isOutlined className='login-button'>Login with 42</Button>
+			</div>
+			<br />
+			<form action={registerAction}>
+			<div className='inputs'>
+				<InputName label="First name" nameType="firstname" />
+				<InputName label="Last name" nameType="lastname"/>
+				<InputName label="User name" nameType="username"/>
+				<InputEmail label="Email" />
+				<InputPassword label="Password" id="pwd"/>
+			</div>
+			<div>
+				<SelectRegion />
+				<ButtonSubmit name='Sign up' />
+			</div>
+			</form>
+		</div>
+		</>
+	)
 }
 
 export default Register
