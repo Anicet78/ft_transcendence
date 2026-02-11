@@ -1,7 +1,9 @@
 # include "Session.hpp"
 
-Session::Session(void): _maxNumPlayer(3), _running(0), _ended(0)
+Session::Session(void): _maxNumPlayer(2), _running(0), _ended(0), _startTime(std::chrono::steady_clock::time_point{}),
+						_numPlayersFinished(0)
 {
+	static std::string set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	int size = static_cast<int>(2 * sqrt(8 + 6 * (_maxNumPlayer - 1)));
 	_maps.emplace_back(1, 1);
 	_maps.back().setWaitingRoom();
@@ -12,13 +14,41 @@ Session::Session(void): _maxNumPlayer(3), _running(0), _ended(0)
 	printMap(_maps[1]);
 	printMap(_maps[2]);
 	this->linkMaps(_maps[1], _maps[2]);
+
+	for (int i = 0; i < 25; i++)
+	{
+		int nb = rand() % 63;
+		this->_sessionId.push_back(set[nb]);
+	}
+
 }
 
-Session::Session(int numPLayer): _maxNumPlayer(numPLayer), _running(0), _ended(0)
-{}
+Session::Session(int numPLayer):	_maxNumPlayer(numPLayer), _running(0), _ended(0), _startTime(std::chrono::steady_clock::time_point{}),
+									_numPlayersFinished(0)
+{
+	static std::string set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	int size = static_cast<int>(2 * sqrt(8 + 6 * (_maxNumPlayer - 1)));
+	_maps.emplace_back(1, 1);
+	_maps.back().setWaitingRoom();
+	_maps.emplace_back(size, size);
+	_maps.back().fillMap(_maxNumPlayer, 0);
+	_maps.emplace_back(size * 0.8, size * 0.8);
+	_maps.back().fillMap(_maxNumPlayer, 1);
+	printMap(_maps[1]);
+	printMap(_maps[2]);
+	this->linkMaps(_maps[1], _maps[2]);
+
+	for (int i = 0; i < 25; i++)
+	{
+		int nb = rand() % 63;
+		this->_sessionId.push_back(set[nb]);
+	}
+}
 
 Session::~Session(void)
-{}
+{
+	std::cout << "session " << this->_sessionId << " has ended !!" << std::endl;
+}
 
 //-----------------------------------------------------------------
 
@@ -27,6 +57,7 @@ void	Session::launch()
 	quadList start, vide;
 	this->_running = true;
 	size_t pos = 0;
+	this->_startTime = std::chrono::_V2::steady_clock::now();
 	for (quadList &node : this->_maps[1].getNodes())
 	{
 		if (!node->getRoom() || node->getRoom()->getName() != "start")
@@ -89,7 +120,7 @@ std::string	Session::sendMaps(void)
 	if (!this->_mapInfos.empty())
 		return this->_mapInfos;
 
-	std::string msg = "{\"action\": \"waiting\", \"maps\": { ";
+	std::string msg = "{\"action\": \"waiting\", \"session_id\": \"" + this->_sessionId + "\", \"maps\": { ";
 	for (size_t i = 0; i < this->_maps.size(); i++)
 	{
 		if (!i)
@@ -153,7 +184,7 @@ bool	Session::removePlayer(std::shared_ptr<Player> rmPlayer)
 	return 0;
 }
 
-std::vector<std::shared_ptr<Player>> Session::getPlayers() const
+std::vector<std::shared_ptr<Player>>	Session::getPlayers() const
 {
 	return this->_players;
 }
@@ -171,32 +202,39 @@ std::shared_ptr<Player> &Session::getPlayer(std::string &uid)
 	return _players[0];
 }
 
-int Session::getMaxNumPlayer() const
+double	Session::getActualTime(void) const
+{
+	if (_startTime == std::chrono::steady_clock::time_point{})
+	    return 0;
+	return std::chrono::duration<double>(std::chrono::steady_clock::now() - this->_startTime).count();
+}
+
+int	Session::getMaxNumPlayer() const
 {
 	return this->_maxNumPlayer;
 }
 
-int Session::getPlaceLeft() const
+int	Session::getPlaceLeft() const
 {
 	return this->_maxNumPlayer - this->_players.size();
 }
 
-int Session::getNumPlayers() const
+int	Session::getNumPlayers() const
 {
 	return this->_players.size();
 }
 
-bool Session::hasEnded() const
+bool	Session::hasEnded() const
 {
 	return this->_ended;
 }
 
-bool Session::isRunning() const
+bool	Session::isRunning() const
 {
 	return this->_running;
 }
 
-bool Session::doesAllPlayersConnected() const
+bool	Session::doesAllPlayersConnected() const
 {
 	for (auto &player : this->_players)
 		if (!player->isConnected())
@@ -204,10 +242,36 @@ bool Session::doesAllPlayersConnected() const
 	return true;
 }
 
-bool Session::isPlayerInSession(std::string &uid) const
+bool	Session::isPlayerInSession(std::string &uid) const
 {
 	for (auto &player : _players)
 		if (player->getUid() == uid)
 			return true;
 	return false;
+}
+
+void	Session::checkFinishedPlayers(uWS::App &app)
+{
+	std::vector<std::shared_ptr<Player>> finishedPlayers;
+	for (auto &player : this->_players)
+	{
+		if (player->getFinished())
+		{
+			this->_numPlayersFinished++;
+			int win = (this->_numPlayersFinished == 1) ? true : false;
+			player->setHasWin(win);
+			std::string msg = "{ \"action\": \"finished\", \"time\": "
+				+ std::to_string(this->getActualTime()) + ", \"win\": "
+				+ std::to_string(win) + "}";
+			player->getWs()->send(msg);
+			std::string	oldTopic = player->getRoomRef().getRoomId();
+			sendLeaveUpdate(*player, app, oldTopic);
+			player->getWs()->unsubscribe(oldTopic);
+			finishedPlayers.push_back(player);
+		}
+	}
+	for (auto &player : finishedPlayers)
+		this->removePlayer(player);
+	if (!this->_players.size() && this->_running)
+		this->_ended = 1;
 }

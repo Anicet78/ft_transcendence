@@ -98,7 +98,13 @@ void updateRoom(Player &player, uWS::App &app)
 		player.setPrevNode(player.getNode());
 		player.setNode(player.getNode()->up.lock());
 		player.findP();
+		std::string	oldTopic = room.getRoomId();
+		sendLeaveUpdate(player, app, oldTopic);
+		player.getWs()->unsubscribe(oldTopic);
+		player.getWs()->subscribe(player.getRoom().getRoomId());
 	}
+	else if (plan[y][x] == 'F')
+		player.setFinished(true);
     else if (player.getExit() > 32)
     {
         player.setExit(' ');

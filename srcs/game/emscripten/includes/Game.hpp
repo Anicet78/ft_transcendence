@@ -12,7 +12,9 @@ class Game
 		Player				&_player;
 		std::vector<Player>	_otherPlayers;
 		Hud					_hud;
+		std::string			_sessionId;
 		int					_launched;
+		float				_time_in_s;
 
 
 	public:
@@ -24,8 +26,12 @@ class Game
 		Player				&getPlayer();
 		std::vector<Player> &getOtherPlayers();
 		Player				&getOtherPlayer(std::string &uid);
-		int					getLaunched() const;
+		float				getTime(void) const;
+		int					getLaunched(void) const;
+		std::string	const	&getSessionId(void) const;
+		void				setSessionId(std::string sessionId);
 		void				setLaunched(int nb);
+		void				setTime(float time);
 		void				drawHud();
 		void				addMap(Map &map);
 		void				clearOtherPlayers();

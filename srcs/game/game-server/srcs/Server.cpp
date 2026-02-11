@@ -203,9 +203,10 @@ void	moveMobs(std::vector<std::string> const &map, Mob &mob)
 	}
 }
 
-void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app, Server *server) {
+void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app, Session &session)
+{
 	std::string msg = "{\"action\": \"loop_action\"";
-	msg += ",\"server_timer\":" + std::to_string(server->getActualTime()) + ",\"loop\": {";
+	msg += ",\"session_timer\":" + std::to_string(session.getActualTime()) + ",\"loop\": {";
 	//put player status in the msg
 	const int player_size = allPlayer.size();
 	if (player_size)
@@ -256,7 +257,7 @@ void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer,
 		{
 			std::string mobs_update = ",\"nbr_mob\":" + std::to_string(mob_size)
 						+ ",\"mobs\": [";
-			for (auto& [id, mob] : Mobs)
+			for (auto &[id, mob] : Mobs)
 			{
 				if (!mob->isDeathSend())
 				{
@@ -323,11 +324,16 @@ void	Server::run(void)
 	us_timer_set(delayTimer, [](struct us_timer_t *t)
 	{
 		auto *data = (TimerData *) us_timer_ext(t);
-		for(auto session : data->server->_sessions)
+		for (auto &session : data->server->_sessions)
 		{
+			session.checkFinishedPlayers(*data->app);
+			if (session.hasEnded())
+				continue ;
 			std::unordered_map<Room *, std::vector<std::shared_ptr<Player>> > PlayerPerRoom;
 			for (auto player : session.getPlayers())
 			{
+				if (player->getFinished())
+					continue ;
 				Room &room = player->getRoomRef();
 				auto i = PlayerPerRoom.find(&room);
 				if (i == PlayerPerRoom.end())
@@ -341,8 +347,15 @@ void	Server::run(void)
 			}
 			for (auto i : PlayerPerRoom)
 			{
-				roomLoopUpdate(*i.first, i.second, data->app, data->server);
+				roomLoopUpdate(*i.first, i.second, data->app, session);
 			}
+		}
+		for (auto it = data->server->_sessions.begin(); it != data->server->_sessions.end();)
+		{
+			if (it->hasEnded())
+				it = data->server->_sessions.erase(it);
+			if (it != data->server->_sessions.end())
+				it++;
 		}
 	}, 500, 50);
 
