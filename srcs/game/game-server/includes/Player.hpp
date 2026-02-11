@@ -38,6 +38,8 @@ class Player
 		quadList	_node;
 		quadList	_prev_node;
 
+		int			_startPos;
+
 	//anim
 		int			_anim;
 		int			_last_dir;
@@ -53,6 +55,9 @@ class Player
 	//atk state
 		bool		_isAttacking;
 		int			_atkFrame;
+
+	//nbr kill
+		int			_kills;
 	public:
 		Player(std::string uid, int partySize, std::string partyName, std::string name,
 				uWS::WebSocket<false, true, PerSocketData> *ws);
@@ -77,6 +82,8 @@ class Player
 		float		getX(void) const;
 		float		getY(void) const;
 
+		int			getStartPos(void) const;
+
 		int			getHp(void) const;
 		int			getAtk(void) const;
 		int			getDef(void) const;
@@ -84,6 +91,7 @@ class Player
 		FRect		&getWallHitBox(void);
 		Room		&getRoomRef(void);
 		HitBox		&getHitBox(void);
+		int			getKills(void) const;
 
 	//setter
 		void		setConnexion(bool c);
@@ -92,6 +100,9 @@ class Player
 		void		setNode(const quadList &node);
 		void		setPrevNode(const quadList &node);
 		void		setPos(float x, float y);
+
+		void		setStartPos(int pos);
+
 		void		setHp(int hp);
 		void		setAtk(int atk);
 		void		setDef(int def);
@@ -100,6 +111,8 @@ class Player
 		void		setInSession(bool flag);
 		void		setAnim(int anim);
 		void		setLastDir(int dir);
+
+		void		addKills(void);
 
 	//action
 		void		findP(void);

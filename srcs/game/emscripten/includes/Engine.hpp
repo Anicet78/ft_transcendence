@@ -11,6 +11,7 @@ class Engine
 		std::string	_playerId;
 		std::string	_playerName;
 		const std::chrono::steady_clock::time_point	_startTime;
+		bool		_isRunning;
 
 	public:
 		SDL_Window		*window;
@@ -40,6 +41,10 @@ class Engine
 		int		getPlayerSize(void);
 
 		double	getActualTime(void) const;
+
+		bool	getIsRunning(void) const;
+		void	enableIsRunning(void);
+		void	disableIsRunning(void);
 
 		SDLTimer	&getTimer(void);
 };

@@ -1,6 +1,6 @@
 #include"Engine.hpp"
 
-Engine::Engine(void) :  _tile_size(0), _startTime(std::chrono::steady_clock::now()), window(NULL), renderer(NULL), texture(NULL) {
+Engine::Engine(void) :  _tile_size(0), _startTime(std::chrono::steady_clock::now()), _isRunning(0), window(NULL), renderer(NULL), texture(NULL) {
 	return ;
 }
 
@@ -68,4 +68,19 @@ SDLTimer	&Engine::getTimer(void)
 double Engine::getActualTime(void) const
 {
 	return std::chrono::duration<double>(std::chrono::steady_clock::now() - this->_startTime).count();
+}
+
+bool	Engine::getIsRunning(void) const
+{
+	return (this->_isRunning);
+}
+
+void	Engine::enableIsRunning(void)
+{
+	this->_isRunning = true;
+}
+
+void	Engine::disableIsRunning(void)
+{
+	this->_isRunning = false;
 }

@@ -1,6 +1,6 @@
 # include "Session.hpp"
 
-Session::Session(void): _maxNumPlayer(3), _running(0), _ended(0)
+Session::Session(void): _maxNumPlayer(3), _running(0), _ended(0), _readyToRun(0), _timerBeforeRun(std::chrono::_V2::steady_clock::now())
 {
 	int size = static_cast<int>(2 * sqrt(8 + 6 * (_maxNumPlayer - 1)));
 	_maps.emplace_back(1, 1);
@@ -35,11 +35,12 @@ void	Session::launch()
 			break ;
 		std::string roomId = this->_players[pos]->getRoom().getRoomId();
 		this->_players[pos]->setNode(node);
+
+		this->_players[pos]->setStartPos(pos);
+
 		if (this->_players[pos]->getWs()->unsubscribe(roomId))
 			std::cout << "unsubscribe from waiting room" << std::endl;
 		this->_players[pos]->getWs()->subscribe(node->getRoom()->getRoomId());
-		std::string msg = "{\"action\": \"launch\", \"start\": " + std::to_string(pos) + '}';
-		this->_players[pos]->getWs()->send(msg);
 		pos++;
 	}
 }
@@ -196,6 +197,11 @@ bool Session::isRunning() const
 	return this->_running;
 }
 
+bool Session::isReadyToRun() const
+{
+	return this->_readyToRun;
+}
+
 bool Session::doesAllPlayersConnected() const
 {
 	for (auto &player : this->_players)
@@ -210,4 +216,25 @@ bool Session::isPlayerInSession(std::string &uid) const
 		if (player->getUid() == uid)
 			return true;
 	return false;
+}
+
+double Session::getActualTimeBeforeRun(void) const
+{
+	return std::chrono::duration<double>(std::chrono::steady_clock::now() - this->_timerBeforeRun).count();
+}
+
+void	Session::startLaunching(void)
+{
+	if (this->_running || this->_readyToRun)
+		return ;
+	this->_readyToRun = true;
+	this->_readyToRunStartTimer = getActualTimeBeforeRun();
+	return ;
+}
+
+bool	Session::isEnoughtReadyTime(void) const
+{
+	if (this->getActualTimeBeforeRun() - this->_readyToRunStartTimer > 1)
+		return(true);
+	return(false);
 }
