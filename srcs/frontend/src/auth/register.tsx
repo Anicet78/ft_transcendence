@@ -28,15 +28,6 @@ function Register() {
     },
   });
 
-	const mutation = useMutation({
-		mutationFn: (data: RegisterBodyType) => api.post("/auth/register", data),
-		onSuccess: (data) => {
-		const response: RegisterResponseType = data.data;
-		console.log("Connecté !", response);
-		navigate("/home");
-		},
-	});
-
 	function registerAction(formData: FormData) {
 
 		const fname = formData.get("firstname");

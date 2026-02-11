@@ -25,9 +25,9 @@ const FriendRequest = () => {
 		return (
 		<li key={friend.friendshipId}>
 			{friend.sender.username !== myUsername && 
-				<NavLink to={"/profile/" + friend.sender.appUserId}>{friend.sender.username}</NavLink>}
+				<NavLink to={"/profile/" + friend.sender.username}>{friend.sender.username}</NavLink>}
 			{friend.receiver.username !== myUsername && 
-				<NavLink to={"/profile/" + friend.receiver.appUserId}>{friend.receiver.username}</NavLink>}
+				<NavLink to={"/profile/" + friend.receiver.username}>{friend.receiver.username}</NavLink>}
 			{friend.sender.username === myUsername && 
 				<NavLink to={"/friends/requests/update/" + friend.friendshipId} state={{requestedAction: "cancel"}} className="button is-medium">Cancel request</NavLink>}
 			{friend.sender.username !== myUsername && 

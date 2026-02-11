@@ -3,7 +3,6 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import './login.css'
 import '../index.css'
 
-import { useNavigate } from 'react-router';
 import { Button } from '@allxsmith/bestax-bulma';
 import ButtonSubmit from '../components/ButtonSubmit.tsx';
 import InputEmail from '../components/InputEmail.tsx';
