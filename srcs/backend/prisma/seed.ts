@@ -38,7 +38,6 @@ async function createFixedUsers() {
 async function seedFriendships(users) {
   const pairs = [
     [users[0], users[1], "accepted"],
-	[users[0], users[2], "accepted"],
 	[users[0], users[3], "waiting"],
 	[users[4], users[0], "waiting"],
     [users[1], users[3], "accepted"],

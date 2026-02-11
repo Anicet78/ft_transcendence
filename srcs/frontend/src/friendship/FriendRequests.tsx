@@ -1,7 +1,7 @@
-import { Box, Button } from "@allxsmith/bestax-bulma"
+import { Box } from "@allxsmith/bestax-bulma"
 import "./friendList.css"
 
-import { NavLink, useNavigate } from "react-router";
+import { NavLink } from "react-router";
 import { useQuery } from '@tanstack/react-query';
 import api, { getAccessToken } from '../serverApi.ts';
 import type { GetResponse } from '../types/GetType.ts'
@@ -11,7 +11,6 @@ type FriendRequestResponseType = GetResponse<"/friends/requests", "get">;
 const FriendRequest = () => {
 
 	const myUsername = "nina"
-	let navigate = useNavigate()
 
 	const { data, isLoading, isError, error } = useQuery({
 		queryKey: ['/friends/requests', getAccessToken()],
@@ -30,9 +29,12 @@ const FriendRequest = () => {
 			{friend.receiver.username !== myUsername && 
 				<NavLink to={"/profile/" + friend.receiver.appUserId}>{friend.receiver.username}</NavLink>}
 			{friend.sender.username === myUsername && 
-				<Button onClick={() => {navigate("/friends/requests/update/" + friend.friendshipId), {state: {requestedAction: "cancel"}}}}>Cancel Request</Button>}
+				<NavLink to={"/friends/requests/update/" + friend.friendshipId} state={{requestedAction: "cancel"}} className="button is-medium">Cancel request</NavLink>}
 			{friend.sender.username !== myUsername && 
-				<Button onClick={() => {navigate("/friends/requests/update/" + friend.friendshipId), {state: {requestedAction: "accept"}}}}>Accept request</Button>}
+				<>
+					<NavLink to={"/friends/requests/update/" + friend.friendshipId} state={{requestedAction: "accept"}} className="button is-medium">Accept request</NavLink>
+					<NavLink to={"/friends/requests/update/" + friend.friendshipId} state={{requestedAction: "reject"}} className="button is-medium">Reject request</NavLink>
+				</>}
 		</li>
 		)
 	})

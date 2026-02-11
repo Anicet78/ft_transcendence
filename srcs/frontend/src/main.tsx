@@ -27,7 +27,6 @@ import UpdateRequest from './friendship/UpdateRequest.tsx';
 import RemoveFriend from './friendship/RemoveFriend.tsx';
 import AddFriend from './friendship/AddFriend.tsx';
 
-
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {

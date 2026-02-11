@@ -75,7 +75,7 @@ const ProfilePublic = () => {
 						</Button>}
 						{friendshipStatus === 'friends' &&
 						<div>
-							<NavLink to={"/friends/remove/" + userData.appUserId}>Remove friend</NavLink>
+							<NavLink to={"/friends/remove/" + userData.appUserId} className="button is-medium">Remove friend</NavLink>
 							<br />
 							<Button color='primary' isInverted aria-label='join button' size='medium'>Join / decline</Button>
 							<br />
@@ -83,11 +83,11 @@ const ProfilePublic = () => {
 						</div>}
 						{friendshipStatus === 'received' && 
 						<div>
-							<NavLink to={"/friends/requests/update/" + friendshipId} state={{requestedAction: "accept"}}>Accept request</NavLink>
-							<NavLink to={"/friends/requests/update/" + friendshipId} state={{requestedAction: "reject"}}>Reject request</NavLink>
+							<NavLink to={"/friends/requests/update/" + friendshipId} state={{requestedAction: "accept"}} className="button is-medium">Accept request</NavLink>
+							<NavLink to={"/friends/requests/update/" + friendshipId} state={{requestedAction: "reject"}} className="button is-medium">Reject request</NavLink>
 						</div>}
-						{friendshipStatus === 'friends' &&
-							<NavLink to={"/friends/add/" + userData.appUserId}>Remove friend</NavLink>}
+						{friendshipStatus === 'none' &&
+							<NavLink to={"/friends/remove/" + userData.appUserId} className="button is-medium">Send friendship request</NavLink>}
 					</div>
 				</>
 			}
