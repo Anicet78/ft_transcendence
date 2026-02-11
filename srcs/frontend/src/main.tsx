@@ -22,6 +22,8 @@ import FriendList from './friendship/FriendsList.tsx';
 import Home from './home/home.tsx';
 import { AuthProvider } from './auth/AuthContext.tsx';
 import { SocketProvider } from './socket/SocketContext.tsx';
+import { RoomProvider } from './home/RoomContext.tsx';
+import JoinRoom from './home/join-room.tsx';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -40,6 +42,7 @@ const AppEntryPoint = () => {
 				<Route path="/login" element={<Login />} />
 				<Route path="/register" element={<Register />} />
 				<Route path="/home" element={<Home />} />
+				<Route path="/join/:roomId" element={<JoinRoom />} />
 				<Route path="/friends" element={<FriendList />} />
 				<Route path="/profile" element={<ProfilePrivate />} />
 				<Route path="/profile/:username" element={<ProfilePublic />} />
@@ -58,7 +61,9 @@ createRoot(document.getElementById('root') as HTMLElement).render(
 			<Router>
 				<AuthProvider>
 					<SocketProvider>
-						<AppEntryPoint />
+						<RoomProvider>
+							<AppEntryPoint />
+						</RoomProvider>
 					</SocketProvider>
 				</AuthProvider>
 			</Router>

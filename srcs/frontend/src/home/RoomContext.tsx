@@ -1,0 +1,109 @@
+import { createContext, useContext, useEffect, useState } from 'react';
+import api from '../serverApi';
+import { useSocket } from '../socket/SocketContext';
+import type { GetResponse } from '../types/GetType';
+import { useMutation } from '@tanstack/react-query';
+
+export type Room = GetResponse<"/room/new", "post">;
+
+export type RoomContextValue = {
+	room: Room | null;
+	joinRoom: (newRoom?: Room) => void;
+	leaveRoom: () => void;
+};
+
+const RoomContext = createContext<RoomContextValue | null>(null);
+
+const onPlayerJoined = (data: { playerId: string }, setRoom: React.Dispatch<React.SetStateAction<Room | null>>) => {
+	setRoom((prev) => {
+		if (!prev) return prev;
+		if (prev.playersId.includes(data.playerId)) return prev;
+
+		const players = Array.isArray(prev.playersId) ? prev.playersId : [];
+		if (players.includes(data.playerId)) return prev;
+
+		return {
+			...prev,
+			playersId: [...prev.playersId, data.playerId],
+		};
+	});
+};
+
+const onPlayerQuit = (data: { playerId: string }, setRoom: React.Dispatch<React.SetStateAction<Room | null>>) => {
+	setRoom((prev) => {
+		if (!prev) return prev;
+
+		return {
+			...prev,
+			playersId: prev.playersId.filter((id: string) => id !== data.playerId),
+		};
+	});
+};
+
+export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
+	const socket = useSocket();
+
+	const [room, setRoom] = useState<Room | null>(null);
+
+	const joinMutation = useMutation({
+		mutationFn: () => api.get("/room/me"),
+		onSuccess: (data) => {
+			setRoom(data.data);
+		},
+	});
+
+	const quitMutation = useMutation({
+		mutationFn: () => api.post(`/room/${room?.roomId}/quit`),
+		onSettled: () => {
+			setRoom(null);
+		},
+	});
+
+	const joinRoom = (newRoom?: Room) => {
+		if (newRoom)
+			setRoom(newRoom);
+		else
+			joinMutation.mutate();
+	}
+
+	const leaveRoom = () => {
+		if (room?.roomId) {
+			quitMutation.mutate()
+		} else {
+			setRoom(null)
+		}
+	}
+
+	useEffect(() => {
+		if (!socket) { leaveRoom(); return }
+
+		joinRoom();
+
+		socket.on('player_joined', (data) => onPlayerJoined(data, setRoom));
+		socket.on('player_left', (data) => onPlayerQuit(data, setRoom));
+
+		return () => {
+			socket.off('player_joined');
+			socket.off('player_left');
+			leaveRoom();
+		};
+	}, [socket]);
+
+	if (joinMutation.isPending) return <p>Creating or joining room...</p>;
+
+	if (joinMutation.isError) return (
+		<p style={{ color: 'red' }}>
+			An error occurred ({joinMutation.error.message}), please refresh.
+		</p>
+	);
+
+	return (
+		<RoomContext.Provider value={{ room, joinRoom, leaveRoom }}>
+			{children}
+		</RoomContext.Provider>
+	);
+};
+
+export const useRoom = (): RoomContextValue | null => {
+	return useContext(RoomContext);
+};
