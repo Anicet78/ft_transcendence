@@ -1,11 +1,13 @@
 import './home.css'
 import '../App.css'
-import { Box, Button } from '@allxsmith/bestax-bulma';
+import { Box } from '@allxsmith/bestax-bulma';
+import { NavLink } from 'react-router';
 
 import { useRoom } from './RoomContext.tsx';
-
+import { useAuth } from '../auth/AuthContext.tsx';
 
 const Home = () => {
+	const { user } = useAuth();
 	const { room } = useRoom()!;
 
 	if (!room || !room.playersId) return <p>Room not ready...</p>;
@@ -15,7 +17,9 @@ const Home = () => {
 			{room.playersId.map((name: string) => (
 				<p>{name}</p>
 			))}
-			<Button color='primary' isInverted aria-label='spectate button' size='medium'>Launch game</Button>
+			{room.hostId === user?.id &&
+				<NavLink to="/game" color='primary' className="button is-dark is-medium is-outlined" aria-label='spectate button'>Launch Game</NavLink>
+			}
 		</Box>
 	)
 }

@@ -1,27 +1,45 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client'
+import { useNavigate } from 'react-router';
+import { useRoom } from '../home/RoomContext';
 import './game.css'
-import Banner from '../components/Banner.tsx';
-import MyFooter from '../components/Footer.tsx';
 import { Box } from '@allxsmith/bestax-bulma';
+import { useAuth } from '../auth/AuthContext';
+import api from '../serverApi';
+import { useMutation } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 const Game = () => {
+	const navigate = useNavigate();
+	const { user } = useAuth();
+	const { room, start, cancelStart } = useRoom()!;
+
+	const mutation = useMutation({
+		mutationFn: () => api.post("/room/launch", room),
+	});
+
+	useEffect(() => {
+		if (user?.id === room?.hostId)
+			mutation.mutate();
+		else if (!start) {
+			navigate("/home");
+			return ;
+		}
+
+		return () => cancelStart();
+	}, []);
+
+	if (mutation.isPending)
+		return <div>Verifying room</div>
+
+	if (mutation.isError) {
+		navigate("/home");
+		return ;
+	}
+
 	return (
-		<>
-			<h1><Banner /></h1>
-			<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between'>
-				<div>Game box</div>
-			</Box>
-			<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between'>
-				<div>Chat box</div>
-			</Box>
-			<MyFooter />
-		</>
+		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between'>
+			<canvas id="game-canvas" width="800" height="950" tabIndex={1}></canvas>
+		</Box>
 	)
 }
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <Game />
-  </StrictMode>,
-)
+export default Game;

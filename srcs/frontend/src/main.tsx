@@ -20,10 +20,11 @@ import Banner from './components/Banner.tsx';
 import MyFooter from './components/Footer.tsx';
 import FriendList from './friendship/FriendsList.tsx';
 import Home from './home/home.tsx';
+import JoinRoom from './home/join-room.tsx';
+import Game from './game/game.tsx';
 import { AuthProvider } from './auth/AuthContext.tsx';
 import { SocketProvider } from './socket/SocketContext.tsx';
 import { RoomProvider } from './home/RoomContext.tsx';
-import JoinRoom from './home/join-room.tsx';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -43,6 +44,7 @@ const AppEntryPoint = () => {
 				<Route path="/register" element={<Register />} />
 				<Route path="/home" element={<Home />} />
 				<Route path="/join/:roomId" element={<JoinRoom />} />
+				<Route path="/game" element={<Game />} />
 				<Route path="/friends" element={<FriendList />} />
 				<Route path="/profile" element={<ProfilePrivate />} />
 				<Route path="/profile/:username" element={<ProfilePublic />} />

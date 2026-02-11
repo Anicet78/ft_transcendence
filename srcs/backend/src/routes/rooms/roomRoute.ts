@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import Type, { type Static } from "typebox";
 import { AppErrorSchema } from "../../schema/errorSchema.js";
-import { getMyRoomController, getRoomController, hostRoomController, joinRoomController, kickRoomController, newRoomController, quitRoomController, verifyRoomController } from "../../controllers/rooms/roomController.js";
+import { getMyRoomController, getRoomController, hostRoomController, joinRoomController, kickRoomController, launchController, newRoomController, quitRoomController, verifyRoomController } from "../../controllers/rooms/roomController.js";
 import { RoomSchema } from "../../schema/roomSchema.js";
 import { GlobalHeadersSchema } from "../../schema/globalHeadersSchema.js";
 
@@ -120,5 +120,19 @@ fastify.post("/verify", {
 		}
 	}
 }, verifyRoomController);
+
+fastify.post("/launch", {
+	schema: {
+		body: RoomSchema,
+		response: {
+			200: RoomSchema,
+			400: AppErrorSchema,
+			403: AppErrorSchema,
+			404: AppErrorSchema,
+			409: AppErrorSchema,
+			500: AppErrorSchema
+		}
+	}
+}, launchController);
 
 };

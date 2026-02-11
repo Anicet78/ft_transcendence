@@ -3,13 +3,16 @@ import api from '../serverApi';
 import { useSocket } from '../socket/SocketContext';
 import type { GetResponse } from '../types/GetType';
 import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router';
 
 export type Room = GetResponse<"/room/new", "post">;
 
 export type RoomContextValue = {
 	room: Room | null;
+	start: Boolean;
 	joinRoom: (newRoom?: Room) => void;
 	leaveRoom: () => void;
+	cancelStart: () => void;
 };
 
 const RoomContext = createContext<RoomContextValue | null>(null);
@@ -41,9 +44,11 @@ const onPlayerQuit = (data: { playerId: string }, setRoom: React.Dispatch<React.
 };
 
 export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
+	const navigate = useNavigate();
 	const socket = useSocket();
 
 	const [room, setRoom] = useState<Room | null>(null);
+	const [start, setStart] = useState<Boolean>(false);
 
 	const joinMutation = useMutation({
 		mutationFn: () => api.get("/room/me"),
@@ -74,6 +79,10 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 		}
 	}
 
+	const cancelStart = () => {
+		setStart(false);
+	}
+
 	useEffect(() => {
 		if (!socket) { leaveRoom(); return }
 
@@ -81,10 +90,15 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 
 		socket.on('player_joined', (data) => onPlayerJoined(data, setRoom));
 		socket.on('player_left', (data) => onPlayerQuit(data, setRoom));
+		socket.on('launch', () => {
+			setStart(true);
+			navigate("/game");
+		});
 
 		return () => {
 			socket.off('player_joined');
 			socket.off('player_left');
+			socket.off('launch');
 			leaveRoom();
 		};
 	}, [socket]);
@@ -98,7 +112,7 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 	);
 
 	return (
-		<RoomContext.Provider value={{ room, joinRoom, leaveRoom }}>
+		<RoomContext.Provider value={{ room, start, cancelStart, joinRoom, leaveRoom }}>
 			{children}
 		</RoomContext.Provider>
 	);

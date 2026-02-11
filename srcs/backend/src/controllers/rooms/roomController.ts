@@ -126,3 +126,23 @@ export async function verifyRoomController(
 
 	return reply.status(200).send(room);
 }
+
+export async function launchController(
+	request: FastifyRequest<{ Body: Room }>,
+	reply: FastifyReply
+) {
+	if (request.body.hostId != request.user.id)
+		return (reply.code(409).send({ error: "You are not the group leader" }));
+
+	const room: Room = RoomService.get(request.body.roomId, request.user.id);
+
+	const equals = request.body.hostId === room.hostId && request.body.playersId.length === room.playersId.length &&
+		[...request.body.playersId].sort().join(',') === [...room.playersId].sort().join(',');
+
+	if (!equals)
+		return reply.code(409).send({ error: "Room data mismatch" });
+
+	SocketService.send(room.roomId, "launch");
+
+	return reply.status(204).send();
+}
