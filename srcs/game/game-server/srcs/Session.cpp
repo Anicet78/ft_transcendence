@@ -236,7 +236,7 @@ void	Session::startLaunching(void)
 
 bool	Session::isEnoughtReadyTime(void) const
 {
-	if (this->getActualTimeBeforeRun() - this->_readyToRunStartTimer > 3)
+	if (this->getActualTimeBeforeRun() - this->_readyToRunStartTimer > 1)
 		return(true);
 	return(false);
 }
