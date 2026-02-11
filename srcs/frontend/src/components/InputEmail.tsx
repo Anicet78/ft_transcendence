@@ -1,7 +1,7 @@
 const InputEmail = ({label}) => {
 	return (
 		<div className="field">
-        	<label htmlFor="email">{label}</label>
+			<label htmlFor="email">{label}</label>
 			<p className="control has-icons-left">
 				<input
 					className="input"
@@ -15,7 +15,7 @@ const InputEmail = ({label}) => {
 				<span className="icon is-small is-left">
 					<i className="fas fa-envelope"></i>
 				</span>
-        	</p>
+			</p>
 		</div>
 	)
 }
