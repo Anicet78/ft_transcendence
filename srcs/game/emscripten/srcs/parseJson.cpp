@@ -65,24 +65,6 @@ void	fillMapInfos(val &msg, Game &game)
 	printMap(vmaps[2]);
 }
 
-// void	launchGame(Game &game, val &msg)
-// {
-// 	auto &maps = game.getMaps();
-// 	quadList start;
-// 	int startRoom = msg["start"].as<int>();
-// 	for (quadList &node : maps[1].getNodes())
-// 	{
-// 		if (node->getRoom() && node->getRoom()->getName() == "start" && !startRoom--)
-// 		{
-// 			start = node;
-// 			break ;
-// 		}
-// 	}
-// 	game.getPlayer().setNode(start);
-// 	game.setLaunched(1);
-// 	EM_ASM_({onCppMessage({action: "launched"});});
-// }
-
 void	launchGame(Game &game, val msg)
 {
 	auto &maps = game.getMaps();
@@ -115,6 +97,9 @@ void	launchGame(Game &game, val msg)
 
 	game.getPlayer().setNode(start);
 	game.setLaunched(1);
+
+	gSdl.enableIsRunning();
+
 	EM_ASM_({onCppMessage({action: "launched"});});
 }
 
@@ -148,7 +133,6 @@ void	parseJson(bool &init, Game &game)
 		{
 			if (msg.hasOwnProperty("running") && msg["running"].as<int>() == 1)
 			{
-				gSdl.enableIsRunning();
 				game.getOtherPlayers().clear();
 				if (loop.hasOwnProperty("player_update"))
 					launchGame(game, loop["player_update"]);
