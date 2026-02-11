@@ -2,14 +2,16 @@ import { useQuery } from '@tanstack/react-query';
 import '../App.css'
 import './profile.css'
 import { Box, Button } from '@allxsmith/bestax-bulma';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import type { GetResponse } from '../types/GetType';
 import api from '../serverApi';
+import { NavLink } from 'react-router';
 
 type ProfileResponseType = GetResponse<"/profile/{username}", "get">;
 // type FriendshipResponseType = GetResponse<"/friends/status/{id}", "get">;
 
 const ProfilePublic = () => {
+	const navigate = useNavigate()
 	const username = useParams().username;
 
 	const userQuery = useQuery({
@@ -35,39 +37,12 @@ const ProfilePublic = () => {
 	const isConnected = userData.availability || false;
 	const isPlaying = userData.playing || false;
 	const friendshipStatus = friendshipQuery.isSuccess ? friendshipData.status : 'unknown';
-	let buttonText = ''
-	let disable = false
-	let inverted = true
-	let mycolor = 'primary'
 	const bestTime = userData.gameProfile?.bestTime || '0';
 	const totalKills = userData.gameProfile?.totalEnemiesKilled || '0';
 	const totalGames = userData.gameProfile?.totalGames || '0';
 	const totalWins = userData.gameProfile?.totalWins || '0';
 	const totalLoses = userData.gameProfile?.totalLoses || '0';
 
-	if (friendshipStatus === 'waiting')
-	{
-		buttonText = "Request pending"
-		disable = true
-		inverted = false
-		mycolor = 'dark'
-	}
-	else if (friendshipStatus === 'accepted')
-		buttonText = 'Revoke friendship'
-
-	else if (friendshipStatus === 'refused')
-	{
-		buttonText = "Request denied"
-		disable = true
-		inverted = false
-		mycolor = 'danger'
-	}
-	else if (friendshipStatus !== 'self')
-	{
-		buttonText = "Friend request"
-		disable = false
-		inverted = true
-	}
 	return (
 		<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' alignItems='center'>
 			<h1>Welcome to {username} profile page</h1>
@@ -95,12 +70,25 @@ const ProfilePublic = () => {
 			{friendshipStatus !== 'self' &&
 				<>
 					<div>
-						<Button color={mycolor} isInverted={inverted} disabled={disable} size='large'>{buttonText}</Button>
-					</div>
-					<div>
-						<Button color='primary' isInverted aria-label='join button' size='medium'>Join / decline</Button>
-						<br />
-						<Button color='primary' isInverted aria-label='spectate button' size='medium'>Spectate</Button>
+						{(friendshipStatus === 'sent') && 
+						<Button color="dark" disabled size='large'>
+							Request pending
+						</Button>}
+						{friendshipStatus === 'friends' &&
+						<div>
+							<NavLink to={"/friends/remove/" + userData.appUserId}>Remove friend</NavLink>
+							<br />
+							<Button color='primary' isInverted aria-label='join button' size='medium'>Join / decline</Button>
+							<br />
+							<Button color='primary' isInverted aria-label='spectate button' size='medium'>Spectate</Button>
+						</div>}
+						{friendshipStatus === 'received' && 
+						<div>
+							<NavLink to={"/friends/requests/update/" + friendshipId} state={{requestedAction: "accept"}}>Accept request</NavLink>
+							<NavLink to={"/friends/requests/update/" + friendshipId} state={{requestedAction: "reject"}}>Reject request</NavLink>
+						</div>}
+						{friendshipStatus === 'friends' &&
+							<NavLink to={"/friends/add/" + userData.appUserId}>Remove friend</NavLink>}
 					</div>
 				</>
 			}

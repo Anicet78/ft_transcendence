@@ -19,14 +19,14 @@ import Error from './error/error.tsx';
 import Banner from './components/Banner.tsx';
 import MyFooter from './components/Footer.tsx';
 import FriendList from './friendship/FriendsList.tsx';
-<<<<<<< HEAD
 import Home from './home/home.tsx';
 import { AuthProvider } from './auth/AuthContext.tsx';
 import { SocketProvider } from './socket/SocketContext.tsx';
-=======
-import FriendRequest from './friendship/FriendRequests.tsx';
-import CancelRequest from './friendship/UpdateRequest.tsx';
->>>>>>> 4cc40fa (rebase from main front-end branch)
+import FriendRequest from './friendship/FriendRequest.tsx';
+import UpdateRequest from './friendship/UpdateRequest.tsx';
+import RemoveFriend from './friendship/RemoveFriend.tsx';
+import AddFriend from './friendship/AddFriend.tsx';
+
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -46,6 +46,10 @@ const AppEntryPoint = () => {
 				<Route path="/register" element={<Register />} />
 				<Route path="/home" element={<Home />} />
 				<Route path="/friends" element={<FriendList />} />
+				<Route path="/friends/requests/" element={<UpdateRequest />} />
+				<Route path="/friends/requests/update/" element={<FriendRequest />} />
+				<Route path="/friends/remove/" element={<RemoveFriend />} />
+				<Route path="/friends/add/" element={<AddFriend />} />
 				<Route path="/profile" element={<ProfilePrivate />} />
 				<Route path="/profile/:username" element={<ProfilePublic />} />
 				<Route path="/terms_of_service" element={<TermsService />} />

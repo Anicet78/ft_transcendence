@@ -1,4 +1,4 @@
-import { Box, Button } from "@allxsmith/bestax-bulma"
+import { Box } from "@allxsmith/bestax-bulma"
 import "./friendList.css"
 
 import { NavLink, useNavigate } from "react-router";
@@ -26,13 +26,16 @@ const FriendRequest = () => {
 		return (
 		<li key={friend.friendshipId}>
 			{friend.sender.username !== myUsername && 
-				<NavLink to={"/profile/" + friend.sender.appUserId}>{friend.sender.username}</NavLink>}
+				<NavLink to={"/profile/" + friend.sender.username}>{friend.sender.username}</NavLink>}
 			{friend.receiver.username !== myUsername && 
-				<NavLink to={"/profile/" + friend.receiver.appUserId}>{friend.receiver.username}</NavLink>}
+				<NavLink to={"/profile/" + friend.receiver.username}>{friend.receiver.username}</NavLink>}
 			{friend.sender.username === myUsername && 
-				<Button onClick={() => {navigate("/friends/requests/update/" + friend.friendshipId), {state: {requestedAction: "cancel"}}}}>Cancel Request</Button>}
+				<NavLink to={"/friends/requests/update/" + friend.friendshipId} state={{requestedAction: "cancel"}}>Cancel Request</NavLink>}
 			{friend.sender.username !== myUsername && 
-				<Button onClick={() => {navigate("/friends/requests/update/" + friend.friendshipId), {state: {requestedAction: "accept"}}}}>Accept request</Button>}
+				<div>
+					<NavLink to={"/friends/requests/update/" + friend.friendshipId} state={{requestedAction: "accept"}}>Accept request</NavLink>
+					<NavLink to={"/friends/requests/update/" + friend.friendshipId} state={{requestedAction: "reject"}}>Reject request</NavLink>
+				</div>}
 		</li>
 		)
 	})
