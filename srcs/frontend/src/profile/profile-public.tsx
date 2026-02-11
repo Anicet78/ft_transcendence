@@ -87,7 +87,7 @@ const ProfilePublic = () => {
 							<NavLink to={"/friends/requests/update/" + friendshipId} state={{requestedAction: "reject"}} className="button is-medium">Reject request</NavLink>
 						</div>}
 						{friendshipStatus === 'none' &&
-							<NavLink to={"/friends/remove/" + userData.appUserId} className="button is-medium">Send friendship request</NavLink>}
+							<NavLink to={"/friends/add/" + userData.appUserId} className="button is-medium">Send friendship request</NavLink>}
 					</div>
 				</>
 			}
