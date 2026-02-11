@@ -6,12 +6,6 @@ Engine gSdl;
 
 	std::queue<val> msgJson;
 
-	void testIncrement(val info)
-	{
-		int a = info["age"].as<int>();
-		a++;
-		info.set("age", a);
-	}
 
 	void finishGame()
 	{
@@ -33,7 +27,6 @@ Engine gSdl;
 	EMSCRIPTEN_BINDINGS(module)
 	{
 		emscripten::function("getMessage", &getMessage);
-		emscripten::function("testIncrement", &testIncrement);
 		emscripten::function("finishGame", &finishGame);
 	}
 #endif

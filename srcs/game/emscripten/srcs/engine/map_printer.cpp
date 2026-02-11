@@ -85,7 +85,7 @@ void	manage_wall(int x, int y, Player &player)
 }
 
 
-int checkTileWall(int x, int y, Player &player, int &isMud)
+int checkTileWall(int x, int y, Player &player, int &isMud, int &depth)
 {
 	int h = player.getRoom().getRoomPlan().size();
 	if (y < 0 || y >= h)
@@ -97,7 +97,7 @@ int checkTileWall(int x, int y, Player &player, int &isMud)
 		return (1);
 	if (player.getRoom().getRoomPlan()[y][x] == '2')
 	{
-		isMud = 1;
+		isMud = depth;
 		return (1);
 	}
 	return (0);
@@ -114,7 +114,7 @@ uint8_t	checkWall(int x, int y, Player &player, int depth, int &isMud)
 	{
 		for (int j = minX; j <= maxX; j++)
 		{
-			if (checkTileWall(j, i, player, isMud))
+			if (checkTileWall(j, i, player, isMud, depth))
 			{
 				if (i < y && j == x) //North
 					res |= 1 << 1;
@@ -338,10 +338,72 @@ void initAutoTileOffset2(std::array<int, 256> &autoTileOffset)
 		autoTileOffset[m] = 45;
 }
 
-void	manageSoil(int x, int y, Player &player)
+void initAutoTileOffset3(std::array<int, 256> &autoTileOffset)
+{
+	// Cas neutres
+	autoTileOffset[0]   = 0;
+	autoTileOffset[24]  = 0;
+	autoTileOffset[68]  = 0;
+
+	// NW
+	autoTileOffset[1]   = 46;
+	// NE
+	autoTileOffset[4]   = 44;
+	// SW
+	autoTileOffset[32]  = -44;
+	// SE
+	autoTileOffset[128] = -46;
+
+	// Coins opposés
+	autoTileOffset[36]  = 50;
+	autoTileOffset[129] = 49;
+
+	// NW + around
+	int nwList[] = {10, 11, 12, 13, 14, 15, 34, 35, 38, 39, 42, 43, 44, 45, 46, 47};
+	for (int m : nwList)
+		autoTileOffset[m] = -46;
+
+	// NE + around
+	int neList[] = {17, 18, 19, 21, 22, 23, 130, 131, 134, 135, 145, 146, 147, 149, 150, 151};
+	for (int m : neList)
+		autoTileOffset[m] = -44;
+
+	// SW + around
+	int swList[] = {65, 72, 73, 97, 104, 105, 136, 137, 168, 169, 193, 200, 201, 225, 232, 233};
+	for (int m : swList)
+		autoTileOffset[m] = 44;
+
+	// SE + around
+	int seList[] = {48, 52, 68, 80, 84, 100, 112, 116, 176, 180, 196, 208, 212, 228, 240, 244};
+	for (int m : seList)
+		autoTileOffset[m] = 46;
+
+	// N group
+	int nList[] = {2, 3, 5, 6, 7};
+	for (int m : nList)
+		autoTileOffset[m] = 90;
+
+	// W group
+	int wList[] = {8, 9, 33, 40, 41};
+	for (int m : wList)
+		autoTileOffset[m] = 2;
+
+	// E group
+	int eList[] = {16, 20, 132, 144, 148};
+	for (int m : eList)
+		autoTileOffset[m] = 2;
+
+	// S group
+	int sList[] = {64, 96, 160, 192, 224};
+	for (int m : sList)
+		autoTileOffset[m] = 90;
+}
+
+void	manageSoil(int x, int y, Player &player) // a changer, faire 2 masks, un pour le sol et un pour le mur
 {
 	static std::array<int, 256>	autoTileOffset = {0};
 	static std::array<int, 256>	autoTileOffset2 = {0};
+	static std::array<int, 256>	autoTileOffset3 = {0};
 	int	tile_s = gSdl.getMapTileSize() * 2;
 	int depth = -1;
 	int fDepth = -1;
@@ -353,6 +415,8 @@ void	manageSoil(int x, int y, Player &player)
 		initAutoTileOffset(autoTileOffset);
 	if (!autoTileOffset2[1])
 		initAutoTileOffset2(autoTileOffset2);
+	if (!autoTileOffset3[1])
+		initAutoTileOffset3(autoTileOffset3);
 
 	while (!mask)
 	{
@@ -365,6 +429,7 @@ void	manageSoil(int x, int y, Player &player)
 				fDepth = depth;
 				fMask = mask;
 			}
+			mask = 0;
 			continue ;
 		}
 		if (depth > 2)
@@ -381,10 +446,8 @@ void	manageSoil(int x, int y, Player &player)
 	int color;
 	int offset;
 	int color2 = 0;
-	if (!isMud || (isMud && depth == 2))
+	if (!isMud || isMud > 1)
 	{
-		if (isMud)
-			depth--;
 		color = 541 + depth * 9;
 		offset = autoTileOffset[mask];
 		color2 = (depth == 2) ? color : color + 9;
@@ -392,12 +455,17 @@ void	manageSoil(int x, int y, Player &player)
 	else if(isMud && depth == 1)
 	{
 		color = 676;
-		offset = autoTileOffset[mask];
+		offset = autoTileOffset3[mask];
+		int offset2 = autoTileOffset2[mask];
 		color2 = 550;
+		Assets::rendMap(x * tile_s, y * tile_s, 856, 1, 1);
+		Assets::rendMap(x * tile_s, y * tile_s, color2 + offset2, 1, 1);
+		Assets::rendMap(x * tile_s, y * tile_s, color + offset, 1, 1);
+		return ;
 	}
 	else
 	{
-		color = 874 -18;
+		color = 856;
 		offset = autoTileOffset2[mask];
 		color2 = color + 9;
 	}

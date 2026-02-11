@@ -53,16 +53,15 @@ void	fillMap(std::vector<Map> &maps, val &msg, std::string mapName)
 
 void	fillMapInfos(val &msg, Game &game)
 {
-
 	auto &vmaps = game.getMaps();
 	val maps = msg["maps"];
-
+	game.setSessionId(msg["session_id"].as<std::string>());
 	fillMap(vmaps, maps, "waiting_map");
 	fillMap(vmaps, maps, "floor_0");
 	fillMap(vmaps, maps, "floor_1");
 	vmaps[1].link(vmaps[2]);
-	printMap(vmaps[1]);
-	printMap(vmaps[2]);
+	// printMap(vmaps[1]);
+	// printMap(vmaps[2]);
 }
 
 void	launchGame(Game &game, val msg)
@@ -103,6 +102,22 @@ void	launchGame(Game &game, val msg)
 	EM_ASM_({onCppMessage({action: "launched"});});
 }
 
+void	endGame(val &msg, Game &game)
+{
+	Player &player = game.getPlayer();
+	float	time = msg["time"].as<float>();
+	int		win = msg["win"].as<int>();
+	EM_ASM_({
+			sendResults({
+				session_id: UTF8ToString($0),
+				player_id: UTF8ToString($1),
+				completion_time: $2,
+				is_winner: $3
+			});
+		}, game.getSessionId().c_str(), player.getUid().c_str(), time, win);
+	finishGame();
+}
+
 void	parseJson(bool &init, Game &game)
 {
 	if (!msgJson.size())
@@ -138,14 +153,16 @@ void	parseJson(bool &init, Game &game)
 					launchGame(game, loop["player_update"]);
 			}
 		}
+		if (msg.hasOwnProperty("session_timer"))
+			game.setTime(msg["session_timer"].as<float>());
 		if (loop.hasOwnProperty("player_update"))
 			loopPlayerState(game, loop["player_update"]);
 		if (loop.hasOwnProperty("room_update"))
 			loopRoomState(game, loop["room_update"]);
 	}
+	else if (action == "finished")
+		endGame(msg, game);
 	else if (action == "room_change")
-	{
 		changeRoom(game, msg["player_leave"]);
-	}
 	// msgJson = val::undefined();
 }

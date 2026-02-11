@@ -100,15 +100,15 @@ void updateRoom(Player &player, uWS::App &app)
 		player.setNode(player.getNode()->up.lock());
 		player.findP();
 		sendLeaveUpdate(player, app, oldTopic);
-		if (player.getWs()->unsubscribe(oldTopic))
-			std::cout << "unsubscribe from " << oldTopic << std::endl;
-		if (player.getWs()->subscribe(player.getRoomRef().getRoomId()))
-			std::cout << "subscribed to " << player.getRoomRef().getRoomId() << std::endl;
+		player.getWs()->unsubscribe(oldTopic);
+		player.getWs()->subscribe(player.getRoom().getRoomId());
 	}
-	else if (player.getExit() > 32)
-	{
-		player.setExit(' ');
-	}
+	else if (plan[y][x] == 'F')
+		player.setFinished(true);
+    else if (player.getExit() > 32)
+    {
+        player.setExit(' ');
+    }
 }
 
 float	abs_dist(Player const &player, Mob const &mob)

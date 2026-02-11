@@ -8,8 +8,6 @@ Player::Player(std::string uid, std::string name, SDL_Color color) : _uid(uid), 
 	if (!surf)
 		SDL_Log("RenderText error: %s", TTF_GetError());
 	this->_nameTexture = SDL_CreateTextureFromSurface(gSdl.renderer, surf);
-	int w, h;
-	SDL_QueryTexture(this->_nameTexture, nullptr, nullptr, &w, &h);
 	SDL_FreeSurface(surf);
 	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
 	return ;

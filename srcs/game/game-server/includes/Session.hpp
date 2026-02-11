@@ -7,19 +7,22 @@
 class Session
 {
 	private:
-		int										_maxNumPlayer;
-		std::vector<std::string>				_spectators;//maybe spectator class later
-		std::vector<std::shared_ptr<Player>>	_players;
-		std::vector<Map>						_maps;
-		Map										_watingRoom;
-		bool									_running;
-		bool									_ended;
+		int											_maxNumPlayer;
+		std::vector<std::string>					_spectators;//maybe spectator class later
+		std::vector<std::shared_ptr<Player>>		_players;
+		std::vector<Map>							_maps;
+		std::string									_sessionId;
+		Map											_watingRoom;
+		bool										_running;
+		bool										_ended;
+		std::string									_mapInfos;
+		std::chrono::_V2::steady_clock::time_point	_startTime;
+		int											_numPlayersFinished;
 
-		bool									_readyToRun;
+		bool										_readyToRun;
 		std::chrono::_V2::steady_clock::time_point	_timerBeforeRun;
-		double									_readyToRunStartTimer;
+		double										_readyToRunStartTimer;
 
-		std::string								_mapInfos;
 
 	private:
 		void									linkMaps(Map &down, Map &up);
@@ -34,6 +37,7 @@ class Session
 	public:
 		void									launch();
 		void									addParty(Party &newParty);
+		void									checkFinishedPlayers(uWS::App &app);
 		bool									removePlayer(std::shared_ptr<Player> rmPlayer);
 		bool									isPlayerInSession(std::string &uid) const;
 		void									sendToAll(Player &sender);
@@ -41,6 +45,7 @@ class Session
 		std::vector<std::shared_ptr<Player>>	getPlayers(void) const;
 		int										getMaxNumPlayer(void) const;
 		int										getPlaceLeft(void) const;
+		double									getActualTime(void) const;
 		int										getNumPlayers(void) const;
 		bool									isRunning(void) const;
 		bool									isReadyToRun(void) const;

@@ -20,7 +20,6 @@ Hud::~Hud(void)
 void	Hud::print(std::vector<Map> const &maps, Player const  &player, int launched)
 {
 	SDL_Rect rect = {0, 0, 800, 150};
-	(void)maps, (void)player, (void)launched;
 	SDL_RenderCopy(gSdl.renderer, this->_placeHolderTexture, NULL, &rect);
 	if (launched)
 		this->_minimap.printMinimap(maps, player);

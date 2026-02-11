@@ -17,18 +17,21 @@ typedef struct PerSocketData
 class Player
 {
 	private:
-		std::string	_uid;
-		int			_numPlayer;
-		int			_partySize;//size of the group
-		std::string	_partyName; //party is for the group with you launch the game with (before matchmaking)
-		std::string	_name;
-		std::string	_groupName; //party is designing an appartenance at a game room, with all of the other players of the session
-		bool		_inQueue;
-		bool		_inSession;
-		bool		_launched;
-		bool		_connected;
-		char		_exit;
-		uWS::WebSocket<false, true, PerSocketData> *_ws;
+		std::string									_uid;
+		int											_numPlayer;
+		int											_partySize;//size of the group
+		std::string									_partyName; //party is for the group with you launch the game with (before matchmaking)
+		std::string									_name;
+		std::string									_groupName; //party is designing an appartenance at a game room, with all of the other players of the session
+		bool										_inQueue;
+		bool										_inSession;
+		bool										_launched;
+		bool										_connected;
+		bool										_finished;
+		bool										_hasWin;
+		int											_finalRanking;
+		char										_exit;
+		uWS::WebSocket<false, true, PerSocketData>	*_ws;
 
 	//player pos
 		float		_x;
@@ -69,6 +72,9 @@ class Player
 		Room		getRoom(void) const;
 		quadList	getNode(void) const;
 		quadList	getPrevNode(void) const;
+		bool		getFinished(void) const;
+		bool		HasWin(void) const;
+		int			getFinalRanking(void) const;
 		char		getExit(void) const;
 		int			getGroupSize() const;
 		int			getAnim(void) const;
@@ -96,6 +102,9 @@ class Player
 	//setter
 		void		setConnexion(bool c);
 		void		setLaunched(bool flag);
+		void		setFinished(bool flag);
+		void		setHasWin(bool flag);
+		void		setFinalRanking(int place);
 		void		setExit(char c);
 		void		setNode(const quadList &node);
 		void		setPrevNode(const quadList &node);

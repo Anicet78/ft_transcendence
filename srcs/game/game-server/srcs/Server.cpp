@@ -206,11 +206,13 @@ void	moveMobs(std::vector<std::string> const &map, Mob &mob, int destX, int dest
 	// }
 }
 
-void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app, int const &isRunning) {
+void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app, Session &session, int const &isRunning)
+{
 	std::string msg = "{\"action\": \"loop_action\"";
 
+	msg += ",\"session_timer\":" + std::to_string(session.getActualTime());
 	msg += ",\"running\":" + std::to_string(isRunning) + ",\"loop\": {";
-	//put player status in the msg
+
 	const int player_size = allPlayer.size();
 	if (player_size)
 	{
@@ -262,7 +264,7 @@ void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer,
 		{
 			std::string mobs_update = ",\"nbr_mob\":" + std::to_string(mob_size)
 						+ ",\"mobs\": [";
-			for (auto& [id, mob] : Mobs)
+			for (auto &[id, mob] : Mobs)
 			{
 				if (!mob->isDeathSend())
 				{
@@ -335,9 +337,14 @@ void	Server::run(void)
 					session.launch();
 				continue;
 			}
+			session.checkFinishedPlayers(*data->app);
+			if (session.hasEnded())
+				continue ;
 			std::unordered_map<Room *, std::vector<std::shared_ptr<Player>> > PlayerPerRoom;
 			for (auto player : session.getPlayers())
 			{
+				if (player->getFinished())
+					continue ;
 				Room &room = player->getRoomRef();
 				auto i = PlayerPerRoom.find(&room);
 				if (i == PlayerPerRoom.end())
@@ -351,8 +358,15 @@ void	Server::run(void)
 			}
 			for (auto i : PlayerPerRoom)
 			{
-				roomLoopUpdate(*i.first, i.second, data->app, session.isRunning());
+				roomLoopUpdate(*i.first, i.second, data->app, session, session.isRunning());
 			}
+		}
+		for (auto it = data->server->_sessions.begin(); it != data->server->_sessions.end();)
+		{
+			if (it->hasEnded())
+				it = data->server->_sessions.erase(it);
+			if (it != data->server->_sessions.end())
+				it++;
 		}
 	}, 500, 50);
 

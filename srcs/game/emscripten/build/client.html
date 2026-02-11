@@ -78,6 +78,13 @@
 			socket.send(payload);
 		}
 
+        function sendResults(obj)
+		{
+			const payload = JSON.stringify(obj);
+
+			log('End of game !! \n ' + payload);
+		}
+
         connectBtn.onclick = () => {
             socket = new WebSocket('ws://localhost:3000');
 
