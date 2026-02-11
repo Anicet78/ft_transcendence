@@ -174,16 +174,16 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
                 std::shared_ptr<Player> player = session.getPlayer(ws->getUserData()->playerId);
                 if (action == "connected")
                     player->setConnexion(1);
-                if (action == "launched")
+                else if (action == "launched")
                     player->setLaunched(1);
-                if (action == "player_move")
+                else if (action == "player_move")
                 {
                     updatePlayer(*player, req);
                     updateRoom(*player, app);
 					updateWorld(*player);
                 }
-                if (!session.getPlaceLeft() && session.doesAllPlayersConnected() && !session.isRunning())
-                    session.launch();
+                if (!session.getPlaceLeft() && session.doesAllPlayersConnected() && !session.isReadyToRun())
+                    session.startLaunching();
                 break;
             }
         }

@@ -2,7 +2,6 @@
 
 void	print_others(Player &player, std::vector<Player> &otherPlayers)
 {
-
 	if (otherPlayers.size())
 	{
 		int	tile_s = gSdl.getMapTileSize() * 2;

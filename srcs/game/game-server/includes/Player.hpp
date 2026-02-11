@@ -38,6 +38,8 @@ class Player
 		quadList	_node;
 		quadList	_prev_node;
 
+		int			_startPos;
+
 	//anim
 		int			_anim;
 		int			_last_dir;
@@ -80,6 +82,8 @@ class Player
 		float		getX(void) const;
 		float		getY(void) const;
 
+		int			getStartPos(void) const;
+
 		int			getHp(void) const;
 		int			getAtk(void) const;
 		int			getDef(void) const;
@@ -96,6 +100,9 @@ class Player
 		void		setNode(const quadList &node);
 		void		setPrevNode(const quadList &node);
 		void		setPos(float x, float y);
+
+		void		setStartPos(int pos);
+
 		void		setHp(int hp);
 		void		setAtk(int atk);
 		void		setDef(int def);

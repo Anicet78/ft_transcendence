@@ -1,5 +1,5 @@
 #include "Server.hpp"
-Server::Server(void) : _startTime(std::chrono::steady_clock::now())
+Server::Server(void)
 {}
 
 Server::~Server(void)
@@ -206,9 +206,10 @@ void	moveMobs(std::vector<std::string> const &map, Mob &mob, int destX, int dest
 	// }
 }
 
-void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app, Server *server) {
+void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app, int const &isRunning) {
 	std::string msg = "{\"action\": \"loop_action\"";
-	msg += ",\"server_timer\":" + std::to_string(server->getActualTime()) + ",\"loop\": {";
+
+	msg += ",\"running\":" + std::to_string(isRunning) + ",\"loop\": {";
 	//put player status in the msg
 	const int player_size = allPlayer.size();
 	if (player_size)
@@ -224,6 +225,7 @@ void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer,
 			player_update += ",\"player_anim\":" + std::to_string(player->getAnim());
 			player_update += ",\"player_dir\":" + std::to_string(player->getLastDir());
 			player_update += ",\"player_kills\":" + std::to_string(player->getKills());
+			player_update += ",\"player_start\":" + std::to_string(player->getStartPos());
 			player_update += ",\"player_exit\":\"";
 			player_update.push_back(player->getExit());
 			player_update += "\"},";
@@ -325,8 +327,14 @@ void	Server::run(void)
 	us_timer_set(delayTimer, [](struct us_timer_t *t)
 	{
 		auto *data = (TimerData *) us_timer_ext(t);
-		for(auto session : data->server->_sessions)
+		for(auto &session : data->server->_sessions)
 		{
+			if (!session.isRunning() && session.isReadyToRun())
+			{
+				if (session.isEnoughtReadyTime())
+					session.launch();
+				continue;
+			}
 			std::unordered_map<Room *, std::vector<std::shared_ptr<Player>> > PlayerPerRoom;
 			for (auto player : session.getPlayers())
 			{
@@ -343,7 +351,7 @@ void	Server::run(void)
 			}
 			for (auto i : PlayerPerRoom)
 			{
-				roomLoopUpdate(*i.first, i.second, data->app, data->server);
+				roomLoopUpdate(*i.first, i.second, data->app, session.isRunning());
 			}
 		}
 	}, 500, 50);
@@ -387,9 +395,4 @@ void	Server::run(void)
 		});
 
 		app.run();
-}
-
-double Server::getActualTime(void) const
-{
-	return std::chrono::duration<double>(std::chrono::steady_clock::now() - this->_startTime).count();
 }

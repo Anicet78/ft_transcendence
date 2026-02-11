@@ -65,19 +65,54 @@ void	fillMapInfos(val &msg, Game &game)
 	printMap(vmaps[2]);
 }
 
-void	launchGame(Game &game, val &msg)
+// void	launchGame(Game &game, val &msg)
+// {
+// 	auto &maps = game.getMaps();
+// 	quadList start;
+// 	int startRoom = msg["start"].as<int>();
+// 	for (quadList &node : maps[1].getNodes())
+// 	{
+// 		if (node->getRoom() && node->getRoom()->getName() == "start" && !startRoom--)
+// 		{
+// 			start = node;
+// 			break ;
+// 		}
+// 	}
+// 	game.getPlayer().setNode(start);
+// 	game.setLaunched(1);
+// 	EM_ASM_({onCppMessage({action: "launched"});});
+// }
+
+void	launchGame(Game &game, val msg)
 {
 	auto &maps = game.getMaps();
 	quadList start;
-	int startRoom = msg["start"].as<int>();
+
+	const int nbr_player = msg["player_num"].as<int>();
+	int startPos = -2;
+
+	val playerStatus = msg["player_status"];
+	for (int i = 0; nbr_player; i++)
+	{
+		val pStatus = playerStatus[i];
+		if (game.getPlayer().getUid() == pStatus["player_uid"].as<std::string>())
+		{
+			startPos = pStatus["player_start"].as<int>();
+			break;
+		}
+	}
+	if (startPos < 0)
+		return ;
+
 	for (quadList &node : maps[1].getNodes())
 	{
-		if (node->getRoom() && node->getRoom()->getName() == "start" && !startRoom--)
+		if (node->getRoom() && node->getRoom()->getName() == "start" && !startPos--)
 		{
 			start = node;
 			break ;
 		}
 	}
+
 	game.getPlayer().setNode(start);
 	game.setLaunched(1);
 	EM_ASM_({onCppMessage({action: "launched"});});
@@ -106,17 +141,27 @@ void	parseJson(bool &init, Game &game)
 		game.getPlayer().setNode(game.getMaps()[0].getNodes()[0]);
 		EM_ASM_({onCppMessage({action: "connected"});});
 	}
-	else if (action == "launch")
-		launchGame(game, msg);
 	else if (action == "loop_action")
 	{
 		val loop = msg["loop"];
+		if (!gSdl.getIsRunning())
+		{
+			if (msg.hasOwnProperty("running") && msg["running"].as<int>() == 1)
+			{
+				gSdl.enableIsRunning();
+				game.getOtherPlayers().clear();
+				if (loop.hasOwnProperty("player_update"))
+					launchGame(game, loop["player_update"]);
+			}
+		}
 		if (loop.hasOwnProperty("player_update"))
 			loopPlayerState(game, loop["player_update"]);
 		if (loop.hasOwnProperty("room_update"))
 			loopRoomState(game, loop["room_update"]);
 	}
 	else if (action == "room_change")
+	{
 		changeRoom(game, msg["player_leave"]);
+	}
 	// msgJson = val::undefined();
 }

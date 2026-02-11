@@ -2,23 +2,23 @@
 
 void updatePlayer(Player &player, std::map<std::string, std::string> &req)
 {
-    player.move(req);
-    player.updateAnim(req["anim"]);
-    int anim = player.getAnim();
-    if (anim == 0)
-    {
-        if (player.getIsAttacking() == true)
-            player.endAttacking();
-    }
-    else if (anim == 1)
-    {
-        if (player.getIsAttacking() == true)
-            player.endAttacking();
-    }
-    else if (anim == 2)
-    {
+	player.move(req);
+	player.updateAnim(req["anim"]);
+	int anim = player.getAnim();
+	if (anim == 0)
+	{
+		if (player.getIsAttacking() == true)
+			player.endAttacking();
+	}
+	else if (anim == 1)
+	{
+		if (player.getIsAttacking() == true)
+			player.endAttacking();
+	}
+	else if (anim == 2)
+	{
 		player.attack();
-    }
+	}
 }
 
 void	sendLeaveUpdate(Player &player, uWS::App &app, std::string &topic)
@@ -34,7 +34,7 @@ void	sendLeaveUpdate(Player &player, uWS::App &app, std::string &topic)
 
 void updateRoom(Player &player, uWS::App &app)
 {
-    Room room = player.getRoom();
+	Room room = player.getRoom();
 	auto plan = room.getRoomPlan();
 	float x = player.getX(), y = player.getY();
 
@@ -53,8 +53,8 @@ void updateRoom(Player &player, uWS::App &app)
 		if (exitsLoc[2][0] == static_cast<int>(x) && exitsLoc[2][1] == static_cast<int>(y)
 			&& !player.getNode()->south.expired())
 		{
-            player.setExit('S');
-            player.setPrevNode(player.getNode());
+			player.setExit('S');
+			player.setPrevNode(player.getNode());
 			player.setNode(player.getNode()->south.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[0][0] + 0.5, exitsLoc[0][1] + 1);
@@ -62,8 +62,8 @@ void updateRoom(Player &player, uWS::App &app)
 		else if (exitsLoc[0][0] == static_cast<int>(x) && exitsLoc[0][1] == static_cast<int>(y)
 			&& !player.getNode()->north.expired())
 		{
-            player.setExit('N');
-            player.setPrevNode(player.getNode());
+			player.setExit('N');
+			player.setPrevNode(player.getNode());
 			player.setNode(player.getNode()->north.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[2][0] + 0.5, exitsLoc[2][1] - 0.1);
@@ -71,8 +71,8 @@ void updateRoom(Player &player, uWS::App &app)
 		else if (exitsLoc[1][0] == static_cast<int>(x) && exitsLoc[1][1] == static_cast<int>(y)
 			&& !player.getNode()->east.expired())
 		{
-            player.setExit('E');
-            player.setPrevNode(player.getNode());
+			player.setExit('E');
+			player.setPrevNode(player.getNode());
 			player.setNode(player.getNode()->east.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[3][0] + 1, exitsLoc[3][1] + 0.5);
@@ -80,8 +80,8 @@ void updateRoom(Player &player, uWS::App &app)
 		else if (exitsLoc[3][0] == static_cast<int>(x) && exitsLoc[3][1] == static_cast<int>(y)
 			&& !player.getNode()->west.expired())
 		{
-            player.setExit('W');
-            player.setPrevNode(player.getNode());
+			player.setExit('W');
+			player.setPrevNode(player.getNode());
 			player.setNode(player.getNode()->west.lock());
 			exitsLoc = player.getRoom().getExitsLoc();
 			player.setPos(exitsLoc[1][0] - 0.1, exitsLoc[1][1] + 0.5);
@@ -105,10 +105,10 @@ void updateRoom(Player &player, uWS::App &app)
 		if (player.getWs()->subscribe(player.getRoomRef().getRoomId()))
 			std::cout << "subscribed to " << player.getRoomRef().getRoomId() << std::endl;
 	}
-    else if (player.getExit() > 32)
-    {
-        player.setExit(' ');
-    }
+	else if (player.getExit() > 32)
+	{
+		player.setExit(' ');
+	}
 }
 
 float	abs_dist(Player const &player, Mob const &mob)
@@ -116,19 +116,19 @@ float	abs_dist(Player const &player, Mob const &mob)
 	return (std::fabs(player.getX() - mob.getX()) + std::fabs(player.getY() - mob.getY()));
 }
 
-static void    mobInteraction(MobRush &rush, int id, Mob &mob, Player &player)
+static void	mobInteraction(MobRush &rush, int id, Mob &mob, Player &player)
 {
-    if (mob.checkInvinsibleFrame() == true)
-    {
-        int invFrame = mob.getInvFrame();
-        if (invFrame >= 23)
-        {
-            mob.setInvFrame(0);
-            mob.endInvinsibleFrame();
-        }
-        else
-            mob.setInvFrame(invFrame + 1);
-    }
+	if (mob.checkInvinsibleFrame() == true)
+	{
+		int invFrame = mob.getInvFrame();
+		if (invFrame >= 23)
+		{
+			mob.setInvFrame(0);
+			mob.endInvinsibleFrame();
+		}
+		else
+			mob.setInvFrame(invFrame + 1);
+	}
 	else if (player.getIsAttacking() == true)
 	{
 		if (abs_dist(player, mob) <= 2)
