@@ -53,7 +53,11 @@ void	key_up(void);
 void	updateRoom(Game &game, Player &player, std::string dir);
 void	print_map(Player &player);
 void	print_others(Player &player, std::vector<Player> &otherPlayers);
+void	print_mobs(MobRush &mobRush, Player &player);
 void	loopPlayerState(Game &game, val playerUpdate);
 void	loopRoomState(Game &game, val roomUpdate);
+void	parseJson(bool &init, Game &game);
+void	changeRoom(Game &game, val playerLeave);
+void	finishGame(void);
 
 #endif

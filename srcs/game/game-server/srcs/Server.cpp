@@ -1,5 +1,5 @@
 #include "Server.hpp"
-Server::Server(void) : _startTime(std::chrono::steady_clock::now())
+Server::Server(void)
 {}
 
 Server::~Server(void)
@@ -164,50 +164,55 @@ Player	&Server::getPlayer(std::string &uid)
 	return *this->_players[0];
 }
 
-void	moveMobs(std::vector<std::string> const &map, Mob &mob)
+void	moveMobs(std::vector<std::string> const &map, Mob &mob, int destX, int destY)
 {
 	float x = mob.getX();
 	float y = mob.getY();
+	(void)x;
+	(void)y;
+	(void)map, (void)destX, (void)destY;
 
-	y -= 0.1;
-	if (map[y][x] == '1' || map[y][x] == 'E')
-		y += 0.1;
-	else
-	{
-		mob.setPos(x,y);
-		return ;
-	}
-	y += 0.1;
-	if (map[y][x] == '1' || map[y][x] == 'E')
-		y -= 0.1;
-	else
-	{
-		mob.setPos(x,y);
-		return ;
-	}
-	x -= 0.1;
-	if (map[y][x] == '1' || map[y][x] == 'E')
-		x += 0.1;
-	else
-	{
-		mob.setPos(x,y);
-		return ;
-	}
-	x += 0.1;
-	if (map[y][x] == '1' || map[y][x] == 'E')
-		x -= 0.1;
-	else
-	{
-		mob.setPos(x,y);
-		return ;
-	}
+	// y -= 0.1;
+	// if (map[y][x] == '1' || map[y][x] == 'E')
+	// 	y += 0.1;
+	// else
+	// {
+	// 	mob.setPos(x,y);
+	// 	return ;
+	// }
+	// y += 0.1;
+	// if (map[y][x] == '1' || map[y][x] == 'E')
+	// 	y -= 0.1;
+	// else
+	// {
+	// 	mob.setPos(x,y);
+	// 	return ;
+	// }
+	// x -= 0.1;
+	// if (map[y][x] == '1' || map[y][x] == 'E')
+	// 	x += 0.1;
+	// else
+	// {
+	// 	mob.setPos(x,y);
+	// 	return ;
+	// }
+	// x += 0.1;
+	// if (map[y][x] == '1' || map[y][x] == 'E')
+	// 	x -= 0.1;
+	// else
+	// {
+	// 	mob.setPos(x,y);
+	// 	return ;
+	// }
 }
 
-void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app, Session &session)
+void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app, Session &session, int const &isRunning)
 {
 	std::string msg = "{\"action\": \"loop_action\"";
-	msg += ",\"session_timer\":" + std::to_string(session.getActualTime()) + ",\"loop\": {";
-	//put player status in the msg
+
+	msg += ",\"session_timer\":" + std::to_string(session.getActualTime());
+	msg += ",\"running\":" + std::to_string(isRunning) + ",\"loop\": {";
+
 	const int player_size = allPlayer.size();
 	if (player_size)
 	{
@@ -221,6 +226,8 @@ void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer,
 			player_update += ",\"player_health\":" + std::to_string(player->getHp());
 			player_update += ",\"player_anim\":" + std::to_string(player->getAnim());
 			player_update += ",\"player_dir\":" + std::to_string(player->getLastDir());
+			player_update += ",\"player_kills\":" + std::to_string(player->getKills());
+			player_update += ",\"player_start\":" + std::to_string(player->getStartPos());
 			player_update += ",\"player_exit\":\"";
 			player_update.push_back(player->getExit());
 			player_update += "\"},";
@@ -277,8 +284,6 @@ void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer,
 						mob->setSendDeath(true);
 					}
 
-					// if (!damaged && !dead)
-					// 	moveMobs(map, *mob);
 					std::string m = "{ \"mob_id\":" + std::to_string(id)
 							+ ",\"mob_x\":" + std::to_string(mob->getX())
 							+ ",\"mob_y\":" + std::to_string(mob->getY())
@@ -324,8 +329,14 @@ void	Server::run(void)
 	us_timer_set(delayTimer, [](struct us_timer_t *t)
 	{
 		auto *data = (TimerData *) us_timer_ext(t);
-		for (auto &session : data->server->_sessions)
+		for(auto &session : data->server->_sessions)
 		{
+			if (!session.isRunning() && session.isReadyToRun())
+			{
+				if (session.isEnoughtReadyTime())
+					session.launch();
+				continue;
+			}
 			session.checkFinishedPlayers(*data->app);
 			if (session.hasEnded())
 				continue ;
@@ -347,7 +358,7 @@ void	Server::run(void)
 			}
 			for (auto i : PlayerPerRoom)
 			{
-				roomLoopUpdate(*i.first, i.second, data->app, session);
+				roomLoopUpdate(*i.first, i.second, data->app, session, session.isRunning());
 			}
 		}
 		for (auto it = data->server->_sessions.begin(); it != data->server->_sessions.end();)
@@ -398,9 +409,4 @@ void	Server::run(void)
 		});
 
 		app.run();
-}
-
-double Server::getActualTime(void) const
-{
-	return std::chrono::duration<double>(std::chrono::steady_clock::now() - this->_startTime).count();
 }

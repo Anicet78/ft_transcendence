@@ -45,11 +45,6 @@ void updateRoom(Game &game, Player &player, std::string dir)
 	}
 }
 
-float	lerp(float a, float b, float t)
-{
-	return (a + (b - a)* t);
-}
-
 void	updatePlayerPosition(Player &player, double deltaTime)
 {
 	static int isIdling = 1;
@@ -109,23 +104,6 @@ void	updatePlayerPosition(Player &player, double deltaTime)
 	}
 }
 
-static void print_mobs(MobRush &mobRush, Player &player)
-{
-	int		tile_s = gSdl.getMapTileSize() * 2;
-	Camera	&cam = player.getCamera();
-	for (auto &mob : mobRush.getMobs())
-	{
-		if (mob.second->isDead() == false)
-		{
-			if (mob.second->checkInvinsibleFrame() == true && mob.second->getFrame() >= 23)
-				mob.second->endInvinsibleFrame();
-			if (mob.second->isDamaged())
-				mob.second->startInvinsibleFrame();
-			mob.second->printMob(cam.getCamX(), cam.getCamY(), tile_s);
-		}
-	}
-}
-
 void	playerAction(Player &player)
 {
 	//manage player atk state
@@ -153,6 +131,7 @@ void	updateOtherPlayer(std::vector<Player> &others, double deltaTime)
 	}
 	return ;
 }
+
 void	drawHud(Game &game)
 {
 	SDL_SetRenderTarget(gSdl.renderer, gSdl.hud);

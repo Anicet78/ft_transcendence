@@ -19,6 +19,11 @@ class Session
 		std::chrono::_V2::steady_clock::time_point	_startTime;
 		int											_numPlayersFinished;
 
+		bool										_readyToRun;
+		std::chrono::_V2::steady_clock::time_point	_timerBeforeRun;
+		double										_readyToRunStartTimer;
+
+
 	private:
 		void									linkMaps(Map &down, Map &up);
 		std::string								sendMaps(void);
@@ -43,8 +48,14 @@ class Session
 		double									getActualTime(void) const;
 		int										getNumPlayers(void) const;
 		bool									isRunning(void) const;
+		bool									isReadyToRun(void) const;
 		bool									doesAllPlayersConnected() const;
 		bool									hasEnded(void) const;
+
+		double									getActualTimeBeforeRun(void) const;
+		void									startLaunching(void);
+		bool									isEnoughtReadyTime(void) const;
+
 };
 
 void	sendPlayerState(Player &player, Session &session, std::string uid_leave);

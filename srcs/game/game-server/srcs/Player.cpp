@@ -2,8 +2,8 @@
 
 Player::Player(std::string uid, int partySize, std::string partyName, std::string name, uWS::WebSocket<false, true, PerSocketData> *ws)
 				: _uid(uid), _partySize(partySize),  _partyName(partyName), _name(name), _inQueue(true), _inSession(false),
-					_launched(0), _connected(0), _finished(0), _hasWin(0), _finalRanking(0), _exit(' '), _ws(ws), _x(0), _y(0), _anim(0), _last_dir(0), _hp(3), _atk(1), _def(0), _box(_x, _y, _last_dir),
-					_isAttacking(false), _atkFrame(0)
+					_launched(0), _connected(0), _finished(0), _hasWin(0), _finalRanking(0), _exit(' '), _ws(ws), _x(0), _y(0), _startPos(-1), _anim(0), _last_dir(0), _hp(3), _atk(1), _def(0), _box(_x, _y, _last_dir),
+					_isAttacking(false), _atkFrame(0), _kills(0)
 {
 	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
 	return ;
@@ -69,6 +69,11 @@ float	Player::getY(void) const
 	return (_y);
 }
 
+int		Player::getStartPos(void) const
+{
+	return (_startPos);
+}
+
 int		Player::getHp(void) const
 {
 	return (_hp);
@@ -107,6 +112,10 @@ HitBox	&Player::getHitBox(void)
 FRect	&Player::getWallHitBox(void)
 {
 	return (this->_wallHitBox);
+}
+
+int		Player::getKills(void) const {
+	return (this->_kills);
 }
 
 bool Player::isInQueue(void) const
@@ -219,6 +228,12 @@ void	Player::setPos(float x, float y)
 	return ;
 }
 
+void	Player::setStartPos(int pos)
+{
+	_startPos = pos;
+	return ;
+}
+
 void	Player::setHp(int hp)
 {
 	_hp = hp;
@@ -252,6 +267,11 @@ void	Player::setInSession(bool flag)
 	this->_inSession = flag;
 }
 
+void	Player::addKills(void)
+{
+	this->_kills++;
+}
+
 void	Player::findP(void)
 {
 	auto plan = this->getRoom().getRoomPlan();
@@ -269,10 +289,11 @@ void	Player::findP(void)
 	}
 }
 
-static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &rect, int const flag, Player &player) {
+static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &rect, int const flag, Player &player, float deltaTime)
+{
 	if (flag == 0)
 	{
-		float y = rect.y - 0.1;
+		float y = rect.y - (6.0f * deltaTime);
 		if (plan[y][rect.x] == '1' || plan[y][rect.x + rect.h] == '1')
 			return (true);
 
@@ -287,7 +308,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &r
 	}
 	if (flag == 1)
 	{
-		float x = rect.x - 0.1;
+		float x = rect.x - (6.0f * deltaTime);
 		if (plan[rect.y][x] == '1' || plan[rect.y + rect.h][x] == '1')
 			return (true);
 
@@ -302,7 +323,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &r
 	}
 	if (flag == 2)
 	{
-		float y = rect.y + 0.1;
+		float y = rect.y + (6.0f * deltaTime);
 		if (plan[y + rect.h][rect.x] == '1' || plan[y + rect.h][rect.x + rect.w] == '1')
 			return (true);
 		
@@ -317,7 +338,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &r
 	}
 	if (flag == 3)
 	{
-		float x = rect.x + 0.1;
+		float x = rect.x + (6.0f * deltaTime);
 		if (plan[rect.y][x + rect.h] == '1' || plan[rect.y + rect.h][x + rect.w] == '1')
 			return (true);
 		
@@ -358,25 +379,25 @@ void	Player::move(std::map<std::string, std::string> &req) {
 	if (req["w_key"] == "true")
 	{
 		y -= 6.0f * deltaTime;
-		if (!(y >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 0, *this)))
+		if (!(y >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 0, *this, deltaTime)))
 			y += 6.0f * deltaTime;
 	}
 	if (req["a_key"] == "true")
 	{
 		x -= 6.0f * deltaTime;
-		if (!(x >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 1, *this)))
+		if (!(x >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 1, *this, deltaTime)))
 			x += 6.0f * deltaTime;
 	}
 	if (req["s_key"] == "true")
 	{
 		y += 6.0f * deltaTime;
-		if (!(y < room.getHeight() && !checkWallHitBox(plan, this->_wallHitBox, 2, *this)))
+		if (!(y < room.getHeight() && !checkWallHitBox(plan, this->_wallHitBox, 2, *this, deltaTime)))
 			y -= 6.0f * deltaTime;
 	}
 	if (req["d_key"] == "true")
 	{
 		x += 6.0f * deltaTime;
-		if (!(x < room.getWidth() && !checkWallHitBox(plan, this->_wallHitBox, 3, *this)))
+		if (!(x < room.getWidth() && !checkWallHitBox(plan, this->_wallHitBox, 3, *this, deltaTime)))
 			x -= 6.0f * deltaTime;
 	}
 	this->setPos(x, y);

@@ -2,7 +2,7 @@
 
 Player::Player(std::string uid, std::string name, SDL_Color color) : _uid(uid), _name(name), _x(0), _y(0),
 					_screenX(0), _screenY(0), _anim(0), _hp(3), _atk(1), _def(0), _atkState(false),
-					_camera(_x, _y, 12, 12, SCREEN_WIDTH, GAME_HEIGHT), _floor(0), _last_dir(0), _frame(0), _prev_state(PLAYER_IDLE)
+					_camera(_x, _y, 12, 12, SCREEN_WIDTH, GAME_HEIGHT), _floor(0), _last_dir(0), _frame(0), _prev_state(PLAYER_IDLE), _kills(0)
 {
 	SDL_Surface* surf = TTF_RenderText_Blended(gSdl.font, name.c_str(), color);
 	if (!surf)
@@ -106,6 +106,11 @@ int	Player::getLastDir(void) const
 	return this->_last_dir;
 }
 
+int	Player::getKills(void) const
+{
+	return (this->_kills);
+}
+
 int Player::getFloor(void) const
 {
 	return this->_floor;
@@ -176,6 +181,12 @@ void	Player::setDef(int def)
 void Player::setDir(int dir)
 {
 	this->_last_dir = dir;
+}
+
+void	Player::setKills(int kills)
+{
+	this->_kills = kills;
+	return ;
 }
 
 void	Player::setAnim(int anim)
