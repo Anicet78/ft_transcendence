@@ -4,12 +4,18 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../serverApi";
 import { Box } from "@allxsmith/bestax-bulma";
 import { useState } from "react";
+import { useAuth } from "../auth/AuthContext";
 
-type ChatInfoResponse = GetResponse<"/chat/:chatId/info", "get">;
-type ChatMessagesResponse = GetResponse<"/chat/:chatId/messages", "get">;
+type ChatInfoResponse = GetResponse<"/chat/{chatId}/info", "get">;
+type ChatMessagesResponse = GetResponse<"/chat/{chatId}/messages", "get">;
+
 
 const ChatView = () => {
 	const { chatId } = useParams();
+	const { user } = useAuth();
+
+	const queryClient = useQueryClient();
+	const [content, setContent] = useState("");
 
 	//GET CHAT INFO
 	const chatInfoQuery = useQuery({
@@ -31,9 +37,6 @@ const ChatView = () => {
 		enabled: !!chatId
 	});
 
-	const queryClient = useQueryClient();
-	const [content, setContent] = useState("");
-
 	// SEND MESSAGE MUTATION
 	const sendMessageMutation = useMutation({
 		mutationFn: async () => {
@@ -45,10 +48,40 @@ const ChatView = () => {
 		}
 	});
 
-	//DELETE MESSAGE
+	//DELETE MESSAGE (only by message author, admin use MODERATE action)
 	const deleteMessageMutation = useMutation({
 		mutationFn: async (messageId: string) => {
 			return api.delete(`/chat/${messageId}`);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["chat-messages", chatId] });
+		}
+	});
+
+	//EDIT MESSAGE
+	const editMessageMutation = useMutation({
+		mutationFn: async ({ messageId, content }: { messageId: string; content: string }) => {
+			return api.patch(`/chat/${chatId}/message/${messageId}/edit`, {content});
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["chat-messages", chatId] });
+		}
+	});
+
+	//MODERATE MESSAGE
+	const moderateMessageMutation = useMutation({
+		mutationFn: async (messageId: string) => {
+			return api.patch(`/chat/${chatId}/message/${messageId}/moderate`);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["chat-messages", chatId] });
+		}
+	});
+
+	//RESTORE MESSAGE
+	const restoreMessageMutation = useMutation({
+		mutationFn: async (messageId: string) => {
+			return api.patch(`/chat/${chatId}/message/${messageId}/restore`);
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["chat-messages", chatId] });
@@ -63,77 +96,115 @@ const ChatView = () => {
 	if (chatInfoQuery.isError || messagesQuery.isError)
 		return <div>Error loading chat</div>;
 
-	const chat = chatInfoQuery.data;
-	const messages = messagesQuery.data;
+	const chat = chatInfoQuery.data!;
+	const messages = messagesQuery.data!;
+	const myMemberEntry = chat.members.find(mbr => mbr.user.appUserId === user?.id);
+	const myRole = myMemberEntry?.role!; // "owner" | "admin" | "moderator" | "writer" | "member"
+	const isModerator = ["owner", "admin", "moderator"].includes(myRole);
 
 	return (
-	<Box m="4" p="6" bgColor="white">
-		<h1 className="title">
-		{chat.chatName || (chat.chatType === "private" ? "Private chat" : "Group chat")}
-		</h1>
+		<Box m="4" p="6" bgColor="white">
+			<h1 className="title">
+			{chat.chatName || (chat.chatType === "private" ? "Private chat" : "Group chat")}
+			</h1>
 
-		<h2 className="subtitle">Members</h2>
-		<ul>
-		{chat.members.map(mbr => (
-			<li key={mbr.chatMemberId}>
-			{mbr.user.username} — {mbr.role}
-			</li>
-		))}
-		</ul>
+			<h2 className="subtitle">Members</h2>
+			<ul>
+			{chat.members.map(mbr => (
+				<li key={mbr.chatMemberId}>
+				{mbr.user.username} - {mbr.role}
+				</li>
+			))}
+			</ul>
 
-		<hr />
+			<hr />
 
-		<h2 className="subtitle">Messages</h2>
+			<h2 className="subtitle">Messages</h2>
 
-		{messages.length === 0 && <p>No messages yet.</p>}
+			{/*messages.length === 0 && <p>No messages yet.</p>*/}
 
-		{messages.map(msg => (
-		<Box key={msg.messageId} className="box" m="2" p="3">
-			<strong>{msg.author.username}</strong>
-			<p>{msg.content}</p>
-			<small>
-			{msg.postedAt ? new Date(msg.postedAt).toLocaleString() : ""}
-			</small>
+			{messages.map(msg => (
+			<Box key={msg.messageId} className="box" m="2" p="3">
+				<strong>{msg.author.username}</strong>
+				<p>{msg.content}</p>
+				<small>{msg.postedAt ? new Date(msg.postedAt).toLocaleString() : ""}</small>
 
-			{/* delete button, only if user is the author (but now only owner */}
-			{msg.userId === chatInfoQuery.data.createdBy?.appUserId && (
+				{/* AUTHOR ONLY ACTIONS */}
+				{msg.userId === user?.id && (
+					<>
+						{/* EDIT */}
+						<button
+							className="button is-warning is-small mt-2"
+							onClick={() => {
+								const newContent = prompt("Edit message:", msg.content);
+								if (newContent) {
+									editMessageMutation.mutate({ messageId: msg.messageId, content: newContent});
+								}
+							}}
+						>
+							Edit
+						</button>
+
+						{/* DELETE */}
+						<button
+							className="button is-danger is-small mt-2"
+							onClick={() => deleteMessageMutation.mutate(msg.messageId)}
+						>
+							Delete
+						</button>
+					</>
+				)}
+
+				{/* MODERATORS AND + ACTIONS */}
+				
+					{/* MODERATE */}
+					{isModerator && msg.status !== "moderated" && (
+						<button
+							className="button is-danger is-small mt-2 ml-2"
+							onClick={() => moderateMessageMutation.mutate(msg.messageId)}
+						>
+							Moderate
+						</button>
+					)}
+					{/* RESTORE */}
+					{isModerator && msg.status === "moderated" && (
+						<button
+							className="button is-success is-small mt-2 ml-2"
+							onClick={() => restoreMessageMutation.mutate(msg.messageId)}
+						>
+							Restore
+						</button>
+					)}
+
+			</Box>
+			
+			))}
+
+			<hr />
+
+			<h2 className="subtitle">Send a message</h2>
+
+			<div className="field has-addons">
+				<div className="control is-expanded">
+				<input
+					className="input"
+					type="text"
+					placeholder="Write a message..."
+					value={content}
+					onChange={(e) => setContent(e.target.value)}
+				/>
+				</div>
+				<div className="control">
 				<button
-					className="button is-danger is-small mt-2"
-					onClick={() => deleteMessageMutation.mutate(msg.messageId)}
+					className="button is-dark"
+					onClick={() => sendMessageMutation.mutate()}
+					disabled={sendMessageMutation.isPending || content.trim() === ""}
 				>
-					Delete
+					Send
 				</button>
-			)}
-
+				</div>
+			</div>
 		</Box>
-		
-		))}
-
-		<hr />
-
-		<h2 className="subtitle">Send a message</h2>
-
-		<div className="field has-addons">
-			<div className="control is-expanded">
-			<input
-				className="input"
-				type="text"
-				placeholder="Write a message..."
-				value={content}
-				onChange={(e) => setContent(e.target.value)}
-			/>
-			</div>
-			<div className="control">
-			<button
-				className="button is-dark"
-				onClick={() => sendMessageMutation.mutate()}
-				disabled={sendMessageMutation.isPending || content.trim() === ""}
-			>
-				Send
-			</button>
-			</div>
-		</div>
-	</Box>
 	);
 };
 

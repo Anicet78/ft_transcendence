@@ -82,9 +82,14 @@ async function seedPrivateChats(users) {
           ],
         },
         privateChat: {
-          create: {
-            user1Id,
-            user2Id,
+          connectOrCreate: {
+            where: {
+              user1Id_user2Id: { user1Id, user2Id },
+            },
+            create: {
+              user1Id,
+              user2Id,
+            },
           },
         },
       },
@@ -236,6 +241,16 @@ async function main() {
 
   const users = await createFixedUsers();
   console.log(" Users created!");
+
+  await prisma.chat.deleteMany();
+  await prisma.privateChat.deleteMany();
+  await prisma.chatMember.deleteMany();
+  await prisma.chatMessage.deleteMany();
+  await prisma.chatRole.deleteMany();
+  await prisma.chatBan.deleteMany();
+  await prisma.chatInvitation.deleteMany();
+
+
   await seedFriendships(users);
   console.log(" Friendships created!");
   await seedPrivateChats(users);
@@ -252,152 +267,3 @@ async function main() {
 
 main().catch(e => console.error(e)).finally(() => prisma.$disconnect());
 
-
-
-
-
-	// --- USERS ---
-	// const alice = await prisma.appUser.upsert({
-	// 	where: { mail: "alice@example.com" },
-	// 	update: {},
-	// 	create: {
-	// 		firstName: "Alice",
-	// 		lastName: "Wonder",
-	// 		username: "alice",
-	// 		mail: "alice@example.com",
-	// 		passwordHash: await hashPassword("password123"),
-	// 		region: "NA",
-	// 	},
-	// });
-
-	// const bob = await prisma.appUser.upsert({
-	// 	where: { mail: "bob@example.com" },
-	// 	update: {},
-	// 	create: {
-	// 		firstName: "Bob",
-	// 		lastName: "Builder",
-	// 		username: "bob",
-	// 		mail: "bob@example.com",
-	// 		passwordHash: await hashPassword("password123"),
-	// 		region: "NA",
-	// 	},
-	// });
-
-	// const vanille = await prisma.appUser.upsert({
-	// 	where: { mail: "vanille@example.com" },
-	// 	update: {},
-	// 	create: {
-	// 		firstName: "vanille",
-	// 		lastName: "Builder",
-	// 		username: "vanille",
-	// 		mail: "vanille@example.com",
-	// 		passwordHash: await hashPassword("password123"),
-	// 		region: "NA",
-	// 	},
-	// });
-
-	// // --- FRIENDSHIP ---
-	// await prisma.friendship.upsert({
-	// 	where: {
-	// 		// composite unique? If not, use idempotent logic:
-	// 		friendshipId: "00000000-0000-0000-0000-000000000001",
-	// 	},
-	// 	update: {},
-	// 	create: {
-	// 		friendshipId: "00000000-0000-0000-0000-000000000001",
-	// 		senderId: alice.appUserId,
-	// 		receiverId: bob.appUserId,
-	// 		status: "accepted",
-	// 	},
-	// });
-
-	// // --- PRIVATE CHAT ---
-	// const chat = await prisma.chat.create({
-	// 	data: {
-	// 		chatType: "private",
-	// 		chatName: "Alice & Bob",
-	// 		createdBy: alice.appUserId,
-	// 		members: {
-	// 		create: [
-	// 			{ userId: alice.appUserId },
-	// 			{ userId: bob.appUserId },
-	// 		],
-	// 		},
-	// 		privateChat: {
-	// 		create: {
-	// 			user1Id: alice.appUserId,
-	// 			user2Id: bob.appUserId,
-	// 		},
-	// 		},
-	// 	},
-	// });
-
-	// // --- GROUP CHAT ---
-	// const groupChat = await prisma.chat.create({
-	// 	data: {
-	// 		chatType: "group",
-	// 		chatName: "Zouzous",
-	// 		createdBy: alice.appUserId,
-	// 		members: {
-	// 		create: [
-	// 			{ userId: alice.appUserId },
-	// 			{ userId: bob.appUserId },
-	// 			{ userId: vanille.appUserId },
-	// 		],
-	// 		},
-	// 		privateChat: {
-	// 		create: {
-	// 			user1Id: alice.appUserId,
-	// 			user2Id: bob.appUserId,
-	// 		},
-	// 		},
-	// 	},
-	// });
-
-	// // --- MESSAGES ---
-	// await prisma.chatMessage.createMany({
-	// 	data: [
-	// 		{
-	// 		chatId: chat.chatId,
-	// 		userId: alice.appUserId,
-	// 		content: "Hey Bob!",
-	// 		},
-	// 		{
-	// 		chatId: chat.chatId,
-	// 		userId: bob.appUserId,
-	// 		content: "Hey Alice!",
-	// 		},
-	// 	],
-	// });
-
-	// // --- GAME PROFILE ---
-	// await prisma.gameProfile.upsert({
-	// 	where: { userId: alice.appUserId },
-	// 	update: {},
-	// 	create: {
-	// 		userId: alice.appUserId,
-	// 		totalGames: 10,
-	// 		totalWins: 6,
-	// 		totalEnemiesKilled: 120,
-	// 		totalXp: 500,
-	// 		level: 3,
-	// 	},
-	// });
-
-	// // --- GAME SESSION + RESULT ---
-	// const session = await prisma.gameSession.create({
-	// 	data: {
-	// 		mapName: "Forest",
-	// 		status: "finished",
-	// 	},
-	// });
-
-	// await prisma.gameResult.create({
-	// 	data: {
-	// 		gameId: session.sessionId,
-	// 		playerId: alice.appUserId,
-	// 		enemiesKilled: 12,
-	// 		gainedXp: 50,
-	// 		isWinner: true,
-	// 	},
-	// });
