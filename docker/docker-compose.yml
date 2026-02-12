@@ -76,15 +76,17 @@ services:
     depends_on:
       - postgres
 
-  # emscripten:
-  #   image: emscripten/emsdk:4.0.23
-  #   container_name: emscripten-c
-  #   volumes:
-  #     - ../srcs/game:/src
-  #     - ../srcs/frontend/game:/build
-  #   networks:
-  #     - transcendence
-  #   entrypoint: ["make", "wasm"]
+  emscripten:
+    image: emscripten/emsdk:4.0.23
+    container_name: emscripten-c
+    working_dir: /src/emscripten
+    volumes:
+      - ../srcs/game/assets:/src/assets
+      - ../srcs/game/emscripten:/src/emscripten
+      - ../srcs/frontend/src/game/build:/build
+    networks:
+      - transcendence
+    entrypoint: ["make", "wasm"]
 
   nginx:
     image: nginx:1.29.4
@@ -100,8 +102,8 @@ services:
       - ./certs:/etc/nginx/certs
     networks:
       - transcendence
-  #   depends_on:
-  #     - emscripten
+    depends_on:
+      - emscripten
 
 secrets:
   db_password:
