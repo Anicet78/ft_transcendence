@@ -19,9 +19,15 @@ import Error from './error/error.tsx';
 import Banner from './components/Banner.tsx';
 import MyFooter from './components/Footer.tsx';
 import FriendList from './friendship/FriendsList.tsx';
+import ChatList from './chat/ChatList.tsx';
+import ChatView from './chat/ChatView.tsx';
 import Home from './home/home.tsx';
 import JoinRoom from './home/join-room.tsx';
 import Game from './game/game.tsx';
+import FriendRequest from './friendship/FriendRequest.tsx';
+import UpdateRequest from './friendship/UpdateRequest.tsx';
+import RemoveFriend from './friendship/RemoveFriend.tsx';
+import AddFriend from './friendship/AddFriend.tsx';
 import { AuthProvider } from './auth/AuthContext.tsx';
 import { SocketProvider } from './socket/SocketContext.tsx';
 import { RoomProvider } from './home/RoomContext.tsx';
@@ -46,6 +52,12 @@ const AppEntryPoint = () => {
 				<Route path="/join/:roomId" element={<JoinRoom />} />
 				<Route path="/game" element={<Game />} />
 				<Route path="/friends" element={<FriendList />} />
+				<Route path="/friends/requests/" element={<FriendRequest />} />
+				<Route path="/friends/requests/update/:id" element={<UpdateRequest />} />
+				<Route path="/friends/remove/:id" element={<RemoveFriend />} />
+				<Route path="/friends/add/:id" element={<AddFriend />} />
+				<Route path="/chat/:chatId/info" element={<ChatView />} />
+				<Route path="/chat/list" element={<ChatList />} />
 				<Route path="/profile" element={<ProfilePrivate />} />
 				<Route path="/profile/:username" element={<ProfilePublic />} />
 				<Route path="/terms_of_service" element={<TermsService />} />

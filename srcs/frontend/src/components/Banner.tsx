@@ -3,24 +3,28 @@ import { NavLink } from 'react-router';
 import { Navbar, Icon } from '@allxsmith/bestax-bulma';
 import '../styles/Banner.css'
 import SearchBar from './SearchBar.tsx';
+import { useAuth } from '../auth/AuthContext.tsx';
 
 const Banner = () => {
+	const { user } = useAuth()
 	const [active, setActive] = useState(true)
 	const connected = false
-	const username = 'My username'
+	const username = user?.role || 'My username'
+	let path = "/"
 
+	if (username !== 'My username') {path = "/home"}
 	return (
 		<Navbar color='dark' role='navigation' aria-label='main navigation'>
 			<Navbar.Brand>
-				<Navbar.Item>
-					<NavLink to="/" aria-label='home button' className='button is-large is-primary is-outlined is-centered'>
+			
+					<NavLink to={path} aria-label='home button' className='button is-large is-primary is-outlined is-centered'>
 						<Icon
 						name="dragon"
 						ariaLabel="dragon logo"
 						/>
-						<span>TransDungeon</span>
+						<span>Dungeon</span>
 					</NavLink>
-				</Navbar.Item>
+
 			</Navbar.Brand>
 			<Navbar.Menu active={active}>
 				<Navbar.Start>
@@ -29,13 +33,10 @@ const Banner = () => {
 					</Navbar.Item>
 				</Navbar.Start>
 				<Navbar.End>
-					<Navbar.Item hidden={!connected}>
 						<NavLink to='/profile' aria-label='profile button' className='button is-primary is-medium is-centered'>
 							<Icon name='user' ariaLabel='user icon'/>
 							<span>{username}</span>
 						</NavLink>
-					</Navbar.Item>
-					<Navbar.Item>
 						<Navbar.Dropdown hoverable>
 							<Navbar.Item as="a" textColor='primary'>
 							<Icon
@@ -52,7 +53,6 @@ const Banner = () => {
 								<Navbar.Item href="#">Credentials</Navbar.Item>
 							</Navbar.DropdownMenu>
 						</Navbar.Dropdown>
-					</Navbar.Item>
 				</Navbar.End>
 			</Navbar.Menu>
 		</Navbar>

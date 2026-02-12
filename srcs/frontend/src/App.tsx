@@ -15,7 +15,7 @@ const App = () => {
 
 	return (
 		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' textSize='2' textWeight='bold'>
-			<div>Welcome to the game TransDungeon</div>
+			<div>Welcome to the game Dungeon</div>
 			<br/>
 			<div>
 				<NavLink to="/login" className="button is-dark is-medium is-outlined">Sign in</NavLink>

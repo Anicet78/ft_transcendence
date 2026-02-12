@@ -38,7 +38,8 @@ async function createFixedUsers() {
 async function seedFriendships(users) {
   const pairs = [
     [users[0], users[1], "accepted"],
-    [users[0], users[2], "waiting"],
+	  [users[0], users[3], "waiting"],
+	  [users[4], users[0], "waiting"],
     [users[1], users[3], "accepted"],
     [users[2], users[4], "waiting"],
     [users[3], users[4], "accepted"],
@@ -63,6 +64,13 @@ async function seedPrivateChats(users) {
   ];
 
   for (const [u1, u2] of pairs) {
+
+    // Enforce ordering for the DB constraint
+    const [user1Id, user2Id] =
+      u1.appUserId < u2.appUserId
+        ? [u1.appUserId, u2.appUserId]
+        : [u2.appUserId, u1.appUserId];
+
     const chat = await prisma.chat.create({
       data: {
         chatType: "private",
@@ -75,9 +83,14 @@ async function seedPrivateChats(users) {
           ],
         },
         privateChat: {
-          create: {
-            user1Id: u1.appUserId,
-            user2Id: u2.appUserId,
+          connectOrCreate: {
+            where: {
+              user1Id_user2Id: { user1Id, user2Id },
+            },
+            create: {
+              user1Id,
+              user2Id,
+            },
           },
         },
       },
@@ -228,11 +241,27 @@ async function main() {
 	});
 
   const users = await createFixedUsers();
+  console.log(" Users created!");
+
+  await prisma.chat.deleteMany();
+  await prisma.privateChat.deleteMany();
+  await prisma.chatMember.deleteMany();
+  await prisma.chatMessage.deleteMany();
+  await prisma.chatRole.deleteMany();
+  await prisma.chatBan.deleteMany();
+  await prisma.chatInvitation.deleteMany();
+
+
   await seedFriendships(users);
+  console.log(" Friendships created!");
   await seedPrivateChats(users);
+  console.log(" PrivateChats created!");
   await seedGroupChat(users);
+  console.log(" GroupChat created!");
   await seedGameProfiles(users);
+  console.log(" GameProfiles created!");
   await seedGameSessions(users);
+  console.log(" GameSessions created!");
 
   console.log("🌱 Seeding complete!");
 }
