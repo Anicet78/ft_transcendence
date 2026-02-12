@@ -63,7 +63,7 @@ export const SearchUsersQuerySchema = Type.Object({
 	sortOrder: Type.Optional(Type.Union([
 		Type.Literal('asc'),
 		Type.Literal('desc'),
-	])),	
+	])),
 
 });
 export type SearchUsersQuery = Static<typeof SearchUsersQuerySchema>;

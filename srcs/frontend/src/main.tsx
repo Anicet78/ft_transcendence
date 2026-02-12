@@ -19,6 +19,8 @@ import Error from './error/error.tsx';
 import Banner from './components/Banner.tsx';
 import MyFooter from './components/Footer.tsx';
 import FriendList from './friendship/FriendsList.tsx';
+import ChatList from './chat/ChatList.tsx';
+import ChatView from './chat/ChatView.tsx';
 import Home from './home/home.tsx';
 import { AuthProvider } from './auth/AuthContext.tsx';
 import { SocketProvider } from './socket/SocketContext.tsx';
@@ -49,6 +51,8 @@ const AppEntryPoint = () => {
 				<Route path="/friends/requests/update/:id" element={<UpdateRequest />} />
 				<Route path="/friends/remove/:id" element={<RemoveFriend />} />
 				<Route path="/friends/add/:id" element={<AddFriend />} />
+				<Route path="/chat/:chatId/info" element={<ChatView />} />
+				<Route path="/chat/list" element={<ChatList />} />
 				<Route path="/profile" element={<ProfilePrivate />} />
 				<Route path="/profile/:username" element={<ProfilePublic />} />
 				<Route path="/terms_of_service" element={<TermsService />} />

@@ -6,6 +6,7 @@ import { NavLink } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import api from '../serverApi.ts';
 import type { GetResponse } from '../types/GetType.ts';
+import { NavLink } from 'react-router';
 
 type ProfileResponseType = GetResponse<"/profile", "get">;
 
@@ -82,6 +83,12 @@ const ProfilePrivate = () => {
 				<p>Total loses: {totalLoses}</p>
 			</Box>
 			<NavLink to="/friends" className="button is-large">Friends list</NavLink>
+			<NavLink
+				to="/chat/list"
+				className="button is-dark is-medium is-outlined mt-4"
+			>
+				View my chats
+			</NavLink>
 		</Box>
 	)
 }
