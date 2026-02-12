@@ -24,6 +24,10 @@ import ChatView from './chat/ChatView.tsx';
 import Home from './home/home.tsx';
 import { AuthProvider } from './auth/AuthContext.tsx';
 import { SocketProvider } from './socket/SocketContext.tsx';
+import FriendRequest from './friendship/FriendRequest.tsx';
+import UpdateRequest from './friendship/UpdateRequest.tsx';
+import RemoveFriend from './friendship/RemoveFriend.tsx';
+import AddFriend from './friendship/AddFriend.tsx';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -43,6 +47,10 @@ const AppEntryPoint = () => {
 				<Route path="/register" element={<Register />} />
 				<Route path="/home" element={<Home />} />
 				<Route path="/friends" element={<FriendList />} />
+				<Route path="/friends/requests/" element={<FriendRequest />} />
+				<Route path="/friends/requests/update/:id" element={<UpdateRequest />} />
+				<Route path="/friends/remove/:id" element={<RemoveFriend />} />
+				<Route path="/friends/add/:id" element={<AddFriend />} />
 				<Route path="/chat/:chatId/info" element={<ChatView />} />
 				<Route path="/chat/list" element={<ChatList />} />
 				<Route path="/profile" element={<ProfilePrivate />} />

@@ -1,53 +1,49 @@
-import { Button } from "@allxsmith/bestax-bulma"
+import { Box, Button } from "@allxsmith/bestax-bulma"
+import "./friendList.css"
 
-const friendList = [
-	{
-		name: 'Alex',
-		isPlaying: true,
-		id: '1ed'
-	},
-	{
-		name: 'Baptiste',
-		isPlaying: false,
-		id: '2ab'
-	},
-	{
-		name: 'Coralie',
-		isPlaying: false,
-		id: '3sd'
-	},
-	{
-		name: 'Denise',
-		isPlaying: true,
-		id: '4kk'
-	},
-	{
-		name: 'Olivier',
-		isPlaying: true,
-		id: '5pl'
-	},
-	{
-		name: 'Emilie',
-		isPlaying: false,
-		id: '6uo'
-	}
-]
+import { NavLink } from "react-router";
+import { useQuery } from '@tanstack/react-query';
+import api, { getAccessToken } from '../serverApi.ts';
+import type { GetResponse } from '../types/GetType.ts'
+
+type FriendsListResponseType = GetResponse<"/friends", "get">;
 
 const FriendList = () => {
+	const myUsername = "nina"
+
+	const { data, isLoading, isError, error } = useQuery({
+		queryKey: ['friends', getAccessToken()],
+		queryFn: () => api.get("/friends"),
+	});
+
+	if (isLoading) return <div>Loading...</div>;
+	if (isError || !data) return <div>Error: {error?.message || 'unknown'}</div>;
+
+	const userData: FriendsListResponseType = data.data;
+	const listItems = userData.map(friend => {
+		return (
+		<li key={friend.friendshipId}>
+			{friend.sender.username !== myUsername && <NavLink to={"/profile/" + friend.sender.username}>{friend.sender.username}</NavLink>}
+			{friend.receiver.username !== myUsername && <NavLink to={"/profile/" + friend.receiver.username}>{friend.receiver.username}</NavLink>}
+			<Button>Join</Button>
+			<Button>Spectate</Button>
+		</li>
+		)
+	})
+
 	return (
-		<div>
-		<p>
-		My friends list:
-		</p>
-		<ul>
-		{friendList.map((friend) => (
-			<li key={friend.id}>
-			<span>{friend.name}</span>
-			{friend.isPlaying && <Button>Spectate</Button>}
-			</li>
-		))}
-		</ul>
-		</div>
+		<Box bgColor="grey" textColor="black" className="wrapbox">
+			<h1>
+			My friends list
+			</h1>
+			<Box m="4" p="6"  className="friendbox" bgColor="grey-light" textColor="black" justifyContent='space-between'>
+			<ul>
+				{listItems}
+				<br />
+			</ul>
+			</Box>
+			<NavLink to="/friends/requests" className="button is-medium">View ongoing friend requests</NavLink>
+		</Box>
 	)
 }
 

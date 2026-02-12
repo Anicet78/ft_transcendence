@@ -38,7 +38,8 @@ async function createFixedUsers() {
 async function seedFriendships(users) {
   const pairs = [
     [users[0], users[1], "accepted"],
-    [users[0], users[2], "waiting"],
+	  [users[0], users[3], "waiting"],
+	  [users[4], users[0], "waiting"],
     [users[1], users[3], "accepted"],
     [users[2], users[4], "waiting"],
     [users[3], users[4], "accepted"],
@@ -105,7 +106,6 @@ async function seedPrivateChats(users) {
     });
   }
 }
-
 
 // GROUP CHAT
 async function seedGroupChat(users) {
@@ -266,4 +266,3 @@ async function main() {
 }
 
 main().catch(e => console.error(e)).finally(() => prisma.$disconnect());
-

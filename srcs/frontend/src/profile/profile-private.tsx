@@ -1,6 +1,7 @@
 import '../App.css'
 import './profile.css'
 import { Box } from '@allxsmith/bestax-bulma';
+import { NavLink } from 'react-router';
 
 import { useQuery } from '@tanstack/react-query';
 import api from '../serverApi.ts';
@@ -16,7 +17,7 @@ const ProfilePrivate = () => {
 		queryFn: () => api.get("/profile"),
 	});
 
-	if (isLoading) return <div>Chargement...</div>;
+	if (isLoading) return <div>Loading...</div>;
 	if (isError || !data) return <div>Error: {error?.message || 'unknown'}</div>;
 
 	const userData: ProfileResponseType = data.data;
@@ -81,6 +82,7 @@ const ProfilePrivate = () => {
 				<p>Total wins: {totalWins}</p>
 				<p>Total loses: {totalLoses}</p>
 			</Box>
+			<NavLink to="/friends" className="button is-large">Friends list</NavLink>
 			<NavLink
 				to="/chat/list"
 				className="button is-dark is-medium is-outlined mt-4"
