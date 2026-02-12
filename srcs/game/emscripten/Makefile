@@ -9,6 +9,8 @@ EMFLAGS =	-s WASM=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -lembind \
 			-s EXPORTED_RUNTIME_METHODS='["callMain"]' \
 			-s EXIT_RUNTIME=1 \
 			-s EXPORT_NAME="createModule" \
+			-s EXPORT_ES6=1 \
+			-s ENVIRONMENT='web' \
 			$(CXXFLAGS) -O3
 
 
@@ -48,7 +50,7 @@ EMSRCS		= $(patsubst %, $(SRC_DIR)%, $(SRCS))
 OBJS		= $(patsubst %.cpp, $(OBJ_DIR)%.o, $(SRCS))
 
 NAME		= game
-EMNAME		= ./build/game.js
+EMNAME		= /build/game.js
 
 all: $(NAME)
 
@@ -67,9 +69,9 @@ clean:
 	rm -rf $(OBJ_DIR)
 
 wfclean:
-	rm -f ./build/game.js
-	rm -f ./build/game.wasm
-	rm -f ./build/game.data
+	rm -f /build/game.js
+	rm -f /build/game.wasm
+	rm -f /build/game.data
 
 fclean: clean
 	rm -rf $(NAME)
