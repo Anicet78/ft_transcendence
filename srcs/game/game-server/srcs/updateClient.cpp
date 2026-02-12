@@ -87,8 +87,11 @@ void updateRoom(Player &player, uWS::App &app)
 			player.setPos(exitsLoc[1][0] - 0.1, exitsLoc[1][1] + 0.5);
 		}
 		sendLeaveUpdate(player, app, oldTopic);
-		player.getWs()->unsubscribe(oldTopic);
-		player.getWs()->subscribe(player.getRoom().getRoomId());
+		if (player.getWs()->unsubscribe(oldTopic))
+			std::cout << "Unsubscribe from " << oldTopic << std::endl;
+
+		if (player.getWs()->subscribe(player.getRoom().getRoomId()))
+			std::cout << "Subscribe to " << player.getRoom().getRoomId() << std::endl;
 	}
 	else if (plan[y][x] == 'S')
 	{
@@ -100,8 +103,10 @@ void updateRoom(Player &player, uWS::App &app)
 		player.setNode(player.getNode()->up.lock());
 		player.findP();
 		sendLeaveUpdate(player, app, oldTopic);
-		player.getWs()->unsubscribe(oldTopic);
-		player.getWs()->subscribe(player.getRoom().getRoomId());
+		if (player.getWs()->unsubscribe(oldTopic))
+			std::cout << "Unsubscribe from " << oldTopic << std::endl;
+		if (player.getWs()->subscribe(player.getRoom().getRoomId()))
+			std::cout << "Subscribed to " << player.getRoom().getRoomId() << std::endl;
 	}
 	else if (plan[y][x] == 'F')
 		player.setFinished(true);

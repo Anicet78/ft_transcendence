@@ -73,7 +73,8 @@ void	Session::launch()
 
 		if (this->_players[pos]->getWs()->unsubscribe(roomId))
 			std::cout << "unsubscribe from waiting room" << std::endl;
-		this->_players[pos]->getWs()->subscribe(node->getRoom()->getRoomId());
+		if (this->_players[pos]->getWs()->subscribe(node->getRoom()->getRoomId()))
+			std::cout << "subscribed to " << node->getRoom()->getRoomId() << std::endl;
 		pos++;
 	}
 }
@@ -274,7 +275,8 @@ void	Session::checkFinishedPlayers(uWS::App &app)
 			player->getWs()->send(msg);
 			std::string	oldTopic = player->getRoomRef().getRoomId();
 			sendLeaveUpdate(*player, app, oldTopic);
-			player->getWs()->unsubscribe(oldTopic);
+			if (player->getWs()->unsubscribe(oldTopic))
+				std::cout << "unsibscribe from " << oldTopic << std::endl;
 			finishedPlayers.push_back(player);
 		}
 	}

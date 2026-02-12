@@ -27,7 +27,6 @@ void chainedMap::addRoom(const Room &room, std::string sessionId)
 		this->_room = std::make_shared<Room>(room);
 
 	this->_room->setRoomId(sessionId + ":" + room.getName() + "_" + std::to_string(this->getX()) + std::to_string(this->getY()));
-	std::cout << this->_room->getRoomId() << std::endl;
 	this->_room->setEvent();
 
 	auto exits = this->_room->getExits();
