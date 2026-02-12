@@ -140,17 +140,20 @@ static void	mobInteraction(MobRush &rush, int id, Mob &mob, Player &player)
 		{
 			HitBox	&box = mob.getBox();
 			box.updateHurtBox();
-			if (box.isDmgHit(player.getHitBox().getAtkHitBox()))
+			if (!mob.isDead())
 			{
-				mob.damaged(true);
-				mob.setHp(mob.getHp() - 1);
-				if (mob.getHp() <= 0)
+				if (box.isDmgHit(player.getHitBox().getAtkHitBox()))
 				{
-					rush.makeDie(id);
-					player.addKills();
-					return ;
+					mob.damaged(true);
+					mob.setHp(mob.getHp() - 1);
+					if (mob.getHp() <= 0)
+					{
+						rush.makeDie(id);
+						player.addKills();
+						return ;
+					}
+					mob.startInvinsibleFrame();
 				}
-				mob.startInvinsibleFrame();
 			}
 		}
 	}
