@@ -50,7 +50,6 @@ function Register() {
 	}
 
 	return (
-		<>
 		<div className="card">
 			<div>
 			<Button color='primary' isOutlined className='login-button'>Login with Google</Button>
@@ -71,7 +70,6 @@ function Register() {
 			</div>
 			</form>
 		</div>
-		</>
 	)
 }
 

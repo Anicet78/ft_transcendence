@@ -22,12 +22,15 @@ import FriendList from './friendship/FriendsList.tsx';
 import ChatList from './chat/ChatList.tsx';
 import ChatView from './chat/ChatView.tsx';
 import Home from './home/home.tsx';
-import { AuthProvider } from './auth/AuthContext.tsx';
-import { SocketProvider } from './socket/SocketContext.tsx';
+import JoinRoom from './home/join-room.tsx';
+import Game from './game/game.tsx';
 import FriendRequest from './friendship/FriendRequest.tsx';
 import UpdateRequest from './friendship/UpdateRequest.tsx';
 import RemoveFriend from './friendship/RemoveFriend.tsx';
 import AddFriend from './friendship/AddFriend.tsx';
+import { AuthProvider } from './auth/AuthContext.tsx';
+import { SocketProvider } from './socket/SocketContext.tsx';
+import { RoomProvider } from './home/RoomContext.tsx';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -46,6 +49,8 @@ const AppEntryPoint = () => {
 				<Route path="/login" element={<Login />} />
 				<Route path="/register" element={<Register />} />
 				<Route path="/home" element={<Home />} />
+				<Route path="/join/:roomId" element={<JoinRoom />} />
+				<Route path="/game" element={<Game />} />
 				<Route path="/friends" element={<FriendList />} />
 				<Route path="/friends/requests/" element={<FriendRequest />} />
 				<Route path="/friends/requests/update/:id" element={<UpdateRequest />} />
@@ -70,7 +75,9 @@ createRoot(document.getElementById('root') as HTMLElement).render(
 			<Router>
 				<AuthProvider>
 					<SocketProvider>
-						<AppEntryPoint />
+						<RoomProvider>
+							<AppEntryPoint />
+						</RoomProvider>
 					</SocketProvider>
 				</AuthProvider>
 			</Router>

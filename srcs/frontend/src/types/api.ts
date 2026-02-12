@@ -486,7 +486,10 @@ export interface paths {
                         "application/json": {
                             roomId: string;
                             hostId: string;
-                            playersId: string[];
+                            players: {
+                                id: string;
+                                username: string;
+                            }[];
                         };
                     };
                 };
@@ -500,6 +503,76 @@ export interface paths {
                             error: string;
                             code?: number;
                             message?: string;
+                        };
+                    };
+                };
+                /** @description Default Response */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            code?: number;
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description Default Response */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            code?: number;
+                            message?: string;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/room/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header: {
+                    "x-socket-id": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            roomId: string;
+                            hostId: string;
+                            players: {
+                                id: string;
+                                username: string;
+                            }[];
                         };
                     };
                 };
@@ -568,7 +641,10 @@ export interface paths {
                         "application/json": {
                             roomId: string;
                             hostId: string;
-                            playersId: string[];
+                            players: {
+                                id: string;
+                                username: string;
+                            }[];
                         };
                     };
                 };
@@ -650,7 +726,10 @@ export interface paths {
                         "application/json": {
                             roomId: string;
                             hostId: string;
-                            playersId: string[];
+                            players: {
+                                id: string;
+                                username: string;
+                            }[];
                         };
                     };
                 };
@@ -682,6 +761,69 @@ export interface paths {
                 };
                 /** @description Default Response */
                 409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            code?: number;
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description Default Response */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            code?: number;
+                            message?: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/room/{id}/quit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    "x-socket-id": string;
+                };
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Default Response */
+                400: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -749,7 +891,10 @@ export interface paths {
                         "application/json": {
                             roomId: string;
                             hostId: string;
-                            playersId: string[];
+                            players: {
+                                id: string;
+                                username: string;
+                            }[];
                         };
                     };
                 };
@@ -850,7 +995,10 @@ export interface paths {
                         "application/json": {
                             roomId: string;
                             hostId: string;
-                            playersId: string[];
+                            players: {
+                                id: string;
+                                username: string;
+                            }[];
                         };
                     };
                 };
@@ -935,7 +1083,10 @@ export interface paths {
                     "application/json": {
                         roomId: string;
                         hostId: string;
-                        playersId: string[];
+                        players: {
+                            id: string;
+                            username: string;
+                        }[];
                     };
                 };
             };
@@ -949,7 +1100,128 @@ export interface paths {
                         "application/json": {
                             roomId: string;
                             hostId: string;
-                            playersId: string[];
+                            players: {
+                                id: string;
+                                username: string;
+                            }[];
+                        };
+                    };
+                };
+                /** @description Default Response */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            code?: number;
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description Default Response */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            code?: number;
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description Default Response */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            code?: number;
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description Default Response */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            code?: number;
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description Default Response */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            code?: number;
+                            message?: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/room/launch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        roomId: string;
+                        hostId: string;
+                        players: {
+                            id: string;
+                            username: string;
+                        }[];
+                    };
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            roomId: string;
+                            hostId: string;
+                            players: {
+                                id: string;
+                                username: string;
+                            }[];
                         };
                     };
                 };

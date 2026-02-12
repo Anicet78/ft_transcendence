@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import Type, { type Static } from "typebox";
 import { AppErrorSchema } from "../../schema/errorSchema.js";
-import { getRoomController, hostRoomController, joinRoomController, kickRoomController, newRoomController, verifyRoomController } from "../../controllers/rooms/roomController.js";
+import { getMyRoomController, getRoomController, hostRoomController, joinRoomController, kickRoomController, launchController, newRoomController, quitRoomController, verifyRoomController } from "../../controllers/rooms/roomController.js";
 import { RoomSchema } from "../../schema/roomSchema.js";
 import { GlobalHeadersSchema } from "../../schema/globalHeadersSchema.js";
 
@@ -29,6 +29,17 @@ fastify.get("/:id", {
 	}
 }, getRoomController);
 
+fastify.get("/me", {
+	schema: {
+		headers: GlobalHeadersSchema,
+		response: {
+			200: RoomSchema,
+			404: AppErrorSchema,
+			500: AppErrorSchema
+		}
+	}
+}, getMyRoomController);
+
 fastify.post("/new", {
 	schema: {
 		headers: GlobalHeadersSchema,
@@ -54,6 +65,18 @@ fastify.post("/:id/join", {
 		}
 	}
 }, joinRoomController);
+
+fastify.post("/:id/quit", {
+	schema: {
+		headers: GlobalHeadersSchema,
+		params: RoomParamsSchema,
+		response: {
+			204: Type.Null(),
+			400: AppErrorSchema,
+			500: AppErrorSchema
+		}
+	}
+}, quitRoomController);
 
 fastify.post("/:id/host", {
 	schema: {
@@ -97,5 +120,19 @@ fastify.post("/verify", {
 		}
 	}
 }, verifyRoomController);
+
+fastify.post("/launch", {
+	schema: {
+		body: RoomSchema,
+		response: {
+			200: RoomSchema,
+			400: AppErrorSchema,
+			403: AppErrorSchema,
+			404: AppErrorSchema,
+			409: AppErrorSchema,
+			500: AppErrorSchema
+		}
+	}
+}, launchController);
 
 };

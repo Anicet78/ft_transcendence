@@ -4,6 +4,7 @@ import fs from "fs";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import fastifyCors from "@fastify/cors";
 import cookies from "@fastify/cookie";
+import type { RequestUser } from "../schema/userSchema.js";
 
 export type JWTPayload = {
 	id: string;
@@ -61,11 +62,7 @@ export default fp(async (fastify) => {
 
 declare module "@fastify/jwt" {
 	interface FastifyJWT {
-		user: {
-			id: string;
-			email: string;
-			role: string;
-		}
+		user: RequestUser
 	}
 }
 

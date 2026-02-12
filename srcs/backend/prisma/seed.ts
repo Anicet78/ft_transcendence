@@ -96,6 +96,7 @@ async function seedPrivateChats(users) {
       },
     });
 
+    // Static messages
     await prisma.chatMessage.createMany({
       data: [
         { chatId: chat.chatId, userId: u1.appUserId, content: "Hello!" },

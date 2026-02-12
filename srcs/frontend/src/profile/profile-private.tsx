@@ -2,11 +2,9 @@ import '../App.css'
 import './profile.css'
 import { Box } from '@allxsmith/bestax-bulma';
 import { NavLink } from 'react-router';
-
 import { useQuery } from '@tanstack/react-query';
 import api from '../serverApi.ts';
 import type { GetResponse } from '../types/GetType.ts';
-import { NavLink } from 'react-router';
 
 type ProfileResponseType = GetResponse<"/profile", "get">;
 
