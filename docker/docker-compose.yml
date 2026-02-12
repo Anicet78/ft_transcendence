@@ -88,6 +88,19 @@ services:
       - transcendence
     entrypoint: ["make", "wasm"]
 
+  game-server:
+    build:
+      context: ../srcs/game/game-server
+      dockerfile: Dockerfile
+    container_name: game-server-c
+    restart: on-failure
+    ports:
+      - 4444:4444
+    volumes:
+      - ../srcs/game/assets:/src/assets
+    networks:
+      - transcendence
+
   nginx:
     image: nginx:1.29.4
     container_name: nginx-c
