@@ -1,0 +1,36 @@
+Game rules
+
+---------------------------------------------------------------------------------------------------------
+(Single Player AND Multiplyer rules)
+
+You are a soldier lost in a multi-floors maze, your goal is to escape the maze the faster you can, while avoiding death at all cost.
+
+In order to win, you need to find one of the stairs of each floors, leading to the next floor and then to the end.
+
+Each floors have a specific design and property, but all of them have an exit/stairs leading to the end/next floor.
+
+The maze is composed of severals rooms, in some of them nothing to be aware of, but sometime, lots of goblin can trap you in the actual room and you need to defeat them in order to progress in the maze.
+
+Beware, goblins are not friendly at all, they'll attack you if they're able to !
+
+---------------------------------------------------------------------------------------------------------
+(Multiplayers rules)
+
+The little soldier you are should also be aware of other player, and progress as fast as they can to escape first, or at least, not be last...
+
+You cannot wound others soldier, your humanity is better than that, but best rewards are means for the most effective soldier, the little soldier quickness but also courrage against goblins will matter...
+
+So be fast, courageous, and dont let the other soldier take what you deserve !
+
+---------------------------------------------------------------------------------------------------------
+Keybinds :
+
+W - move forward
+
+A - move left
+
+S - move backward
+
+D - move right
+
+SPACE - attack
