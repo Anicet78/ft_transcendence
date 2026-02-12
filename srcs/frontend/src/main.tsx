@@ -24,7 +24,7 @@ import ChatView from './chat/ChatView.tsx';
 import Home from './home/home.tsx';
 import { AuthProvider } from './auth/AuthContext.tsx';
 import { SocketProvider } from './socket/SocketContext.tsx';
-import FriendRequest from './friendship/FriendRequest.tsx';
+import FriendRequest from './friendship/FriendRequests.tsx';
 import UpdateRequest from './friendship/UpdateRequest.tsx';
 import RemoveFriend from './friendship/RemoveFriend.tsx';
 import AddFriend from './friendship/AddFriend.tsx';
