@@ -83,7 +83,37 @@
 			const payload = JSON.stringify(obj);
 
 			log('End of game !! \n ' + payload);
+            disconnect();
 		}
+
+        function disconnect()
+        {
+            if (socket)
+            {
+                socket.close();
+                socket = null;
+            }
+
+            if (Module)
+            {
+                if (Module.finishGame)
+                    Module.finishGame();
+
+                if (Module.ctx)
+                {
+                    const ext = Module.ctx.getExtension('WEBGL_lose_context');
+                    if (ext)
+                        ext.loseContext();
+                }
+
+                Module = null;
+            }
+
+            const oldCanvas = document.getElementById("game-canvas");
+            const newCanvas = oldCanvas.cloneNode(true);
+            oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+        }
+
 
         connectBtn.onclick = () => {
             socket = new WebSocket('ws://localhost:3000');
@@ -134,30 +164,7 @@
 
         disconnectBtn.onclick = () =>
         {
-            if (socket)
-            {
-                socket.close();
-                socket = null;
-            }
-
-            if (Module)
-            {
-                if (Module.finishGame)
-                    Module.finishGame();
-
-                if (Module.ctx)
-                {
-                    const ext = Module.ctx.getExtension('WEBGL_lose_context');
-                    if (ext)
-                        ext.loseContext();
-                }
-
-                Module = null;
-            }
-
-            const oldCanvas = document.getElementById("game-canvas");
-            const newCanvas = oldCanvas.cloneNode(true);
-            oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+            disconnect();
         };
 
 

@@ -1,6 +1,6 @@
 # include "Session.hpp"
 
-Session::Session(void): _maxNumPlayer(2), _running(0), _ended(0), _startTime(std::chrono::steady_clock::time_point{}),
+Session::Session(void): _maxNumPlayer(1), _running(0), _ended(0), _startTime(std::chrono::steady_clock::time_point{}),
 						_numPlayersFinished(0),  _timerBeforeRun(std::chrono::_V2::steady_clock::now())
 {
 	static std::string set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

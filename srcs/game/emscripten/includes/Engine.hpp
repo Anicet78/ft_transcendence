@@ -22,6 +22,8 @@ class Engine
 		SDL_Texture		*texture;
 		SDL_Texture		*texture2;
 		TTF_Font		*font;
+		int				maxTexWidth;
+		int				maxTexHeight;
 		SDLTimer		cap;
 		SDLTimer		timer;
 		Key				key;
