@@ -21,9 +21,9 @@ const Home = () => {
 			{room.hostId === user?.id &&
 				<NavLink to="/game" color='primary' className='button is-dark is-medium is-outlined' aria-label='spectate button'>Launch Game</NavLink>
 			}
-			<Button color='primary' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={newRoom}>Quit room</Button>
+			<Button color='link' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={newRoom}>Quit room</Button>
 			{/* <Button color='primary' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={() => {navigator.clipboard.writeText(`${ServerUrl}/join/${room.roomId}`)}}>Copy invite link</Button> */}
-			<Button color='primary' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={() => {navigator.clipboard.writeText(`http://localhost:5173/join/${room.roomId}`)}}>Copy invite link</Button>
+			<Button color='link' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={() => {navigator.clipboard.writeText(`http://localhost:5173/join/${room.roomId}`)}}>Copy invite link</Button>
 		</Box>
 	)
 }

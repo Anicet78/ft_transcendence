@@ -1,8 +1,18 @@
 import './App.css'
 import { Box } from '@allxsmith/bestax-bulma';
-import { NavLink } from 'react-router';
+import { NavLink, useNavigate } from 'react-router';
+import { useAuth } from './auth/AuthContext';
+import { useEffect } from 'react';
 
 const App = () => {
+	const navigate = useNavigate();
+	const { user } = useAuth();
+
+	useEffect(() => {
+		if (user)
+			navigate("/home");
+	}, [])
+
 	return (
 		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' textSize='2' textWeight='bold'>
 			<div>Welcome to the game TransDungeon</div>
