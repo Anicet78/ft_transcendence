@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import type { GetResponse } from "../types/GetType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../serverApi";
@@ -125,7 +125,15 @@ const ChatView = () => {
 
 			{messages.map(msg => (
 			<Box key={msg.messageId} className="box" m="2" p="3">
-				<strong>{msg.author.username}</strong>
+				<strong>
+					<Link
+						to={`/profile/${encodeURIComponent(msg.author.username)}`}
+						aria-label={`Open ${msg.author.username} profile`}
+						className="has-texte-dark"
+					> 
+						{msg.author.username}
+					</Link>
+				</strong>
 				<p>{msg.content}</p>
 				<small>{msg.postedAt ? new Date(msg.postedAt).toLocaleString() : ""}</small>
 

@@ -32,6 +32,20 @@ export async function findOrCreatePrivateChat(userA: string, userB: string) {
 						{ userId: user1Id },
 						{ userId: user2Id }
 					]
+				},
+				roles: {//doesnt work, need to check why
+					create: [
+						{
+							userId: user1Id,
+							role: 'writer',
+							attributedBy: user2Id
+						},
+						{
+							userId: user2Id,
+							role: 'writer',
+							attributedBy: user1Id
+						}
+					]
 				}
 			},
 			select: { chatId: true }
@@ -49,38 +63,6 @@ export async function findOrCreatePrivateChat(userA: string, userB: string) {
 				chatId: true
 			}
 		});
-
-		// //create 2 rows inside chat_member and chat_role table, allowing 'writer' to prevent admin problems
-		// await prisma.$transaction([
-		// 	prisma.chatMember.create({
-		// 		data: {
-		// 			chatId: chat.chatId,
-		// 			userId: user1Id
-		// 		}
-		// 	}),
-		// 	prisma.chatMember.create({
-		// 		data: {
-		// 			chatId: chat.chatId,
-		// 			userId: user2Id
-		// 		}
-		// 	}),
-		// 	prisma.chatRole.createMany({
-		// 		data: [
-		// 			{
-		// 				chatId: chat.chatId,
-		// 				userId: user1Id,
-		// 				role: 'writer',
-		// 				attributedBy: systemUserId
-		// 			},
-		// 			{
-		// 				chatId: chat.chatId,
-		// 				userId: user2Id,
-		// 				role: 'writer',
-		// 				attributedBy: systemUserId
-		// 			}
-		// 		]
-		// 	})
-		// ]);
 
 		return privateChat;
 	});
