@@ -18,17 +18,17 @@ export type RoomContextValue = {
 
 const RoomContext = createContext<RoomContextValue | null>(null);
 
-const onPlayerJoined = (data: { playerId: string }, setRoom: React.Dispatch<React.SetStateAction<Room | null>>) => {
+const onPlayerJoined = (data: { playerId: string, playerUsername: string }, setRoom: React.Dispatch<React.SetStateAction<Room | null>>) => {
 	setRoom((prev) => {
 		if (!prev) return prev;
-		if (prev.playersId.includes(data.playerId)) return prev;
+		if (prev.players.map(players => players.id).includes(data.playerId)) return prev;
 
-		const players = Array.isArray(prev.playersId) ? prev.playersId : [];
-		if (players.includes(data.playerId)) return prev;
+		const players = Array.isArray(prev.players) ? prev.players : [];
+		if (players.map(players => players.id).includes(data.playerId)) return prev;
 
 		return {
 			...prev,
-			playersId: [...prev.playersId, data.playerId],
+			players: [...prev.players, { id: data.playerId, username: data.playerUsername }],
 		};
 	});
 };
@@ -39,7 +39,7 @@ const onPlayerQuit = (data: { playerId: string }, setRoom: React.Dispatch<React.
 
 		return {
 			...prev,
-			playersId: prev.playersId.filter((id: string) => id !== data.playerId),
+			players: prev.players.filter(players => players.id !== data.playerId)
 		};
 	});
 };

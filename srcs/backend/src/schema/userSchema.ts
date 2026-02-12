@@ -15,3 +15,10 @@ export const UserSchema = Type.Object({
 });
 
 export type User = Static<typeof UserSchema>
+
+export type RequestUser = {
+	id: string;
+	username: string,
+	email: string;
+	role: string;
+}

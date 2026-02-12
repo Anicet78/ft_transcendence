@@ -486,7 +486,10 @@ export interface paths {
                         "application/json": {
                             roomId: string;
                             hostId: string;
-                            playersId: string[];
+                            players: {
+                                id: string;
+                                username: string;
+                            }[];
                         };
                     };
                 };
@@ -566,7 +569,10 @@ export interface paths {
                         "application/json": {
                             roomId: string;
                             hostId: string;
-                            playersId: string[];
+                            players: {
+                                id: string;
+                                username: string;
+                            }[];
                         };
                     };
                 };
@@ -635,7 +641,10 @@ export interface paths {
                         "application/json": {
                             roomId: string;
                             hostId: string;
-                            playersId: string[];
+                            players: {
+                                id: string;
+                                username: string;
+                            }[];
                         };
                     };
                 };
@@ -717,7 +726,10 @@ export interface paths {
                         "application/json": {
                             roomId: string;
                             hostId: string;
-                            playersId: string[];
+                            players: {
+                                id: string;
+                                username: string;
+                            }[];
                         };
                     };
                 };
@@ -879,7 +891,10 @@ export interface paths {
                         "application/json": {
                             roomId: string;
                             hostId: string;
-                            playersId: string[];
+                            players: {
+                                id: string;
+                                username: string;
+                            }[];
                         };
                     };
                 };
@@ -980,7 +995,10 @@ export interface paths {
                         "application/json": {
                             roomId: string;
                             hostId: string;
-                            playersId: string[];
+                            players: {
+                                id: string;
+                                username: string;
+                            }[];
                         };
                     };
                 };
@@ -1065,7 +1083,10 @@ export interface paths {
                     "application/json": {
                         roomId: string;
                         hostId: string;
-                        playersId: string[];
+                        players: {
+                            id: string;
+                            username: string;
+                        }[];
                     };
                 };
             };
@@ -1079,7 +1100,10 @@ export interface paths {
                         "application/json": {
                             roomId: string;
                             hostId: string;
-                            playersId: string[];
+                            players: {
+                                id: string;
+                                username: string;
+                            }[];
                         };
                     };
                 };
@@ -1177,7 +1201,10 @@ export interface paths {
                     "application/json": {
                         roomId: string;
                         hostId: string;
-                        playersId: string[];
+                        players: {
+                            id: string;
+                            username: string;
+                        }[];
                     };
                 };
             };
@@ -1191,7 +1218,10 @@ export interface paths {
                         "application/json": {
                             roomId: string;
                             hostId: string;
-                            playersId: string[];
+                            players: {
+                                id: string;
+                                username: string;
+                            }[];
                         };
                     };
                 };

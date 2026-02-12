@@ -35,7 +35,7 @@ export async function postRegisterController(
 	if (dbUser.availability === false)
 		await UserService.setAvailabality(user.id, true);
 
-	const jwt = await reply.jwtSign({ id: user.id, email: user.email, role: user.role });
+	const jwt = await reply.jwtSign({ id: user.id, username: user.username, email: user.email, role: user.role });
 	const refresh = await createRefreshToken(user.id);
 
 	const response: RegisterResponseType = {token: jwt, user: user, roomId: "" };

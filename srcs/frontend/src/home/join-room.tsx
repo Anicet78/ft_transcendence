@@ -19,7 +19,6 @@ const JoinRoom = () => {
 		mutationFn: () => api.post(`/room/${roomId}/join`),
 		onSuccess: (data) => {
 			const newRoom: Room = data.data;
-			console.log(newRoom);
 			joinRoom(newRoom);
 			navigate("/home");
 			return ;
