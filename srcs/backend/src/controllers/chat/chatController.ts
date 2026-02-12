@@ -36,7 +36,7 @@ export async function getChatInfoController(
 	const { chatId } = req.params;
 
 	if (!userId) {
-	throw new AppError('Unauthorized', 401);
+		throw new AppError('Unauthorized', 401);
 	}
 
 	const chat = await getChatByIdForUser(chatId, userId);

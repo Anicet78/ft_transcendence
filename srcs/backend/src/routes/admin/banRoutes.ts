@@ -1,4 +1,4 @@
-import Type, { type Static } from "typebox";
+/* import Type, { type Static } from "typebox";
 import type { FastifyInstance } from "fastify";
 import { AppErrorSchema } from "../../schema/errorSchema.js";
 import { banController, unbanController } from "../../controllers/admin/banController.js";
@@ -48,3 +48,4 @@ fastify.post("/:id/unban", {
 }, unbanController);
 
 }
+ */

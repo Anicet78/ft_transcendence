@@ -1,6 +1,6 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import * as profileService from '../../services/db/profileService.js';
-import { type UpdateProfileBody, type ProfileIdParams} from '../../schema/profileSchema.js';
+import { type UpdateProfileBody, type ProfileIdParams, type ProfileUsernameParams} from '../../schema/profileSchema.js';
 import { mapProfileToResponse, mapPublicProfileToResponse } from './profileMapper.js';
 import { serializePrisma } from '../../utils/serializePrisma.js';
 import { UserService } from '../../services/db/userService.js';
@@ -20,11 +20,11 @@ export async function getProfile( req: FastifyRequest, reply: FastifyReply ) {
 // GET /profile/:id
 // export async function getPublicProfile( req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply ) {
 export async function getPublicProfile(
-  req: FastifyRequest<{ Params: ProfileIdParams }>,
+  req: FastifyRequest<{ Params: ProfileUsernameParams }>,
   reply: FastifyReply ) {
-  const userId = req.params.id;
+  const userName = req.params.username;
 
-  const profile = await profileService.getPublicProfile(userId);
+  const profile = await profileService.getPublicProfile(userName);
   if (!profile) {
     return reply.code(404).send({ error: 'User not found' });
   }

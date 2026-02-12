@@ -20,7 +20,7 @@ export const UpdateProfileBodySchema = Type.Object({
   region: Type.Optional(Type.String()),
   availability: Type.Optional(Type.Boolean())
 });
-export type UpdateProfileBody = Static<typeof UpdateProfileBodySchema>; 
+export type UpdateProfileBody = Static<typeof UpdateProfileBodySchema>;
 
 
 export const ProfileResponseSchema = Type.Object({
@@ -41,9 +41,11 @@ export type ProfileResponse = Static<typeof ProfileResponseSchema>;
 
 
 export const PublicProfileResponseSchema = Type.Object({
+  appUserId: Type.String(),
   username: Type.String(),
   avatarUrl: Type.Union([Type.String(), Type.Null()]),
   availability: Type.Boolean(),
+  playing: Type.Boolean(),
   region: Type.String(),
   createdAt: Type.String({ format: 'date-time' }),
   gameProfile: Type.Union([GameProfileSchema, Type.Null()])
@@ -55,5 +57,11 @@ export const ProfileIdParamsSchema = Type.Object({
   id: Type.String()
 });
 export type ProfileIdParams = Static<typeof ProfileIdParamsSchema>;
+
+export const ProfileUsernameParamsSchema = Type.Object({
+  username: Type.String()
+});
+export type ProfileUsernameParams = Static<typeof ProfileUsernameParamsSchema>;
+
 
 export const DeleteProfileResponseSchema = Type.Null();

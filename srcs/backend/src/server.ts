@@ -4,6 +4,7 @@ import errorPlugin from './plugins/error.js';
 import authPlugin from './plugins/auth.js';
 import socketPlugin from './plugins/socket.js';
 import { router } from './routes/index.js';
+import swagger from './plugins/swagger.js';
 
 export const fastify = Fastify({
 	logger: true,
@@ -14,10 +15,11 @@ fastify.withTypeProvider<TypeBoxTypeProvider>();
 
 const start = async () => {
 	try {
-		fastify.register(errorPlugin);
-		fastify.register(authPlugin);
-		fastify.register(socketPlugin);
-		fastify.register(router);
+		await fastify.register(swagger);
+		await fastify.register(errorPlugin);
+		await fastify.register(authPlugin);
+		await fastify.register(socketPlugin);
+		await fastify.register(router);
 
 		await fastify.listen({ port: 3000, host: '0.0.0.0' });
 		console.log('Server running on http://localhost:3000');

@@ -27,6 +27,9 @@ cert:
 		-subj "/CN=$(DOMAIN)"
 	$(INFO) "Certificate created."
 
+doc:
+	@docker exec -it node-c npx --prefix /front openapi-typescript http://node:3000/documentation/json --output /front/src/types/api.ts
+
 $(SECRET_PATH)/%_secret.txt:
 	@mkdir -p $(SECRET_PATH)
 	@node -e "console.log(require('crypto').randomBytes(32).toString('hex'))" | cat > $@

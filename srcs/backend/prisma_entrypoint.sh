@@ -20,6 +20,10 @@ if ! npx prisma db pull; then
 	echo "Prisma db pull failed; continuing without blocking container start"
 fi
 
+if ! npx prisma db seed; then
+	echo "Prisma db seed failed; continuing without blocking container start"
+fi
+
 echo "DATABASE_URL loaded securely: ${#URL} chars."
 
 exec "$@"
