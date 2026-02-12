@@ -61,7 +61,6 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 wasm:
-	mkdir -p build
 	$(EMSCRIPTEN) $(EMSRCS) $(EMFLAGS) --preload-file ../assets -o $(EMNAME)
 
 clean:

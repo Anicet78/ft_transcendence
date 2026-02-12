@@ -30,68 +30,82 @@ const Game = () => {
 			return ;
 		}
 
-		setGameSocket(new WebSocket('ws://localhost:3000'));
+		const socket = new WebSocket('ws://localhost:4444');
+		setGameSocket(socket);
 
-		const initWasm = async () => {
+		if (!socket) return ;
 
-			if (!canvasRef.current || !gameSocket) return;
+		return () => {
+			cancelStart();
+			socket.close();
 
-			gameSocket.onopen = async () => {
-				try {
-					setModule(await createModule({
-						canvas: canvasRef.current,
-						noInitialRun: true,
-						print: (text: string) => console.log('Wasm Log:', text),
-						printErr: (text: string) => console.error('Wasm Error:', text),
-					}));
-					console.log("Module chargé avec succès !");
-				} catch (e) {
-					console.error("Erreur chargement Wasm:", e);
-				}
-			};
-		}
+			if (!Module) return;
 
-		initWasm();
+			Module.finishGame();
 
-		return () => cancelStart();
+			if ((Module as any).ctx) {
+				const ext = (Module as any).ctx.getExtension('WEBGL_lose_context');
+				if (ext) ext.loseContext();
+			}
+		};
 	}, []);
 
 	useEffect(() => {
-		if (!Module || !gameSocket) return;
+		if (!canvasRef.current || mutation.isPending || !gameSocket) return;
+
+		const initWasm = async () => {
+			try {
+				const mod = await createModule({
+					canvas: canvasRef.current,
+					noInitialRun: true,
+					locateFile: (path: string, prefix: string) => {
+						if (path.endsWith(".data")) return `http://localhost:5173/game/build/${path}`;
+						return prefix + path;
+					},
+					onCppMessage: (obj: Object) => gameSocket.send(JSON.stringify(obj)),
+					sendResults: (obj: Object) => {
+						console.log(JSON.stringify(obj))
+						navigate("/home");
+					}
+				});
+
+				(window as any).onCppMessage = (mod as any).onCppMessage;
+				(window as any).sendResults = (mod as any).sendResults;
+
+				setModule(mod);
+				mod.callMain(["bonjour"]);
+			} catch (e) {
+				console.error("Wasm Error:", e);
+			}
+		};
+
+		initWasm();
+	}, [mutation.isPending, gameSocket]); // Se déclenche quand le chargement finit
+
+	useEffect(() => {
+		if (!gameSocket || !Module) return;
 
 		gameSocket.onmessage = async (event) => {
 			let data = event.data;
-
-			if (data instanceof Blob)
-				data = await data.text();
+			if (data instanceof Blob) data = await data.text();
 
 			try {
 				const json = JSON.parse(data);
-				// log('📥 Reçu JSON : ' + JSON.stringify(json, null, 2));
-
-				if (Module && Module.getMessage) {
-					Module.getMessage(json);
-				} else {
-					// log("⚠️ Module pas encore prêt, message ignoré");
-				}
-			}
-			catch (e) {
-				console.error("❌ JSON.parse error:", e);
-				console.log("Type:", typeof data);
-				console.log("Raw data:", data);
-				// log('📥 Reçu (non-JSON) : ' + data);
+				if (Module.getMessage) Module.getMessage(json);
+			} catch (e) {
+				console.error("JSON parse error", e);
 			}
 		};
 
 		gameSocket.onclose = () => {
-			// log('❌ Déconnecté du serveur');
+
 		};
 
 		gameSocket.onerror = (err) => {
-			// log('⚠️ Erreur WebSocket');
 			console.error(err);
 		};
-	}, [Module]);
+
+	}, [gameSocket, Module]);
 
 	if (mutation.isPending)
 		return <div>Verifying room</div>;
@@ -100,56 +114,6 @@ const Game = () => {
 		navigate("/home");
 		return;
 	}
-
-	if (!gameSocket || gameSocket.readyState != gameSocket.OPEN)
-		return <div>Loading game socket</div>;
-
-	if (!Module)
-		return <div>Loading game module</div>;
-
-	/* function onCppMessage(obj: Object)
-	{
-		const payload = JSON.stringify(obj);
-
-		// log('📤 Envoyé JSON : ' + payload);
-		gameSocket.send(payload);
-	}
-
-	function sendResults(obj)
-	{
-		const payload = JSON.stringify(obj);
-
-		log('End of game !! \n ' + payload);
-		disconnect();
-	}
-
-	function disconnect()
-	{
-		if (socket)
-		{
-			socket.close();
-			socket = null;
-		}
-
-		if (Module)
-		{
-			if (Module.finishGame)
-				Module.finishGame();
-
-			if (Module.ctx)
-			{
-				const ext = Module.ctx.getExtension('WEBGL_lose_context');
-				if (ext)
-					ext.loseContext();
-			}
-
-			Module = null;
-		}
-
-		const oldCanvas = document.getElementById("game-canvas");
-		const newCanvas = oldCanvas.cloneNode(true);
-		oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
-	} */
 
 	return (
 		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between'>
