@@ -6,10 +6,9 @@ Session::Session(void): _maxNumPlayer(1), _running(0), _ended(0), _startTime(std
 	static std::string set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	int size = static_cast<int>(2 * sqrt(8 + 6 * (_maxNumPlayer - 1)));
 
-
 	for (int i = 0; i < 25; i++)
 	{
-		int nb = rand() % 63;
+		int nb = rand() % 62;
 		this->_sessionId.push_back(set[nb]);
 	}
 
@@ -32,7 +31,7 @@ Session::Session(int numPLayer):	_maxNumPlayer(numPLayer), _running(0), _ended(0
 
 	for (int i = 0; i < 25; i++)
 	{
-		int nb = rand() % 63;
+		int nb = rand() % 62;
 		this->_sessionId.push_back(set[nb]);
 	}
 

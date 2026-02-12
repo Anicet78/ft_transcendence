@@ -38,6 +38,25 @@ int	init_sdl(Engine &gSdl)
 		return (0);
 	}
 
+	SDL_RendererInfo    info;
+
+    SDL_GetRendererInfo(gSdl.renderer, &info);
+
+	std::cout << info.max_texture_width << " " << info.max_texture_height << std::endl;
+
+	if (info.max_texture_width > 16384)
+	{
+		gSdl.maxTexWidth = info.max_texture_width / 2;
+		gSdl.maxTexHeight = info.max_texture_height / 2;
+	}
+	else
+	{
+		gSdl.maxTexWidth = info.max_texture_width;
+		gSdl.maxTexHeight = info.max_texture_height;
+	}
+
+	std::cout << gSdl.maxTexHeight << " " << gSdl.maxTexWidth << std::endl;
+
 	if (!gSdl.timer.getStarted())
 		gSdl.timer.startTimer();
 	if (gSdl.game == NULL)
@@ -48,14 +67,5 @@ int	init_sdl(Engine &gSdl)
 	SDL_EventState(SDL_KEYDOWN, SDL_ENABLE);
 	SDL_EventState(SDL_KEYUP, SDL_ENABLE);
 	
-
-
-	SDL_RendererInfo    info;
-
-    SDL_GetRendererInfo(gSdl.renderer, &info);
-
-	gSdl.maxTexWidth = info.max_texture_width;
-	gSdl.maxTexHeight = info.max_texture_height;
-
 	return (1);
 }
