@@ -83,11 +83,13 @@ const ProfilePublic = () => {
 						</div>}
 						{friendshipStatus === 'received' && 
 						<div>
-							<NavLink to={"/friends/requests/update/" + friendshipId} state={{requestedAction: "accept"}} className="button is-medium">Accept request</NavLink>
-							<NavLink to={"/friends/requests/update/" + friendshipId} state={{requestedAction: "reject"}} className="button is-medium">Reject request</NavLink>
+							<NavLink to={"/friends/requests/update/" + friendshipId} state={{requestedAction: "accepted"}} className="button is-medium">Accept request</NavLink>
+							<NavLink to={"/friends/requests/update/" + friendshipId} state={{requestedAction: "rejected"}} className="button is-medium">Reject request</NavLink>
 						</div>}
 						{friendshipStatus === 'none' &&
 							<NavLink to={"/friends/add/" + userData.appUserId} className="button is-medium">Send friendship request</NavLink>}
+						<NavLink to={"/profile/" + userData.appUserId + "/block"} state={{requestedAction: "block"}} className="button is-medium">Block user</NavLink>
+						<NavLink to={"/profile/" + userData.appUserId + "/unblock"} state={{requestedAction: "unblock"}} className="button is-medium">Unblock user</NavLink>
 					</div>
 				</>
 			}

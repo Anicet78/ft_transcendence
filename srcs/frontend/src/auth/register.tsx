@@ -64,6 +64,7 @@ function Register() {
 				<InputName label="User name" nameType="username"/>
 				<InputEmail label="Email" />
 				<InputPassword label="Password" id="pwd"/>
+				<InputPassword label="Password" id="confirm_pwd"/>
 			</div>
 			<div>
 				<SelectRegion />

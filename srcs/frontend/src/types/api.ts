@@ -1675,7 +1675,7 @@ export interface paths {
             requestBody: {
                 content: {
                     "application/json": {
-                        action: "accept" | "reject" | "cancel";
+                        action: "accepted" | "rejected" | "cancelled";
                     };
                 };
             };

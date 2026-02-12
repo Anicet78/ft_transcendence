@@ -59,9 +59,9 @@ export type updateFriendshipRequestParams = Static<typeof updateFriendshipReques
 
 export const updateFriendshipRequestBodySchema = Type.Object({
   action: Type.Union([
-    Type.Literal('accept'),
-    Type.Literal('reject'),
-    Type.Literal('cancel')
+    Type.Literal('accepted'),
+    Type.Literal('rejected'),
+    Type.Literal('cancelled')
   ])
 });
 export type updateFriendshipRequestBody = Static<typeof updateFriendshipRequestBodySchema>;

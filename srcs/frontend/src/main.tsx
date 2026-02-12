@@ -26,6 +26,10 @@ import FriendRequest from './friendship/FriendRequest.tsx';
 import UpdateRequest from './friendship/UpdateRequest.tsx';
 import RemoveFriend from './friendship/RemoveFriend.tsx';
 import AddFriend from './friendship/AddFriend.tsx';
+import SearchResult from './search/SearchResult.tsx';
+import SearchComponent from './search/searchComponent.tsx';
+import UsernameUpdate from './profile/UsernameUpdate.tsx';
+import AvatarUpdate from './profile/AvatarUpdate.tsx';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -41,6 +45,7 @@ const AppEntryPoint = () => {
 			<h1><Banner /></h1>
 			<Routes>
 				<Route path="/" element={<App />} />
+				<Route path="/test" element={<SearchComponent />} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/register" element={<Register />} />
 				<Route path="/home" element={<Home />} />
@@ -50,6 +55,8 @@ const AppEntryPoint = () => {
 				<Route path="/friends/remove/:id" element={<RemoveFriend />} />
 				<Route path="/friends/add/:id" element={<AddFriend />} />
 				<Route path="/profile" element={<ProfilePrivate />} />
+				<Route path="/profile/updateUsername" element={<UsernameUpdate />} />
+				<Route path="/profile/updateAvatar" element={<AvatarUpdate />} />
 				<Route path="/profile/:username" element={<ProfilePublic />} />
 				<Route path="/terms_of_service" element={<TermsService />} />
 				<Route path="/privacy_policy" element={<Privacy />} />
