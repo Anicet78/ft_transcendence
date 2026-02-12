@@ -1,6 +1,8 @@
 #include"Engine.hpp"
 
-Engine::Engine(void) :  _tile_size(0), _startTime(std::chrono::steady_clock::now()), _isRunning(0), window(NULL), renderer(NULL), texture(NULL) {
+Engine::Engine(void) :  _tile_size(0), _startTime(std::chrono::steady_clock::now()), _isRunning(0), window(NULL), renderer(NULL), texture(NULL),
+						maxTexWidth(0), maxTexHeight(0)
+{
 	return ;
 }
 
