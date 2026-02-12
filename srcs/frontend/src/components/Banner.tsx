@@ -9,14 +9,13 @@ const Banner = () => {
 	const { user } = useAuth()
 	const [active, setActive] = useState(true)
 	const connected = false
-	const username = user?.role || 'My username'
-	let path = "/"
+	const username = user?.username || 'Username'
+	let path = user ? "/home" : "/";
 
-	if (username !== 'My username') {path = "/home"}
 	return (
 		<Navbar color='dark' role='navigation' aria-label='main navigation'>
 			<Navbar.Brand>
-			
+
 					<NavLink to={path} aria-label='home button' className='button is-large is-primary is-outlined is-centered'>
 						<Icon
 						name="dragon"

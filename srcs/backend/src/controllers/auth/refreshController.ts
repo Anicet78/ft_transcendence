@@ -65,5 +65,5 @@ export async function postRefreshController(
 			secure: true,
 			sameSite: 'strict',
 			maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in ms
-		}).status(200).send({ token: jwt, user: { id: user.app_user.appUserId, email: user.app_user.mail, role: user.app_user.rolesReceived[0]?.role || "user" }});
+		}).status(200).send({ token: jwt, user: { id: user.app_user.appUserId, username: user.app_user.username, email: user.app_user.mail, role: user.app_user.rolesReceived[0]?.role || "user" }});
 }
