@@ -44,12 +44,12 @@ void mainloopE(void *arg)
 	gSdl.cap.startTimer();
 	while (SDL_PollEvent(&gSdl.event))
 	{
-		if (gSdl.event.type == SDL_KEYDOWN && gSdl.event.key.keysym.sym == SDLK_ESCAPE)
-		{
-			emscripten_cancel_main_loop();
-			return ;
-		}
-		else if (gSdl.event.type == SDL_KEYDOWN)
+		// if (gSdl.event.type == SDL_KEYDOWN && gSdl.event.key.keysym.sym == SDLK_ESCAPE)
+		// {
+		// 	emscripten_cancel_main_loop();
+		// 	return ;
+		// }
+		if (gSdl.event.type == SDL_KEYDOWN)
 			key_down();
 		else if (gSdl.event.type == SDL_KEYUP)
 			key_up();

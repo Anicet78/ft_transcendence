@@ -1,91 +1,6 @@
 #include "Game.hpp"
 
-int	check_tile(int x, int y, Player &player)
-{
-	int h = player.getRoom().getRoomPlan().size();
-	if (y < 0 || y >= h)
-		return (0);
-	int w = player.getRoom().getRoomPlan()[y].size();
-	if (x < 0 || x >= w)
-		return (0);
-	if (player.getRoom().getRoomPlan()[y][x] == '0')
-		return (1);
-	return (0);
-}
-
-int	check_valid_tile(int x, int y, Player &player)
-{
-	int h = player.getRoom().getRoomPlan().size();
-	if (y < 0 || y >= h)
-		return (0);
-	int w = player.getRoom().getRoomPlan()[y].size();
-	if (x < 0 || x >= w)
-		return (0);
-	if (player.getRoom().getRoomPlan()[y][x] == ' ')
-		return (0);
-	return (1);
-}
-
-//check if the actual tile is at the border of the map
-int	check_border(int x, int y, Player &player)
-{
-
-	if (!check_valid_tile(x - 1, y - 1, player) || !check_valid_tile(x, y - 1, player)
-		|| !check_valid_tile(x + 1, y - 1, player) || !check_valid_tile(x - 1, y, player)
-		|| !check_valid_tile(x + 1, y, player) || !check_valid_tile(x - 1, y + 1, player)
-		|| !check_valid_tile(x, y + 1, player) || !check_valid_tile(x + 1, y + 1, player))
-		return (1);
-	return (0);
-}
-
-void	manage_border(int x, int y, Player &player)
-{
-	int	tile_s = gSdl.getMapTileSize() * 2;
-	// check for top left wall corner
-	if (check_tile(x + 1, y + 1, player) && !check_tile(x, y + 1, player) && !check_tile(x + 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_UP_LEFT_CORNER, 2, 0);
-
-	// check for top right wall corner
-	else if (check_tile(x - 1, y + 1, player) && !check_tile(x, y + 1, player) && !check_tile(x - 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_UP_RIGHT_CORNER, 2, 0);
-
-	//check for down left wall corner 
-	else if (check_tile(x + 1, y - 1, player) && !check_tile(x, y - 1, player) && !check_tile(x + 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_DOWN_LEFT_CORNER, 2, 0);
-
-	//check for down right wall corner
-	else if (check_tile(x - 1, y - 1, player) && !check_tile(x, y - 1, player) && !check_tile(x - 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_DOWN_RIGHT_CORNER, 2, 0);
-
-	// check if the wall is on the left
-	else if (check_tile(x + 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_LEFT, 2, 0);
-
-	//check if the wall is on the right
-	else if (check_tile(x - 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_RIGHT, 2, 0);
-
-	//check if the wall is on the top
-	else if (check_tile(x, y + 1, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL, 2, 0);
-
-	//check if the wall is on the bottom
-	else if (check_tile(x, y - 1, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_DOWN, 2, 0);
-}
-
-//manage the wall print
-void	manage_wall(int x, int y, Player &player)
-{
-	if (check_border(x, y, player))
-	{
-		manage_border(x, y, player);
-		return ;
-	}
-}
-
-
-int checkTileWall(int x, int y, Player &player, int &isMud, int &depth)
+static int checkTileWall(int x, int y, Player &player, char c, char s)
 {
 	int h = player.getRoom().getRoomPlan().size();
 	if (y < 0 || y >= h)
@@ -93,17 +8,14 @@ int checkTileWall(int x, int y, Player &player, int &isMud, int &depth)
 	int w = player.getRoom().getRoomPlan()[y].size();
 	if (x < 0 || x >= w)
 		return (1);
-	if (player.getRoom().getRoomPlan()[y][x] == '1')
+	if (player.getRoom().getRoomPlan()[y][x] == c)
 		return (1);
-	if (player.getRoom().getRoomPlan()[y][x] == '2')
-	{
-		isMud = depth;
+	if (s && player.getRoom().getRoomPlan()[y][x] == s)
 		return (1);
-	}
 	return (0);
 }
 
-uint8_t	checkWall(int x, int y, Player &player, int depth, int &isMud)
+static uint8_t	checkWall(int x, int y, Player &player, int depth, char c, char s)
 {
 	uint8_t res = 0;
 	
@@ -114,7 +26,7 @@ uint8_t	checkWall(int x, int y, Player &player, int depth, int &isMud)
 	{
 		for (int j = minX; j <= maxX; j++)
 		{
-			if (checkTileWall(j, i, player, isMud, depth))
+			if (checkTileWall(j, i, player, c, s))
 			{
 				if (i < y && j == x) //North
 					res |= 1 << 1;
@@ -165,7 +77,7 @@ static int checkLastTree(int x, int y, int w, std::vector<int> &plan)
 	return 0;
 }
 
-void	manage_wall2(int x, int y, Player &player, int iteration)
+void	manage_wall_forest(int x, int y, Player &player, int iteration)
 {
 	static std::vector<int>	plan;
 	static quadList node;
@@ -216,7 +128,7 @@ void	manage_wall2(int x, int y, Player &player, int iteration)
 	
 }
 
-void initAutoTileOffset(std::array<int, 256> &autoTileOffset)
+static void initAutoTileOffset(std::array<int, 256> &autoTileOffset)
 {
 	// Cas neutres
 	autoTileOffset[0]   = 0;
@@ -277,7 +189,7 @@ void initAutoTileOffset(std::array<int, 256> &autoTileOffset)
 		autoTileOffset[m] = -45;
 }
 
-void initAutoTileOffset2(std::array<int, 256> &autoTileOffset)
+static void initAutoTileOffset2(std::array<int, 256> &autoTileOffset)
 {
 	// Cas neutres
 	autoTileOffset[0]   = 0;
@@ -338,7 +250,7 @@ void initAutoTileOffset2(std::array<int, 256> &autoTileOffset)
 		autoTileOffset[m] = 45;
 }
 
-void initAutoTileOffset3(std::array<int, 256> &autoTileOffset)
+static void initAutoTileOffset3(std::array<int, 256> &autoTileOffset)
 {
 	// Cas neutres
 	autoTileOffset[0]   = 0;
@@ -399,17 +311,16 @@ void initAutoTileOffset3(std::array<int, 256> &autoTileOffset)
 		autoTileOffset[m] = 90;
 }
 
-void	manageSoil(int x, int y, Player &player) // a changer, faire 2 masks, un pour le sol et un pour le mur
+
+void	manageSoil(int x, int y, Player &player)
 {
 	static std::array<int, 256>	autoTileOffset = {0};
 	static std::array<int, 256>	autoTileOffset2 = {0};
 	static std::array<int, 256>	autoTileOffset3 = {0};
+
 	int	tile_s = gSdl.getMapTileSize() * 2;
-	int depth = -1;
-	int fDepth = -1;
-	int isMud = 0;
-	uint8_t	mask = 0;
-	uint8_t	fMask = 0;
+	int depthTree = -1, depthPath = -1;
+	uint8_t	maskTree = 0, maskPath = 0;
 
 	if (!autoTileOffset[1])
 		initAutoTileOffset(autoTileOffset);
@@ -418,148 +329,72 @@ void	manageSoil(int x, int y, Player &player) // a changer, faire 2 masks, un po
 	if (!autoTileOffset3[1])
 		initAutoTileOffset3(autoTileOffset3);
 
-	while (!mask)
+	while (!maskTree)
 	{
-		depth++;
-		mask = checkWall(x, y, player, depth, isMud);
-		if (mask && !isMud && depth <= 2)
+		depthTree++;
+		if (depthTree <= 2)
+			maskTree = checkWall(x, y, player, depthTree, '1', 0);
+		else
 		{
-			if (fDepth == -1)
-			{
-				fDepth = depth;
-				fMask = mask;
-			}
-			mask = 0;
-			continue ;
-		}
-		if (depth > 2)
-		{
-			depth = 2;
+			depthTree--;
 			break ;
 		}
 	}
-	if (fDepth != -1)
+
+	while (!maskPath)
 	{
-		depth = fDepth;
-		mask = fMask;
+		depthPath++;
+		if (depthPath <= 2)
+			maskPath = checkWall(x, y, player, depthPath, '2', 'E');
+		else
+		{
+			depthPath--;
+			break ;
+		}
 	}
-	int color;
+
+	int color, color2;
 	int offset;
-	int color2 = 0;
-	if (!isMud || isMud > 1)
+
+	if (maskTree && maskPath && depthTree == 1 && depthPath == 1)
 	{
-		color = 541 + depth * 9;
-		offset = autoTileOffset[mask];
-		color2 = (depth == 2) ? color : color + 9;
+		maskTree |= maskPath;
+		color = 541 + depthTree * 9;
+		offset = autoTileOffset[maskTree];
+		color2 = (depthTree == 2) ? color : color + 9;
 	}
-	else if(isMud && depth == 1)
+	else
+	{
+		color = 541 + depthTree * 9;
+		offset = autoTileOffset[maskTree];
+		color2 = (depthTree == 2) ? color : color + 9;
+	}
+	
+	Assets::rendMap(x * tile_s, y * tile_s, color2, 1, 1);
+	Assets::rendMap(x * tile_s, y * tile_s, color + offset, 1, 1);
+
+	if ((depthTree < 2 && depthTree <= depthPath) || (depthTree == 2 && !maskPath) || depthPath == 2)
+		return ;
+
+	if (depthPath == 0)
 	{
 		color = 676;
-		offset = autoTileOffset3[mask];
-		int offset2 = autoTileOffset2[mask];
+		offset = autoTileOffset3[maskPath];
+		int offset2 = autoTileOffset2[maskPath];
 		color2 = 550;
-		Assets::rendMap(x * tile_s, y * tile_s, 856, 1, 1);
+		Assets::rendMap(x * tile_s, y * tile_s, 865, 1, 1);
+		Assets::rendMap(x * tile_s, y * tile_s, 856 + offset2, 1, 1);
 		Assets::rendMap(x * tile_s, y * tile_s, color2 + offset2, 1, 1);
 		Assets::rendMap(x * tile_s, y * tile_s, color + offset, 1, 1);
 		return ;
 	}
 	else
 	{
-		color = 856;
-		offset = autoTileOffset2[mask];
-		color2 = color + 9;
-	}
-	Assets::rendMap(x * tile_s, y * tile_s, color2, 1, 1);
-	Assets::rendMap(x * tile_s, y * tile_s, color + offset, 1, 1);
-}
-
-void	manageFloorPrint(int x, int y, char c, Player &player, int iteration)
-{
-	int	tile_s = gSdl.getMapTileSize() * 2;
-	if (player.getFloor() == 0)
-	{
-		if (c == '1' && !iteration)
-			manage_wall(x, y, player);
-		else if (c == '0')	
-			Assets::rendMap(x * tile_s, y * tile_s, Assets::FLOOR, 2, 0);
-		else if (c == 'E')
-			Assets::rendMap(x * tile_s, y * tile_s, Assets::DOOR_FRONT, 2, 0);
-	}
-	else if (player.getFloor() == 1)
-	{
-		if (c == '1'  || c == ' ')
-			manage_wall2(x, y, player, iteration);
-		if (c == '2')
-			Assets::rendMap(x * tile_s, y * tile_s, 865, 1, 1);
-		else if (c == '0' || c == 'P' || c == 'E')
-			manageSoil(x, y, player);
+		color = 550;
+		offset = autoTileOffset[maskPath];
+		color2 = 559;
 	}
 	
-}
-
-void	print_map(Player &player)
-{
-	static int	mapX = -1;
-	static int	mapY = -1;
-
-	quadList	node = player.getNode();
-	int	tile_s = gSdl.getMapTileSize() * 2;
-
-	if (mapX != node->getX() || mapY != node->getY())
-	{
-		mapX = node->getX();
-		mapY = node->getY();
-
-		if (gSdl.texture == NULL)
-		{
-			gSdl.texture = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, gSdl.maxTexWidth, gSdl.maxTexHeight);
-			SDL_SetTextureBlendMode(gSdl.texture, SDL_BLENDMODE_BLEND);
-		}
-		if (gSdl.texture2 == NULL)
-		{
-			gSdl.texture2 = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, gSdl.maxTexWidth, gSdl.maxTexHeight);
-			SDL_SetTextureBlendMode(gSdl.texture2, SDL_BLENDMODE_BLEND);
-		}
-
-		SDL_SetRenderTarget(gSdl.renderer, gSdl.texture);
-		SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 0);
-		SDL_RenderClear(gSdl.renderer);
-
-		int h = player.getRoom().getRoomPlan().size();
-		for (int y = 0; y < h; y++)
-		{
-			int w = player.getRoom().getRoomPlan()[y].size();
-			for (int x = 0; x < w; x++)
-			{
-				char c = player.getRoom().getRoomPlan()[y][x];
-				manageFloorPrint(x, y, c, player, 0);
-			}
-		}
-		if (!player.getFloor())
-		{
-			SDL_SetRenderTarget(gSdl.renderer, gSdl.texture2);
-			SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 0);
-			SDL_RenderClear(gSdl.renderer);
-			for (int y = 0; y < h; y++)
-			{
-				int w = player.getRoom().getRoomPlan()[y].size();
-				for (int x = 0; x < w; x++)
-				{
-					char c = player.getRoom().getRoomPlan()[y][x];
-					if (c != '1' && c != ' ')
-						continue ;
-					manageFloorPrint(x, y, c, player, 1);
-				}
-			}
-		}
-		SDL_SetRenderTarget(gSdl.renderer, gSdl.game);
-	}
-
-	int roomH = player.getRoom().getRoomPlan().size();
-	int roomW = player.getRoom().getRoomPlan()[0].size();
-	Camera	&camera = player.getCamera();
-	camera.updateCamera(tile_s, roomW, roomH);
-	player.updateScreenPos(tile_s);
-	SDL_Rect dst = {0, 0, SCREEN_WIDTH, GAME_HEIGHT};
-	SDL_RenderCopy(gSdl.renderer, gSdl.texture, &camera.getCamera(), &dst);
+	Assets::rendMap(x * tile_s, y * tile_s, color2, 1, 1);
+	Assets::rendMap(x * tile_s, y * tile_s, color + offset, 1, 1);
 }
