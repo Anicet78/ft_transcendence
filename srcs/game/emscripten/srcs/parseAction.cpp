@@ -37,15 +37,49 @@ void	setPlayerState(Player &player, val &pStatus, int flag)
 	}
 }
 
+void	clearLeavedUid(std::vector<std::string> &uidInRoom, Game &game)
+{
+	auto &otherPlayers = game.getOtherPlayers();
+	std::vector<std::string> beDelete;
+	for (auto &player : otherPlayers)
+	{
+		bool toDelete = true;
+		const std::string &uid = player.getUid();
+		for (auto &uidRoom : uidInRoom)
+		{
+			if (uid == uidRoom)
+			{
+				toDelete = false;
+				break;
+			}
+		}
+		if (toDelete)
+			beDelete.push_back(uid);
+	}
+	for (auto &del : beDelete)
+	{
+		game.suppOtherPlayer(del);
+	}
+}
+
 void	loopPlayerState(Game &game, val playerUpdate)
 {
 	const int nbrPlayer = playerUpdate["player_num"].as<int>();
+	auto &otherPlayers = game.getOtherPlayers();
+
+	// this only serve when game page goes from back to front
+	std::vector<std::string> uidInRoom;
+	bool	diff = (nbrPlayer - 1 < (int)otherPlayers.size()) ? true : false;
+	//-------------------------------------------------------
 
 	val playerStatus = playerUpdate["player_status"];
 	for (int i = 0; i < nbrPlayer; i++)
 	{
 		val pStatus = playerStatus[i];
 		std::string uid = pStatus["player_uid"].as<std::string>();
+
+		if (diff)
+			uidInRoom.push_back(uid);
 
 		if (game.getPlayer().getUid() == uid)
 		{
@@ -61,9 +95,12 @@ void	loopPlayerState(Game &game, val playerUpdate)
 		{
 			std::string name = pStatus["player_name"].as<std::string>();
 			game.addOtherPlayer(uid, name);
-			setPlayerState(game.getOtherPlayers().back(), pStatus, 2);
+			setPlayerState(otherPlayers.back(), pStatus, 2);
 		}
 	}
+	
+	if (!uidInRoom.empty())
+		clearLeavedUid(uidInRoom, game);
 }
 
 void	loopRoomState(Game &game, val roomUpdate)

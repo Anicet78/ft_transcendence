@@ -38,6 +38,7 @@ class Game
 		bool				isInOtherPlayers(std::string &uid) const;
 		void				addOtherPlayer(std::string &uid, std::string &name);
 		void				suppOtherPlayer(std::string &uid);
+		void				suppOtherPlayer(const std::string &uid);
 };
 
 

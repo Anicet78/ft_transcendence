@@ -1,6 +1,6 @@
 # include "Session.hpp"
 
-Session::Session(void): _maxNumPlayer(1), _running(0), _ended(0), _startTime(std::chrono::steady_clock::time_point{}),
+Session::Session(void): _maxNumPlayer(2), _running(0), _ended(0), _startTime(std::chrono::steady_clock::time_point{}),
 						_numPlayersFinished(0),  _timerBeforeRun(std::chrono::_V2::steady_clock::now())
 {
 	static std::string set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -277,12 +277,17 @@ void	Session::checkFinishedPlayers(uWS::App &app)
 			if (player->getWs()->unsubscribe(oldTopic))
 				std::cout << "unsibscribe from " << oldTopic << std::endl;
 			finishedPlayers.push_back(player);
+			std::cout << player->getName() << ": " << std::endl
+				<< "Kills: " << player->getKills() << "Place :" << player->getFinalRanking() << std::endl;
 		}
 	}
 	for (auto &player : finishedPlayers)
 		this->removePlayer(player);
 	if (!this->_players.size() && this->_running)
+	{
+		std::cout << "SESSION STOP" << std::endl;
 		this->_ended = 1;
+	}
 }
 
 double Session::getActualTimeBeforeRun(void) const

@@ -113,6 +113,11 @@ void	playerAction(Player &player)
 		player.startAtk();
 }
 
+float	dist(float x1, float y1, float x2, float y2)
+{
+	return (SDL_fabs(x2 - x1) + SDL_fabs(y2 - y1));
+}
+
 void	updateOtherPlayer(std::vector<Player> &others, double deltaTime)
 {
 	const float smoothing = 10;
@@ -124,8 +129,19 @@ void	updateOtherPlayer(std::vector<Player> &others, double deltaTime)
 			float x = player.getX();
 			float y = player.getY();
 
-			x += (player.getTargetX() - x) * smoothing * deltaTime;
-			y += (player.getTargetY() - y) * smoothing * deltaTime;
+			float targetX = player.getTargetX();
+			float targetY = player.getTargetY();
+
+			if (dist(x, y, targetX, targetY) > 6.0f)
+			{
+				x = targetX;
+				y = targetY;
+			}
+			else
+			{
+				x += (player.getTargetX() - x) * smoothing * deltaTime;
+				y += (player.getTargetY() - y) * smoothing * deltaTime;
+			}
 			player.setPos(x, y);
 		}
 	}
