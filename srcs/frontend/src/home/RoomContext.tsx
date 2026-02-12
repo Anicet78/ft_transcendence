@@ -12,6 +12,7 @@ export type RoomContextValue = {
 	start: Boolean;
 	joinRoom: (newRoom?: Room) => void;
 	leaveRoom: () => void;
+	newRoom: () => void;
 	cancelStart: () => void;
 };
 
@@ -57,6 +58,13 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 		},
 	});
 
+	const newMutation = useMutation({
+		mutationFn: () => api.post("/room/new"),
+		onSuccess: (data) => {
+			setRoom(data.data);
+		}
+	})
+
 	const quitMutation = useMutation({
 		mutationFn: () => api.post(`/room/${room?.roomId}/quit`),
 		onSettled: () => {
@@ -77,6 +85,10 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 		} else {
 			setRoom(null)
 		}
+	}
+
+	const newRoom = () => {
+		newMutation.mutate();
 	}
 
 	const cancelStart = () => {
@@ -112,7 +124,7 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 	);
 
 	return (
-		<RoomContext.Provider value={{ room, start, cancelStart, joinRoom, leaveRoom }}>
+		<RoomContext.Provider value={{ room, start, joinRoom, leaveRoom, newRoom, cancelStart }}>
 			{children}
 		</RoomContext.Provider>
 	);
