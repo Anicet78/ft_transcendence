@@ -35,12 +35,12 @@ const ProfilePublic = () => {
 	const xp = userData.gameProfile?.totalXp || '0';
 	const isConnected = userData.availability || false;
 	const isPlaying = userData.playing || false;
-	const friendshipStatus = friendshipQuery.isSuccess ? friendshipData.status : 'unknown';
 	const bestTime = userData.gameProfile?.bestTime || '0';
 	const totalKills = userData.gameProfile?.totalEnemiesKilled || '0';
 	const totalGames = userData.gameProfile?.totalGames || '0';
 	const totalWins = userData.gameProfile?.totalWins || '0';
 	const totalLoses = userData.gameProfile?.totalLoses || '0';
+	const friendshipStatus = friendshipQuery.isSuccess ? friendshipData.status : 'unknown';
 
 	return (
 		<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' alignItems='center'>
@@ -83,8 +83,8 @@ const ProfilePublic = () => {
 						</div>}
 						{friendshipStatus === 'received' && 
 						<div>
-							<NavLink to={"/friends/requests/update/" + friendshipId} state={{requestedAction: "accepted"}} className="button is-medium">Accept request</NavLink>
-							<NavLink to={"/friends/requests/update/" + friendshipId} state={{requestedAction: "rejected"}} className="button is-medium">Reject request</NavLink>
+							<NavLink to={"/friends/requests/update/" + friendshipData.friendshipId} state={{requestedAction: "accepted"}} className="button is-medium">Accept request</NavLink>
+							<NavLink to={"/friends/requests/update/" + friendshipData.friendshipId} state={{requestedAction: "rejected"}} className="button is-medium">Reject request</NavLink>
 						</div>}
 						{friendshipStatus === 'none' &&
 							<NavLink to={"/friends/add/" + userData.appUserId} className="button is-medium">Send friendship request</NavLink>}

@@ -24,7 +24,7 @@ import ChatView from './chat/ChatView.tsx';
 import Home from './home/home.tsx';
 import JoinRoom from './home/join-room.tsx';
 import Game from './game/game.tsx';
-import FriendRequest from './friendship/FriendRequest.tsx';
+import FriendRequest from './friendship/FriendRequests.tsx';
 import UpdateRequest from './friendship/UpdateRequest.tsx';
 import RemoveFriend from './friendship/RemoveFriend.tsx';
 import AddFriend from './friendship/AddFriend.tsx';
