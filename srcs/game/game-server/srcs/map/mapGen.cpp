@@ -83,7 +83,7 @@ quadList Map::chooseRoom(std::string mapName, int lvl)
 			continue;
 		}
 
-		tmp->addRoom(temp);
+		tmp->addRoom(temp, this->_sessionId);
 		return tmp;
 	}
 }
@@ -188,7 +188,7 @@ static void selectRoom(quadList &node, std::vector<Room> &candidates, std::array
 	}
 }
 
-static void selectAndAddRoom(quadList &node, int lvl)
+static void selectAndAddRoom(quadList &node, int lvl, std::string &sessionId)
 {
 	if (!node->getRoom())
 	{
@@ -209,7 +209,7 @@ static void selectAndAddRoom(quadList &node, int lvl)
 				continue ;
 			}
 			int r = rand() % candidates.size();
-			node->addRoom(candidates[r]);
+			node->addRoom(candidates[r], sessionId);
 			break ;
 		}
 	}
@@ -336,7 +336,7 @@ void Map::fillPrimaryPath(int lvl)
 	{
 		if (node->getPath() != 3)
 			continue ;
-		selectAndAddRoom(node, lvl);
+		selectAndAddRoom(node, lvl, this->_sessionId);
 		if (!node->north.expired() && !node->north.lock()->getPath())
 			node->north.lock()->setPath(1);
 		if (!node->east.expired() && !node->east.lock()->getPath())
@@ -358,32 +358,32 @@ void Map::fillOtherRooms(int lvl)
 		{
 			if (node->getPath() != 1 && node->getPath() != 2)
 				continue ;
-			selectAndAddRoom(node, lvl);
+			selectAndAddRoom(node, lvl, this->_sessionId);
 			if (!node->north.expired() && !node->north.lock()->getPath())
 			{
 				quadList next = node->north.lock();
-				selectAndAddRoom(next, lvl);
+				selectAndAddRoom(next, lvl, this->_sessionId);
 				next->setPath(1);
 				count++;
 			}
 			if (!node->east.expired() && !node->east.lock()->getPath())
 			{
 				quadList next = node->east.lock();
-				selectAndAddRoom(next, lvl);
+				selectAndAddRoom(next, lvl, this->_sessionId);
 				next->setPath(1);
 				count++;
 			}
 			if (!node->south.expired() && !node->south.lock()->getPath())
 			{
 				quadList next = node->south.lock();
-				selectAndAddRoom(next, lvl);
+				selectAndAddRoom(next, lvl, this->_sessionId);
 				next->setPath(1);
 				count++;
 			}
 			if (!node->west.expired() && !node->west.lock()->getPath())
 			{
 				quadList next = node->west.lock();
-				selectAndAddRoom(next, lvl);
+				selectAndAddRoom(next, lvl, this->_sessionId);
 				next->setPath(1);
 				count++;
 			}

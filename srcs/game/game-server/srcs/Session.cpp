@@ -5,22 +5,22 @@ Session::Session(void): _maxNumPlayer(1), _running(0), _ended(0), _startTime(std
 {
 	static std::string set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	int size = static_cast<int>(2 * sqrt(8 + 6 * (_maxNumPlayer - 1)));
-	_maps.emplace_back(1, 1);
+
+	for (int i = 0; i < 25; i++)
+	{
+		int nb = rand() % 62;
+		this->_sessionId.push_back(set[nb]);
+	}
+
+	_maps.emplace_back(1, 1, this->_sessionId);
 	_maps.back().setWaitingRoom();
-	_maps.emplace_back(size, size);
+	_maps.emplace_back(size, size, this->_sessionId);
 	_maps.back().fillMap(_maxNumPlayer, 0);
-	_maps.emplace_back(size * 0.8, size * 0.8);
+	_maps.emplace_back(size * 0.8, size * 0.8, this->_sessionId);
 	_maps.back().fillMap(_maxNumPlayer, 1);
 	printMap(_maps[1]);
 	printMap(_maps[2]);
 	this->linkMaps(_maps[1], _maps[2]);
-
-	for (int i = 0; i < 25; i++)
-	{
-		int nb = rand() % 63;
-		this->_sessionId.push_back(set[nb]);
-	}
-
 }
 
 Session::Session(int numPLayer):	_maxNumPlayer(numPLayer), _running(0), _ended(0), _startTime(std::chrono::steady_clock::time_point{}),
@@ -28,21 +28,22 @@ Session::Session(int numPLayer):	_maxNumPlayer(numPLayer), _running(0), _ended(0
 {
 	static std::string set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	int size = static_cast<int>(2 * sqrt(8 + 6 * (_maxNumPlayer - 1)));
-	_maps.emplace_back(1, 1);
+
+	for (int i = 0; i < 25; i++)
+	{
+		int nb = rand() % 62;
+		this->_sessionId.push_back(set[nb]);
+	}
+
+	_maps.emplace_back(1, 1, this->_sessionId);
 	_maps.back().setWaitingRoom();
-	_maps.emplace_back(size, size);
+	_maps.emplace_back(size, size, this->_sessionId);
 	_maps.back().fillMap(_maxNumPlayer, 0);
-	_maps.emplace_back(size * 0.8, size * 0.8);
+	_maps.emplace_back(size * 0.8, size * 0.8, this->_sessionId);
 	_maps.back().fillMap(_maxNumPlayer, 1);
 	printMap(_maps[1]);
 	printMap(_maps[2]);
 	this->linkMaps(_maps[1], _maps[2]);
-
-	for (int i = 0; i < 25; i++)
-	{
-		int nb = rand() % 63;
-		this->_sessionId.push_back(set[nb]);
-	}
 }
 
 Session::~Session(void)
@@ -71,7 +72,8 @@ void	Session::launch()
 
 		if (this->_players[pos]->getWs()->unsubscribe(roomId))
 			std::cout << "unsubscribe from waiting room" << std::endl;
-		this->_players[pos]->getWs()->subscribe(node->getRoom()->getRoomId());
+		if (this->_players[pos]->getWs()->subscribe(node->getRoom()->getRoomId()))
+			std::cout << "subscribed to " << node->getRoom()->getRoomId() << std::endl;
 		pos++;
 	}
 }
@@ -272,7 +274,8 @@ void	Session::checkFinishedPlayers(uWS::App &app)
 			player->getWs()->send(msg);
 			std::string	oldTopic = player->getRoomRef().getRoomId();
 			sendLeaveUpdate(*player, app, oldTopic);
-			player->getWs()->unsubscribe(oldTopic);
+			if (player->getWs()->unsubscribe(oldTopic))
+				std::cout << "unsibscribe from " << oldTopic << std::endl;
 			finishedPlayers.push_back(player);
 		}
 	}

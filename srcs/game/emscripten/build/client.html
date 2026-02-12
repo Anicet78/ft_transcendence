@@ -143,7 +143,13 @@
                         log("⚠️ Module pas encore prêt, message ignoré");
                     }
                 }
-                catch {
+                // catch {
+                //     log('📥 Reçu (non-JSON) : ' + data);
+                // }
+                catch (e) {
+                    console.error("❌ JSON.parse error:", e);
+                    console.log("Type:", typeof data);
+                    console.log("Raw data:", data);
                     log('📥 Reçu (non-JSON) : ' + data);
                 }
             };

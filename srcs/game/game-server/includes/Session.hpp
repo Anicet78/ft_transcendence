@@ -12,7 +12,6 @@ class Session
 		std::vector<std::shared_ptr<Player>>		_players;
 		std::vector<Map>							_maps;
 		std::string									_sessionId;
-		Map											_watingRoom;
 		bool										_running;
 		bool										_ended;
 		std::string									_mapInfos;

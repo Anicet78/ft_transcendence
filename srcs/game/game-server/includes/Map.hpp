@@ -24,7 +24,7 @@ class chainedMap
 		std::weak_ptr<chainedMap>	up;
 	
 	public:
-		void					addRoom(const Room &room);
+		void					addRoom(const Room &room, std::string sessionId);
 		void					resetRoom();
 		std::shared_ptr<Room>	getRoom(void) const;
 		void					setPath(int flag);
@@ -44,6 +44,7 @@ class Map
 		int						_height;
 		quadList				_head;
 		std::vector<quadList>	_nodes;
+		std::string				_sessionId;
 	
 	private:
 		quadList				chooseRoom(std::string mapName, int lvl);
@@ -56,8 +57,8 @@ class Map
 		std::vector<quadList>	astar(const quadList &start, const quadList &goal);
 
 	public:
-		Map(void);
-		Map(int width, int height);
+		Map(std::string sessionId);
+		Map(int width, int height, std::string sessionId);
 		~Map(void);
 	
 	public:
