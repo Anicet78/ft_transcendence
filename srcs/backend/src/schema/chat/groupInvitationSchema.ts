@@ -1,0 +1,53 @@
+import Type, { type Static } from 'typebox';
+// import { AppErrorSchema } from '../errorSchema.js';
+import { UserPreviewSchema } from '../friendshipSchema.js';
+
+//INVITATION
+export const InviteToGroupParamsSchema = Type.Object({
+	chatId: Type.String({ format: 'uuid' }),
+	memberId: Type.String({ format: 'uuid' })
+});
+export type InviteToGroupParams = Static<typeof InviteToGroupParamsSchema>;
+
+export const ChatInvitationResponseSchema = Type.Object({
+	chatInvitationId: Type.String(),
+	chatId: Type.String(),
+	senderId: Type.String(),//UserPreviewSchema,
+	receiverId: Type.String(),//UserPreviewSchema,
+	status: Type.String(),
+	createdAt: Type.String()
+});
+
+
+//RETURN USER'S CHAT INVITATIONS (send and received)
+export const ChatInvitationPreviewSchema = Type.Object({
+  chatInvitationId: Type.String(),
+  chatId: Type.Union([Type.String(), Type.Null()]),
+  status: Type.String(),
+  createdAt: Type.String(),
+
+  sender: UserPreviewSchema,
+  receiver: UserPreviewSchema,
+
+  chat: Type.Object({
+	chatId: Type.String(),
+	chatType: Type.String(),
+	chatName: Type.Union([Type.String(), Type.Null()])
+  })
+});
+export const ChatInvitationListResponseSchema = ChatInvitationPreviewSchema;
+
+
+//ANSWER GROUP CHAT INVITATION
+export const AcceptInvitationParamsSchema = Type.Object({
+	chatInvitationId: Type.String({ format: 'uuid' })
+});
+export type AcceptInvitationParams = Static<typeof AcceptInvitationParamsSchema>;
+
+export const ChatMemberResponseSchema = Type.Object({
+	chatMemberId: Type.String(),
+	chatId: Type.String(),
+	userId: Type.String(),
+	role: Type.String(),
+	joinedAt: Type.String()
+});

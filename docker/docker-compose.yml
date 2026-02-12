@@ -1,6 +1,6 @@
 services:
-  db:
-    image: postgres
+  postgres:
+    image: postgres:18.1
     container_name: postgre-c
     restart: on-failure
     env_file:
@@ -15,29 +15,55 @@ services:
     networks:
       - transcendence
 
-  node:
-    build:
-      context: ../srcs/backend
-      dockerfile: Dockerfile
-    container_name: node-c
+  # node:
+  #   build:
+  #     context: ../srcs/backend
+  #     dockerfile: Dockerfile
+  #   container_name: node-c
+  #   restart: on-failure
+  #   env_file:
+  #     - .env
+  #   secrets:
+  #     - db_password
+  #     - jwt_secret
+  #   networks:
+  #     - transcendence
+  #   depends_on:
+  #     - postgres
+
+  node-dev:
+    image: node:25.2.1
+    container_name: node-dev-c
     restart: on-failure
+    # ports:
+    #   - 3000:3000
     env_file:
       - .env
     secrets:
       - db_password
+      - jwt_secret
+      - cookie_secret
+    volumes:
+      - ../srcs/backend:/app
+    working_dir: /app
+    entrypoint: ["/app/prisma_entrypoint.sh"]
+    command: ["sh", "-c", "npm install --legacy-peer-deps && npx prisma generate && npx prisma db seed && sleep infinity"]
     networks:
       - transcendence
     depends_on:
-      - db
+      - postgres
 
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:9.11.0
     container_name: pgadmin-c
     restart: on-failure
     ports:
       - 5050:80
     env_file:
       - .env
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./pgadmin/servers.json:/pgadmin4/servers.json
     environment:
       - PGADMIN_DEFAULT_PASSWORD_FILE=/run/secrets/pgadmin_password
     secrets:
@@ -45,20 +71,20 @@ services:
     networks:
       - transcendence
     depends_on:
-      - db
+      - postgres
 
-  emscripten:
-    image: emscripten/emsdk
-    container_name: emscripten-c
-    volumes:
-      - ../srcs/game:/src
-      - ../srcs/frontend/game:/build
-    networks:
-      - transcendence
-    entrypoint: ["make", "wasm"]
+  # emscripten:
+  #   image: emscripten/emsdk:4.0.23
+  #   container_name: emscripten-c
+  #   volumes:
+  #     - ../srcs/game:/src
+  #     - ../srcs/frontend/game:/build
+  #   networks:
+  #     - transcendence
+  #   entrypoint: ["make", "wasm"]
 
   nginx:
-    image: nginx
+    image: nginx:1.29.4
     container_name: nginx-c
     restart: on-failure
     ports:
@@ -71,17 +97,22 @@ services:
       - ./certs:/etc/nginx/certs
     networks:
       - transcendence
-    depends_on:
-      - emscripten
+  #   depends_on:
+  #     - emscripten
 
 secrets:
   db_password:
     file: ./secrets/db_password.txt
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
+  cookie_secret:
+    file: ./secrets/cookie_secret.txt
   pgadmin_password:
     file: ./secrets/pgadmin_password.txt
 
 volumes:
   postgres-v:
+  pgadmin_data:
 
 networks:
   transcendence:
