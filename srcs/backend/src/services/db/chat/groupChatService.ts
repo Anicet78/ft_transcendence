@@ -24,8 +24,8 @@ export async function createGroupChat(
 		// 1. create chat members
 		members: {
 		create: uniqueMembers.map((userId) => ({
-			userId,
-			joinedAt: new Date()
+				userId,
+				joinedAt: new Date()
 			}))
 		},
 
