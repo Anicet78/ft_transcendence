@@ -5,6 +5,7 @@ import { Box } from '@allxsmith/bestax-bulma';
 import { useQuery } from '@tanstack/react-query';
 import api from '../serverApi.ts';
 import type { GetResponse } from '../types/GetType.ts';
+import { NavLink } from 'react-router';
 
 type ProfileResponseType = GetResponse<"/profile", "get">;
 
@@ -16,7 +17,7 @@ const ProfilePrivate = () => {
 	});
 
 	if (isLoading) return <div>Chargement...</div>;
-	if (isError || !data) return <div>Erreur: {error?.message || 'unknown'}</div>;
+	if (isError || !data) return <div>Error: {error?.message || 'unknown'}</div>;
 
 	const userData: ProfileResponseType = data.data;
 
@@ -80,6 +81,12 @@ const ProfilePrivate = () => {
 				<p>Total wins: {totalWins}</p>
 				<p>Total loses: {totalLoses}</p>
 			</Box>
+			<NavLink
+				to="/chat/list"
+				className="button is-dark is-medium is-outlined mt-4"
+			>
+				View my chats
+			</NavLink>
 		</Box>
 	)
 }

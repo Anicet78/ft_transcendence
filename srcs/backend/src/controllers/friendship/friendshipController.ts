@@ -6,7 +6,7 @@ import {
 } from '../../schema/friendshipSchema.js';
 
 import { findOrCreatePrivateChat } from '../../services/db/chat/privateChatService.js';
-
+import { AppError } from '../../schema/errorSchema.js';
 
 function normalize<T extends Record<string, any>>(obj: T): T {
   return {
@@ -32,12 +32,15 @@ export async function getFriendshipStatusController(
   const otherId = req.params.userId;
 
   if (userId === otherId) {
-    return reply.send({ status: 'self' });
+    return reply.send({ 
+      status: 'self',
+      friendshipId: null
+    });
   }
 
-  const status = await Service.getFriendshipStatus(userId, otherId);
+  const result = await Service.getFriendshipStatus(userId, otherId);
 
-  return reply.send({ status });
+  return reply.send({ result });
 }
 
 
@@ -50,9 +53,6 @@ export async function getRequests(req: FastifyRequest, reply: FastifyReply) {
   return reply.send(requests.map(normalize));
 }
 
-//GET FRIEND'S STATUS WITH A SPECIFIC USER
-
-
 //SEND FRIENDSHIP REQUEST
 export async function sendRequest(
   req: FastifyRequest<{ Params: SendRequestParams }>,
@@ -62,15 +62,13 @@ export async function sendRequest(
   const receiverId = req.params.id;
 
   if (senderId === receiverId)
-    return reply.status(400).send({ error: 'Cannot befriend yourself' });
+    throw new AppError('Cannot befriend yourself', 400);
 
   // Prevent duplicates
   const existing = await Service.findExistingFriendship(senderId, receiverId);
-  if (existing) {
-    return reply.status(409).send({
-      error: 'A friendship or pending request already exists'
-    });
-  }
+  if (existing)
+    throw new AppError('A friendship or pending request already exists', 409);
+
   await Service.sendRequest(senderId, receiverId);
   return reply.status(201).send({ success: true });
 }
@@ -88,27 +86,23 @@ export async function updateFriendshipRequest(
   //Load the friendship
   const friendship = await Service.getFriendshipById(friendshipId);
 
-  if (!friendship || friendship.status !== 'waiting') {
-    return reply.status(404).send({ error: 'No pending request found' });
-  }
+  if (!friendship || friendship.status !== 'waiting')
+    throw new AppError('No pending request found', 404);
 
   const { senderId, receiverId } = friendship;
 
-  if (!senderId || !receiverId) {
-    return reply.status(500).send({ error: 'Invalid friendship data: missing at least one user IDs' });
-  }
+  if (!senderId || !receiverId)
+    throw new AppError('Invalid friendship data: missing at least one user IDs', 500);
 
   //Check if action is allowed depending if user is sender or receiver
   if (action === 'accept' || action === 'reject') {
-    if (userId !== receiverId) {
-      return reply.status(403).send({ error: 'Only the receiver can accept or reject the request' });
-    }
+    if (userId !== receiverId)
+      throw new AppError('Only the receiver can accept or reject the request', 403);
   }
 
   if (action === 'cancel') {
-    if (userId !== senderId) {
-      return reply.status(403).send({ error: 'Only the sender can cancel the request' });
-    }
+    if (userId !== senderId)
+      throw new AppError('Only the sender can cancel the request', 403);
   }
 
   // Create or reuse private chat
@@ -142,7 +136,7 @@ export async function removeFriend(
   const result = await Service.removeFriend(userId, otherId);
 
   if (result.count === 0)
-    return reply.status(404).send({ error: 'Friendship not found' });
+    throw new AppError('Friendship not found', 404);
 
   return reply.status(204).send();
 }

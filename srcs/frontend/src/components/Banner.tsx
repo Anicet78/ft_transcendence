@@ -18,7 +18,7 @@ const Banner = () => {
 						name="dragon"
 						ariaLabel="dragon logo"
 						/>
-						<span>TransDungeon</span>
+						<span>Dungeon</span>
 					</NavLink>
 				</Navbar.Item>
 			</Navbar.Brand>
