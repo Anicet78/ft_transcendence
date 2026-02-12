@@ -512,12 +512,12 @@ void	print_map(Player &player)
 
 		if (gSdl.texture == NULL)
 		{
-			gSdl.texture = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH * 16, GAME_HEIGHT * 16);
+			gSdl.texture = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, gSdl.maxTexWidth, gSdl.maxTexHeight);
 			SDL_SetTextureBlendMode(gSdl.texture, SDL_BLENDMODE_BLEND);
 		}
 		if (gSdl.texture2 == NULL)
 		{
-			gSdl.texture2 = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH * 16, GAME_HEIGHT * 16);
+			gSdl.texture2 = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, gSdl.maxTexWidth, gSdl.maxTexHeight);
 			SDL_SetTextureBlendMode(gSdl.texture2, SDL_BLENDMODE_BLEND);
 		}
 

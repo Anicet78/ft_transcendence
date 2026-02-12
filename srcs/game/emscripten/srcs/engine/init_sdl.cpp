@@ -41,12 +41,21 @@ int	init_sdl(Engine &gSdl)
 	if (!gSdl.timer.getStarted())
 		gSdl.timer.startTimer();
 	if (gSdl.game == NULL)
-		gSdl.game = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH * 16, GAME_HEIGHT * 16);
+		gSdl.game = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, gSdl.maxTexWidth, gSdl.maxTexHeight);
 	if (gSdl.hud == NULL)
 		gSdl.hud = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, (SCREEN_HEIGHT - GAME_HEIGHT));
 
 	SDL_EventState(SDL_KEYDOWN, SDL_ENABLE);
 	SDL_EventState(SDL_KEYUP, SDL_ENABLE);
 	
+
+
+	SDL_RendererInfo    info;
+
+    SDL_GetRendererInfo(gSdl.renderer, &info);
+
+	gSdl.maxTexWidth = info.max_texture_width;
+	gSdl.maxTexHeight = info.max_texture_height;
+
 	return (1);
 }
