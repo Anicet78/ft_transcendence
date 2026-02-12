@@ -11,8 +11,8 @@ import {
 export async function sendMessage(chatId: string, userId: string, content: string) {
 	// 1. check if chat exists
 	const chat = await prisma.chat.findUnique({
-	where: { chatId },
-	select: { chatId: true }
+		where: { chatId },
+		select: { chatId: true }
 	});
 
 	if (!chat) {
@@ -25,7 +25,7 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 
 	// 2. is user a member
 	const member = await prisma.chatMember.findFirst({
-	where: { chatId, userId }
+		where: { chatId, userId }
 	});
 
 	if (!member) {
@@ -34,15 +34,15 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 
 	// 3. check user is not banned
 	const ban = await prisma.chatBan.findFirst({
-	where: {
-		chatId,
-		userId,
-		deletedAt: null,
-		OR: [
-		{ expiresAt: null },
-		{ expiresAt: { gt: new Date() } }
-		]
-	}
+		where: {
+			chatId,
+			userId,
+			deletedAt: null,
+			OR: [
+				{ expiresAt: null },
+				{ expiresAt: { gt: new Date() } }
+			]
+		}
 	});
 
 	if (ban) {
@@ -55,28 +55,35 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 		select: { role: true }
 	});
 
+	const type = await prisma.chat.findFirst({
+		where: { chatId },
+		select: { chatType: true }
+	});
+
 	//check user role, if dont exists, define as member by default
 	const userRole = role?.role ?? chat_role_type.member;
-	if (userRole == 'member') {
+	//check if chat is group chat
+	const chatType = type?.chatType;
+	if (userRole == 'member' && chatType == 'group') {
 		throw new AppError('You do not have permission to write in this chat', 403);
 	}
 
 	// 4. Create message
 	const message = await prisma.chatMessage.create({
-	data: {
-		chatId,
-		userId,
-		status: 'posted',
-		content
-	},
-	select: {
-		messageId: true,
-		chatId: true,
-		userId: true,
-		content: true,
-		status: true,
-		postedAt: true
-	}
+		data: {
+			chatId,
+			userId,
+			status: 'posted',
+			content
+		},
+		select: {
+			messageId: true,
+			chatId: true,
+			userId: true,
+			content: true,
+			status: true,
+			postedAt: true
+		}
 	});
 
 	return message;
@@ -86,46 +93,37 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 export async function deleteMessage(messageId: string, userId: string) {
 	// 1. Load message
 	const message = await prisma.chatMessage.findUnique({
-	where: { messageId },
-	select: {
-		messageId: true,
-		chatId: true,
-		userId: true, // author
-		status: true
-	}
+		where: { messageId },
+		select: {
+			messageId: true,
+			chatId: true,
+			userId: true, // author
+			status: true
+		}
 	});
 
 	if (!message) {
 		throw new AppError('Message not found', 404);
 	}
 
-	// 2. Load user role in this chat
-	// const role = await prisma.chatRole.findFirst({
-	// where: { chatId: message.chatId, userId },
-	// select: { role: true }
-	// });
-	// const userRole = role?.role ?? 'member';
-	// const isModeratorOrAbove = ;
-	//NEED to add check if user is moderator
-
 	const isAuthor = message.userId === userId;
-	if (!isAuthor /*&& !isModeratorOrAbove*/) {
+	if (!isAuthor) {
 		throw new AppError('You do not have permission to delete this message', 403);
 	}
 
 	// 3. Soft delete
 	const updated = await prisma.chatMessage.update({
-	where: { messageId },
-	data: {
-		status: 'deleted',
-		deletedAt: new Date()
-	},
-	select: {
-		messageId: true,
-		chatId: true,
-		status: true,
-		deletedAt: true
-	}
+		where: { messageId },
+		data: {
+			status: 'deleted',
+			deletedAt: new Date()
+		},
+		select: {
+			messageId: true,
+			chatId: true,
+			status: true,
+			deletedAt: true
+		}
 	});
 
 	return updated;
@@ -203,15 +201,15 @@ export async function editMessage(
 			content: newContent,
 			status: 'edited',
 			editedAt: new Date()
-	},
-	select: {
-		messageId: true,
-		chatId: true,
-		userId: true,
-		content: true,
-		status: true,
-		editedAt: true
-	}
+		},
+		select: {
+			messageId: true,
+			chatId: true,
+			userId: true,
+			content: true,
+			status: true,
+			editedAt: true
+		}
 	});
 
 	return updated;
@@ -241,7 +239,7 @@ export async function moderateMessage(
 	const moderatorRole = await prisma.chatRole.findFirst({
 		where: { chatId, userId: moderatorId, deletedAt: null },
 		select: { role: true }
-		});
+	});
 
 	const moderatorRank = getRoleRank(moderatorRole?.role);
 
@@ -251,18 +249,18 @@ export async function moderateMessage(
 
 	// 3. Moderate message
 	const updated = await prisma.chatMessage.update({
-	where: { messageId },
-	data: {
-		status: 'moderated',
-		deletedAt: new Date(),
-		moderatedBy: moderatorId
-	},
-	select: {
-		messageId: true,
-		chatId: true,
-		status: true,
-		deletedAt: true
-	}
+		where: { messageId },
+		data: {
+			status: 'moderated',
+			deletedAt: new Date(),
+			moderatedBy: moderatorId
+		},
+		select: {
+			messageId: true,
+			chatId: true,
+			status: true,
+			deletedAt: true
+		}
 	});
 
 	return updated;
@@ -322,125 +320,3 @@ export async function restoreMessage(
 	});
 	return updated;
 }
-
-
-// import { prisma } from '../../shared/prisma/prisma.js';
-// import { AppError } from '../../shared/errors/AppError.js';
-// import { ensureCanSendMessage } from '../chat/chat.integrity.js';
-// import { loadMessageOrFail, ensureAuthor, ensureModerator } from './message.utils.js';
-// import { messageSelect } from './message.select.js';
-
-// // SEND MESSAGE
-// export async function sendMessage(chatId: string, userId: string, content: string) {
-//   await ensureCanSendMessage(chatId, userId);
-
-//   return prisma.chatMessage.create({
-//     data: {
-//       chatId,
-//       userId,
-//       content,
-//       status: 'posted'
-//     },
-//     select: messageSelect
-//   });
-// }
-
-// // DELETE MESSAGE
-// export async function deleteMessage(messageId: string, userId: string) {
-//   const message = await loadMessageOrFail(messageId);
-
-//   const isAuthor = message.userId === userId;
-//   if (!isAuthor) {
-//     throw new AppError('You do not have permission to delete this message', 403);
-//   }
-
-//   return prisma.chatMessage.update({
-//     where: { messageId },
-//     data: {
-//       status: 'deleted',
-//       deletedAt: new Date()
-//     },
-//     select: {
-//       messageId: true,
-//       chatId: true,
-//       status: true,
-//       deletedAt: true
-//     }
-//   });
-// }
-
-// // EDIT MESSAGE
-// export async function editMessage(chatId: string, messageId: string, userId: string, newContent: string) {
-//   const message = await loadMessageOrFail(messageId);
-
-//   if (message.chatId !== chatId) {
-//     throw new AppError('Message not found', 404);
-//   }
-
-//   ensureAuthor(message, userId);
-
-//   return prisma.chatMessage.update({
-//     where: { messageId },
-//     data: {
-//       content: newContent,
-//       status: 'edited',
-//       editedAt: new Date()
-//     },
-//     select: messageSelect
-//   });
-// }
-
-// // MODERATE MESSAGE
-// export async function moderateMessage(chatId: string, messageId: string, moderatorId: string) {
-//   const message = await loadMessageOrFail(messageId);
-
-//   if (message.chatId !== chatId) {
-//     throw new AppError('Message not found', 404);
-//   }
-
-//   await ensureModerator(chatId, moderatorId);
-
-//   return prisma.chatMessage.update({
-//     where: { messageId },
-//     data: {
-//       status: 'moderated',
-//       deletedAt: new Date(),
-//       moderatedBy: moderatorId
-//     },
-//     select: {
-//       messageId: true,
-//       chatId: true,
-//       status: true,
-//       deletedAt: true
-//     }
-//   });
-// }
-
-// // RESTORE MESSAGE
-// export async function restoreMessage(chatId: string, messageId: string, moderatorId: string) {
-//   const message = await loadMessageOrFail(messageId);
-
-//   if (message.chatId !== chatId) {
-//     throw new AppError('Message not found', 404);
-//   }
-
-//   if (message.status !== 'moderated') {
-//     throw new AppError('Only moderated messages can be restored', 400);
-//   }
-
-//   await ensureModerator(chatId, moderatorId);
-
-//   return prisma.chatMessage.update({
-//     where: { messageId },
-//     data: {
-//       status: 'posted',
-//       deletedAt: null,
-//       moderatedBy: null
-//     },
-//     select: {
-//       messageId: true,
-//       chatId: true,
-//       status: true
-//     }
-//   });
-// }
