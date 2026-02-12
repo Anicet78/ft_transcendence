@@ -10,8 +10,8 @@ const RemoveFriend = () => {
 	const id = useParams();
 
 	const { data, isLoading, isError, error } = useQuery({
-		queryKey: [`/friends/${id}`, getAccessToken()],
-		queryFn: () => api.delete(`/friends/${id}`, id),
+		queryKey: [`/friends/${id.id}`, getAccessToken()],
+		queryFn: () => api.delete(`/friends/${id.id}`),
 	});
 
 	if (isLoading) return <div>Loading...</div>;

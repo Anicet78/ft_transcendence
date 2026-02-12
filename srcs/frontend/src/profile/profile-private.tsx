@@ -43,14 +43,21 @@ const ProfilePrivate = () => {
 					<figure className='image is-128x128'>
 						<img aria-label='avatar of the user' src={avatar} />
 					</figure>
-				</Box>
-				<Box className='head-text'>
-					<span className="icon-text">
-						<span>{username}</span>
+					<NavLink to='/profile/updateAvatar' className='button is-small is-white' state={{toChange: "avatarUrl"}}>
 						<span className="icon">
 							<i className="fas fa-pen"></i>
 						</span>
-					</span>
+					</NavLink>
+				</Box>
+				<Box className='head-text'>
+					<div className='profile_username'>
+						{username}
+						<NavLink to='/profile/updateUsername' className='button is-small' state={{toChange: "username"}}>
+							<span className="icon">
+								<i className="fas fa-pen"></i>
+							</span>
+						</NavLink>
+					</div>
 					<p>Lvl {level}</p>
 					<p>{xp} XP</p>
 				</Box>
@@ -60,19 +67,19 @@ const ProfilePrivate = () => {
 				<p>Last name: {lastname}</p>
 				<p>
 					Email: {email}
-					<span className="icon-text">
-						<span className="icon">
-							<i className="fas fa-pen"></i>
-						</span>
-					</span>
+					<NavLink to='/profile/getNewInfo' className='button is-small is-white' state={{toChange: "email"}}>
+							<span className="icon">
+								<i className="fas fa-pen"></i>
+							</span>
+					</NavLink>
 				</p>
 				<p>
 					Password: {password}
-					<span className="icon-text">
-						<span className="icon">
-							<i className="fas fa-pen"></i>
-						</span>
-					</span>
+					<NavLink to='/profile/getNewInfo' className='button is-small is-white' state={{toChange: "password"}}>
+							<span className="icon">
+								<i className="fas fa-pen"></i>
+							</span>
+					</NavLink>
 				</p>
 				<p>Best time: {bestTime}</p>
 				<p>Total ennemies killed: {totalKills}</p>
