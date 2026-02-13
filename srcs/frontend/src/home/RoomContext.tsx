@@ -4,6 +4,7 @@ import { useSocket } from '../socket/SocketContext';
 import type { GetResponse } from '../types/GetType';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
+import { useAuth } from '../auth/AuthContext';
 
 export type Room = GetResponse<"/room/new", "post">;
 
@@ -47,6 +48,7 @@ const onPlayerQuit = (data: { playerId: string }, setRoom: React.Dispatch<React.
 export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 	const navigate = useNavigate();
 	const socket = useSocket();
+	const { user } = useAuth();
 
 	const [room, setRoom] = useState<Room | null>(null);
 	const [start, setStart] = useState<Boolean>(false);
@@ -81,9 +83,9 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const leaveRoom = () => {
 		if (room?.roomId) {
-			quitMutation.mutate()
+			quitMutation.mutate();
 		} else {
-			setRoom(null)
+			setRoom(null);
 		}
 	}
 
@@ -122,6 +124,9 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 			An error occurred ({joinMutation.error.message}), please refresh.
 		</p>
 	);
+
+	if (user && !room)
+		return <div>Creating room</div>
 
 	return (
 		<RoomContext.Provider value={{ room, start, joinRoom, leaveRoom, newRoom, cancelStart }}>

@@ -1,5 +1,5 @@
-CXX      = c++
-CC       = cc
+CXX      = clang++
+CC       = clang
 CXXFLAGS = -Wall -Werror -Wextra -std=c++20 -g
 CFLAGS   = -DLIBUS_USE_EPOLL -DLIBUS_NO_SSL -I./uWebSockets/uSockets/src
 LDFLAGS  = -lpthread -lz
@@ -15,11 +15,11 @@ SRCS =  main.cpp \
 		updateClient.cpp \
 		Server.cpp \
 		Session.cpp \
-        map/Map.cpp \
+		map/Map.cpp \
 		map/mapMain.cpp \
 		map/mapGen.cpp \
 		map/aStar.cpp \
-        Room.cpp \
+		Room.cpp \
 		RoomEvent.cpp \
 		Mob.cpp \
 		Player.cpp \
@@ -33,7 +33,7 @@ NAME = game-server
 
 # Liste TOUS les fichiers .c de uSockets
 USOCKETS_C = $(wildcard ./uWebSockets/uSockets/src/*.c) \
-             $(wildcard ./uWebSockets/uSockets/src/eventing/*.c)
+			 $(wildcard ./uWebSockets/uSockets/src/eventing/*.c)
 
 all: $(NAME)
 

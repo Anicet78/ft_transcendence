@@ -40,6 +40,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const { data, isLoading, isError } = useQuery({
 		queryKey: ['session'],
 		queryFn: async () => await api.post('/auth/refresh'),
+		refetchOnWindowFocus: false,
+		retry: false
 	});
 
 	useEffect(() => {
