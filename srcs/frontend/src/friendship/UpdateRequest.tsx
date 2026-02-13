@@ -4,21 +4,24 @@ import "./friendList.css"
 import { NavLink, useLocation, useParams } from "react-router";
 import { useQuery } from '@tanstack/react-query';
 import api, { getAccessToken } from '../serverApi.ts';
-import type { GetBody } from '../types/GetType.ts'
-
-type UpdateFriendRequestBodyType = GetBody<"/friends/{id}", "patch">;
 
 const UpdateRequest = () => {
 
 	const id = useParams();
 	const location = useLocation()
 	const {requestedAction} = location.state || {}
-	console.log(`${requestedAction}`)
+	let action: string = ''
 
-	const UpdateFriendRequestBody: UpdateFriendRequestBodyType = {action: requestedAction}
+	if (requestedAction === 'cancel')
+		action = 'cancelled'
+	else if (requestedAction === 'accept')
+		action = 'accepted'
+	else if (requestedAction === 'reject')
+		action = 'rejected'
+
 	const { data, isLoading, isError, error } = useQuery({
-		queryKey: [`/friends/${id}`, getAccessToken()],
-		queryFn: () => api.patch(`/friends/${id}`, {id, UpdateFriendRequestBody}),
+		queryKey: ['friendship', getAccessToken()],
+		queryFn: () => api.patch(`/friends/${id.id}`, {action: requestedAction}),
 	});
 
 	if (isLoading) return <div>Loading...</div>;
@@ -30,7 +33,7 @@ const UpdateRequest = () => {
 			Sent requests list
 			</h1>
 			<Box m="4" p="6"  className="friendbox" bgColor="grey-light" textColor="black" justifyContent='space-between'>
-				Friend request successfully cancelled!
+				{"Friend request successfully " + action}
 			</Box>
 			<NavLink to="/friends" className="button is-medium">Back to friends list</NavLink>
 		</Box>

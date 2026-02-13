@@ -28,6 +28,7 @@ const ProfilePrivate = () => {
 	const lastname = userData.lastName;
 	const email = userData.mail;
 	const password = '**********'
+	const region = userData.region;
 	const bestTime = userData.gameProfile?.bestTime || '0';
 	const totalKills = userData.gameProfile?.totalEnemiesKilled || '0';
 	const totalGames = userData.gameProfile?.totalGames || '0';
@@ -43,14 +44,21 @@ const ProfilePrivate = () => {
 					<figure className='image is-128x128'>
 						<img aria-label='avatar of the user' src={avatar} />
 					</figure>
-				</Box>
-				<Box className='head-text'>
-					<span className="icon-text">
-						<span>{username}</span>
+					<NavLink to='/profile/update/avatar' className='button is-small is-white'>
 						<span className="icon">
 							<i className="fas fa-pen"></i>
 						</span>
-					</span>
+					</NavLink>
+				</Box>
+				<Box className='head-text'>
+					<div className='profile_username'>
+						{username}
+						<NavLink to='/profile/update/username' className='button is-small'>
+							<span className="icon">
+								<i className="fas fa-pen"></i>
+							</span>
+						</NavLink>
+					</div>
 					<p>Lvl {level}</p>
 					<p>{xp} XP</p>
 				</Box>
@@ -58,21 +66,22 @@ const ProfilePrivate = () => {
 			<Box className='info' bgColor="white" textSize='5'>
 				<p>First name: {firstname}</p>
 				<p>Last name: {lastname}</p>
-				<p>
-					Email: {email}
-					<span className="icon-text">
-						<span className="icon">
-							<i className="fas fa-pen"></i>
-						</span>
-					</span>
-				</p>
+				<p>Email: {email}</p>
 				<p>
 					Password: {password}
-					<span className="icon-text">
-						<span className="icon">
-							<i className="fas fa-pen"></i>
-						</span>
-					</span>
+					{/* <NavLink to='/profile/update/' className='button is-small is-white'>
+							<span className="icon">
+								<i className="fas fa-pen"></i>
+							</span>
+					</NavLink> */}
+				</p>
+				<p>
+					Region: {region}
+					<NavLink to='/profile/update/region' className='button is-small is-white'>
+							<span className="icon">
+								<i className="fas fa-pen"></i>
+							</span>
+					</NavLink>
 				</p>
 				<p>Best time: {bestTime}</p>
 				<p>Total ennemies killed: {totalKills}</p>

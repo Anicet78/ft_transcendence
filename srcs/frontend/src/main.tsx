@@ -24,13 +24,15 @@ import ChatView from './chat/ChatView.tsx';
 import Home from './home/home.tsx';
 import JoinRoom from './home/join-room.tsx';
 import Game from './game/game.tsx';
-import FriendRequest from './friendship/FriendRequest.tsx';
+import FriendRequest from './friendship/FriendRequests.tsx';
 import UpdateRequest from './friendship/UpdateRequest.tsx';
 import RemoveFriend from './friendship/RemoveFriend.tsx';
 import AddFriend from './friendship/AddFriend.tsx';
 import { AuthProvider } from './auth/AuthContext.tsx';
 import { SocketProvider } from './socket/SocketContext.tsx';
 import { RoomProvider } from './home/RoomContext.tsx';
+import SearchComponent from './search/searchComponent.tsx';
+import ProfileUpdate from './profile/ProfileUpdate.tsx';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -46,6 +48,7 @@ const AppEntryPoint = () => {
 			<h1><Banner /></h1>
 			<Routes>
 				<Route path="/" element={<App />} />
+				<Route path="/test" element={<SearchComponent />} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/register" element={<Register />} />
 				<Route path="/home" element={<Home />} />
@@ -59,6 +62,7 @@ const AppEntryPoint = () => {
 				<Route path="/chat/:chatId/info" element={<ChatView />} />
 				<Route path="/chat/list" element={<ChatList />} />
 				<Route path="/profile" element={<ProfilePrivate />} />
+				<Route path="/profile/update/:field" element={<ProfileUpdate />} />
 				<Route path="/profile/:username" element={<ProfilePublic />} />
 				<Route path="/terms_of_service" element={<TermsService />} />
 				<Route path="/privacy_policy" element={<Privacy />} />
