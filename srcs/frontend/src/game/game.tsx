@@ -54,7 +54,7 @@ const Game = () => {
 	}, []);
 
 	useEffect(() => {
-		if (!canvasRef.current || mutation.isPending || !gameSocket) return;
+		if (!canvasRef.current || mutation.isPending || !gameSocket || !user || !room) return;
 
 		const initWasm = async () => {
 			try {
@@ -76,7 +76,8 @@ const Game = () => {
 				(window as any).sendResults = (mod as any).sendResults;
 
 				setModule(mod);
-				mod.callMain(["bonjour"]);
+				// Add username and session size
+				mod.callMain([user.id, 'username', room.roomId, room.players.length.toString(), "5"]);
 			} catch (e) {
 				console.error("Wasm Error:", e);
 			}
