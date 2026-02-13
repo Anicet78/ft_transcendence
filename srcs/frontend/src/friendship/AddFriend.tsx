@@ -10,8 +10,8 @@ const AddFriend = () => {
 	const id = useParams();
 
 	const { data, isLoading, isError, error } = useQuery({
-		queryKey: [`/friends/${id}`, getAccessToken()],
-		queryFn: () => api.post(`/friends/${id}`, id.toString()),
+		queryKey: [`/friends/${id.id}`, getAccessToken()],
+		queryFn: () => api.post(`/friends/${id.id}`),
 	});
 
 	if (isLoading) return <div>Loading...</div>;
