@@ -33,7 +33,7 @@ const regionUpdate = () => {
 			<h1>Change profile</h1>
 			<Box m="4" p="6"  className="friendbox" bgColor="grey-light" textColor="black" justifyContent='space-between'>
 				<form action={UpdateAction}>
-					<label htmlFor="New region">Enter your new region</label>
+					<label htmlFor="New region"></label>
 					<SelectRegion />
 					<Button type="submit">Submit</Button>
 				</form>

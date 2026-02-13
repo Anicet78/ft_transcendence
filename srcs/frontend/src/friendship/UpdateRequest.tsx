@@ -10,8 +10,14 @@ const UpdateRequest = () => {
 	const id = useParams();
 	const location = useLocation()
 	const {requestedAction} = location.state || {}
-	const action: string = requestedAction
+	let action: string = ''
 
+	if (requestedAction === 'cancel')
+		action = 'cancelled'
+	else if (requestedAction === 'accept')
+		action = 'accepted'
+	else if (requestedAction === 'reject')
+		action = 'rejected'
 
 	const { data, isLoading, isError, error } = useQuery({
 		queryKey: ['friendship', getAccessToken()],

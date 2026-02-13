@@ -30,11 +30,11 @@ const FriendRequest = () => {
 			{friend.receiver.appUserId !== user?.id && 
 				<NavLink to={"/profile/" + friend.receiver.username}>{friend.receiver.username}</NavLink>}
 			{friend.sender.appUserId === user?.id && 
-				<NavLink to={"/friends/requests/update/" + friend.friendshipId} state={{requestedAction: "cancelled"}} className="button is-medium">Cancel request</NavLink>}
+				<NavLink to={"/friends/requests/update/" + friend.friendshipId} state={{requestedAction: "cancel"}} className="button is-medium">Cancel request</NavLink>}
 			{friend.sender.appUserId !== user?.id && 
 				<div>
-					<NavLink to={"/friends/requests/update/" + friend.friendshipId} state={{requestedAction: "accepted"}} className="button is-medium">Accept request</NavLink>
-					<NavLink to={"/friends/requests/update/" + friend.friendshipId} state={{requestedAction: "rejected"}} className="button is-medium">Reject request</NavLink>
+					<NavLink to={"/friends/requests/update/" + friend.friendshipId} state={{requestedAction: "accept"}} className="button is-medium">Accept request</NavLink>
+					<NavLink to={"/friends/requests/update/" + friend.friendshipId} state={{requestedAction: "reject"}} className="button is-medium">Reject request</NavLink>
 				</div>}
 		</li>
 		)

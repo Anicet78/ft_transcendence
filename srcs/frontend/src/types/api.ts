@@ -1947,7 +1947,7 @@ export interface paths {
             requestBody: {
                 content: {
                     "application/json": {
-                        action: "accepted" | "rejected" | "cancelled";
+                        action: "accept" | "reject" | "cancel";
                     };
                 };
             };

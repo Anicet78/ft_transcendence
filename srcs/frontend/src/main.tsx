@@ -32,8 +32,7 @@ import { AuthProvider } from './auth/AuthContext.tsx';
 import { SocketProvider } from './socket/SocketContext.tsx';
 import { RoomProvider } from './home/RoomContext.tsx';
 import SearchComponent from './search/searchComponent.tsx';
-import UsernameUpdate from './profile/UsernameUpdate.tsx';
-import AvatarUpdate from './profile/AvatarUpdate.tsx';
+import ProfileUpdate from './profile/ProfileUpdate.tsx';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -63,8 +62,7 @@ const AppEntryPoint = () => {
 				<Route path="/chat/:chatId/info" element={<ChatView />} />
 				<Route path="/chat/list" element={<ChatList />} />
 				<Route path="/profile" element={<ProfilePrivate />} />
-				<Route path="/profile/updateUsername" element={<UsernameUpdate />} />
-				<Route path="/profile/updateAvatar" element={<AvatarUpdate />} />
+				<Route path="/profile/update/:field" element={<ProfileUpdate />} />
 				<Route path="/profile/:username" element={<ProfilePublic />} />
 				<Route path="/terms_of_service" element={<TermsService />} />
 				<Route path="/privacy_policy" element={<Privacy />} />
