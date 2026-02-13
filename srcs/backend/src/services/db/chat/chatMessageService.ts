@@ -3,8 +3,7 @@ import { chat_role_type } from '@prisma/client';
 import { AppError } from '../../../schema/errorSchema.js';
 import {
 	ROLE_RANK,
-	getRoleRank/*,
-	type ChatRole */
+	getRoleRank
 } from '../../../utils/chatRoles.js';
 
 //SEND MESSAGE
@@ -82,7 +81,15 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 			userId: true,
 			content: true,
 			status: true,
-			postedAt: true
+			postedAt: true,
+			author: {
+				select: {
+				appUserId: true,
+				username: true,
+				avatarUrl: true,
+				availability: true
+				}
+			}
 		}
 	});
 
