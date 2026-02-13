@@ -1,13 +1,16 @@
-const InputPassword = ({label, id}) => {
+const InputPassword = ({ label, type, name, value, onChange, placeholder }) => {
 	return (
 		<div className="field">
-			<label htmlFor="password">{label}</label>
+			<label htmlFor={name}>{label}</label>
 			<p className="control has-icons-left">
 				<input
 					className="input"
-					type="password"
-					id={id}
-					name="pwd"
+					type={type}
+					id={name}
+					name={name}
+					value={value}
+					onChange={onChange}
+					placeholder={placeholder}
 					required
 					minLength={8}
 				/>
