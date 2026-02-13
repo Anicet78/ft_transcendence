@@ -9,9 +9,11 @@ docker/certs
 
 # Node
 node_modules/
+srcs/backend/.env
 
 # Build
 dist/
+build/
 
 # Logs
 npm-debug.log*

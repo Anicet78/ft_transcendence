@@ -1,0 +1,25 @@
+.box-head {
+	columns: 2;
+	align-items: center;
+	width: 60%;
+	margin: auto;
+}
+
+.head-text{
+	width: 100%;
+}
+
+.info {
+	columns: 2;
+	text-align: left;
+	color: black;
+	width: 90%;
+	margin: auto;
+}
+
+.profile_username {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: auto;
+}
