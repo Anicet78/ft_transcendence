@@ -356,9 +356,22 @@ void	manageSoil(int x, int y, Player &player)
 	int color, color2;
 	int offset;
 
-	if (maskTree && maskPath && depthTree == 1 && depthPath == 1)
+	//std::cout << "x = " << x << ", y = " << y << ", depthTree = " << depthTree << ", depthPah = " << depthPath << std::endl;
+
+	if (maskTree && maskPath && depthTree == depthPath)
 	{
 		maskTree |= maskPath;
+		if (depthPath == 0)
+		{
+			color = 676;
+			offset = autoTileOffset3[maskPath];
+			int offset3 = autoTileOffset[maskTree];
+			color2 = 541;
+			Assets::rendMap(x * tile_s, y * tile_s, 550, 1, 1);
+			Assets::rendMap(x * tile_s, y * tile_s, color2 + offset3, 1, 1);
+			Assets::rendMap(x * tile_s, y * tile_s, color + offset, 1, 1);
+			return ;
+		}
 		color = 541 + depthTree * 9;
 		offset = autoTileOffset[maskTree];
 		color2 = (depthTree == 2) ? color : color + 9;

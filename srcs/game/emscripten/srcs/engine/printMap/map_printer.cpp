@@ -147,7 +147,7 @@ void	print_map(Player &player)
 				manageFloorPrint(x, y, c, player, 0);
 			}
 		}
-		if (player.getFloor() || player.getRoomRef().getName() == "waiting")
+		if (player.getFloor())
 		{
 			SDL_SetRenderTarget(gSdl.renderer, gSdl.texture2);
 			SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 0);
