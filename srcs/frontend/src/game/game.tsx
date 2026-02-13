@@ -23,19 +23,22 @@ const Game = () => {
 	});
 
 	useEffect(() => {
-		if (user?.id === room?.hostId)
+		if (user?.id === room?.hostId) {
 			mutation.mutate();
+		}
 		else if (!start) {
 			navigate("/home");
 			return ;
 		}
 
-		const socket = new WebSocket('ws://localhost:4444');
+		const socket = new WebSocket('wss://localhost:8443/ws/');
 		setGameSocket(socket);
 
 		if (!socket) return ;
 
 		return () => {
+			if (start) return;
+
 			cancelStart();
 			socket.close();
 
@@ -80,7 +83,7 @@ const Game = () => {
 		};
 
 		initWasm();
-	}, [mutation.isPending, gameSocket]); // Se déclenche quand le chargement finit
+	}, [mutation.isPending, gameSocket]);
 
 	useEffect(() => {
 		if (!gameSocket || !Module) return;
@@ -107,8 +110,9 @@ const Game = () => {
 
 	}, [gameSocket, Module]);
 
-	if (mutation.isPending)
+	if (mutation.isPending) {
 		return <div>Verifying room</div>;
+	}
 
 	if (mutation.isError) {
 		navigate("/home");
