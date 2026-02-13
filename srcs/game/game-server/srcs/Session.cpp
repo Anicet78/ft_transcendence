@@ -1,7 +1,7 @@
 # include "Session.hpp"
 
 Session::Session(void): _maxNumPlayer(2), _running(0), _ended(0), _startTime(std::chrono::steady_clock::time_point{}),
-						_numPlayersFinished(0),  _timerBeforeRun(std::chrono::_V2::steady_clock::now())
+						_numPlayersFinished(0), _readyToRun(0), _timerBeforeRun(std::chrono::_V2::steady_clock::now()), _readyToRunStartTimer(0.0f)
 {
 	static std::string set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	int size = static_cast<int>(2 * sqrt(8 + 6 * (_maxNumPlayer - 1)));
@@ -24,7 +24,7 @@ Session::Session(void): _maxNumPlayer(2), _running(0), _ended(0), _startTime(std
 }
 
 Session::Session(int numPLayer):	_maxNumPlayer(numPLayer), _running(0), _ended(0), _startTime(std::chrono::steady_clock::time_point{}),
-									_numPlayersFinished(0)
+									_numPlayersFinished(0), _readyToRun(0), _timerBeforeRun(std::chrono::_V2::steady_clock::now()), _readyToRunStartTimer(0.0f)
 {
 	static std::string set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	int size = static_cast<int>(2 * sqrt(8 + 6 * (_maxNumPlayer - 1)));
@@ -70,10 +70,12 @@ void	Session::launch()
 
 		this->_players[pos]->setStartPos(pos);
 
-		if (this->_players[pos]->getWs()->unsubscribe(roomId))
-			std::cout << "unsubscribe from waiting room" << std::endl;
-		if (this->_players[pos]->getWs()->subscribe(node->getRoom()->getRoomId()))
-			std::cout << "subscribed to " << node->getRoom()->getRoomId() << std::endl;
+		this->_players[pos]->getWs()->unsubscribe(roomId);
+		this->_players[pos]->getWs()->subscribe(node->getRoom()->getRoomId());
+		// if (this->_players[pos]->getWs()->unsubscribe(roomId))
+		// 	std::cout << "unsubscribe from waiting room" << std::endl;
+		// if (this->_players[pos]->getWs()->subscribe(node->getRoom()->getRoomId()))
+		// 	std::cout << "subscribed to " << node->getRoom()->getRoomId() << std::endl;
 		pos++;
 	}
 }
@@ -274,15 +276,15 @@ void	Session::checkFinishedPlayers(uWS::App &app)
 			player->getWs()->send(msg);
 			std::string	oldTopic = player->getRoomRef().getRoomId();
 			sendLeaveUpdate(*player, app, oldTopic);
-			if (player->getWs()->unsubscribe(oldTopic))
-				std::cout << "unsibscribe from " << oldTopic << std::endl;
+			player->getWs()->unsubscribe(oldTopic);
+			// if (player->getWs()->unsubscribe(oldTopic))
+			// 	std::cout << "unsibscribe from " << oldTopic << std::endl;
 			finishedPlayers.push_back(player);
 			std::cout << player->getName() << ": " << std::endl
 				<< "Kills: " << player->getKills() << "Place :" << player->getFinalRanking() << std::endl;
 		}
 	}
-	for (auto &player : finishedPlayers)
-		this->removePlayer(player);
+	
 	if (!this->_players.size() && this->_running)
 	{
 		std::cout << "SESSION STOP" << std::endl;
