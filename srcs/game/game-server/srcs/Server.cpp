@@ -142,10 +142,14 @@ void	Server::removePlayer(std::string &uid, uWS::App &app)
                     {
 						std::string topic = (*it)->getRoom().getRoomId();
 						sendLeaveUpdate(*(*it).get(), app, topic);
+						(*it)->getWs()->unsubscribe(topic);
                         // itS->sendToAll(*(*it).get());
                         itS->removePlayer(*it);
                         if (itS->isRunning() && itS->getNumPlayers() < 1)
+						{
+							std::cout << "session erased by no players left" << std::endl;
                             this->_sessions.erase(itS);
+						}
                         break ;
                     }
                 }
@@ -326,6 +330,7 @@ void	Server::run(void)
 	us_timer_set(delayTimer, [](struct us_timer_t *t)
 	{
 		auto *data = (TimerData *) us_timer_ext(t);
+
 		for(auto &session : data->server->_sessions)
 		{
 			if (!session.isRunning() && session.isReadyToRun())
@@ -336,12 +341,17 @@ void	Server::run(void)
 			}
 			session.checkFinishedPlayers(*data->app);
 			if (session.hasEnded())
+			{
+				std::cout << "ended" << std::endl;
 				continue ;
+			}
 			std::unordered_map<Room *, std::vector<std::shared_ptr<Player>> > PlayerPerRoom;
 			for (auto player : session.getPlayers())
 			{
 				if (player->getFinished())
+				{
 					continue ;
+				}
 				Room &room = player->getRoomRef();
 				auto i = PlayerPerRoom.find(&room);
 				if (i == PlayerPerRoom.end())
@@ -361,7 +371,9 @@ void	Server::run(void)
 		for (auto it = data->server->_sessions.begin(); it != data->server->_sessions.end();)
 		{
 			if (it->hasEnded())
+			{
 				it = data->server->_sessions.erase(it);
+			}
 			if (it != data->server->_sessions.end())
 				it++;
 		}

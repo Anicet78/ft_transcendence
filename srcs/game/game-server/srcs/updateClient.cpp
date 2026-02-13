@@ -87,11 +87,12 @@ void updateRoom(Player &player, uWS::App &app)
 			player.setPos(exitsLoc[1][0] - 0.1, exitsLoc[1][1] + 0.5);
 		}
 		sendLeaveUpdate(player, app, oldTopic);
-		if (player.getWs()->unsubscribe(oldTopic))
-			std::cout << "Unsubscribe from " << oldTopic << std::endl;
-
-		if (player.getWs()->subscribe(player.getRoom().getRoomId()))
-			std::cout << "Subscribe to " << player.getRoom().getRoomId() << std::endl;
+		player.getWs()->unsubscribe(oldTopic);
+		player.getWs()->subscribe(player.getRoom().getRoomId());
+		// if (player.getWs()->unsubscribe(oldTopic))
+		// 	std::cout << "Unsubscribe from " << oldTopic << std::endl;
+		// if (player.getWs()->subscribe(player.getRoom().getRoomId()))
+		// 	std::cout << "Subscribe to " << player.getRoom().getRoomId() << std::endl;
 	}
 	else if (plan[y][x] == 'S')
 	{
@@ -103,10 +104,12 @@ void updateRoom(Player &player, uWS::App &app)
 		player.setNode(player.getNode()->up.lock());
 		player.findP();
 		sendLeaveUpdate(player, app, oldTopic);
-		if (player.getWs()->unsubscribe(oldTopic))
-			std::cout << "Unsubscribe from " << oldTopic << std::endl;
-		if (player.getWs()->subscribe(player.getRoom().getRoomId()))
-			std::cout << "Subscribed to " << player.getRoom().getRoomId() << std::endl;
+		player.getWs()->unsubscribe(oldTopic);
+		player.getWs()->subscribe(player.getRoom().getRoomId());
+		// if (player.getWs()->unsubscribe(oldTopic))
+		// 	std::cout << "Unsubscribe from " << oldTopic << std::endl;
+		// if (player.getWs()->subscribe(player.getRoom().getRoomId()))
+		// 	std::cout << "Subscribed to " << player.getRoom().getRoomId() << std::endl;
 	}
 	else if (plan[y][x] == 'F')
 		player.setFinished(true);
@@ -140,17 +143,20 @@ static void	mobInteraction(MobRush &rush, int id, Mob &mob, Player &player)
 		{
 			HitBox	&box = mob.getBox();
 			box.updateHurtBox();
-			if (box.isDmgHit(player.getHitBox().getAtkHitBox()))
+			if (!mob.isDead())
 			{
-				mob.damaged(true);
-				mob.setHp(mob.getHp() - 1);
-				if (mob.getHp() <= 0)
+				if (box.isDmgHit(player.getHitBox().getAtkHitBox()))
 				{
-					rush.makeDie(id);
-					player.addKills();
-					return ;
+					mob.damaged(true);
+					mob.setHp(mob.getHp() - 1);
+					if (mob.getHp() <= 0)
+					{
+						rush.makeDie(id);
+						player.addKills();
+						return ;
+					}
+					mob.startInvinsibleFrame();
 				}
-				mob.startInvinsibleFrame();
 			}
 		}
 	}

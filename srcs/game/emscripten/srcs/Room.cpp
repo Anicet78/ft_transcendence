@@ -96,28 +96,28 @@ void Room::identifyExits()
         while ((pos = line.find('E', pos)) != std::string::npos)
         {
             // West
-            if (pos + 1 < line.size() && line[pos + 1] == '0')
+            if (pos + 1 < line.size() && (line[pos + 1] == '0' || line[pos + 1] == '2'))
 			{
                 _exits[3] = 1;
 				_exitsLoc[3] = {static_cast<int>(pos), static_cast<int>(i)};
 			}
 
             // East
-            else if (pos > 0 && line[pos - 1] == '0')
+            else if (pos > 0 && (line[pos - 1] == '0' || line[pos - 1] == '2'))
 			{
                 _exits[1] = 1;
 				_exitsLoc[1] = {static_cast<int>(pos), static_cast<int>(i)};
 			}
 
             // North
-            else if (i + 1 < _roomPlan.size() && _roomPlan[i + 1][pos] == '0')
+            else if (i + 1 < _roomPlan.size() && (_roomPlan[i + 1][pos] == '0' || _roomPlan[i + 1][pos] == '2'))
 			{
                 _exits[0] = 1;
 				_exitsLoc[0] = {static_cast<int>(pos), static_cast<int>(i)};
 			}
 
             // South
-            else if (i > 0 && _roomPlan[i - 1][pos] == '0')
+            else if (i > 0 && (_roomPlan[i - 1][pos] == '0' || _roomPlan[i - 1][pos] == '2'))
 			{
                 _exits[2] = 1;
 				_exitsLoc[2] = {static_cast<int>(pos), static_cast<int>(i)};
@@ -222,8 +222,6 @@ void	Room::importFloor(std::string fullPath, std::map<std::string, std::shared_p
 
 Room Room::getWatingRoom()
 {
-	// if (!_WatingRooms.size())
-	// 	throw std::runtime_error("No wating room available");
 	return *_WaitingRooms["waiting"].get();
 }
 
