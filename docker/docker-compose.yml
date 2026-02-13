@@ -15,21 +15,24 @@ services:
     networks:
       - transcendence
 
-  # node:
-  #   build:
-  #     context: ../srcs/backend
-  #     dockerfile: Dockerfile
-  #   container_name: node-c
-  #   restart: on-failure
-  #   env_file:
-  #     - .env
-  #   secrets:
-  #     - db_password
-  #     - jwt_secret
-  #   networks:
-  #     - transcendence
-  #   depends_on:
-  #     - postgres
+  node:
+    build:
+      context: ../srcs/backend
+      dockerfile: Dockerfile
+    container_name: node-c
+    restart: on-failure
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    secrets:
+      - db_password
+      - jwt_secret
+      - cookie_secret
+    networks:
+      - transcendence
+    depends_on:
+      - postgres
 
   node-dev:
     image: node:25.2.1
