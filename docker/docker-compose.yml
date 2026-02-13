@@ -94,8 +94,6 @@ services:
       dockerfile: Dockerfile
     container_name: game-server-c
     restart: on-failure
-    ports:
-      - 4444:4444
     volumes:
       - ../srcs/game/assets:/src/assets
     networks:
