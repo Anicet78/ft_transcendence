@@ -89,7 +89,8 @@ export const RestoreMessageResponseSchema = Type.Object({
 
 //DELETE MESSAGE
 export const DeleteMessageParamsSchema = Type.Object({
-	messageId: Type.String({ format: 'uuid' })
+  chatId: Type.String({ format: 'uuid' }),
+  messageId: Type.String({ format: 'uuid' })
 });
 export type DeleteMessageParams = Static<typeof DeleteMessageParamsSchema>;
 

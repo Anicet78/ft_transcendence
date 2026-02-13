@@ -25,9 +25,8 @@ export async function sendMessageController(
 	const { chatId } = req.params;
 	const { content } = req.body;
 
-	if (!userId) {
-		throw new AppError('Unauthorized', 401);
-	}
+	const socket = req.getSocket();
+	await SocketService.addInRoom(chatId, socket);
 
 	const message = await sendMessage(chatId, userId, content);
 
@@ -51,8 +50,8 @@ export async function getChatMessagesController(
 	const userId = req.user.id;
 	const { chatId } = req.params;
 
-	if (!userId)
-		throw new AppError('Unauthorized', 401);
+	const socket = req.getSocket();
+	await SocketService.addInRoom(chatId, socket);
 
 	const messages = await getChatMessages(chatId, userId);
 
@@ -77,14 +76,15 @@ export async function editMessageController(
 							Body: { content: string } }>,
 	reply: FastifyReply
 ){
-
 	const userId = req.user.id;
 	const { chatId, messageId } = req.params;
 	const { content } = req.body;
 
-	if (!userId) throw new AppError('Unauthorized', 401);
+	const socket = req.getSocket();
+	await SocketService.addInRoom(chatId, socket);
 
 	const result = await editMessage(chatId, messageId, userId, content);
+	SocketService.send(chatId, "chat_message_edited", result);
 
 	return reply.status(200).send({
 		...result,
@@ -100,10 +100,14 @@ export async function moderateMessageController(
 	const moderatorId = req.user.id;
 	const { chatId, messageId } = req.params;
 
-	if (!moderatorId)
-		throw new AppError('Unauthorized', 401);
+	const socket = req.getSocket();
+	await SocketService.addInRoom(chatId, socket);
 
 	const result = await moderateMessage(chatId, messageId, moderatorId);
+	SocketService.send(chatId, "chat_message_moderated", {
+		...result,
+		deletedAt: result.deletedAt?.toISOString() ?? null
+	});
 
 	return reply.status(200).send({
 		...result,
@@ -111,7 +115,7 @@ export async function moderateMessageController(
 	});
 }
 
-//RESTORE SCHEMA
+//RESTORE MESSAGE
 export async function restoreMessageController(
 	req: FastifyRequest<{ Params: { chatId: string, messageId: string } }>,
 	reply: FastifyReply
@@ -119,10 +123,15 @@ export async function restoreMessageController(
 	const moderatorId = req.user.id;
 	const { chatId, messageId } = req.params;
 
-	if (!moderatorId)
-		throw new AppError('Unauthorized', 401);
+	const socket = req.getSocket();
+	await SocketService.addInRoom(chatId, socket);
 
 	const result = await restoreMessage(chatId, messageId, moderatorId);
+	SocketService.send(chatId, "chat_message_restored", {
+		messageId: result.messageId,
+		chatId: result.chatId,
+		status: result.status
+	});
 
 	return reply.status(200).send({
 		messageId: result.messageId,
@@ -137,17 +146,15 @@ export async function deleteMessageController(
 	reply: FastifyReply
 ) {
 	const userId = req.user.id;
-	const { messageId } = req.params;
+	const { chatId, messageId } = req.params;
+	console.log("DELETE controller hit", chatId, messageId);
 
-	if (!userId)
-		throw new AppError('Unauthorized', 401);
+	const socket = req.getSocket();
+	await SocketService.addInRoom(chatId, socket);
 
-	const result = await deleteMessage(messageId, userId);
+	const result = await deleteMessage(chatId, messageId, userId);
 
-	return reply.status(200).send({
-		messageId: result.messageId,
-		chatId: result.chatId,
-		status: result.status,
-		deletedAt: result.deletedAt?.toISOString() ?? null
-	});
+	SocketService.send(result.chatId, "chat_message_deleted", result);
+
+	return reply.status(204).send();
 }
