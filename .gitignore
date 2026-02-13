@@ -13,6 +13,7 @@ srcs/backend/.env
 
 # Build
 dist/
+build/
 
 # Logs
 npm-debug.log*

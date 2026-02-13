@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import * as profileController from '../../controllers/profile/profileController.js';
-import { DeleteProfileResponseSchema, ProfileIdParamsSchema, UpdateProfileBodySchema, ProfileResponseSchema, PublicProfileResponseSchema } from '../../schema/profileSchema.js';
+import { DeleteProfileResponseSchema, ProfileIdParamsSchema, UpdateProfileBodySchema, ProfileResponseSchema, PublicProfileResponseSchema, ProfileUsernameParamsSchema } from '../../schema/profileSchema.js';
 import { AppErrorSchema } from '../../schema/errorSchema.js';
 import Type from 'typebox';
 
@@ -17,9 +17,9 @@ export async function profileRoutes(fastify: FastifyInstance) {
     handler: profileController.getProfile
   });
 
-  fastify.get('/profile/:id', {
+  fastify.get('/profile/:username', {
     schema: {
-      params: ProfileIdParamsSchema,
+      params: ProfileUsernameParamsSchema,
       response: {
         200: PublicProfileResponseSchema,
         404: AppErrorSchema,

@@ -1,0 +1,22 @@
+.box-head {
+	columns: 2;
+	align-items: center;
+	width: 60%;
+	margin: auto;
+}
+
+.head-text{
+	width: 100%;
+}
+
+.info {
+	columns: 2;
+	text-align: left;
+	color: black;
+	width: 70%;
+	margin: auto;
+}
+
+.button {
+	margin-top: 1rem;
+}

@@ -54,7 +54,7 @@ async function friendshipRoutes(fastify: FastifyInstance) {
     handler: controller.sendRequest
   });
 
-  //ACCEPT, REJECT, DELETE FRIENDSHIP REQUEST
+  //ACCEPT, REJECT, CANCEL FRIENDSHIP REQUEST, by friendship request Id
   fastify.patch('/friends/:id', {
     schema: {
       params: updateFriendshipRequestParamsSchema,
