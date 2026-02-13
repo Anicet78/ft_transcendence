@@ -14,10 +14,12 @@ import type {
 	SendMessageBody,
 	DeleteMessageParams
 } from '../../schema/chat/chatMessageSchema.js';
+import { SocketService } from '../../services/socket/SocketService.js';
 
 //SEND MESSAGE
 export async function sendMessageController(
-	req: FastifyRequest<{ Params: SendMessageParams; Body: SendMessageBody }>, reply: FastifyReply
+	req: FastifyRequest<{ Params: SendMessageParams; Body: SendMessageBody }>,
+	reply: FastifyReply
 ) {
 	const userId = req.user.id;
 	const { chatId } = req.params;
@@ -29,43 +31,44 @@ export async function sendMessageController(
 
 	const message = await sendMessage(chatId, userId, content);
 
+	SocketService.send(chatId, "chat_message_created", message);
+
 	return reply.status(201).send({
-	messageId: message.messageId,
-	chatId: message.chatId,
-	userId: message.userId,
-	content: message.content,
-	status: message.status,
-	postedAt: message.postedAt?.toISOString() ?? null
+		messageId: message.messageId,
+		chatId: message.chatId,
+		userId: message.userId,
+		content: message.content,
+		status: message.status,
+		postedAt: message.postedAt?.toISOString() ?? null
 	});
 }
 
 //RETRIEVE CHAT MESSAGES
 export async function getChatMessagesController(
-  req: FastifyRequest<{ Params: { chatId: string } }>,
-  reply: FastifyReply
+	req: FastifyRequest<{ Params: { chatId: string } }>,
+	reply: FastifyReply
 ) {
-  const userId = req.user.id;
-  const { chatId } = req.params;
+	const userId = req.user.id;
+	const { chatId } = req.params;
 
-  if (!userId) {
-    throw new AppError('Unauthorized', 401);
-  }
+	if (!userId)
+		throw new AppError('Unauthorized', 401);
 
-  const messages = await getChatMessages(chatId, userId);
+	const messages = await getChatMessages(chatId, userId);
 
-  return reply.status(200).send(
-    messages.map(m => ({
-      messageId: m.messageId,
-      chatId: m.chatId,
-      userId: m.userId,
-      content: m.content,
-      status: m.status,
-      postedAt: m.postedAt?.toISOString() ?? null,
-      editedAt: m.editedAt?.toISOString() ?? null,
-      deletedAt: m.deletedAt?.toISOString() ?? null,
-      author: m.author
-    }))
-  );
+	return reply.status(200).send(
+		messages.map(m => ({
+			messageId: m.messageId,
+			chatId: m.chatId,
+			userId: m.userId,
+			content: m.content,
+			status: m.status,
+			postedAt: m.postedAt?.toISOString() ?? null,
+			editedAt: m.editedAt?.toISOString() ?? null,
+			deletedAt: m.deletedAt?.toISOString() ?? null,
+			author: m.author
+		}))
+	);
 }
 
 //EDIT MESSAGE
@@ -84,27 +87,28 @@ export async function editMessageController(
 	const result = await editMessage(chatId, messageId, userId, content);
 
 	return reply.status(200).send({
-	...result,
-	editedAt: result.editedAt?.toISOString() ?? null
+		...result,
+		editedAt: result.editedAt?.toISOString() ?? null
 	});
 }
 
 //MODERATE MESSAGE
 export async function moderateMessageController(
-  req: FastifyRequest<{ Params: { chatId: string, messageId: string } }>,
-  reply: FastifyReply
+	req: FastifyRequest<{ Params: { chatId: string, messageId: string } }>,
+	reply: FastifyReply
 ) {
-  const moderatorId = req.user.id;
-  const { chatId, messageId } = req.params;
+	const moderatorId = req.user.id;
+	const { chatId, messageId } = req.params;
 
-  if (!moderatorId) throw new AppError('Unauthorized', 401);
+	if (!moderatorId)
+		throw new AppError('Unauthorized', 401);
 
-  const result = await moderateMessage(chatId, messageId, moderatorId);
+	const result = await moderateMessage(chatId, messageId, moderatorId);
 
-  return reply.status(200).send({
-    ...result,
-    deletedAt: result.deletedAt?.toISOString() ?? null
-  });
+	return reply.status(200).send({
+		...result,
+		deletedAt: result.deletedAt?.toISOString() ?? null
+	});
 }
 
 //RESTORE SCHEMA
@@ -115,9 +119,8 @@ export async function restoreMessageController(
 	const moderatorId = req.user.id;
 	const { chatId, messageId } = req.params;
 
-	if (!moderatorId) {
+	if (!moderatorId)
 		throw new AppError('Unauthorized', 401);
-	}
 
 	const result = await restoreMessage(chatId, messageId, moderatorId);
 
@@ -132,20 +135,19 @@ export async function restoreMessageController(
 export async function deleteMessageController(
 	req: FastifyRequest<{ Params: DeleteMessageParams }>,
 	reply: FastifyReply
-	) {
+) {
 	const userId = req.user.id;
 	const { messageId } = req.params;
 
-	if (!userId) {
-	throw new AppError('Unauthorized', 401);
-	}
+	if (!userId)
+		throw new AppError('Unauthorized', 401);
 
 	const result = await deleteMessage(messageId, userId);
 
 	return reply.status(200).send({
-	messageId: result.messageId,
-	chatId: result.chatId,
-	status: result.status,
-	deletedAt: result.deletedAt?.toISOString() ?? null
+		messageId: result.messageId,
+		chatId: result.chatId,
+		status: result.status,
+		deletedAt: result.deletedAt?.toISOString() ?? null
 	});
 }
