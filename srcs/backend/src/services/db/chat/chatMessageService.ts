@@ -6,6 +6,26 @@ import {
 	getRoleRank
 } from '../../../utils/chatRoles.js';
 
+export const messageSelect = {
+	
+	messageId: true,
+	chatId: true,
+	userId: true,
+	content: true,
+	status: true,
+	postedAt: true,
+	editedAt: true,
+	deletedAt: true,
+	author: {
+		select: {
+			appUserId: true,
+			username: true,
+			avatarUrl: true,
+			availability: true
+		}
+	}
+};
+
 //SEND MESSAGE
 export async function sendMessage(chatId: string, userId: string, content: string) {
 	// 1. check if chat exists
@@ -14,9 +34,8 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 		select: { chatId: true }
 	});
 
-	if (!chat) {
+	if (!chat)
 		throw new AppError('Chat not found', 404);
-	}
 
 	// if (chat.deletedAt !== null) {
 	// 	throw new AppError('This chat has been disbanded', 410);
@@ -27,9 +46,8 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 		where: { chatId, userId }
 	});
 
-	if (!member) {
+	if (!member)
 		throw new AppError('You are not a member of this chat', 403);
-	}
 
 	// 3. check user is not banned
 	const ban = await prisma.chatBan.findFirst({
@@ -44,9 +62,8 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 		}
 	});
 
-	if (ban) {
+	if (ban)
 		throw new AppError('You are banned from this chat', 403);
-	}
 
 	// 4. Check user role always writting (writer or above)
 	const role = await prisma.chatRole.findFirst({
@@ -63,9 +80,8 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 	const userRole = role?.role ?? chat_role_type.member;
 	//check if chat is group chat
 	const chatType = type?.chatType;
-	if (userRole == 'member' && chatType == 'group') {
+	if (userRole == 'member' && chatType == 'group')
 		throw new AppError('You do not have permission to write in this chat', 403);
-	}
 
 	// 4. Create message
 	const message = await prisma.chatMessage.create({
@@ -75,29 +91,14 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 			status: 'posted',
 			content
 		},
-		select: {
-			messageId: true,
-			chatId: true,
-			userId: true,
-			content: true,
-			status: true,
-			postedAt: true,
-			author: {
-				select: {
-				appUserId: true,
-				username: true,
-				avatarUrl: true,
-				availability: true
-				}
-			}
-		}
+		select: messageSelect
 	});
 
 	return message;
 }
 
 //DELETE MESSAGE
-export async function deleteMessage(messageId: string, userId: string) {
+export async function deleteMessage(chatId: string, messageId: string, userId: string) {
 	// 1. Load message
 	const message = await prisma.chatMessage.findUnique({
 		where: { messageId },
@@ -109,7 +110,7 @@ export async function deleteMessage(messageId: string, userId: string) {
 		}
 	});
 
-	if (!message) {
+	if (!message || message.chatId !== chatId) {
 		throw new AppError('Message not found', 404);
 	}
 
@@ -125,12 +126,20 @@ export async function deleteMessage(messageId: string, userId: string) {
 			status: 'deleted',
 			deletedAt: new Date()
 		},
-		select: {
-			messageId: true,
-			chatId: true,
-			status: true,
-			deletedAt: true
-		}
+		select: messageSelect//{
+		// 	messageId: true,
+		// 	chatId: true,
+		// 	status: true,
+		// 	deletedAt: true//,
+		// 	// author: {
+		// 	// 	select: {
+		// 	// 	appUserId: true,
+		// 	// 	username: true,
+		// 	// 	avatarUrl: true,
+		// 	// 	availability: true
+		// 	// 	}
+		// 	// }
+		// }
 	});
 
 	return updated;
@@ -138,40 +147,39 @@ export async function deleteMessage(messageId: string, userId: string) {
 
 //RETRIEVE CONVERSATION MESSAGES
 export async function getChatMessages(chatId: string, userId: string) {
-  // 1. Check user is member of this conversation
-  const isMember = await prisma.chatMember.findFirst({
-    where: { chatId, userId }
-  });
+	// 1. Check user is member of this conversation
+	const isMember = await prisma.chatMember.findFirst({
+		where: { chatId, userId }
+	});
 
-  if (!isMember) {
-    throw new AppError('You are not a member of this chat', 403);
-  }
+	if (!isMember)
+		throw new AppError('You are not a member of this chat', 403);
 
-  // 2. Retrieve messages
-  const messages = await prisma.chatMessage.findMany({
-    where: { chatId },
-    orderBy: { postedAt: 'asc' },
-    select: {
-      messageId: true,
-      chatId: true,
-      userId: true,
-      content: true,
-      status: true,
-      postedAt: true,
-      editedAt: true,
-      deletedAt: true,
-      author: {
-        select: {
-          appUserId: true,
-          username: true,
-          avatarUrl: true,
-          availability: true
-        }
-      }
-    }
-  });
+	// 2. Retrieve messages
+	const messages = await prisma.chatMessage.findMany({
+		where: { chatId },
+		orderBy: { postedAt: 'asc' },
+		select: messageSelect//{
+			// messageId: true,
+			// chatId: true,
+			// userId: true,
+			// content: true,
+			// status: true,
+			// postedAt: true,
+			// editedAt: true,
+			// deletedAt: true,
+			// author: {
+			// 	select: {
+			// 		appUserId: true,
+			// 		username: true,
+			// 		avatarUrl: true,
+			// 		availability: true
+			// 	}
+			// }
+		// }
+	});
 
-  return messages;
+	return messages;
 }
 
 //EDIT MESSAGE (for writer user only)
@@ -192,14 +200,12 @@ export async function editMessage(
 		}
 	});
 
-	if (!message || message.chatId !== chatId) {
+	if (!message || message.chatId !== chatId)
 		throw new AppError('Message not found', 404);
-	}
 
 	// 2. Only author can edit
-	if (message.userId !== userId) {
+	if (message.userId !== userId)
 		throw new AppError('You do not have permission to edit this message', 403);
-	}
 
 	// 3. Update message
 	const updated = await prisma.chatMessage.update({
@@ -209,14 +215,22 @@ export async function editMessage(
 			status: 'edited',
 			editedAt: new Date()
 		},
-		select: {
-			messageId: true,
-			chatId: true,
-			userId: true,
-			content: true,
-			status: true,
-			editedAt: true
-		}
+		select: messageSelect//{
+		// 	messageId: true,
+		// 	chatId: true,
+		// 	userId: true,
+		// 	content: true,
+		// 	status: true,
+		// 	editedAt: true,
+		// 	author: {
+		// 		select: {
+		// 			appUserId: true,
+		// 			username: true,
+		// 			avatarUrl: true,
+		// 			availability: true
+		// 		}
+		// 	}
+		// }
 	});
 
 	return updated;
@@ -238,9 +252,8 @@ export async function moderateMessage(
 		}
 	});
 
-	if (!message || message.chatId !== chatId) {
+	if (!message || message.chatId !== chatId)
 		throw new AppError('Message not found', 404);
-	}
 
 	// 2. Check moderator role
 	const moderatorRole = await prisma.chatRole.findFirst({
@@ -250,9 +263,8 @@ export async function moderateMessage(
 
 	const moderatorRank = getRoleRank(moderatorRole?.role);
 
-	if (moderatorRank < ROLE_RANK.moderator) {
+	if (moderatorRank < ROLE_RANK.moderator)
 		throw new AppError('You do not have permission to moderate messages', 403);
-	}
 
 	// 3. Moderate message
 	const updated = await prisma.chatMessage.update({
@@ -262,12 +274,20 @@ export async function moderateMessage(
 			deletedAt: new Date(),
 			moderatedBy: moderatorId
 		},
-		select: {
-			messageId: true,
-			chatId: true,
-			status: true,
-			deletedAt: true
-		}
+		select: messageSelect//{
+		// 	messageId: true,
+		// 	chatId: true,
+		// 	status: true,
+		// 	deletedAt: true,
+		// 	author: {
+		// 		select: {
+		// 		appUserId: true,
+		// 		username: true,
+		// 		avatarUrl: true,
+		// 		availability: true
+		// 		}
+		// 	}
+		// }
 	});
 
 	return updated;
@@ -319,11 +339,19 @@ export async function restoreMessage(
 			deletedAt: null,
 			moderatedBy: null
 		},
-		select: {
-			messageId: true,
-			chatId: true,
-			status: true
-		}
+		select: messageSelect//{
+		// 	messageId: true,
+		// 	chatId: true,
+		// 	status: true,
+		// 	author: {
+		// 		select: {
+		// 		appUserId: true,
+		// 		username: true,
+		// 		avatarUrl: true,
+		// 		availability: true
+		// 		}
+		// 	}
+		// }
 	});
 	return updated;
 }

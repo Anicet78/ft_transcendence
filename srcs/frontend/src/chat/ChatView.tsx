@@ -24,6 +24,7 @@ const ChatView = () => {
 		if (!socket || !chatId)
 			return;
 
+		//SEND
 		const onMessageCreated = (message: any) => {
 			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] | undefined) => {
 				if (!cache)
@@ -32,10 +33,58 @@ const ChatView = () => {
 			});
 		};
 
+		//EDIT
+		const onMessageEdited = (message: any) => {
+			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] = []) => {
+				return cache.map(msg => msg.messageId === message.messageId ? message : msg);
+			});
+		};
+
+		//DELETE
+		const onMessageDeleted = (message: any) => {
+			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] = []) => {
+				return cache.map(msg => msg.messageId === message.messageId 
+					? {...msg, status: "deleted", deletedAt: message.deletedAt }
+					: msg
+				);
+				// cache.filter(msg => msg.messageId !== message.messageId);
+			});
+		};
+
+
+		//MODERATED
+		const onMessageModerated = (message: any) => {
+			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] = []) => {
+				return cache.map(msg => msg.messageId === message.messageId 
+					? {...msg, status: "moderated", deletedAt: message.deletedAt }
+					: msg
+				);
+			});
+		};
+
+		//RESTORE
+		const onMessageRestored = (message: any) => {
+			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] = []) => {
+				return cache.map(msg => msg.messageId === message.messageId 
+					? {...msg, status: "posted"}
+					: msg
+				);
+			});
+		};
+
 		socket.on("chat_message_created", onMessageCreated);
+		socket.on("chat_message_edited", onMessageEdited);
+		socket.on("chat_message_deleted", onMessageDeleted);
+		socket.on("chat_message_moderated", onMessageModerated);
+		socket.on("chat_message_restored", onMessageRestored);
+
 
 		return () => {
 			socket.off("chat_message_created", onMessageCreated);
+			socket.off("chat_message_edited", onMessageEdited);
+			socket.off("chat_message_deleted", onMessageDeleted);
+			socket.off("chat_message_moderated", onMessageModerated);
+			socket.off("chat_message_restored", onMessageRestored);
 		}
 
 	}, [socket, chatId, queryClient]);
@@ -75,7 +124,7 @@ const ChatView = () => {
 	//DELETE MESSAGE (only by message author, admin use MODERATE action)
 	const deleteMessageMutation = useMutation({
 		mutationFn: async (messageId: string) => {
-			return api.delete(`/chat/${messageId}`);
+			return api.delete(`/chat/${chatId}/message/${messageId}`);
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["chat-messages", chatId] });
@@ -119,7 +168,7 @@ const ChatView = () => {
 		return <div>Error loading chat</div>;
 
 	const chat = chatInfoQuery.data!;
-	const messages = messagesQuery.data ?? [];//
+	const messages =(messagesQuery.data ?? []).filter( msg => msg.status !== "deleted" );//
 	const myMemberEntry = chat.members.find(mbr => mbr.user.appUserId === user?.id);
 	const myRole = myMemberEntry?.role!; // "owner" | "admin" | "moderator" | "writer" | "member"
 	const isModerator = ["owner", "admin", "moderator"].includes(myRole);
