@@ -21,7 +21,7 @@ export async function postLoginController(
 		await UserService.setAvailabality(dbUser.appUserId, true);
 
 	if (!await verifyPassword(dbUser.passwordHash, password))
-		return reply.code(401).send({ error: "Incorrect password" });
+		return reply.code(400).send({ error: "Incorrect password" });
 
 	const user: User = {
 		id: dbUser.appUserId,

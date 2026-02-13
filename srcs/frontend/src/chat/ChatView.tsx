@@ -3,8 +3,9 @@ import type { GetResponse } from "../types/GetType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../serverApi";
 import { Box } from "@allxsmith/bestax-bulma";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
+import { useSocket } from "../socket/SocketContext";
 
 type ChatInfoResponse = GetResponse<"/chat/{chatId}/info", "get">;
 type ChatMessagesResponse = GetResponse<"/chat/{chatId}/messages", "get">;
@@ -16,6 +17,78 @@ const ChatView = () => {
 
 	const queryClient = useQueryClient();
 	const [content, setContent] = useState("");
+
+	const socket = useSocket();
+
+	useEffect(() => {
+		if (!socket || !chatId)
+			return;
+
+		//SEND
+		const onMessageCreated = (message: any) => {
+			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] | undefined) => {
+				if (!cache)
+					return [message];
+				return [...cache, message];
+			});
+		};
+
+		//EDIT
+		const onMessageEdited = (message: any) => {
+			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] = []) => {
+				return cache.map(msg => msg.messageId === message.messageId ? message : msg);
+			});
+		};
+
+		//DELETE
+		const onMessageDeleted = (message: any) => {
+			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] = []) => {
+				return cache.map(msg => msg.messageId === message.messageId 
+					? {...msg, status: "deleted", deletedAt: message.deletedAt }
+					: msg
+				);
+				// cache.filter(msg => msg.messageId !== message.messageId);
+			});
+		};
+
+
+		//MODERATED
+		const onMessageModerated = (message: any) => {
+			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] = []) => {
+				return cache.map(msg => msg.messageId === message.messageId 
+					? {...msg, status: "moderated", deletedAt: message.deletedAt }
+					: msg
+				);
+			});
+		};
+
+		//RESTORE
+		const onMessageRestored = (message: any) => {
+			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] = []) => {
+				return cache.map(msg => msg.messageId === message.messageId 
+					? {...msg, status: "posted"}
+					: msg
+				);
+			});
+		};
+
+		socket.on("chat_message_created", onMessageCreated);
+		socket.on("chat_message_edited", onMessageEdited);
+		socket.on("chat_message_deleted", onMessageDeleted);
+		socket.on("chat_message_moderated", onMessageModerated);
+		socket.on("chat_message_restored", onMessageRestored);
+
+
+		return () => {
+			socket.off("chat_message_created", onMessageCreated);
+			socket.off("chat_message_edited", onMessageEdited);
+			socket.off("chat_message_deleted", onMessageDeleted);
+			socket.off("chat_message_moderated", onMessageModerated);
+			socket.off("chat_message_restored", onMessageRestored);
+		}
+
+	}, [socket, chatId, queryClient]);
+
 
 	//GET CHAT INFO
 	const chatInfoQuery = useQuery({
@@ -37,21 +110,21 @@ const ChatView = () => {
 		enabled: !!chatId
 	});
 
-	// SEND MESSAGE MUTATION
+	//SEND MESSAGE MUTATION
 	const sendMessageMutation = useMutation({
 		mutationFn: async () => {
 			return api.post(`/chat/${chatId}`, { content });
 		},
 		onSuccess: () => {
 			setContent("");
-			queryClient.invalidateQueries({ queryKey: ["chat-messages", chatId] });
+			//queryClient.invalidateQueries({ queryKey: ["chat-messages", chatId] });
 		}
 	});
 
 	//DELETE MESSAGE (only by message author, admin use MODERATE action)
 	const deleteMessageMutation = useMutation({
 		mutationFn: async (messageId: string) => {
-			return api.delete(`/chat/${messageId}`);
+			return api.delete(`/chat/${chatId}/message/${messageId}`);
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["chat-messages", chatId] });
@@ -88,8 +161,6 @@ const ChatView = () => {
 		}
 	});
 
-
-
 	if (chatInfoQuery.isLoading || messagesQuery.isLoading)
 		return <div>Loading chat...</div>;
 
@@ -97,7 +168,7 @@ const ChatView = () => {
 		return <div>Error loading chat</div>;
 
 	const chat = chatInfoQuery.data!;
-	const messages = messagesQuery.data!;
+	const messages =(messagesQuery.data ?? []).filter( msg => msg.status !== "deleted" );//
 	const myMemberEntry = chat.members.find(mbr => mbr.user.appUserId === user?.id);
 	const myRole = myMemberEntry?.role!; // "owner" | "admin" | "moderator" | "writer" | "member"
 	const isModerator = ["owner", "admin", "moderator"].includes(myRole);
@@ -129,12 +200,12 @@ const ChatView = () => {
 					<Link
 						to={`/profile/${encodeURIComponent(msg.author.username)}`}
 						aria-label={`Open ${msg.author.username} profile`}
-						className="has-texte-dark"
+						className="has-text-dark"
 					> 
 						{msg.author.username}
 					</Link>
 				</strong>
-				<p>{msg.content}</p>
+				<p>{msg.status === "moderated" ? "Message moderated" : msg.content}</p>
 				<small>{msg.postedAt ? new Date(msg.postedAt).toLocaleString() : ""}</small>
 
 				{/* AUTHOR ONLY ACTIONS */}

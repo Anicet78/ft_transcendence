@@ -1,27 +1,18 @@
 import { Box } from "@allxsmith/bestax-bulma"
 import "./friendList.css"
 
-import { NavLink, useLocation, useParams } from "react-router";
+import { NavLink, useLocation } from "react-router";
 import { useQuery } from '@tanstack/react-query';
 import api, { getAccessToken } from '../serverApi.ts';
 
-const UpdateRequest = () => {
+const BlockUser = () => {
 
-	const id = useParams();
 	const location = useLocation()
 	const {requestedAction} = location.state || {}
-	let action: string = ''
-
-	if (requestedAction === 'cancel')
-		action = 'cancelled'
-	else if (requestedAction === 'accept')
-		action = 'accepted'
-	else if (requestedAction === 'reject')
-		action = 'rejected'
 
 	const { data, isLoading, isError, error } = useQuery({
-		queryKey: ['friendship', getAccessToken()],
-		queryFn: () => api.patch(`/friends/${id.id}`, {action: requestedAction}),
+		queryKey: [location.pathname, getAccessToken()],
+		queryFn: () => api.post(location.pathname),
 	});
 
 	if (isLoading) return <div>Loading...</div>;
@@ -29,15 +20,14 @@ const UpdateRequest = () => {
 
 	return (
 		<Box bgColor="grey" textColor="black" className="wrapbox">
-			<h1>
-			Sent requests list
-			</h1>
 			<Box m="4" p="6"  className="friendbox" bgColor="grey-light" textColor="black" justifyContent='space-between'>
-				{"Friend request successfully " + action}
+				{requestedAction === 'block' &&"User successfully blocked!"}
+				{requestedAction === 'unblock' &&"User successfully unblocked!"}
+				
 			</Box>
 			<NavLink to="/friends" className="button is-medium">Back to friends list</NavLink>
 		</Box>
 	)
 }
 
-export default UpdateRequest
+export default BlockUser

@@ -13,10 +13,13 @@
 	columns: 2;
 	text-align: left;
 	color: black;
-	width: 70%;
+	width: 90%;
 	margin: auto;
 }
 
-.button {
-	margin-top: 1rem;
+.profile_username {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: auto;
 }
