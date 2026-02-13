@@ -153,7 +153,7 @@ static void selectRoom(quadList &node, std::vector<Room> &candidates, std::array
 				bool roomExit = temp.getExits()[i];
 				bool required = directions[i];
 
-				// Required exit missing → reject
+				// Required exit missing -> reject
 				if (sum != 4 && required && !roomExit)
 				{
 					flag = 1;

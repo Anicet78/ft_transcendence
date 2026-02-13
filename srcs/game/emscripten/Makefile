@@ -27,7 +27,8 @@ SRCS		=	main.cpp \
 				engine/load_image.cpp \
 				engine/init_sdl.cpp \
 				engine/keyAction.cpp \
-				engine/map_printer.cpp \
+				engine/printMap/map_printer.cpp \
+				engine/printMap/print_forest.cpp \
 				engine/SDLTimer.cpp \
 				engine/RoomEvent.cpp \
 				engine/Mob.cpp \

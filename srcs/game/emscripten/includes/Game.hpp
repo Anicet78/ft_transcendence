@@ -52,7 +52,11 @@ void	game_loop(Game &game, double fps);
 void	key_down(void);
 void	key_up(void);
 void	updateRoom(Game &game, Player &player, std::string dir);
+
 void	print_map(Player &player);
+void	manageSoil(int x, int y, Player &player);
+void	manage_wall_forest(int x, int y, Player &player, int iteration);
+
 void	print_others(Player &player, std::vector<Player> &otherPlayers);
 void	print_mobs(MobRush &mobRush, Player &player);
 void	loopPlayerState(Game &game, val playerUpdate);
@@ -60,5 +64,7 @@ void	loopRoomState(Game &game, val roomUpdate);
 void	parseJson(bool &init, Game &game);
 void	changeRoom(Game &game, val playerLeave);
 void	finishGame(void);
+
+
 
 #endif

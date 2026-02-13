@@ -3,21 +3,14 @@
 void printRooms(Map &map)
 {
 	auto nodes = map.getNodes();
-    for (int y = 0; y < 10; y++)
-    {
-        for (int x = 0; x < 10; x++)
-        {
-            auto node = nodes[y * 10 + x];
-            if (!node->getRoom()) continue;
-
-            auto room = node->getRoom();
-            auto exits = room->getExits();
-            std::cout << "Room at (" << x << "," << y << "): " 
-                      << room->getName() << " | "
-                      << "N=" << exits[0] << " E=" << exits[1] 
-                      << " S=" << exits[2] << " W=" << exits[3] 
-                      << std::endl;
+    for (int i = 0; i < map.getHeight(); i++)
+	{
+		for (int j = 0; j < map.getWidth(); j++)
+		{
+            auto node = nodes[i * map.getWidth() + j];
+            std::cout << node->getPath() << ' ';
         }
+		std::cout << std::endl;
     }
 }
 
