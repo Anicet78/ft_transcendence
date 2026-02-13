@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { NavLink } from 'react-router';
 import { Navbar, Icon } from '@allxsmith/bestax-bulma';
 import '../styles/Banner.css'
-import SearchBar from './SearchBar.tsx';
+import SearchBar from '../search/SearchBar.tsx';
 import { useAuth } from '../auth/AuthContext.tsx';
 
 const Banner = () => {

@@ -81,26 +81,26 @@ function Register() {
 	return (
 		<div className="card">
 			<div>
-			<Button color='primary' isOutlined className='login-button'>Login with Google</Button>
-			<Button color='primary' isOutlined className='login-button'>Login with 42</Button>
+				<Button color='primary' isOutlined className='login-button'>Login with Google</Button>
+				<Button color='primary' isOutlined className='login-button'>Login with 42</Button>
 			</div>
 			<br />
 			<form onSubmit={registerSubmit}>
-			<div className='inputs'>
-				<InputName label="First name" type="text" name="firstname" value={formData.firstname} onChange={handleChange} placeholder="Firstname" />
-				<InputName label="Last name" type="text" name="lastname" value={formData.lastname} onChange={handleChange} placeholder="Lastname" />
-				<InputName label="User name" type="text" name="username" value={formData.username} onChange={handleChange} placeholder="Username" />
-				<InputEmail label="Email" type="email" name="email" value={formData.email} onChange={handleChange} placeholder="example@transcendence.com" />
-				<InputPassword label="Password" type="password" name="password" value={formData.password} onChange={handleChange} placeholder="••••••••••••" />
-				<InputPassword label="Confirm password" type="password" name="confirm_password" value={formData.confirm_password} onChange={handleChange} placeholder="••••••••••••" />
-			</div>
-			<div>
-				<br></br>
-				<SelectRegion />
-				{passwordError && <span>Password don't match</span>}
-				<br></br>
-				<ButtonSubmit name='Sign up' />
-			</div>
+				<div className='inputs'>
+					<InputName label="First name" type="text" name="firstname" value={formData.firstname} onChange={handleChange} placeholder="Firstname" />
+					<InputName label="Last name" type="text" name="lastname" value={formData.lastname} onChange={handleChange} placeholder="Lastname" />
+					<InputName label="User name" type="text" name="username" value={formData.username} onChange={handleChange} placeholder="Username" />
+					<InputEmail label="Email" type="email" name="email" value={formData.email} onChange={handleChange} placeholder="example@transcendence.com" />
+					<InputPassword label="Password" type="password" name="password" value={formData.password} onChange={handleChange} placeholder="••••••••••••" />
+					<InputPassword label="Confirm password" type="password" name="confirm_password" value={formData.confirm_password} onChange={handleChange} placeholder="••••••••••••" />
+				</div>
+				<div>
+					<br></br>
+					<SelectRegion />
+					{passwordError && <span>Password don't match</span>}
+					<br></br>
+					<ButtonSubmit name='Sign up' />
+				</div>
 			</form>
 		</div>
 	)
