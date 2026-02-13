@@ -50,7 +50,7 @@ EMSRCS		= $(patsubst %, $(SRC_DIR)%, $(SRCS))
 OBJS		= $(patsubst %.cpp, $(OBJ_DIR)%.o, $(SRCS))
 
 NAME		= game
-EMNAME		= /build/game.js
+EMNAME		= ./build/game.js
 
 all: $(NAME)
 
@@ -68,9 +68,9 @@ clean:
 	rm -rf $(OBJ_DIR)
 
 wfclean:
-	rm -f /build/game.js
-	rm -f /build/game.wasm
-	rm -f /build/game.data
+	rm -f ./build/game.js
+	rm -f ./build/game.wasm
+	rm -f ./build/game.data
 
 fclean: clean
 	rm -rf $(NAME)

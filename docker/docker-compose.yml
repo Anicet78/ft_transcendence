@@ -81,11 +81,11 @@ services:
   emscripten:
     image: emscripten/emsdk:4.0.23
     container_name: emscripten-c
-    working_dir: /src/emscripten
+    working_dir: /emscripten
     volumes:
-      - ../srcs/game/assets:/src/assets
-      - ../srcs/game/emscripten:/src/emscripten
-      - ../srcs/frontend/src/game/build:/build
+      - ../srcs/game/assets:/assets
+      - ../srcs/game/emscripten:/emscripten
+      - ../srcs/frontend/src/game/build:/emscripten/build
     networks:
       - transcendence
     entrypoint: ["make", "wasm"]
