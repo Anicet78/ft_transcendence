@@ -11,7 +11,8 @@ import { TypingIndicator } from "./components/ChatTypingIndicator";
 
 const ChatView = () => {
 	const { chatId } = useParams();
-	const { chat, role, permissions, typingUsers, joinChat } = useChat();
+	//const { chat, role, permissions, typingUsers, joinChat } = useChat();
+	const { chat, role, permissions, isTyping, joinChat } = useChat();
 
 	const { messages, isLoading, isError } = useChatMessages(chatId);
 	const mutations = useChatMutations(chatId);
@@ -47,7 +48,8 @@ const ChatView = () => {
 				onRestore={mutations.restoreMessageMutation.mutate}
 			/>
 
-			<TypingIndicator typingUsers={typingUsers} />
+			{/* <TypingIndicator typingUsers={typingUsers} /> */}
+			<TypingIndicator isTyping={isTyping} />
 
 			<ChatInput
 				chatId={chatId}

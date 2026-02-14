@@ -72,8 +72,8 @@ export default fp(async (fastify) => {
 					return;
 				
 				socket.to(chatId).emit("chat_typing", {
-					userId: userPayload.id,
-					username: userPayload.email
+					userId: userPayload.id//,
+					// username: userPayload.email
 				});
 			});
 

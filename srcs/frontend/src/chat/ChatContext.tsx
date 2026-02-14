@@ -10,7 +10,8 @@ type ChatContextValue = {
 	chat: ChatInfoResponse | null;
 	role: string | null;
 	permissions: Record<string, boolean>;
-	typingUsers: Record<string, string>;
+	isTyping: Boolean;
+	// typingUsers: Record<string, string>;
 	joinChat: (chatId: string) => void;
 	leaveChat: () => void;
 };
@@ -23,7 +24,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 	const { user } = useAuth();
 
 	const [chat, setChat] = useState<ChatInfoResponse | null>(null);
-	const [typingUsers, setTypingUsers] = useState<Record<string, string>>({});
+	//const [typingUsers, setTypingUsers] = useState<Record<string, string>>({});
+	const [isTyping, setIsTyping] = useState(false);
 
 	const role = chat?.members.find(mbr => mbr.user.appUserId === user?.id)?.role ?? null;
 
@@ -50,7 +52,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 			socket.emit("leave_chat", {chatId: chat.chatId});
 
 		setChat(null);
-		setTypingUsers({});
+		//setTypingUsers({});
+		setIsTyping(false);
 	};
 
 	useEffect(() => {
@@ -58,22 +61,33 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 		if (!socket)
 			return;
 
-		socket.on("chat_typing", ({ userId, username }) => {
-			if (userId === user?.id)//show typing except for the typing user
+		socket.on("chat_typing", ({ userId }) => {
+			if (userId === user?.id)// ignore yourself
 				return;
 
-			setTypingUsers(prev => ({
-				...prev, [userId]: username
-			}));
+			setIsTyping(true);
 
 			setTimeout(() => {
-				setTypingUsers(prev => {
-					const copy = { ...prev };
-					delete copy[userId];
-					return copy;
-				});
+				setIsTyping(false);
 			}, 2000);
 		});
+
+		// socket.on("chat_typing", ({ userId, username }) => {
+		// 	if (userId === user?.id)//show typing except for the typing user
+		// 		return;
+
+		// 	setTypingUsers(prev => ({
+		// 		...prev, [userId]: username
+		// 	}));
+
+		// 	setTimeout(() => {
+		// 		setTypingUsers(prev => {
+		// 			const copy = { ...prev };
+		// 			delete copy[userId];
+		// 			return copy;
+		// 		});
+		// 	}, 2000);
+		// });
 
 		return () => {
 			socket.off("chat_typing");
@@ -82,7 +96,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 	}, [socket, user]);
 
 	return ( 
-		<ChatContext.Provider value= {{chat, role, permissions, typingUsers, joinChat, leaveChat }}>
+		//<ChatContext.Provider value= {{chat, role, permissions, typingUsers, joinChat, leaveChat }}></ChatContext.Provider>
+		<ChatContext.Provider value= {{chat, role, permissions, isTyping, joinChat, leaveChat }}>
 			{children}
 		</ChatContext.Provider>);
 };
