@@ -8,6 +8,7 @@ import { MessageList } from "./components/ChatMessageList";
 import { ChatInput } from "./components/ChatInput";
 import { useChatSocket } from "./hooks/useChatSocket";
 import { TypingIndicator } from "./components/ChatTypingIndicator";
+import { useChatRoleMutation } from "./hooks/useChatRoleMutations";
 
 const ChatView = () => {
 	const { chatId } = useParams();
@@ -16,6 +17,7 @@ const ChatView = () => {
 
 	const { messages, isLoading, isError } = useChatMessages(chatId);
 	const mutations = useChatMutations(chatId);
+	const roleMutation = useChatRoleMutation(chatId);
 
 	useChatSocket(chatId);
 
@@ -37,6 +39,38 @@ const ChatView = () => {
 			<h1 className="title">
 				{chat.chatName || (chat.chatType === "private" ? "Private chat" : "Group chat")}
 			</h1>
+
+			{/* MEMBERS */}
+			<div className="mb-4">
+			<strong>Members:</strong>
+			<ul>
+				{chat.members.map(m => (
+				<li key={m.chatMemberId} className="mb-1">
+					{m.user.username} — <em>{m.role}</em>
+
+					{permissions.canChangeRoles && (
+					<select
+						className="ml-2"
+						value={m.role}
+						onChange={(e) =>
+							roleMutation.mutate({
+								memberId: m.user.appUserId,
+								role: e.target.value
+							})
+						}
+					>
+						<option value="owner">Owner</option>
+						<option value="admin">Admin</option>
+						<option value="moderator">Moderator</option>
+						<option value="writer">Writer</option>
+						<option value="member">Member</option>
+					</select>
+					)}
+				</li>
+				))}
+			</ul>
+			</div>
+
 
 			<MessageList
 				messages={messages}

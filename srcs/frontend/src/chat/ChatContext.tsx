@@ -31,10 +31,11 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const permissions = {
 		canModerate: ["owner", "admin", "moderator"].includes(role ?? ""),
-		canInvite: ["owner", "admin"].includes(role ?? ""),
+		canInvite: ["owner", "admin", "moderator", "writer", "member"].includes(role ?? ""),
 		canBan: ["owner", "admin"].includes(role ?? ""),
 		canKick: ["owner", "admin"].includes(role ?? ""),
-		canRename: ["owner", "admin"].includes(role ?? "")
+		canRename: ["owner", "admin"].includes(role ?? ""),
+		canChangeRoles: ["owner", "admin"].includes(role ?? "") 
 	}
 
 	const joinChat = async(chatId: string) => {
