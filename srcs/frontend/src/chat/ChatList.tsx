@@ -38,8 +38,8 @@ const ChatList = () => {
 				<p>Members: {chat.members.length}</p>
 
 				<Link
-				to={`/chat/${chat.chatId}/info`}
-				className="button is-dark is-small mt-2"
+					to={`/chat/${chat.chatId}/info`}
+					className="button is-dark is-small mt-2"
 				>
 				Open chat
 				</Link>

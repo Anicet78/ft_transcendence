@@ -33,6 +33,7 @@ import { SocketProvider } from './socket/SocketContext.tsx';
 import { RoomProvider } from './home/RoomContext.tsx';
 import SearchComponent from './search/searchComponent.tsx';
 import ProfileUpdate from './profile/ProfileUpdate.tsx';
+import { ChatProvider } from './chat/ChatContext.tsx';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -79,9 +80,11 @@ createRoot(document.getElementById('root') as HTMLElement).render(
 			<Router>
 				<AuthProvider>
 					<SocketProvider>
-						<RoomProvider>
-							<AppEntryPoint />
-						</RoomProvider>
+						<ChatProvider>
+							<RoomProvider>
+								<AppEntryPoint />
+							</RoomProvider>
+						</ChatProvider>
 					</SocketProvider>
 				</AuthProvider>
 			</Router>

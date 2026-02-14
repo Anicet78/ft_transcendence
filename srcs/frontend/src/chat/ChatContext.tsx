@@ -1,0 +1,95 @@
+import { createContext, useContext, useEffect, useState } from "react";
+import type { GetResponse } from "../types/GetType";
+import { useSocket } from "../socket/SocketContext";
+import { useAuth } from "../auth/AuthContext";
+import api from "../serverApi";
+
+type ChatInfoResponse = GetResponse<"/chat/{chatId}/info", "get">;
+
+type ChatContextValue = {
+	chat: ChatInfoResponse | null;
+	role: string | null;
+	permissions: Record<string, boolean>;
+	typingUsers: Record<string, string>;
+	joinChat: (chatId: string) => void;
+	leaveChat: () => void;
+};
+
+const ChatContext = createContext<ChatContextValue | null>(null);
+
+export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
+	
+	const socket = useSocket();
+	const { user } = useAuth();
+
+	const [chat, setChat] = useState<ChatInfoResponse | null>(null);
+	const [typingUsers, setTypingUsers] = useState<Record<string, string>>({});
+
+	const role = chat?.members.find(mbr => mbr.user.appUserId === user?.id)?.role ?? null;
+
+	const permissions = {
+		canModerate: ["owner", "admin", "moderator"].includes(role ?? ""),
+		canInvite: ["owner", "admin"].includes(role ?? ""),
+		canKick: ["owner", "admin"].includes(role ?? ""),
+		canRename: ["owner", "admin"].includes(role ?? "")
+	}
+
+	const joinChat = async(chatId: string) => {
+
+		//GET CHAT INFO
+		const res = await api.get<ChatInfoResponse>(`/chat/${chatId}/info`);
+		setChat(res.data);
+
+		if (socket)
+			socket.emit("join_chat", { chatId });
+	};
+
+	const leaveChat = async() => {
+		if (socket && chat?.chatId)
+			socket.emit("leave_chat", {chatId: chat.chatId});
+
+		setChat(null);
+		setTypingUsers({});
+	};
+
+	useEffect(() => {
+
+		if (!socket)
+			return;
+
+		socket.on("chat_typing", ({ userId, username }) => {
+			if (userId === user?.id)//show typing except for the typing user
+				return;
+
+			setTypingUsers(prev => ({
+				...prev, [userId]: username
+			}));
+
+			setTimeout(() => {
+				setTypingUsers(prev => {
+					const copy = { ...prev };
+					delete copy[userId];
+					return copy;
+				});
+			}, 2000);
+		});
+
+		return () => {
+			socket.off("chat_typing");
+		};
+
+	}, [socket, user]);
+
+	return ( 
+		<ChatContext.Provider value= {{chat, role, permissions, typingUsers, joinChat, leaveChat }}>
+			{children}
+		</ChatContext.Provider>);
+};
+
+export const useChat = (): ChatContextValue | null => {
+	const ctx = useContext(ChatContext);
+	if (!ctx)
+		throw new Error("useChat must be used inside ChatProvider");
+	return ctx;
+}
+
