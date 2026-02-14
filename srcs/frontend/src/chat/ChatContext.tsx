@@ -30,6 +30,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 	const permissions = {
 		canModerate: ["owner", "admin", "moderator"].includes(role ?? ""),
 		canInvite: ["owner", "admin"].includes(role ?? ""),
+		canBan: ["owner", "admin"].includes(role ?? ""),
 		canKick: ["owner", "admin"].includes(role ?? ""),
 		canRename: ["owner", "admin"].includes(role ?? "")
 	}

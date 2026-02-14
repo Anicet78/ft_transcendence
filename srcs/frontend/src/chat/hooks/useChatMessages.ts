@@ -6,6 +6,7 @@ type ChatMessagesResponse = GetResponse<"/chat/{chatId}/messages", "get">;
 
 //GET CHAT MESSAGES
 export function useChatMessages(chatId?: string) {
+	
 	const query = useQuery({
 		queryKey: ["chat-messages", chatId],
 		queryFn: async () => {

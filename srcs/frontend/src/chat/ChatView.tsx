@@ -50,6 +50,7 @@ const ChatView = () => {
 			<TypingIndicator typingUsers={typingUsers} />
 
 			<ChatInput
+				chatId={chatId}
 				onSend={mutations.sendMessageMutation.mutate}
 			/>
 		</Box>
