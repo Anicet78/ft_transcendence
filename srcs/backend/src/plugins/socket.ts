@@ -75,6 +75,19 @@ export default fp(async (fastify) => {
 
 				disconnectionTimers.set(userPayload.id, timer);
 			});
+
+			// broadcast typing into chat effect in the chat room
+			socket.on("chat_typing", ({ chatId }) => {
+
+				if (!userPayload)
+					return;
+				
+				socket.to(chatId).emit("chat_typing", {
+					userId: userPayload.id,
+					username: userPayload.email
+				});
+			});
+
 		} catch (err) {
 			console.log("An error occured:", err);
 			socket.disconnect(true);
