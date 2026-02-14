@@ -10,7 +10,7 @@ type ChatContextValue = {
 	chat: ChatInfoResponse | null;
 	role: string | null;
 	permissions: Record<string, boolean>;
-	isTyping: Boolean;
+	isTyping: boolean;
 	// typingUsers: Record<string, string>;
 	joinChat: (chatId: string) => void;
 	leaveChat: () => void;
@@ -102,7 +102,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 		</ChatContext.Provider>);
 };
 
-export const useChat = (): ChatContextValue | null => {
+export const useChat = (): ChatContextValue => {
 	const ctx = useContext(ChatContext);
 	if (!ctx)
 		throw new Error("useChat must be used inside ChatProvider");
