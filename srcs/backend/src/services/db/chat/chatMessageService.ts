@@ -213,7 +213,8 @@ export async function editMessage(
 		data: {
 			content: newContent,
 			status: 'edited',
-			editedAt: new Date()
+			editedAt: new Date(),
+			deletedAt: null
 		},
 		select: messageSelect//{
 		// 	messageId: true,
