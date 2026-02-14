@@ -34,7 +34,7 @@ std::string Party::getPartyName() const
 	return this->_partyName;
 }
 
-std::vector<std::shared_ptr<Player>> Party::getPlayers() const
+std::vector<std::weak_ptr<Player>> Party::getPlayers() const
 {
 	return this->_party;
 }
@@ -43,7 +43,7 @@ void Party::removePlayer(std::string &uid)
 {
 	for (auto it = _party.begin(); it != _party.end(); it++)
 	{
-		if (it->get()->getUid() == uid)
+		if (!it->expired() && it->lock()->getUid() == uid)
 		{
 			this->_party.erase(it);
 			return ;
@@ -59,7 +59,7 @@ void Party::setPartySize(size_t size)
 bool Party::isPlayerInParty(std::string &uid) const
 {
 	for (auto &player : _party)
-		if (player->getUid() == uid)
+		if (!player.expired() && player.lock()->getUid() == uid)
 			return true;
 	return false;
 }
@@ -79,9 +79,9 @@ void Party::setPlayerSession()
 {
 	for (auto &player : _party)
 	{
-		if (!player)
+		if (player.expired())
 			continue ;
-		player->setInQueue(false);
-		player->setInSession(true);
+		player.lock()->setInQueue(false);
+		player.lock()->setInSession(true);
 	}
 }

@@ -34,6 +34,13 @@
         <button id="connectBtn">Se connecter</button>
         <button id="disconnectBtn" disabled>Se déconnecter</button>
     </div>
+    <form id="myForm">
+        <label> Nom : <input type="text" id="name" name="name"> </label>
+        <br>
+        <label> id : <input type="text" id="id" name="id"> </label>
+        <br>
+        <button type="submit">Envoyer</button>
+    </form>
     <canvas id="game-canvas" width="800" height="950" tabindex="1"></canvas>
     <div id="log"></div>
     <script src="game.js"></script>
@@ -45,6 +52,20 @@
 
         let Module = null;
 
+        const form = document.getElementById('myForm');
+        let name;
+        let id;
+
+        form.addEventListener('submit', function (event)
+        {
+            event.preventDefault();
+
+            name = document.getElementById('name').value;
+            id = document.getElementById('id').value;
+        });
+
+
+
         function startGame()
         {
             createModule({
@@ -52,7 +73,7 @@
                 noInitialRun: true
             }).then(mod => {
                 Module = mod;
-                Module.callMain(["bonjour"]);
+                Module.callMain([name, id]);
             });
         }
 

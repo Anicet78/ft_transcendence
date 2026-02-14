@@ -120,8 +120,11 @@ void sendPlayerState(Player &player, Session &session, std::string uid_leave)
 						+ "\"player_exit\" : \"" + player.getExit() + "\"";
 		
 	int sumPlayer = 1;
-	for (auto &oplayer : session.getPlayers())
+	for (auto &op : session.getPlayers())
 	{
+		if (op.expired())
+			continue ;
+		std::shared_ptr<Player> oplayer = op.lock();
 		if (oplayer->getUid() == player.getUid())
 			continue ;
 		if (oplayer->getNode() == player.getNode() || (oplayer->getPrevNode() == player.getNode() && oplayer->getExit() > 32))
@@ -159,19 +162,27 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
         data->playerId = req["player_id"];
         data->group = req["group_id"];
         data->groupSize = std::atoi(req["group_size"].c_str());
+		if (this->playerInServer(data->playerId))
+		{
+			this->reconnectPlayer(data->playerId, ws);
+			data->jsonMsg.clear();
+			return 1;
+		}
         ws->send("You have been added in the queue !", uWS::OpCode::TEXT);
         this->_players.emplace_back(std::make_shared<Player>(data->playerId, data->groupSize, data->group, data->pseudo, ws));
         this->addPlayerOnQueue(_players.back());
         data->jsonMsg.clear();
         return 0;
     }
+	else if (action == "reconnected")
+		ws->subscribe(this->getPlayer(data->playerId).getRoomRef().getRoomId());
     else if (action == "player_move" || action == "connected" || action == "launched")
     {
         for (Session &session : _sessions)
         {
             if (session.isPlayerInSession(ws->getUserData()->playerId))
             {
-                std::shared_ptr<Player> player = session.getPlayer(ws->getUserData()->playerId);
+                std::shared_ptr<Player> player = session.getPlayer(ws->getUserData()->playerId).lock();
                 if (action == "connected")
                     player->setConnexion(1);
                 else if (action == "launched")

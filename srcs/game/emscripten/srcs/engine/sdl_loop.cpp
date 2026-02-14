@@ -162,14 +162,13 @@ void	game_loop(Game &game, double deltaTime)
 {
 	Player	&player = game.getPlayer();
 	Camera	&camera = player.getCamera();
-	//updateRoom(player);
+
 	playerAction(player);
 	#ifdef __EMSCRIPTEN__
 
 	updatePlayerPosition(game.getPlayer(), deltaTime); 
 	#endif
 	updateOtherPlayer(game.getOtherPlayers(), deltaTime);
-
 	SDL_SetRenderTarget(gSdl.renderer, gSdl.game);
 	SDL_RenderClear(gSdl.renderer);
 

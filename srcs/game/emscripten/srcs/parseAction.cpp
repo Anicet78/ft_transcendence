@@ -114,7 +114,6 @@ void	loopRoomState(Game &game, val roomUpdate)
 		for (int i = 0; i < nbrMob; i++)
 		{
 			val monster = horde[i];
-
 			int id = monster["mob_id"].as<int>();
 
 			if (!monster.hasOwnProperty(std::string("deathsended").c_str()))

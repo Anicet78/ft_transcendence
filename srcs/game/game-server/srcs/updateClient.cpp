@@ -100,6 +100,7 @@ void updateRoom(Player &player, uWS::App &app)
 			return ;
 		std::string oldTopic = player.getRoomRef().getRoomId();
 		player.setExit('U');
+		player.incrementFloor();
 		player.setPrevNode(player.getNode());
 		player.setNode(player.getNode()->up.lock());
 		player.findP();

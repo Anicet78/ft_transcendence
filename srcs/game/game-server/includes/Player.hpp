@@ -36,6 +36,7 @@ class Player
 	//player pos
 		float		_x;
 		float		_y;
+		int			_floor;
 
 	//pos in map
 		quadList	_node;
@@ -87,6 +88,7 @@ class Player
 
 		float		getX(void) const;
 		float		getY(void) const;
+		int			getFloor(void) const;
 
 		int			getStartPos(void) const;
 
@@ -100,6 +102,7 @@ class Player
 		int			getKills(void) const;
 
 	//setter
+		void		setWs(uWS::WebSocket<false, true, PerSocketData> *ws);
 		void		setConnexion(bool c);
 		void		setLaunched(bool flag);
 		void		setFinished(bool flag);
@@ -109,6 +112,7 @@ class Player
 		void		setNode(const quadList &node);
 		void		setPrevNode(const quadList &node);
 		void		setPos(float x, float y);
+		void		incrementFloor(void);
 
 		void		setStartPos(int pos);
 

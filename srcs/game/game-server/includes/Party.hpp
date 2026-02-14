@@ -7,7 +7,7 @@
 class Party
 {
 	private:
-		std::vector<std::shared_ptr<Player>>	_party;
+		std::vector<std::weak_ptr<Player>>		_party;
 		std::string								_partyName;
 		int										_partySize;
 		bool									_partyFull;
@@ -26,7 +26,7 @@ class Party
 		void									removePlayer(std::string &uid);
 		void									setPartySize(size_t size);
 		std::string								getPartyName() const;
-		std::vector<std::shared_ptr<Player>>	getPlayers() const;
+		std::vector<std::weak_ptr<Player>>		getPlayers() const;
 		int										getPartySize() const;
 		bool									isPartyFull() const;
 		bool									isPlayerInParty(std::string &uid) const;

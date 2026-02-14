@@ -89,8 +89,8 @@ int main(int ac, char **av)
 		importAssetsAndRoom();
 
 		#ifdef __EMSCRIPTEN__
-		id = std::to_string(rand() % 500);
-		name = "guest_" + id;
+		id = av[1];//std::to_string(rand() % 500);
+		name = av[2];//"guest_" + id;
 		gSdl.setPlayerName(name);
 		gSdl.setPlayerId(id);
 		EM_ASM_({

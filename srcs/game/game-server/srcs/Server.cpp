@@ -110,54 +110,125 @@ void	Server::manageQueue()
 	}
 	addPartyMulti(this->_matchMakingQueue, this->_sessions);
 	addPartySolo(sumSolo, this->_matchMakingQueue, this->_sessions);
-
 }
 
-void	Server::removePlayer(std::string &uid, uWS::App &app)
+bool	Server::playerInServer(std::string uid)
 {
-    for (auto it = _players.begin(); it != _players.end(); it++)
-    {
-        if (*it && it->get()->getUid() == uid)
-        {
-            if (it->get()->isInQueue())
-            {
-                for (Party &party : _matchMakingQueue)
-                {
-                    if (party.isPlayerInParty(uid))
-                    {
-                        party.removePlayer(uid);
-                        if (!party.getPartySize())
-                            _matchMakingQueue.remove(party);
-                        else
-                            party.setPartySize(party.getPartySize());
-                        break ;
-                    }
-                }
-            }
-            else if (it->get()->isInSession())
-            {
-                for (auto itS = _sessions.begin(); itS != _sessions.end(); it++)
-                {
-                    if (itS->isPlayerInSession(uid))
-                    {
-						std::string topic = (*it)->getRoom().getRoomId();
-						sendLeaveUpdate(*(*it).get(), app, topic);
-						(*it)->getWs()->unsubscribe(topic);
-                        // itS->sendToAll(*(*it).get());
-                        itS->removePlayer(*it);
-                        if (itS->isRunning() && itS->getNumPlayers() < 1)
-						{
-							std::cout << "session erased by no players left" << std::endl;
-                            this->_sessions.erase(itS);
-						}
-                        break ;
-                    }
-                }
-            }
-            this->_players.erase(it);
-            return ;
-        }
-    }
+	for (auto player : this->_players)
+	{
+		if (player->getUid() == uid)
+			return 1;
+	}
+	return 0;
+}
+
+void	Server::reconnectPlayer(std::string &uid, uWS::WebSocket<false, true, PerSocketData> *ws)
+{
+	for (auto &player : this->_players)
+	{
+		if (player->getUid() != uid)
+			continue ;
+		if (player->isInQueue() || !player->isInSession())
+			return ;
+		player->setWs(ws);
+		for (auto &session : this->_sessions)
+		{
+			if (!session.isPlayerInSession(uid))
+				continue ;
+			std::string msg;
+			if (!session.isRunning())
+				msg = session.sendMaps();
+			else
+			{
+				msg = session.sendMaps();
+				msg.replace(12, 7, "reconnect");
+				msg.pop_back();
+				msg += ", \"player_floor\":" + std::to_string(player->getFloor())
+					+ ", \"map_x\" : " + std::to_string(player->getNode()->getX())
+					+ ", \"map_y\" : " + std::to_string(player->getNode()->getY())
+					+ ", \"room_x\" : " + std::to_string(player->getX()) 
+					+ ", \"room_y\" : " + std::to_string(player->getY()) + '}';
+			}
+			std::cout << msg << std::endl;
+			ws->send("You have been reconnected to a session !", uWS::OpCode::TEXT);
+			ws->send(msg);
+			return ;
+		}
+	}
+}
+
+void	Server::removePlayer(std::string uid)
+{
+	for (auto it = _players.begin(); it != _players.end(); it++)
+	{
+		if ((*it)->getUid() != uid)
+			continue ;
+		this->_players.erase(it);
+	}
+}
+
+// void	Server::removePlayer(std::string &uid, uWS::App &app)
+// {
+//     for (auto it = _players.begin(); it != _players.end(); it++)
+//     {
+//         if (*it && it->get()->getUid() == uid)
+//         {
+//             if (it->get()->isInQueue())
+//             {
+//                 for (Party &party : _matchMakingQueue)
+//                 {
+//                     if (party.isPlayerInParty(uid))
+//                     {
+//                         party.removePlayer(uid);
+//                         if (!party.getPartySize())
+//                             _matchMakingQueue.remove(party);
+//                         else
+//                             party.setPartySize(party.getPartySize());
+//                         break ;
+//                     }
+//                 }
+//             }
+//             else if (it->get()->isInSession())
+//             {
+//                 for (auto itS = _sessions.begin(); itS != _sessions.end(); it++)
+//                 {
+//                     if (itS->isPlayerInSession(uid))
+//                     {
+// 						std::string topic = (*it)->getRoom().getRoomId();
+// 						sendLeaveUpdate(*(*it).get(), app, topic);
+// 						(*it)->getWs()->unsubscribe(topic);
+//                         // itS->sendToAll(*(*it).get());
+//                         itS->removePlayer(*it);
+//                         if (itS->isRunning() && itS->getNumPlayers() < 1)
+// 						{
+// 							std::cout << "session erased by no players left" << std::endl;
+//                             this->_sessions.erase(itS);
+// 						}
+//                         break ;
+//                     }
+//                 }
+//             }
+//             this->_players.erase(it);
+//             return ;
+//         }
+//     }
+// }
+
+std::vector<Session>::iterator	Server::endSession(std::string sessionId)
+{
+	for (auto it = this->_sessions.begin(); it != this->_sessions.end(); it++)
+	{
+		if (it->getSessionId() != sessionId)
+			continue ;
+		for (auto &p : it->getPlayers())
+		{
+			if (p.expired())
+				continue ;
+			this->removePlayer(p.lock()->getUid());
+		}
+		return this->_sessions.erase(it);
+	}
+	return this->_sessions.end();
 }
 
 Player	&Server::getPlayer(std::string &uid)
@@ -210,7 +281,7 @@ void	moveMobs(std::vector<std::string> const &map, Mob &mob, int destX, int dest
 	// }
 }
 
-void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app, Session &session, int const &isRunning)
+void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, uWS::App *app, Session &session, int const &isRunning)
 {
 	std::string msg = "{\"action\": \"loop_action\"";
 
@@ -221,8 +292,11 @@ void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer,
 	if (player_size)
 	{
 		std::string player_update = "\"player_update\": { \"player_status\": [";
-		for (const auto &player : allPlayer)
+		for (const auto &p : allPlayer)
 		{
+			if (p.expired())
+				continue ;
+			std::shared_ptr<Player> player = p.lock();
 			player_update += "{\"player_uid\":\"" + player->getUid() + '\"';
 			player_update += ",\"player_name\":\"" + player->getName() + '\"';
 			player_update += ",\"player_x\":" + std::to_string(player->getX());
@@ -348,23 +422,23 @@ void	Server::run(void)
 				std::cout << "ended" << std::endl;
 				continue ;
 			}
-			std::unordered_map<Room *, std::vector<std::shared_ptr<Player>> > PlayerPerRoom;
-			for (auto player : session.getPlayers())
+			std::unordered_map<Room *, std::vector<std::weak_ptr<Player>> > PlayerPerRoom;
+			for (auto p : session.getPlayers())
 			{
-				if (player->getFinished())
-				{
+				if (p.expired())
 					continue ;
-				}
-				Room &room = player->getRoomRef();
+				if (p.lock()->getFinished())
+					continue ;
+				Room &room = p.lock()->getRoomRef();
 				auto i = PlayerPerRoom.find(&room);
 				if (i == PlayerPerRoom.end())
 				{
-					std::vector<std::shared_ptr<Player>> lol;
-					lol.push_back(player);
+					std::vector<std::weak_ptr<Player>> lol;
+					lol.push_back(p);
 					PlayerPerRoom.emplace(&room, lol);
 				}
 				else
-					PlayerPerRoom[i->first].push_back(player);
+					PlayerPerRoom[i->first].push_back(p);
 			}
 			for (auto i : PlayerPerRoom)
 			{
@@ -375,7 +449,7 @@ void	Server::run(void)
 		{
 			if (it->hasEnded())
 			{
-				it = data->server->_sessions.erase(it);
+				it = data->server->endSession(it->getSessionId());
 			}
 			if (it != data->server->_sessions.end())
 				it++;
@@ -407,8 +481,8 @@ void	Server::run(void)
 			.close = [this, &app](auto *ws, int code, std::string_view msg)
 			{
 				(void)ws, (void)code, (void)msg;
-				auto *data = (PerSocketData *)ws->getUserData();
-				this->removePlayer(data->playerId, app);
+				// auto *data = (PerSocketData *)ws->getUserData();
+				// this->removePlayer(data->playerId, app);
 				std::cout << "Client déconnecté\n";
 			}
 		})
