@@ -16,6 +16,7 @@ export const messageSelect = {
 	postedAt: true,
 	editedAt: true,
 	deletedAt: true,
+	moderatedBy: true,
 	author: {
 		select: {
 			appUserId: true,
@@ -155,28 +156,29 @@ export async function getChatMessages(chatId: string, userId: string) {
 	if (!isMember)
 		throw new AppError('You are not a member of this chat', 403);
 
-	// 2. Retrieve messages
+	// Find all users who block or are blocked by current user
+	const blockedRelations = await prisma.blockedList.findMany({
+	where: {
+		OR: [
+			{ blocker: userId },
+			{ blocked: userId }
+		]
+	}
+	});
+
+	const blockedUserIds = blockedRelations
+		.map(b => b.blocker === userId ? b.blocked : b.blocker)
+		.filter((id): id is string => id !== null && id !== undefined);
+
+
+	// 3. Retrieve messages
 	const messages = await prisma.chatMessage.findMany({
-		where: { chatId },
+		where: { 
+			chatId,
+			userId: { notIn: blockedUserIds}
+		},
 		orderBy: { postedAt: 'asc' },
-		select: messageSelect//{
-			// messageId: true,
-			// chatId: true,
-			// userId: true,
-			// content: true,
-			// status: true,
-			// postedAt: true,
-			// editedAt: true,
-			// deletedAt: true,
-			// author: {
-			// 	select: {
-			// 		appUserId: true,
-			// 		username: true,
-			// 		avatarUrl: true,
-			// 		availability: true
-			// 	}
-			// }
-		// }
+		select: messageSelect
 	});
 
 	return messages;
