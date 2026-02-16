@@ -75,12 +75,14 @@ export async function hostRoomController(
 	if (request.user.id !== room.hostId)
 		return reply.code(403).send({ error: "Not leader" });
 
-	if (!room.players.map(players => players.id).includes(request.body.userId))
+	const newHost = room.players.find((player) => player.id === request.body.userId);
+
+	if (!newHost || !room.players.map(players => players.id).includes(request.body.userId))
 		return reply.code(404).send({ error: "Target not in room" });
 
 	SocketService.send(room.roomId, "host_changed", {
 		oldHost: room.hostId,
-		newHost: request.body.userId
+		newHost: { id: newHost.id, username: newHost.username }
 	});
 
 	room.hostId = request.body.userId;
@@ -107,7 +109,7 @@ export async function kickRoomController(
 	await RoomService.leave(request.body.userId, userSocket, "Kicked");
 
 	SocketService.send(`user:${request.body.userId}`, "kicked", {
-		hostId: request.user.id,
+		newHostUsername: request.user.username,
 	});
 	return reply.status(200).send(room);
 }
