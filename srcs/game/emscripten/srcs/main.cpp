@@ -91,8 +91,8 @@ int main(int ac, char **av)
 		#ifdef __EMSCRIPTEN__
 		int groupSize, sessionSize;
 		std::string groupId;
-		name = av[1];
-		id = av[2];
+		id = av[1];
+		name = av[2];
 		groupId = av[3];
 		groupSize = std::atoi(av[4]);
 		sessionSize = std::atoi(av[5]);
