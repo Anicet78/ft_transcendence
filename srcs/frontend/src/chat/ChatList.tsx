@@ -26,6 +26,20 @@ const ChatList = () => {
 		<Box m="4" p="6" bgColor="white">
 			<h1 className="title">Your chats</h1>
 
+			{/* CREATE GROUP CHAT BUTTON */}
+			<Link
+				to="/chat/group/new"
+				className="button is-primary is-small mb-4"
+			>
+			Create Group Chat
+			</Link>
+
+			{/* <Link to="/chat/invitations" className="button is-small is-warning">
+			Group Chat Invitations
+			</Link> */}
+
+
+			{/* LIST CHATS */}
 			{data.length === 0 && <p>You have no chats yet.</p>}
 
 			{data.map(chat => (

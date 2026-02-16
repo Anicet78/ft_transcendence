@@ -14,7 +14,7 @@ export function useChatSocket(chatId?: string) {
 			return;
 
 		//SEND
-		const onMessageCreated = (message: any) => {
+		const onMessageCreated = () => {
 	
 			//let the backend decide what you’re allowed to see
 			queryClient.invalidateQueries({ queryKey: ["chat-messages", chatId] });

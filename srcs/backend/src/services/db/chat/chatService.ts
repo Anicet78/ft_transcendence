@@ -35,10 +35,10 @@ export const chatSelect = {
 	},
 
 	roles: {
-	select: {
-		userId: true,
-		role: true
-	}
+		select: {
+			userId: true,
+			role: true
+		}
 	}
 };
 

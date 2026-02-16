@@ -66,7 +66,13 @@ async function seedBlocks(users) {
 async function seedFriendships(users) {
   const pairs = [
     [users[0], users[1], "accepted"],
-	  [users[0], users[3], "accepted"],
+    [users[0], users[2], "accepted"],
+    [users[0], users[3], "accepted"],
+    [users[0], users[4], "accepted"],
+    [users[5], users[0], "accepted"],
+    [users[0], users[6], "accepted"],
+    [users[0], users[7], "accepted"],
+	  [users[0], users[8], "waiting"],
 	  [users[4], users[0], "waiting"],
     [users[1], users[3], "accepted"],
     [users[2], users[4], "waiting"],
