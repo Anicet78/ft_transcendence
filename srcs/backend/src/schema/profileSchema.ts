@@ -48,7 +48,8 @@ export const PublicProfileResponseSchema = Type.Object({
   playing: Type.Boolean(),
   region: Type.String(),
   createdAt: Type.String({ format: 'date-time' }),
-  gameProfile: Type.Union([GameProfileSchema, Type.Null()])
+  gameProfile: Type.Union([GameProfileSchema, Type.Null()]),
+  blocked: Type.Boolean()
 });
 export type PublicProfileResponse = Static<typeof PublicProfileResponseSchema>;
 
