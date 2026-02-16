@@ -33,6 +33,7 @@ import { SocketProvider } from './socket/SocketContext.tsx';
 import { RoomProvider } from './home/RoomContext.tsx';
 import SearchComponent from './search/searchComponent.tsx';
 import ProfileUpdate from './profile/ProfileUpdate.tsx';
+import { Toaster } from "sonner";
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -77,6 +78,7 @@ createRoot(document.getElementById('root') as HTMLElement).render(
 	// <StrictMode>
 		<QueryClientProvider client={queryClient}>
 			<Router>
+				<Toaster />
 				<AuthProvider>
 					<SocketProvider>
 						<RoomProvider>

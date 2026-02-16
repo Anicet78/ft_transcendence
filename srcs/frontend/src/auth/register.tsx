@@ -14,6 +14,7 @@ import api from '../serverApi.ts';
 import { useMutation } from '@tanstack/react-query';
 import { useAuth } from './AuthContext.tsx';
 import { useState } from 'react';
+import toast from '../Notifications.tsx';
 
 type RegisterBodyType = GetBody<"/auth/register", "post">;
 type RegisterResponseType = GetResponse<"/auth/register", "post">;
@@ -26,8 +27,12 @@ function Register() {
 		mutationFn: (data: RegisterBodyType) => api.post("/auth/register", data),
 		onSuccess: (data) => {
 			const response: RegisterResponseType = data.data;
+			toast({ title: `Your account has been successfully created`, type: "is-success" })
 			login(response.user, response.token);
 		},
+		onError: (error: Error) => {
+			toast({ title: `An error occurred`, message: error.message, type: "is-warning" })
+		}
 	});
 
 	const [formData, setFormData] = useState({
