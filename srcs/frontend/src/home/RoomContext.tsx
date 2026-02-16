@@ -33,11 +33,15 @@ const onPlayerJoined = (data: { playerId: string, playerUsername: string }, setR
 			players: [...prev.players, { id: data.playerId, username: data.playerUsername }],
 		};
 	});
+	toast({ title: `Player joined`, message: `${data.playerUsername} has joined the room`, type: "is-info" });
 };
 
-const onPlayerQuit = (data: { playerId: string, newHost: string }, setRoom: React.Dispatch<React.SetStateAction<Room | null>>) => {
+const onPlayerQuit = (data: { playerId: string, reason: string, newHost: string}, setRoom: React.Dispatch<React.SetStateAction<Room | null>>) => {
 	setRoom((prev) => {
 		if (!prev) return prev;
+
+		const username = prev.players.find((player) => player.id === data.playerId)?.username;
+		toast({ title: `Player left`, message: `${username} has ${data.reason === "kicked" ? 'been kicked from' : 'left'} the room`, type: "is-warning" });
 
 		return {
 			...prev,
@@ -47,16 +51,22 @@ const onPlayerQuit = (data: { playerId: string, newHost: string }, setRoom: Reac
 	});
 };
 
-const onHostChanged = (data: { newHost: string }, setRoom: React.Dispatch<React.SetStateAction<Room | null>>) => {
+const onHostChanged = (data: { newHost: {id: string, username: string} }, setRoom: React.Dispatch<React.SetStateAction<Room | null>>) => {
 	setRoom((prev) => {
 		if (!prev) return prev;
 
 		return {
 			...prev,
-			hostId: data.newHost
+			hostId: data.newHost.id
 		};
 	});
+	toast({ title: `Host changed`, message: `${data.newHost.username} is the new host`, type: "is-info" });
 };
+
+const onKicked = (data: { newHostUsername: string }, newRoom: () => void) => {
+	newRoom();
+	toast({ title: `You have been kicked from the room`, message: `You have been kicked by ${data.newHostUsername}`, type: "is-danger" });
+}
 
 export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 	const navigate = useNavigate();
@@ -118,7 +128,7 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 		socket.on('player_joined', (data) => onPlayerJoined(data, setRoom));
 		socket.on('player_left', (data) => onPlayerQuit(data, setRoom));
 		socket.on('host_changed', (data) => onHostChanged(data, setRoom));
-		socket.on('kicked', () => newRoom());
+		socket.on('kicked', (data) => onKicked(data, newRoom));
 		socket.on('launch', () => {
 			setStart(true);
 			toast({ title: `Joining the game` });
