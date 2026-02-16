@@ -30,17 +30,23 @@
     </style>
 </head>
 <body>
-    <div>
-        <button id="connectBtn">Se connecter</button>
-        <button id="disconnectBtn" disabled>Se déconnecter</button>
-    </div>
     <form id="myForm">
         <label> id : <input type="text" id="id" name="id"> </label>
         <br>
         <label> Nom : <input type="text" id="name" name="name"> </label>
         <br>
+        <label> groupId : <input type="text" id="groupId" name="groupId"> </label>
+        <br>
+        <label> groupSize : <input type="text" id="groupSize" name="groupSize"> </label>
+        <br>
+        <label> sessionSize : <input type="text" id="sessionSize" name="sessionSize"> </label>
+        <br>
         <button type="submit">Envoyer</button>
     </form>
+    <div>
+        <button id="connectBtn">Se connecter</button>
+        <button id="disconnectBtn" disabled>Se déconnecter</button>
+    </div>
     <canvas id="game-canvas" width="800" height="950" tabindex="1"></canvas>
     <div id="log"></div>
     <script src="game.js"></script>
@@ -55,6 +61,9 @@
         const form = document.getElementById('myForm');
         let name;
         let id;
+        let groupId;
+        let groupSize;
+        let sessionSize;
 
         form.addEventListener('submit', function (event)
         {
@@ -62,6 +71,9 @@
 
             name = document.getElementById('name').value;
             id = document.getElementById('id').value;
+            groupId = document.getElementById('groupId').value;
+            groupSize = document.getElementById('groupSize').value;
+            sessionSize = document.getElementById('sessionSize').value;
         });
 
 
@@ -73,7 +85,7 @@
                 noInitialRun: true
             }).then(mod => {
                 Module = mod;
-                Module.callMain([name, id]);
+                Module.callMain([name, id, groupId, groupSize, sessionSize]);
             });
         }
 

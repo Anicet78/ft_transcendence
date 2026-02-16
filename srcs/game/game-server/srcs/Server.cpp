@@ -11,18 +11,18 @@ void	Server::addPlayerOnQueue(std::shared_ptr<Player> player)
 {
 	if (!player)
 		throw std::runtime_error("the player does not exists");
-	if (!player->getPartyName().empty())
+	if (!player->getPartyId().empty())
 	{
 		for (Party &party : _matchMakingQueue)
 		{
-			if (!party.getPartyName().empty() && player->getPartyName() == party.getPartyName())
+			if (!party.getPartyId().empty() && player->getPartyId() == party.getPartyId())
 			{
 				party.addPlayer(player);
 				return ;
 			}
 		}
 	}
-	Party nParty(player->getPartyName(), player->getGroupSize());
+	Party nParty(player->getPartyId(), player->getGroupSize(), player->getSessionSize());
 	nParty.addPlayer(player);
 	this->_matchMakingQueue.emplace_back(nParty);
 }
@@ -41,7 +41,7 @@ static void addPartyMulti(std::list<Party> &matchMakingQueue, std::vector<Sessio
 		bool placed = false;
 		for (Session &session : sessions)
 		{
-			if (!session.isRunning() && session.getPlaceLeft() >= party.getPartySize())
+			if (!session.isRunning() && session.getPlaceLeft() >= party.getPartySize() && session.getMaxNumPlayer() == party.getSessionSize())
 			{
 				party.setPlayerSession();
 				session.addParty(party);
@@ -51,7 +51,7 @@ static void addPartyMulti(std::list<Party> &matchMakingQueue, std::vector<Sessio
 		}
 		if (!placed)
 		{
-			sessions.emplace_back();
+			sessions.emplace_back(party.getSessionSize());
 			party.setPlayerSession();
 			sessions.back().addParty(party);
 		}
@@ -73,7 +73,7 @@ static void addPartySolo(int &sumSolo, std::list<Party> &matchMakingQueue, std::
 		bool placed = false;
 		for (Session &session : sessions)
 		{
-			if (!session.isRunning() && session.getPlaceLeft())
+			if (!session.isRunning() && session.getPlaceLeft() && session.getMaxNumPlayer() == party.getSessionSize())
 			{
 				party.setPlayerSession();
 				session.addParty(party);
@@ -87,7 +87,7 @@ static void addPartySolo(int &sumSolo, std::list<Party> &matchMakingQueue, std::
 		else if (sumSolo >= 1)
 		{
 			party.setPlayerSession();
-			sessions.emplace_back();
+			sessions.emplace_back(party.getSessionSize());
 			sessions.back().addParty(party);
 			it = matchMakingQueue.erase(it);
 			sumSolo--;

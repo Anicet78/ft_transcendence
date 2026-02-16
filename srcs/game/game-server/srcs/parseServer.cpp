@@ -160,8 +160,9 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
 	{
 		data->pseudo = req["player_name"];
         data->playerId = req["player_id"];
-        data->group = req["group_id"];
+        data->groupId = req["group_id"];
         data->groupSize = std::atoi(req["group_size"].c_str());
+		data->sessionSize = std::atoi(req["session_size"].c_str());
 		if (this->playerInServer(data->playerId))
 		{
 			this->reconnectPlayer(data->playerId, ws);
@@ -171,7 +172,7 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
 			return 1;
 		}
         ws->send("You have been added in the queue !", uWS::OpCode::TEXT);
-        this->_players.emplace_back(std::make_shared<Player>(data->playerId, data->groupSize, data->group, data->pseudo, ws));
+        this->_players.emplace_back(std::make_shared<Player>(data->playerId, data->groupSize, data->groupId, data->pseudo, data->sessionSize, ws));
         this->addPlayerOnQueue(_players.back());
         data->jsonMsg.clear();
         return 0;

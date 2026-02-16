@@ -1,7 +1,7 @@
 #include"Player.hpp"
 
-Player::Player(std::string uid, int partySize, std::string partyName, std::string name, uWS::WebSocket<false, true, PerSocketData> *ws)
-				: _uid(uid), _partySize(partySize),  _partyName(partyName), _name(name), _inQueue(true), _inSession(false),
+Player::Player(std::string uid, int partySize, std::string partyId, std::string name, int sessionSize, uWS::WebSocket<false, true, PerSocketData> *ws)
+				: _uid(uid), _sessionSize(sessionSize), _partySize(partySize),  _partyId(partyId), _name(name), _inQueue(true), _inSession(false),
 					_launched(0), _connected(1), _finished(0), _hasWin(0), _finalRanking(0), _exit(' '), _ws(ws), _x(0), _y(0),
 					_floor(0), _startPos(-1), _anim(0), _last_dir(0), _hp(3), _atk(1), _def(0), _box(_x, _y, _last_dir),
 					_isAttacking(false), _atkFrame(0), _kills(0)
@@ -45,9 +45,9 @@ std::string	Player::getUid(void) const
 	return (_uid);
 }
 
-std::string	Player::getPartyName(void) const
+std::string	Player::getPartyId(void) const
 {
-	return (_partyName);
+	return (_partyId);
 }
 
 int Player::getGroupSize() const
@@ -73,6 +73,11 @@ float	Player::getY(void) const
 int		Player::getFloor(void) const
 {
 	return this->_floor;
+}
+
+int		Player::getSessionSize(void) const
+{
+	return this->_sessionSize;
 }
 
 int		Player::getStartPos(void) const

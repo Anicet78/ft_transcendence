@@ -7,7 +7,7 @@ bool Party::operator==(Party const &rhs)
 
 //Constructors/Destructors------------------------------------------------
 
-Party::Party(std::string partyName, int partySize): _partyName(partyName), _partySize(partySize), _partyFull(0), _partyId(rand() % 1000000)
+Party::Party(std::string partyId, int partySize, int sessionSize): _partyId(partyId), _partySize(partySize), _partyFull(0), _sessionSize(sessionSize)
 {}
 
 Party::~Party()
@@ -17,7 +17,7 @@ Party::~Party()
 
 void Party::addPlayer(std::shared_ptr<Player> player)
 {
-	if (player && player->getPartyName() == this->_partyName)
+	if (player && player->getPartyId() == this->_partyId)
 	{
 		this->_party.push_back(player);
 		if (this->_partySize == static_cast<int>(this->_party.size()))
@@ -29,9 +29,14 @@ void Party::addPlayer(std::shared_ptr<Player> player)
 		throw std::runtime_error("this player does not exists");
 }
 
-std::string Party::getPartyName() const
+std::string Party::getPartyId() const
 {
-	return this->_partyName;
+	return this->_partyId;
+}
+
+int	Party::getSessionSize(void) const
+{
+	return this->_sessionSize;
 }
 
 std::vector<std::weak_ptr<Player>> Party::getPlayers() const

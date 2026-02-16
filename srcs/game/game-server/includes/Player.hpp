@@ -9,8 +9,9 @@ typedef struct PerSocketData
     std::string							playerId;
     std::string							pseudo;
     std::string							room; //room is designing an appartenance at a game room, with all of the other players of the session
-	std::string							group; //group is is for the group with you launch the game (before matchmaking)
+	std::string							groupId; //group is is for the group with you launch the game (before matchmaking)
 	int									groupSize;//size of the group
+	int									sessionSize;
     std::map<std::string, std::string>	jsonMsg;
 } PerSocketData;
 
@@ -19,10 +20,10 @@ class Player
 	private:
 		std::string									_uid;
 		int											_numPlayer;
-		int											_partySize;//size of the group
-		std::string									_partyName; //party is for the group with you launch the game with (before matchmaking)
+		int											_sessionSize; // size of the session requested
+		int											_partySize; //size of the group
+		std::string									_partyId; //party is for the group with you launch the game with (before matchmaking)
 		std::string									_name;
-		std::string									_groupName; //party is designing an appartenance at a game room, with all of the other players of the session
 		bool										_inQueue;
 		bool										_inSession;
 		bool										_launched;
@@ -63,8 +64,8 @@ class Player
 	//nbr kill
 		int			_kills;
 	public:
-		Player(std::string uid, int partySize, std::string partyName, std::string name,
-				uWS::WebSocket<false, true, PerSocketData> *ws);
+		Player(std::string uid, int partySize, std::string partyId, std::string name,
+				int sessionSize, uWS::WebSocket<false, true, PerSocketData> *ws);
 		~Player();
 
 	//getter
@@ -74,13 +75,14 @@ class Player
 		quadList	getNode(void) const;
 		quadList	getPrevNode(void) const;
 		bool		getFinished(void) const;
+		int			getSessionSize(void) const;
 		bool		HasWin(void) const;
 		bool		isConnected(void) const;
 		int			getFinalRanking(void) const;
 		char		getExit(void) const;
 		int			getGroupSize() const;
 		int			getAnim(void) const;
-		std::string	getPartyName(void) const;
+		std::string	getPartyId(void) const;
 		bool		isInQueue(void)	const;
 		bool		isInSession(void) const;
 		bool		isLaunched(void) const;
