@@ -6,11 +6,6 @@ import fastifyCors from "@fastify/cors";
 import cookies from "@fastify/cookie";
 import type { RequestUser } from "../schema/userSchema.js";
 
-export type JWTPayload = {
-	id: string;
-	email: string;
-};
-
 export default fp(async (fastify) => {
 	// CORS
 	await fastify.register(fastifyCors, {
