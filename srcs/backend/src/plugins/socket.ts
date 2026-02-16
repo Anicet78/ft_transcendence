@@ -4,9 +4,10 @@ import socketio from 'fastify-socket.io';
 import { Server, Socket } from 'socket.io';
 import { SocketService } from "../services/socket/SocketService.js";
 import { AppError } from "../schema/errorSchema.js";
-import type { JWTPayload } from "./auth.js";
 import { RoomService } from "../services/rooms/roomService.js";
 import { prisma } from "../services/db/prisma.js";
+import { UserService } from "../services/db/userService.js";
+import type { RequestUser } from "../schema/userSchema.js";
 
 type SocketIOOptions = {
 	cors?: {
@@ -49,7 +50,7 @@ export default fp(async (fastify) => {
 	fastify.io.on("connection", async (socket) => {
 		const clientId = socket.id;
 		try {
-			const userPayload: JWTPayload | null = fastify.jwt.decode(socket.handshake.auth.token);
+			const userPayload: RequestUser | null = fastify.jwt.decode(socket.handshake.auth.token);
 			if (!userPayload) {
 				socket.disconnect(true);
 				return;
@@ -75,11 +76,13 @@ export default fp(async (fastify) => {
 				}, 5000);
 
 				disconnectionTimers.set(userPayload.id, timer);
+
+				await UserService.setAvailabality(userPayload.id, false);
 			});
 
 			// broadcast typing into chat effect in the chat room
 			socket.on("chat_typing", async ({ chatId }) => {
-			
+
 				const isMember = await prisma.chatMember.findFirst({
 					where: {
 						chatId,
