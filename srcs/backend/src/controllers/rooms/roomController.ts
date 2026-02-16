@@ -5,6 +5,7 @@ import type { RoomBodyType, RoomParamsType } from "../../routes/rooms/roomRoute.
 import { Socket } from "socket.io";
 import { SocketService } from "../../services/socket/SocketService.js";
 import type { GlobalHeaders } from "../../schema/globalHeadersSchema.js";
+import { fastify } from "../../server.js";
 
 export async function getRoomController(
 	request: FastifyRequest<{ Params: RoomParamsType }>,
@@ -101,11 +102,11 @@ export async function kickRoomController(
 	if (!room.players.map(players => players.id).includes(request.body.userId))
 		return reply.code(404).send({ error: "Target not in room" });
 
-	const userSocket: Socket = request.getSocket();
+	const userSocket: Socket | null = await fastify.getSocketByUserId(request.body.userId);
 
 	await RoomService.leave(request.body.userId, userSocket, "Kicked");
 
-	SocketService.send(request.body.userId, "kicked", {
+	SocketService.send(`user:${request.body.userId}`, "kicked", {
 		hostId: request.user.id,
 	});
 	return reply.status(200).send(room);
