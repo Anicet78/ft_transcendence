@@ -21,7 +21,7 @@ const ProfilePrivate = () => {
 	const userData: ProfileResponseType = data.data;
 
 	const username = userData.username;
-	const avatar = userData.avatarUrl || '../assets/skull.svg';
+	const avatar = userData.avatarUrl ? `http://localhost:3000/uploads/${userData.avatarUrl}` : '../assets/skull.svg';
 	const level = userData.gameProfile?.level || '0';
 	const xp = userData.gameProfile?.totalXp || '0';
 	const firstname = userData.firstName;
@@ -34,6 +34,7 @@ const ProfilePrivate = () => {
 	const totalGames = userData.gameProfile?.totalGames || '0';
 	const totalWins = userData.gameProfile?.totalWins || '0';
 	const totalLoses = userData.gameProfile?.totalLoses || '0';
+	console.log("in front end: " + userData.avatarUrl);
 
 	return (
 		<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' alignItems='center'>
@@ -42,7 +43,7 @@ const ProfilePrivate = () => {
 			<Box className='box-head' bgColor="white" justifyContent='center' textSize='4'>
 				<Box bgColor='white' className='image-box'>
 					<figure className='image is-128x128'>
-						<img aria-label='avatar of the user' src={avatar} />
+						<img aria-label='avatar of the user' src={avatar} crossOrigin="anonymous"/>
 					</figure>
 					<NavLink to='/profile/update/avatar' className='button is-small is-white'>
 						<span className="icon">

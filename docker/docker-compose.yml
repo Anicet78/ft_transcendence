@@ -23,6 +23,7 @@ services:
     restart: on-failure
     ports:
       - 5173:5173
+      - 3000:3000
     env_file:
       - .env
     secrets:
@@ -31,6 +32,7 @@ services:
       - cookie_secret
     volumes:
       - ../srcs/frontend:/front
+      - ./uploads:/usr/src/app/uploads
     networks:
       - transcendence
     depends_on:

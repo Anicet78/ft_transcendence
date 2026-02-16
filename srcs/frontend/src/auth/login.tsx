@@ -6,7 +6,6 @@ import '../index.css'
 import { Button } from '@allxsmith/bestax-bulma';
 import ButtonSubmit from '../components/ButtonSubmit.tsx';
 import InputEmail from '../components/InputEmail.tsx';
-import InputPassword from '../components/InputPassword.tsx';
 import { useMutation } from '@tanstack/react-query';
 import api from '../serverApi.ts';
 
@@ -46,7 +45,23 @@ function Login() {
 				<br />
 				<form action={loginAction}>
 				<InputEmail label="Email"/>
-				<InputPassword label="Password" id="pwd"/>
+				<div className="field">
+					<label htmlFor="password">Password</label>
+					<p className="control has-icons-left">
+						<input
+							className="input"
+							type="password"
+							id="pwd"
+							name="pwd"
+							required
+							minLength={3}
+							maxLength={80}
+						/>
+						<span className="icon is-small is-left">
+							<i className="fas fa-lock"></i>
+						</span>
+					</p>
+				</div>
 
 				{mutation.isError && (
 					<div style={{ color: 'red' }}>
