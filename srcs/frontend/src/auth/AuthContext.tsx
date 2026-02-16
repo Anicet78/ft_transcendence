@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import api, { setAccessToken, setOnLogout, setOnRefreshSuccess } from '../serverApi';
 import { useQuery } from '@tanstack/react-query';
 import type { GetResponse } from '../types/GetType';
+import toast from '../Notifications';
 
 export type User = GetResponse<"/auth/refresh", "post">["user"];
 
@@ -59,6 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			setUser(data.data.user);
 			setToken(data.data.token);
 			setAccessToken(data.data.token);
+			toast({ title: `Welcome ${data.data.user.username}` });
 		}
 		if (!isLoading) {
 			setIsInitializing(false);
