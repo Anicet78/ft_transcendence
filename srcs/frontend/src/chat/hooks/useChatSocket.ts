@@ -15,11 +15,14 @@ export function useChatSocket(chatId?: string) {
 
 		//SEND
 		const onMessageCreated = (message: any) => {
-			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] | undefined) => {
-				if (!cache)
-					return [message];
-				return [...cache, message];
-			});
+	
+			//let the backend decide what you’re allowed to see
+			queryClient.invalidateQueries({ queryKey: ["chat-messages", chatId] });
+			// queryClient.setQueryData(["chat-messages", chatId], (cache: any[] | undefined) => {
+			// 	if (!cache)
+			// 		return [message];
+			// 	return [...cache, message];
+			// });
 		};
 
 		//EDIT
