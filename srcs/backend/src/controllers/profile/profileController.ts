@@ -24,7 +24,7 @@ export async function getPublicProfile(
   reply: FastifyReply ) {
   const userName = req.params.username;
 
-  const profile = await profileService.getPublicProfile(userName);
+  const profile = await profileService.getPublicProfile(userName, req.user.id);
   if (!profile) {
     return reply.code(404).send({ error: 'User not found' });
   }

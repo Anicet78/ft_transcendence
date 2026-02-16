@@ -24,9 +24,37 @@ export const profileSelect = Prisma.validator<Prisma.AppUserSelect>()({
       level: true,
       bestTime: true
     }
-  }
+  },
 });
 export type PrismaProfile = Prisma.AppUserGetPayload<{ select: typeof profileSelect }>;
+
+export const publicProfileSelect = Prisma.validator<Prisma.AppUserSelect>()({
+  appUserId: true,
+  firstName: true,
+  lastName: true,
+  username: true,
+  mail: true,
+  avatarUrl: true,
+  availability: true,
+  playing: true,
+  region: true,
+  createdAt: true,
+  updatedAt: true,
+  lastConnectedAt: true,
+  usersWhoBlockedYou: true,
+  gameProfile: {
+    select: {
+      totalGames: true,
+      totalWins: true,
+      totalLoses: true,
+      totalEnemiesKilled: true,
+      totalXp: true,
+      level: true,
+      bestTime: true
+    }
+  },
+});
+export type PrismaPublicProfile = Prisma.AppUserGetPayload<{ select: typeof publicProfileSelect }>;
 
 // Access authenticated user's to its own profile
 //rename with getPublicProfile
@@ -39,10 +67,17 @@ export async function getProfile(userId: string) {
 
 // Retrieve another user's public profile
 //rename with getPublicProfileById
-export async function getPublicProfile(userName: string) {
+export async function getPublicProfile(userName: string, fetcherId: string) {
   return prisma.appUser.findUnique({
     where: { username:  userName},
-    select: profileSelect
+    select: { ...profileSelect, usersWhoBlockedYou: {
+      where: {
+        app_user_blocked_list_blockerToapp_user: {
+          appUserId: fetcherId
+        },
+        deletedAt: null
+      },
+    }},
   });
 }
 
