@@ -11,6 +11,8 @@ type ChatContextValue = {
 	role: string | null;
 	permissions: Record<string, boolean>;
 	isTyping: boolean;
+	// blockedUsersId: string;
+	// bannedUsersId: string; //need to handle banned users
 	// typingUsers: Record<string, string>;
 	joinChat: (chatId: string) => void;
 	leaveChat: () => void;

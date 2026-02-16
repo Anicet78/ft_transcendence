@@ -45,7 +45,7 @@ console.log(Object.keys(prisma));
 //BLOCKLIST
 async function seedBlocks(users) {
   const blocks = [
-    [users[0], users[3]], // Nina blocks Alice
+    [users[0], users[3]], // Nina blocks Julie
     [users[5], users[0]], // Alice blocks Nina
     [users[1], users[6]], // Anicet blocks Bob
     [users[7], users[2]], // Charlie blocks Maxime
