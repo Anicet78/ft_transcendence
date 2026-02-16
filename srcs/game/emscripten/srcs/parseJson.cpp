@@ -149,6 +149,8 @@ void	parseJson(bool &init, Game &game)
 			float px = msg["room_x"].as<float>();
 			float py = msg["room_y"].as<float>();
 			game.getPlayer().setPos(px, py);
+			while (floor--)
+				game.getPlayer().incrementFloor();
 			game.setLaunched(1);
 			gSdl.enableIsRunning();
 			EM_ASM_({onCppMessage({action: "reconnected"});});

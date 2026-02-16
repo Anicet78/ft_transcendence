@@ -94,7 +94,7 @@ class Player
 		int			getFrame(void) const;
 		int			getLastDir(void) const;
 
-		int		getKills(void) const;
+		int			getKills(void) const;
 
 		int			getFloor(void) const;
 
@@ -114,7 +114,7 @@ class Player
 		void	incrementFloor(void);
 
 	//print
-		void	printPlayer(float px, float py);
+		void	printPlayer(float px, float py, int flag);
 
 	//player attacking action
 		void	startAtk(void);

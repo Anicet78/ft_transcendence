@@ -75,6 +75,7 @@ class Player
 		quadList	getPrevNode(void) const;
 		bool		getFinished(void) const;
 		bool		HasWin(void) const;
+		bool		isConnected(void) const;
 		int			getFinalRanking(void) const;
 		char		getExit(void) const;
 		int			getGroupSize() const;
@@ -83,7 +84,6 @@ class Player
 		bool		isInQueue(void)	const;
 		bool		isInSession(void) const;
 		bool		isLaunched(void) const;
-		bool		isConnected(void) const;
 		uWS::WebSocket<false, true, PerSocketData> *getWs(void) const;
 
 		float		getX(void) const;

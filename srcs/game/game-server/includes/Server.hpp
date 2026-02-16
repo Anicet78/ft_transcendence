@@ -16,8 +16,8 @@ class Server
 		int								executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSocketData> *ws, uWS::App &app);
 		void							addPlayerOnQueue(std::shared_ptr<Player> player);
 		void							manageQueue(void);
-		void							removePlayer(std::string uid);
 		bool							playerInServer(std::string uid);
+		void							removePlayer(std::string uid);
 		void							reconnectPlayer(std::string &uid, uWS::WebSocket<false, true, PerSocketData> *ws);
 		std::vector<Session>::iterator	endSession(std::string sessionId);
 		Player							&getPlayer(std::string &uid);
@@ -29,7 +29,6 @@ class Server
 	
 	public:
 		void	run();
-
 };
 
 void	updatePlayer(Player &player, std::map<std::string, std::string> &req);

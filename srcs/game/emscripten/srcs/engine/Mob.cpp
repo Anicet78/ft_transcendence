@@ -192,26 +192,35 @@ bool	Mob::checkInvinsibleFrame(void) {
 
 //-------------printer and render----------------------------------------
 
-void	Mob::printMob(float camX, float camY, int tile_size)
+void	Mob::printMob(float camX, float camY, int tile_size, int flag)
 {
-	if (this->_frame >= 20)
+	if (!flag && this->_frame >= 20)
 		this->_frame = 0;
-	this->_frame++;
+	if (!flag)
+		this->_frame++;
 	float x = ((this->_x - camX) * tile_size) - (0.5f * tile_size);
 	float y = ((this->_y - camY) * tile_size) - (0.5f * tile_size);
 	if (checkInvinsibleFrame())
-		this->rendMobHurt(x, y, this->_frame / 4, 2);
+		this->rendMobHurt(x, y, this->_frame / 4, 2, flag);
 	else
-		this->rendMobIdle(x, y, this->_frame / 4, 2);
+		this->rendMobIdle(x, y, this->_frame / 4, 2, flag);
 	return ;
 }
 
-void	Mob::rendMobWalk(int x, int y, int assetIndex, float scale) {
-	if (assetIndex < 0) {
+void	Mob::rendMobWalk(int x, int y, int assetIndex, float scale, int flag)
+{
+	if (flag)
+	{
+		SDL_SetTextureBlendMode(_mobWalkText, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(_mobWalkText, 128);
+	}
+	if (assetIndex < 0)
+	{
 		std::cerr << "Invalid index" << std::endl;
 		return ;
 	}
-	if (scale <= 0) {
+	if (scale <= 0)
+	{
 		std::cerr << "Invalid scale" << std::endl;
 		return ;
 	}
@@ -229,14 +238,25 @@ void	Mob::rendMobWalk(int x, int y, int assetIndex, float scale) {
 		SDL_RenderCopy(gSdl.renderer, _mobWalkText, rect, &renderRect);
 	else
 		SDL_RenderCopyEx(gSdl.renderer, _mobWalkText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
+	if (flag)
+		SDL_SetTextureAlphaMod(_mobWalkText, 255);
 }
 
-void	Mob::rendMobIdle(int x, int y, int assetIndex, float scale) {
-	if (assetIndex < 0) {
+void	Mob::rendMobIdle(int x, int y, int assetIndex, float scale, int flag)
+{
+	if (flag)
+	{
+		SDL_SetTextureBlendMode(_mobIdleText, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(_mobIdleText, 128);
+	}
+
+	if (assetIndex < 0)
+	{
 		std::cerr << "Invalid index" << std::endl;
 		return ;
 	}
-	if (scale <= 0) {
+	if (scale <= 0)
+	{
 		std::cerr << "Invalid scale" << std::endl;
 		return ;
 	}
@@ -254,14 +274,25 @@ void	Mob::rendMobIdle(int x, int y, int assetIndex, float scale) {
 		SDL_RenderCopy(gSdl.renderer, _mobIdleText, rect, &renderRect);
 	else
 		SDL_RenderCopyEx(gSdl.renderer, _mobIdleText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
+	if (flag)
+		SDL_SetTextureAlphaMod(_mobIdleText, 255);
 }
 
-void	Mob::rendMobAttack(int x, int y, int assetIndex, float scale) {
-	if (assetIndex < 0) {
+void	Mob::rendMobAttack(int x, int y, int assetIndex, float scale, int flag)
+{
+	if (flag)
+	{
+		SDL_SetTextureBlendMode(_mobAttackText, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(_mobAttackText, 128);
+	}
+
+	if (assetIndex < 0)
+	{
 		std::cerr << "Invalid index" << std::endl;
 		return ;
 	}
-	if (scale <= 0) {
+	if (scale <= 0)
+	{
 		std::cerr << "Invalid scale" << std::endl;
 		return ;
 	}
@@ -279,14 +310,25 @@ void	Mob::rendMobAttack(int x, int y, int assetIndex, float scale) {
 		SDL_RenderCopy(gSdl.renderer, _mobAttackText, rect, &renderRect);
 	else
 		SDL_RenderCopyEx(gSdl.renderer, _mobAttackText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
+	if (flag)
+		SDL_SetTextureAlphaMod(_mobAttackText, 255);
 }
 
-void	Mob::rendMobHurt(int x, int y, int assetIndex, float scale) {
-	if (assetIndex < 0) {
+void	Mob::rendMobHurt(int x, int y, int assetIndex, float scale, int flag)
+{
+	if (flag)
+	{
+		SDL_SetTextureBlendMode(_mobHurtText, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(_mobHurtText, 128);
+	}
+
+	if (assetIndex < 0)
+	{
 		std::cerr << "Invalid index" << std::endl;
 		return ;
 	}
-	if (scale <= 0) {
+	if (scale <= 0)
+	{
 		std::cerr << "Invalid scale" << std::endl;
 		return ;
 	}
@@ -304,17 +346,21 @@ void	Mob::rendMobHurt(int x, int y, int assetIndex, float scale) {
 		SDL_RenderCopy(gSdl.renderer, _mobHurtText, rect, &renderRect);
 	else
 		SDL_RenderCopyEx(gSdl.renderer, _mobHurtText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
+	if (flag)
+		SDL_SetTextureAlphaMod(_mobHurtText, 255);
 }
 
 //-----------------------------------------------------------------------
 
 //-------------Mob death  flag----------------
 
-void	Mob::setIsDead(bool value) {
+void	Mob::setIsDead(bool value)
+{
 	this->_isDead = value;
 }
 
-bool	Mob::isDead(void) const {
+bool	Mob::isDead(void) const
+{
 	return (this->_isDead);
 }
 
@@ -322,11 +368,13 @@ bool	Mob::isDead(void) const {
 
 //-------------Mob take damage flag----------------
 
-void	Mob::damaged(bool value) {
+void	Mob::damaged(bool value)
+{
 	this->_tookDamage = value;
 }
 
-bool	Mob::isDamaged(void) const {
+bool	Mob::isDamaged(void) const
+{
 	return (this->_tookDamage);
 }
 

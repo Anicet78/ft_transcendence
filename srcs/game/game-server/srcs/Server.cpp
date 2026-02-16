@@ -149,7 +149,6 @@ void	Server::reconnectPlayer(std::string &uid, uWS::WebSocket<false, true, PerSo
 					+ ", \"room_x\" : " + std::to_string(player->getX()) 
 					+ ", \"room_y\" : " + std::to_string(player->getY()) + '}';
 			}
-			std::cout << msg << std::endl;
 			ws->send("You have been reconnected to a session !", uWS::OpCode::TEXT);
 			ws->send(msg);
 			return ;
@@ -157,15 +156,26 @@ void	Server::reconnectPlayer(std::string &uid, uWS::WebSocket<false, true, PerSo
 	}
 }
 
-void	Server::removePlayer(std::string uid)
+void Server::removePlayer(std::string uid)
 {
-	for (auto it = _players.begin(); it != _players.end(); it++)
-	{
-		if ((*it)->getUid() != uid)
-			continue ;
-		this->_players.erase(it);
-	}
+    for (auto it = _players.begin(); it != _players.end(); )
+    {
+        if (!*it)
+		{
+            it = _players.erase(it);
+            continue;
+        }
+
+		if (it == _players.end())
+			break ;
+
+        if ((*it)->getUid() == uid)
+            it = _players.erase(it);
+		else
+            ++it;
+    }
 }
+
 
 // void	Server::removePlayer(std::string &uid, uWS::App &app)
 // {
@@ -480,9 +490,12 @@ void	Server::run(void)
 			},
 			.close = [this, &app](auto *ws, int code, std::string_view msg)
 			{
-				(void)ws, (void)code, (void)msg;
-				// auto *data = (PerSocketData *)ws->getUserData();
-				// this->removePlayer(data->playerId, app);
+				(void)ws, (void)code, (void)msg, (void)app;
+				auto *data = (PerSocketData *)ws->getUserData();
+				Player &player = this->getPlayer(data->playerId);
+				player.setConnexion(0);
+				if (player.getFinished())
+					this->removePlayer(data->playerId);
 				std::cout << "Client déconnecté\n";
 			}
 		})

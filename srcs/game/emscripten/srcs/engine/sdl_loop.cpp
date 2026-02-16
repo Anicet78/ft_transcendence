@@ -158,6 +158,23 @@ void	drawHud(Game &game)
 	SDL_RenderCopy(gSdl.renderer, gSdl.hud, NULL, &dstHud);
 }
 
+bool isUnderTree(std::vector<std::string> plan, int x, int y)
+{
+	for (int i = y; i < y + 4; i++)
+	{
+		if (i < 0 || i >= static_cast<int>(plan.size()))
+			continue ;
+		for (int j = x - 1; j <= x + 1; j++)
+		{
+			if (j < 0 || j >= static_cast<int>(plan[i].size()))
+				continue ;
+			if (plan[i][j] == '1' && i != y)
+				return 1;
+		}
+	}
+	return 0;
+}
+
 void	game_loop(Game &game, double deltaTime)
 {
 	Player	&player = game.getPlayer();
@@ -171,17 +188,24 @@ void	game_loop(Game &game, double deltaTime)
 	updateOtherPlayer(game.getOtherPlayers(), deltaTime);
 	SDL_SetRenderTarget(gSdl.renderer, gSdl.game);
 	SDL_RenderClear(gSdl.renderer);
-
 	print_map(player);
 	if (player.getRoom().getRoomEvent())
 	{
 		MobRush &mobrush = dynamic_cast<MobRush &>(*player.getRoom().getRoomEvent());
-		print_mobs(mobrush, player);
+		print_mobs(mobrush, player, 0);
 	}
-	print_others(player, game.getOtherPlayers());
-	player.printPlayer(player.getScreenX(), player.getScreenY());
+	print_others(player, game.getOtherPlayers(), 0);
+	player.printPlayer(player.getScreenX(), player.getScreenY(), 0);
 	SDL_Rect dst = {0, 0, SCREEN_WIDTH, GAME_HEIGHT};
 	SDL_RenderCopy(gSdl.renderer, gSdl.texture2, &camera.getCamera(), &dst);
+	if (player.getRoom().getRoomEvent())
+	{
+		MobRush &mobrush = dynamic_cast<MobRush &>(*player.getRoom().getRoomEvent());
+		print_mobs(mobrush, player, 1);
+	}
+	print_others(player, game.getOtherPlayers(), 1);
+	if (isUnderTree(player.getRoomRef().getRoomPlan(), player.getX(), player.getY()))
+		player.printPlayer(player.getScreenX(), player.getScreenY(), 1);
 	SDL_SetRenderTarget(gSdl.renderer, NULL);
 	SDL_Rect dstGame = {0, 0, SCREEN_WIDTH, GAME_HEIGHT};
 	SDL_RenderCopy(gSdl.renderer, gSdl.game, &dstGame, &dstGame);

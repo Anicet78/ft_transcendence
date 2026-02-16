@@ -165,6 +165,8 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
 		if (this->playerInServer(data->playerId))
 		{
 			this->reconnectPlayer(data->playerId, ws);
+			Player &player = this->getPlayer(data->playerId);
+			player.setConnexion(1);
 			data->jsonMsg.clear();
 			return 1;
 		}

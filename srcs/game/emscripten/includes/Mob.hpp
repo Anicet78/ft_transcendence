@@ -86,12 +86,12 @@ public:
 	bool	isDamaged(void) const;
 
 //mob renderer
-	void	rendMobWalk(int x, int y, int index, float scale);
-	void	rendMobAttack(int x, int y, int index, float scale);
-	void	rendMobIdle(int x, int y, int index, float scale);
-	void	rendMobHurt(int x, int y, int index, float scale);
+	void	rendMobWalk(int x, int y, int index, float scale, int flag);
+	void	rendMobAttack(int x, int y, int index, float scale, int flag);
+	void	rendMobIdle(int x, int y, int index, float scale, int flag);
+	void	rendMobHurt(int x, int y, int index, float scale, int flag);
 
-	void	printMob(float camX, float camY, int tile_size);
+	void	printMob(float camX, float camY, int tile_size, int flag);
 };
 
 

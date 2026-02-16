@@ -1,6 +1,6 @@
 # include "Session.hpp"
 
-Session::Session(void): _maxNumPlayer(1), _running(0), _ended(0), _startTime(std::chrono::steady_clock::time_point{}),
+Session::Session(void): _maxNumPlayer(2), _running(0), _ended(0), _startTime(std::chrono::steady_clock::time_point{}),
 						_numPlayersFinished(0), _readyToRun(0), _timerBeforeRun(std::chrono::_V2::steady_clock::now()), _readyToRunStartTimer(0.0f)
 {
 	static std::string set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -289,10 +289,10 @@ bool	Session::isPlayerInSession(std::string &uid) const
 
 void	Session::checkFinishedPlayers(uWS::App &app)
 {
-	std::vector<std::shared_ptr<Player>> finishedPlayers;
+	std::vector<std::weak_ptr<Player>> finishedPlayers;
 	for (auto &p : this->_players)
 	{
-		if (p.expired())
+		if (p.expired() || !p.lock()->isConnected())
 			continue ;
 		std::shared_ptr<Player> player = p.lock();
 		if (player->getFinished())
@@ -300,6 +300,7 @@ void	Session::checkFinishedPlayers(uWS::App &app)
 			this->_numPlayersFinished++;
 			int win = (this->_numPlayersFinished == 1) ? true : false;
 			player->setHasWin(win);
+			player->setFinalRanking(this->_numPlayersFinished);
 			std::string msg = "{ \"action\": \"finished\", \"time\": "
 				+ std::to_string(this->getActualTime()) + ", \"win\": "
 				+ std::to_string(win) + "}";
@@ -309,13 +310,18 @@ void	Session::checkFinishedPlayers(uWS::App &app)
 			player->getWs()->unsubscribe(oldTopic);
 			// if (player->getWs()->unsubscribe(oldTopic))
 			// 	std::cout << "unsibscribe from " << oldTopic << std::endl;
-			finishedPlayers.push_back(player);
+			finishedPlayers.push_back(p);
 			std::cout << player->getName() << ": " << std::endl
 				<< "Kills: " << player->getKills() << "Place :" << player->getFinalRanking() << std::endl;
 		}
 	}
-	
-	if (!this->_players.size() && this->_running)
+	int count = 0;
+
+	for (auto player : this->_players)
+		if (!player.expired() && player.lock()->isConnected())
+			count++;
+
+	if (!count && this->_running)
 	{
 		std::cout << "SESSION STOP" << std::endl;
 		this->_ended = 1;
