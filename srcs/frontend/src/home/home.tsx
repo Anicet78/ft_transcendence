@@ -5,18 +5,28 @@ import { NavLink } from 'react-router';
 
 import { useRoom } from './RoomContext.tsx';
 import { useAuth } from '../auth/AuthContext.tsx';
-import { ServerUrl } from '../serverApi.ts';
+import api, { ServerUrl } from '../serverApi.ts';
+import { PlayerDropdown } from '../components/PlayerDropdown.tsx';
+import { useMutation } from '@tanstack/react-query';
 
 const Home = () => {
 	const { user } = useAuth();
 	const { room, newRoom } = useRoom()!;
 
+	const kickMutation = useMutation({
+		mutationFn: (userId: string) => api.post(`/room/${room?.roomId}/kick`, { userId })
+	});
+
+	const hostMutation = useMutation({
+		mutationFn: (userId: string) => api.post(`/room/${room?.roomId}/host`, { userId })
+	});
+
 	if (!room || !room.players) return <p>Room not ready...</p>;
 
 	return (
 		<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' alignItems='center'>
-			{room.players.map(players => players.username).map((username: string) => (
-				<p>{username}</p>
+			{room.players.map((player) => (
+				<PlayerDropdown key={player.username} player={player} kickFn={kickMutation.mutate} hostFn={hostMutation.mutate} isHost={user?.id == room.hostId} isSelf={user?.id == player.id}/>
 			))}
 			{room.hostId === user?.id &&
 				<NavLink to="/game" color='primary' className='button is-dark is-medium is-outlined' aria-label='spectate button'>Launch Game</NavLink>

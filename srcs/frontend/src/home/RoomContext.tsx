@@ -117,7 +117,7 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 		socket.on('player_joined', (data) => onPlayerJoined(data, setRoom));
 		socket.on('player_left', (data) => onPlayerQuit(data, setRoom));
 		socket.on('host_changed', (data) => onHostChanged(data, setRoom));
-		socket.on('kicked', () => newRoom);
+		socket.on('kicked', () => newRoom());
 		socket.on('launch', () => {
 			setStart(true);
 			navigate("/game");
