@@ -6,6 +6,7 @@ import { SocketService } from "../services/socket/SocketService.js";
 import { AppError } from "../schema/errorSchema.js";
 import type { JWTPayload } from "./auth.js";
 import { RoomService } from "../services/rooms/roomService.js";
+import { prisma } from "../services/db/prisma.js";
 
 type SocketIOOptions = {
 	cors?: {
@@ -64,6 +65,26 @@ export default fp(async (fastify) => {
 
 				disconnectionTimers.set(userPayload.id, timer);
 			});
+
+			// broadcast typing into chat effect in the chat room
+			socket.on("chat_typing", async ({ chatId }) => {
+			
+				const isMember = await prisma.chatMember.findFirst({
+					where: {
+						chatId,
+						userId: userPayload.id
+					}
+				});
+
+				if (!isMember)
+					return;
+
+				socket.to(chatId).emit("chat_typing", {
+					userId: userPayload.id//,
+					// username: userPayload.email
+				});
+			});
+
 		} catch (err) {
 			console.log("An error occured:", err);
 			socket.disconnect(true);

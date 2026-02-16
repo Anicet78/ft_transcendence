@@ -4,8 +4,7 @@ const SOFT_DELETE_MODELS = new Set([
 	'Chat',
 	'ChatMember',
 	'ChatRole',
-	'ChatInvitation',
-	'ChatMessage'
+	'ChatInvitation'
 ]);//need to complete it, can be used in other 
 
 export const softDeleteMiddleware: Prisma.Middleware = async (params, next) => {
