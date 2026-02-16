@@ -32,10 +32,10 @@ export async function getFriendshipStatusController(
   const otherId = req.params.userId;
 
   if (userId === otherId) {
-    return reply.send({ 
+    return reply.send({ result: {
       status: 'self',
       friendshipId: null
-    });
+    }});
   }
 
   const result = await Service.getFriendshipStatus(userId, otherId);
