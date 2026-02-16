@@ -34,6 +34,9 @@ import { RoomProvider } from './home/RoomContext.tsx';
 import SearchComponent from './search/searchComponent.tsx';
 import ProfileUpdate from './profile/ProfileUpdate.tsx';
 import { Toaster } from "sonner";
+import { ChatProvider } from './chat/ChatContext.tsx';
+import GroupChatCreation from './chat/components/GroupChatCreation.tsx';
+// import { GroupChatInvitation } from './chat/components/GroupChatInvitation.tsx';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -55,13 +58,19 @@ const AppEntryPoint = () => {
 				<Route path="/home" element={<Home />} />
 				<Route path="/join/:roomId" element={<JoinRoom />} />
 				<Route path="/game" element={<Game />} />
+
 				<Route path="/friends" element={<FriendList />} />
 				<Route path="/friends/requests/" element={<FriendRequest />} />
 				<Route path="/friends/requests/update/:id" element={<UpdateRequest />} />
 				<Route path="/friends/remove/:id" element={<RemoveFriend />} />
 				<Route path="/friends/add/:id" element={<AddFriend />} />
+				{/* <Route path="/chat/:chatId/invite/:friendId" element={<GroupChatInvitation />} />
+				<Route path="/chat/invitations" element={<GroupChatInvitation />} /> */}
+
 				<Route path="/chat/:chatId/info" element={<ChatView />} />
 				<Route path="/chat/list" element={<ChatList />} />
+				<Route path="/chat/group/new" element={<GroupChatCreation />} />
+
 				<Route path="/profile" element={<ProfilePrivate />} />
 				<Route path="/profile/update/:field" element={<ProfileUpdate />} />
 				<Route path="/profile/:username" element={<ProfilePublic />} />
@@ -81,9 +90,11 @@ createRoot(document.getElementById('root') as HTMLElement).render(
 				<Toaster />
 				<AuthProvider>
 					<SocketProvider>
-						<RoomProvider>
-							<AppEntryPoint />
-						</RoomProvider>
+						<ChatProvider>
+							<RoomProvider>
+								<AppEntryPoint />
+							</RoomProvider>
+						</ChatProvider>
 					</SocketProvider>
 				</AuthProvider>
 			</Router>
