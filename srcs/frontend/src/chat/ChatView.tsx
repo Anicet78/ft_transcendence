@@ -1,4 +1,4 @@
-import { useParams } from "react-router"
+import { Link, useParams } from "react-router"
 import { useChat } from "./ChatContext";
 import { useChatMessages } from "./hooks/useChatMessages";
 import { useChatMutations } from "./hooks/useChatMutations";
@@ -9,6 +9,7 @@ import { ChatInput } from "./components/ChatInput";
 import { useChatSocket } from "./hooks/useChatSocket";
 import { TypingIndicator } from "./components/ChatTypingIndicator";
 import { useChatRoleMutation } from "./hooks/useChatRoleMutations";
+import { GroupChatInvitations } from "./components/InviteToGroupChat";
 
 const ChatView = () => {
 	const { chatId } = useParams();
@@ -71,7 +72,15 @@ const ChatView = () => {
 			</ul>
 			</div>
 
+			{/* INVITE TO JOIN GROUP CHAT */}
+			{chat.chatType === "group" &&
+				<GroupChatInvitations
+					chatId={chat.chatId}
+					existingMembers={chat.members} 
+				/>
+			}
 
+			{/* LIST MESSAGES */}
 			<MessageList
 				messages={messages}
 				role={role}
@@ -93,5 +102,3 @@ const ChatView = () => {
 	);
 };
 export default ChatView;
-
-//need to add chatMembers at top of conversation

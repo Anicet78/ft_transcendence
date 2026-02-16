@@ -34,9 +34,11 @@ const ChatList = () => {
 			Create Group Chat
 			</Link>
 
-			{/* <Link to="/chat/invitations" className="button is-small is-warning">
+			<Link
+				to="/group/invitations" className="button is-small is-warning"
+			>
 			Group Chat Invitations
-			</Link> */}
+			</Link>
 
 
 			{/* LIST CHATS */}

@@ -52,15 +52,15 @@ export async function listChatInvitationsController(
 	const invitations = await listUserChatInvitations(userId);
 
 	return reply.status(200).send(
-	invitations.map(inv => ({
-		chatInvitationId: inv.chatInvitationId,
-		chatId: inv.chatId,
-		status: inv.status,
-		createdAt: inv.createdAt?.toISOString() ?? null,
-		sender: inv.sender,
-		receiver: inv.receiver,
-		chat: inv.chat
-	}))
+		invitations.map(inv => ({
+			chatInvitationId: inv.chatInvitationId,
+			chatId: inv.chatId,
+			status: inv.status,
+			createdAt: inv.createdAt?.toISOString() ?? null,
+			sender: inv.sender,
+			receiver: inv.receiver,
+			chat: inv.chat
+		}))
 	);
 }
 

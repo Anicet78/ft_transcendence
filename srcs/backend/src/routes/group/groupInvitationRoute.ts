@@ -18,7 +18,7 @@ import {
 async function groupInvitationRoutes(fastify: FastifyInstance) {
 
 	//SEND GROUP CHAT INVITATION
-	fastify.post('/group/:chatId/:memberId/invite', {
+	fastify.post('/group/:chatId/invite/:memberId', {
 		schema: {
 		params: InviteToGroupParamsSchema,
 		response: {
@@ -39,7 +39,7 @@ async function groupInvitationRoutes(fastify: FastifyInstance) {
 	});
 
 	//ANSWER GROUP CHAT INVITATION
-	fastify.post('/group/:chatInvitationId', {
+	fastify.post('/group/answer/:chatInvitationId', {
 		schema: {
 		params: AcceptInvitationParamsSchema,
 		response: {

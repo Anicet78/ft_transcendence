@@ -35,7 +35,8 @@ export const ChatInvitationPreviewSchema = Type.Object({
 	chatName: Type.Union([Type.String(), Type.Null()])
   })
 });
-export const ChatInvitationListResponseSchema = ChatInvitationPreviewSchema;
+
+export const ChatInvitationListResponseSchema = Type.Array(ChatInvitationPreviewSchema);
 
 
 //ANSWER GROUP CHAT INVITATION

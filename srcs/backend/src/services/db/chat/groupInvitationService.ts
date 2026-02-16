@@ -1,12 +1,8 @@
 import { prisma } from '../prisma.js';
 import { chat_role_type } from '@prisma/client';
 import { AppError } from '../../../schema/errorSchema.js';
-// import {
-// 	ROLE_RANK,
-// 	getRoleRank/*,
-// 	type ChatRole */} from '../../../utils/chatRoles.js';
 
-//INVITATION
+//SEND CHAT INVITATION
 export async function inviteToGroupChat(chatId: string, senderId: string, receiverId: string) {
 	// 1. Check chat exists and is group
 	const chat = await prisma.chat.findUnique({

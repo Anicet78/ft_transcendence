@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Box } from "@allxsmith/bestax-bulma";
 import { useAuth } from "../../auth/AuthContext";
 
-export default function GroupChatCreation() {
+export default function InviteToGroupChat() {
 
 	const navigate = useNavigate();
 	const [name, setName] = useState("");
