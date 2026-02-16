@@ -37,6 +37,10 @@ export default fp(async (fastify) => {
 	});
 
 	fastify.addHook("onRequest", async (request: FastifyRequest, reply: FastifyReply) => {
+		// Skip auth for static files
+		if (request.url.startsWith('/uploads')) {
+			return; // do nothing, allow access
+		}
 		const currentRoute = request.routeOptions.url;
 
 		const publicRoutes = ['/auth/register', '/auth/login', '/auth/refresh', '/documentation/json', '/'];

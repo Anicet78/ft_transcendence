@@ -20,7 +20,7 @@ const regionUpdate = () => {
 		},
 	});
 
-	function UpdateAction(formData: FormData) {
+	function Update(formData: FormData) {
 		const uname = formData.get("region");
 		if (!uname) return ;
 		mutation.mutate({
@@ -31,7 +31,7 @@ const regionUpdate = () => {
 		<Box bgColor="grey" textColor="black" className="wrapbox">
 			<h1>Change profile</h1>
 			<Box m="4" p="6"  className="friendbox" bgColor="grey-light" textColor="black" justifyContent='space-between'>
-				<form action={UpdateAction}>
+				<form action={Update}>
 					<div className="field">
 						<label htmlFor="region">Select your region</label>
 						<div className="control has-icons-left">

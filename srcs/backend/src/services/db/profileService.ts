@@ -1,5 +1,7 @@
 import { prisma } from './prisma.js';
 import { Prisma } from '@prisma/client';
+import path from 'path';
+import fs from 'fs';
 
 export const profileSelect = Prisma.validator<Prisma.AppUserSelect>()({
   appUserId: true,
@@ -48,15 +50,34 @@ export async function getPublicProfile(userName: string) {
 
 // Update user's own profile
 export async function updateProfile(userId: string, data: Record<string, unknown>) {
-  return prisma.appUser.update({
-    where: { appUserId: userId },
-    data: {
-      ...data,
-      updatedAt: new Date()
-    },
-    select: profileSelect
-  });
-}
+	//Check if we are updating avatarUrl
+	if (data.avatarUrl) {
+		const user = await prisma.appUser.findUnique({
+		where: { appUserId: userId },
+		select: { avatarUrl: true }
+		});
+
+    // Delete old file if exists
+    if (user?.avatarUrl) {
+      const oldFilePath = path.join(process.cwd(), "uploads", user.avatarUrl);
+      if (fs.existsSync(oldFilePath)) {
+        try {
+          fs.unlinkSync(oldFilePath);
+        } catch (err) {
+          console.error('Failed to delete old avatar', err);
+        }
+      }
+    }
+	}
+	return prisma.appUser.update({
+		where: { appUserId: userId },
+		data: {
+		...data,
+		updatedAt: new Date()
+		},
+		select: profileSelect
+	});
+	}
 
 // Soft-delete the user: anonymize but keep rows for FK integrity
 export async function softDeleteProfile(userId: string) {

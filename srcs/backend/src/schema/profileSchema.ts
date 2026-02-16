@@ -65,3 +65,4 @@ export type ProfileUsernameParams = Static<typeof ProfileUsernameParamsSchema>;
 
 
 export const DeleteProfileResponseSchema = Type.Null();
+
