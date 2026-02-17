@@ -31,12 +31,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		navigate("/home");
 	}, [navigate]);
 
-	const logout = useCallback(() => {
-		setUser(null);
-		setToken(null);
-		setAccessToken(null);
-		navigate("/");
+	const logout = useCallback(async () => {
+		try {
+			await api.post('/auth/logout');
+		} catch (err) {
+			console.error('Logout request failed', err);
+		} finally {
+			setUser(null);
+			setToken(null);
+			setAccessToken(null);
+			navigate("/");
+		}
 	}, [navigate]);
+
+	// Hooks for API refresh / logout
+	useEffect(() => {
+		setOnLogout(logout);
+		setOnRefreshSuccess((newToken) => setToken(newToken));
+
+		return () => {
+			setOnLogout(null as any);
+			setOnRefreshSuccess(null as any);
+		};
+	}, [logout]);
 
 	const { data, isLoading, isError } = useQuery({
 		queryKey: ['session'],
@@ -56,7 +73,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	}, [logout]);
 
 	useEffect(() => {
-		if (data) {
+		if (data?.data?.user && data.data.token) {
 			setUser(data.data.user);
 			setToken(data.data.token);
 			setAccessToken(data.data.token);
@@ -66,7 +83,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			setIsInitializing(false);
 		}
 		if (isError) {
-			navigate('/');
+			setUser(null);
+			setToken(null);
+			setAccessToken(null);
 		}
 
 		return () => {

@@ -1,5 +1,4 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { AppError } from '../../schema/errorSchema.js';
 import {
 	sendMessage,
 	deleteMessage,

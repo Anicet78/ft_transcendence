@@ -15,7 +15,6 @@ const Banner = () => {
 
 	const handleClick = () => {
 		logout()
-		navigate("/")
 	}
 
 	return (

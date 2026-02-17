@@ -17,13 +17,6 @@ import InputText from '../components/InputText.tsx';
 import InputPassword from '../components/InputPassword.tsx';
 import SelectRegion from '../components/SelectRegion.tsx';
 import toast from '../Notifications.tsx';
-import { useForm } from "react-hook-form";
-import { Toaster } from "react-hot-toast";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import InputText from '../components/InputText.tsx';
-import InputPassword from '../components/InputPassword.tsx';
-import SelectRegion from '../components/SelectRegion.tsx';
 
 type RegisterBodyType = GetBody<"/auth/register", "post">;
 type RegisterResponseType = GetResponse<"/auth/register", "post">;
