@@ -5,14 +5,16 @@ import {
 
 	ChatInvitationListResponseSchema,
 
-	AcceptInvitationParamsSchema,
-	ChatMemberResponseSchema
+	UpdateInvitationParamsSchema,
+	ChatMemberResponseSchema,
+	InvitationStatusResponseSchema,
+	UpdateInvitationBodySchema
 } from '../../schema/chat/groupInvitationSchema.js';
 
 import {
 	inviteToGroupController,
 	listChatInvitationsController,
-	acceptGroupInvitationController
+	updateGroupInvitationController
 } from '../../controllers/group/groupInvitationController.js';
 
 async function groupInvitationRoutes(fastify: FastifyInstance) {
@@ -41,12 +43,14 @@ async function groupInvitationRoutes(fastify: FastifyInstance) {
 	//ANSWER GROUP CHAT INVITATION
 	fastify.post('/group/answer/:chatInvitationId', {
 		schema: {
-		params: AcceptInvitationParamsSchema,
+		params: UpdateInvitationParamsSchema,
+		body: UpdateInvitationBodySchema,
 		response: {
+			200: InvitationStatusResponseSchema,
 			201: ChatMemberResponseSchema
 		}
 		},
-		handler: acceptGroupInvitationController
+		handler: updateGroupInvitationController
 	});
 
 } export default groupInvitationRoutes;

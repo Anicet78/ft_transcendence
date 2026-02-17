@@ -219,12 +219,14 @@ CREATE TABLE chat (
 	-- CHECK (chat_type IN ('private', 'group'))
 );
 
+CREATE TYPE invite_status AS ENUM ('waiting', 'accepted', 'rejected', 'cancelled', 'deleted');
+
 CREATE TABLE chat_invitation (
 	chat_invitation_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	sender_id UUID,
 	receiver_id UUID,
 	chat_id UUID,
-	"status" VARCHAR(10) NOT NULL DEFAULT 'waiting',
+	"status" invite_status DEFAULT 'waiting',
 	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
 	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
 	deleted_at timestamptz,
@@ -242,9 +244,9 @@ CREATE TABLE chat_invitation (
 		REFERENCES chat(chat_id),
 
 	CONSTRAINT chk_chat_ivitate_not_self
-		CHECK (sender_id <> receiver_id),
+		CHECK (sender_id <> receiver_id)
 
-	CHECK ("status" IN ('waiting', 'accepted', 'rejected', 'cancelled', 'deleted'))
+	-- CHECK ("status" IN ('waiting', 'accepted', 'rejected', 'cancelled', 'deleted'))
 );
 
 CREATE TABLE chat_member (

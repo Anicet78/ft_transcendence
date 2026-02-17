@@ -117,13 +117,25 @@ export async function listUserChatInvitations(userId: string) {
 }
 
 //ANSWER PENDING GROUP CHAT INVITATION
-export async function acceptGroupInvitation( chatInvitationId: string, userId: string ) {
+export async function updateGroupInvitationService(
+	chatInvitationId: string,
+	userId: string,
+	action: "accept" | "reject" | "cancel"
+): Promise < 
+	| {
+		chatMemberId: string;
+		chatId: string;
+		userId: string;
+		joinedAt: Date;
+	} | { status: string; } > {
+
 	// 1. Load invitation
 	const invitation = await prisma.chatInvitation.findUnique({
 		where: { chatInvitationId },
 		select: {
 			chatInvitationId: true,
 			chatId: true,
+			senderId: true,
 			receiverId: true,
 			status: true
 		}
@@ -138,66 +150,97 @@ export async function acceptGroupInvitation( chatInvitationId: string, userId: s
 	// }
 
 	// 2. Must be waiting
-	if (invitation.status !== 'waiting') {
+	if (invitation.status !== 'waiting')
 		throw new AppError('Invitation is not pending', 400);
+
+	// 3. ACCEPT ACTIONS
+	if (action === "accept") {
+
+		//c  Check user id invite receiver
+		if (invitation.receiverId !== userId)
+				throw new AppError('Only the receiver can accept this invitation', 403);
+
+		// Chat must exist and be group
+		const chat = await prisma.chat.findUnique({
+			where: { chatId: invitation.chatId! },
+			select: { chatType: true }
+		});
+
+		if (!chat || chat.chatType !== 'group')
+			throw new AppError('Chat not found or not a group chat', 404);
+
+		// Prevent duplicate membership
+		const alreadyMember = await prisma.chatMember.findFirst({
+			where: { chatId: invitation.chatId!, userId }
+		});
+
+		if (alreadyMember)
+			throw new AppError('You are already a member of this group', 409);
+
+		// Create member + role in a transaction
+		const result = await prisma.$transaction(async (tx) => {
+			const member = await tx.chatMember.create({
+				data: {
+					chatId: invitation.chatId!,
+					userId,
+					joinedAt: new Date()
+				},
+				select: {
+					chatMemberId: true,
+					chatId: true,
+					userId: true,
+					joinedAt: true
+				}
+			});
+
+			await tx.chatRole.create({
+				data: {
+					chatId: invitation.chatId!,
+					userId,
+					role: chat_role_type.member,
+					attributedBy: userId
+				}
+			});
+
+			await tx.chatInvitation.update({
+				where: { chatInvitationId },
+				data: { status: 'accepted' }
+			});
+
+			return {
+				chatMemberId: member.chatMemberId,
+				chatId: member.chatId!,
+				userId: member.userId!,
+				joinedAt: member.joinedAt!
+			};
+		});
+		return result;
 	}
 
-	// 3. Only receiver can accept
-	if (invitation.receiverId !== userId) {
-		throw new AppError('You are not allowed to accept this invitation', 403);
+	// REJECT
+	if (action === "reject") {
+		if (invitation.receiverId !== userId) 
+			throw new AppError("Only the receiver can reject this invitation", 403);
+		
+		await prisma.chatInvitation.update({
+			where: { chatInvitationId },
+			data: { status: "rejected" }
+		});
+		
+		return { status: "rejected" };
 	}
 
-	// 4. Chat must exist and be group
-	const chat = await prisma.chat.findUnique({
-		where: { chatId: invitation.chatId! },
-		select: { chatType: true }
-	});
-
-	if (!chat || chat.chatType !== 'group') {
-		throw new AppError('Chat not found or not a group chat', 404);
+	// CANCEL
+	if (action === "cancel") {
+		if (invitation.senderId !== userId)
+			throw new AppError("Only the sender can cancel this invitation", 403);
+		await prisma.chatInvitation.update({
+			where: { chatInvitationId },
+			data: { status: "cancelled" }
+		});
+		
+	return { status: "cancelled" };
 	}
-
-	// 5. Prevent duplicate membership
-	const alreadyMember = await prisma.chatMember.findFirst({
-		where: { chatId: invitation.chatId!, userId }
-	});
-
-	if (alreadyMember) {
-		throw new AppError('You are already a member of this group', 409);
-	}
-
-	// 6–7. Create member + role in a transaction
-	const result = await prisma.$transaction(async (tx) => {
-	const member = await tx.chatMember.create({
-		data: {
-		chatId: invitation.chatId!,
-		userId,
-		joinedAt: new Date()
-		},
-		select: {
-		chatMemberId: true,
-		chatId: true,
-		userId: true,
-		joinedAt: true
-		}
-	});
-
-	await tx.chatRole.create({
-		data: {
-		chatId: invitation.chatId!,
-		userId,
-		role: chat_role_type.member,
-		attributedBy: userId
-		}
-	});
-
-	await tx.chatInvitation.update({
-		where: { chatInvitationId },
-		data: { status: 'accepted' }
-	});
-
-	return member;
-	});
-
-	return result;
+	
+	throw new AppError("Invalid action", 400);
 }
