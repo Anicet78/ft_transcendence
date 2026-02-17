@@ -158,10 +158,11 @@ CREATE TABLE game_profile (
 
 CREATE TABLE game_session (
 	session_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+	session_game_id CITEXT UNIQUE NOT NULL,
 	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
 	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
 	deleted_at timestamptz,
-	map_name VARCHAR(100) NOT NULL,
+	-- map_name VARCHAR(100) NOT NULL,
 
 	started_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	ended_at timestamptz,
@@ -174,8 +175,8 @@ CREATE TABLE game_session (
 
 CREATE TABLE game_result (
 	game_result_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-	game_id UUID,
-	player_id UUID,
+	game_id UUID NOT NULL,
+	player_id UUID NOT NULL,
 
 	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
 	updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
