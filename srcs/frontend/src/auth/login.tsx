@@ -58,25 +58,27 @@ function Login() {
 					<Button color='primary' isOutlined className='login-button'>Login with 42</Button>
 				</div>
 				<br />
-				<form action={loginAction}>
-				<InputEmail label="Email"/>
-				<div className="field">
-					<label htmlFor="password">Password</label>
-					<p className="control has-icons-left">
-						<input
-							className="input"
-							type="password"
-							id="pwd"
-							name="pwd"
-							required
-							minLength={3}
-							maxLength={80}
-						/>
-						<span className="icon is-small is-left">
-							<i className="fas fa-lock"></i>
-						</span>
-					</p>
-				</div>
+				<form onSubmit={loginSubmit}>
+					<InputEmail label="Email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email"/>
+					<div className="field">
+						<label htmlFor="password">Password</label>
+						<p className="control has-icons-left">
+							<input
+								className="input"
+								type="password"
+								id="password"
+								name="password"
+								required
+								minLength={3}
+								maxLength={80}
+								value={formData.password}
+								onChange={handleChange}
+							/>
+							<span className="icon is-small is-left">
+								<i className="fas fa-lock"></i>
+							</span>
+						</p>
+					</div>
 					{mutation.isError && (
 						<div style={{ color: 'red' }}>
 							Erreur : {mutation.error instanceof Error ? mutation.error.message : 'Unknown'}
