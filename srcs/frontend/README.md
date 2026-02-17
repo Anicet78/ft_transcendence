@@ -15,4 +15,4 @@ npm install -D typescript @types/react @types/react-dom
 npm install react-hook-form
 ```
 
-``
+`docker exec -it node-c npm run dev --prefix /front`
