@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { GameModule } from './build/game';
 import createModule from './build/game';
 import toast from '../Notifications.tsx';
+import { SidebarChat } from '../chat/components/SidebarChat';
 
 const Game = () => {
 	const navigate = useNavigate();
@@ -124,11 +125,27 @@ const Game = () => {
 		return;
 	}
 
+	// return (
+	// 	<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between'>
+	// 		<canvas ref={canvasRef} id="game-canvas" width="800" height="950" tabIndex={1}></canvas>
+	// 	</Box>
+	// )
 	return (
-		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between'>
-			<canvas ref={canvasRef} id="game-canvas" width="800" height="950" tabIndex={1}></canvas>
-		</Box>
+		<div style={{ display: "flex", height: "100vh" }}>
+			
+			{/* GAME CANVAS */}
+			<div style={{ flex: 1, overflow: "hidden" }}>
+			<Box m="4" p="6" bgColor="grey-light">
+				<canvas ref={canvasRef} id="game-canvas" width="800" height="950" tabIndex={1}></canvas>
+			</Box>
+			</div>
+
+			{/* CHAT SIDEBAR */}
+			<SidebarChat />
+
+		</div>
 	)
+
 }
 
 export default Game;

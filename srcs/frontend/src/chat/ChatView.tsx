@@ -14,8 +14,15 @@ import { useMutation } from "@tanstack/react-query";
 import api from "../serverApi";
 import { useAuth } from "../auth/AuthContext";
 
-const ChatView = () => {
-	const { chatId } = useParams();
+// const ChatView = () => {
+const ChatView = ({ chatId: propChatId, onClose }: {
+	chatId?: string;
+	onClose?: () => void;
+}) => {
+	const params = useParams();
+	const chatId = propChatId ?? params.chatId;
+
+	//const { chatId } = useParams();
 	//const { chat, role, permissions, typingUsers, joinChat } = useChat();
 	const { chat, role, permissions, isTyping, joinChat, leaveChat } = useChat();
 
@@ -165,6 +172,16 @@ const ChatView = () => {
 				chatId={chatId}
 				onSend={mutations.sendMessageMutation.mutate}
 			/>
+
+			{onClose && (
+				<button
+					className="button is-light is-small mb-3"
+					onClick={onClose}
+				>
+				Back to chats
+				</button>
+			)}
+
 		</Box>
 	);
 };

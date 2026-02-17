@@ -5,10 +5,11 @@ import { NavLink } from 'react-router';
 
 import { useRoom } from './RoomContext.tsx';
 import { useAuth } from '../auth/AuthContext.tsx';
-import api, { ServerUrl } from '../serverApi.ts';
+// import api, { ServerUrl } from '../serverApi.ts';
 import { PlayerDropdown } from '../components/PlayerDropdown.tsx';
 import { useMutation } from '@tanstack/react-query';
 import toast from '../Notifications.tsx';
+import { SidebarChat } from '../chat/components/SidebarChat.tsx';
 
 const Home = () => {
 	const { user } = useAuth();
@@ -35,17 +36,45 @@ const Home = () => {
 	}
 
 	return (
-		<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' alignItems='center'>
-			{room.players.map((player) => (
-				<PlayerDropdown key={player.username} player={player} kickFn={kickMutation.mutate} hostFn={hostMutation.mutate} isHost={user?.id == room.hostId} isSelf={user?.id == player.id}/>
-			))}
-			{room.hostId === user?.id &&
-				<NavLink to="/game" color='primary' className='button is-dark is-medium is-outlined' aria-label='spectate button'>Launch Game</NavLink>
-			}
-			<Button color='link' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={QuitRoom}>Quit room</Button>
-			<Button color='link' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={CopyRoomUrl}>Copy invite link</Button>
-		</Box>
+			<div style={{ display: "flex", height: "100vh" }}>
+				
+			{/* LEFT SIDE — GAME / ROOM CONTENT */}
+			<div style={{ flex: 1, overflow: "auto" }}>
+				<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' alignItems='center'>
+				{room.players.map((player) => (
+					<PlayerDropdown key={player.username} player={player} kickFn={kickMutation.mutate} hostFn={hostMutation.mutate} isHost={user?.id == room.hostId} isSelf={user?.id == player.id}/>
+				))}
+				{room.hostId === user?.id &&
+					<NavLink to="/game" color='primary' className='button is-dark is-medium is-outlined' aria-label='spectate button'>Launch Game</NavLink>
+				}
+				<Button color='link' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={QuitRoom}>Quit room</Button>
+				<Button color='link' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={CopyRoomUrl}>Copy invite link</Button>
+			</Box>
+			</div>
+
+			{/* RIGHT SIDE — CHAT SIDEBAR */}
+			<SidebarChat />
+
+		</div>
 	)
+
+
+	// return (
+	// 	<div style={{ flex: 1 }}>
+	// 		<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' alignItems='center'>
+	// 			{room.players.map(players => players.username).map((username: string) => (
+	// 				<p>{username}</p>
+	// 			))}
+	// 			{room.hostId === user?.id &&
+	// 				<NavLink to="/game" color='primary' className='button is-dark is-medium is-outlined' aria-label='spectate button'>Launch Game</NavLink>
+	// 			}
+	// 			<Button color='link' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={newRoom}>Quit room</Button>
+	// 			{/* <Button color='primary' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={() => {navigator.clipboard.writeText(`${ServerUrl}/join/${room.roomId}`)}}>Copy invite link</Button> */}
+	// 			<Button color='link' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={() => {navigator.clipboard.writeText(`http://localhost:5173/join/${room.roomId}`)}}>Copy invite link</Button>
+	// 		</Box>
+	// 		<SidebarChat />
+	// 	</div>
+	// )
 }
 
 export default Home
