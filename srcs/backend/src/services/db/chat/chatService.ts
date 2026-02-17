@@ -45,7 +45,7 @@ export const chatSelect = {
 export async function getChatByIdForUser(chatId: string, userId: string) {
 	// Ensure user is a member
 	const isMember = await prisma.chatMember.findFirst({
-		where: { chatId, userId }
+		where: { chatId, userId, deletedAt: null }
 	});
 
 	if (!isMember)
@@ -122,21 +122,21 @@ export async function listUserChats(userId: string) {
 
 	const chats = await prisma.chat.findMany({
 		where: {
-			members: { some: { userId } },
+			members: { some: { userId, deletedAt: null } },
 			NOT: {
-			AND: [
-				{ chatType: "private" },
-				{
-				privateChat: {
-					some: {
-						OR: [
-						{ user1Id: { in: blockedIds } },
-						{ user2Id: { in: blockedIds } }
-						]
+				AND: [
+					{ chatType: "private" },
+					{
+					privateChat: {
+						some: {
+							OR: [
+							{ user1Id: { in: blockedIds } },
+							{ user2Id: { in: blockedIds } }
+							]
+						}
 					}
-				}
-				}
-			]
+					}
+				]
 			}
 		},
 		select: chatSelect
