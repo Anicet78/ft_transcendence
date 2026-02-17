@@ -175,17 +175,17 @@ model ChatBan {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model ChatInvitation {
-  chatInvitationId String    @id @default(dbgenerated("uuid_generate_v4()")) @map("chat_invitation_id") @db.Uuid
-  senderId         String?   @map("sender_id") @db.Uuid
-  receiverId       String?   @map("receiver_id") @db.Uuid
-  chatId           String?   @map("chat_id") @db.Uuid
-  status           String    @default("waiting") @db.VarChar(10)
-  createdAt        DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
-  deletedAt        DateTime? @map("deleted_at") @db.Timestamptz(6)
-  chat             Chat?     @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_id")
-  receiver         AppUser?  @relation("chat_invitation_receiver_idToapp_user", fields: [receiverId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ivitate_receiver")
-  sender           AppUser?  @relation("chat_invitation_sender_idToapp_user", fields: [senderId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ivitate_sender")
+  chatInvitationId String         @id @default(dbgenerated("uuid_generate_v4()")) @map("chat_invitation_id") @db.Uuid
+  senderId         String?        @map("sender_id") @db.Uuid
+  receiverId       String?        @map("receiver_id") @db.Uuid
+  chatId           String?        @map("chat_id") @db.Uuid
+  status           invite_status  @default(waiting)
+  createdAt        DateTime?      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime?      @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt        DateTime?      @map("deleted_at") @db.Timestamptz(6)
+  chat             Chat?          @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_id")
+  receiver         AppUser?       @relation("chat_invitation_receiver_idToapp_user", fields: [receiverId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ivitate_receiver")
+  sender           AppUser?       @relation("chat_invitation_sender_idToapp_user", fields: [senderId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ivitate_sender")
 
   @@map("chat_invitation")
 }
@@ -279,6 +279,14 @@ enum message_status {
   edited
   deleted
   moderated
+}
+
+enum invite_status {
+  waiting
+  accepted
+  rejected
+  cancelled
+  deleted
 }
 
 enum region_list {

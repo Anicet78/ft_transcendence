@@ -21,7 +21,7 @@ export async function postLoginController(
 		await UserService.setAvailabality(dbUser.appUserId, true);
 
 	if (!await verifyPassword(dbUser.passwordHash, password))
-		return reply.code(401).send({ error: "Incorrect password" });
+		return reply.code(400).send({ error: "Incorrect password" });
 
 	const user: User = {
 		id: dbUser.appUserId,
@@ -34,7 +34,7 @@ export async function postLoginController(
 		role: dbUser.rolesReceived[0]?.role || "user"
 	};
 
-	const jwt = await reply.jwtSign({ id: user.id, email: user.email, role: user.role });
+	const jwt = await reply.jwtSign({ id: user.id, username: user.username, email: user.email, role: user.role });
 	const refresh = await createRefreshToken(user.id);
 
 	const response: LoginResponseType = { token: jwt, user: user, roomId: "" };

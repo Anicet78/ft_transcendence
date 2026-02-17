@@ -7,6 +7,7 @@ import {
 } from '../../services/db/chat/chatService.js';
 
 import type { ChatInfoParams } from '../../schema/chat/chatSchema.js';
+import { SocketService } from '../../services/socket/SocketService.js';
 
 function normalizeChat(chat: any) {
 	return {
@@ -35,8 +36,11 @@ export async function getChatInfoController(
 	const userId = req.user.id;
 	const { chatId } = req.params;
 
+	const socket = req.getSocket();
+	await SocketService.addInRoom(chatId, socket);
+
 	if (!userId) {
-	throw new AppError('Unauthorized', 401);
+		throw new AppError('Unauthorized', 401);
 	}
 
 	const chat = await getChatByIdForUser(chatId, userId);

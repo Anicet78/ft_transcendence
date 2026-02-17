@@ -14,10 +14,10 @@ async function chatRoutes(fastify: FastifyInstance) {
 	//GET CHAT INFOS + ACCESS CHAT
 	fastify.get('/chat/:chatId/info', {
 		schema: {
-		params: ChatInfoParamsSchema,
-		response: {
-			200: ChatSchema
-		}
+			params: ChatInfoParamsSchema,
+			response: {
+				200: ChatSchema
+			}
 		},
 		handler: getChatInfoController
 	});
@@ -25,9 +25,9 @@ async function chatRoutes(fastify: FastifyInstance) {
 	//GET USER'S CHATS LIST
 	fastify.get('/chat/list', {
 		schema: {
-		response: {
-			200: ChatListResponseSchema
-		}
+			response: {
+				200: ChatListResponseSchema
+			}
 		},
 		handler: listUserChatsController
 	});

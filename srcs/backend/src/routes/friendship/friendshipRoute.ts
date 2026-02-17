@@ -14,7 +14,7 @@ import {
 async function friendshipRoutes(fastify: FastifyInstance) {
 
   //GET FRIENDS LIST
-  fastify.get('/friends', {
+  fastify.get('/friends/list', {
     schema: {
       response: {
         200: FriendsListResponseSchema
@@ -54,7 +54,7 @@ async function friendshipRoutes(fastify: FastifyInstance) {
     handler: controller.sendRequest
   });
 
-  //ACCEPT, REJECT, DELETE FRIENDSHIP REQUEST
+  //ACCEPT, REJECT, CANCEL FRIENDSHIP REQUEST, by friendship request Id
   fastify.patch('/friends/:id', {
     schema: {
       params: updateFriendshipRequestParamsSchema,

@@ -1,11 +1,7 @@
 import { prisma } from '../prisma.js';
 import { chat_role_type } from '@prisma/client';
 import { AppError } from '../../../schema/errorSchema.js';
-// import {
-// 	ROLE_RANK,
-// 	getRoleRank/*,
-// 	type ChatRole */} from '../../../utils/chatRoles.js';
-
+import { chatSelect } from './chatService.js';
 
 //GROUP CREATION
 export async function createGroupChat(
@@ -16,68 +12,30 @@ export async function createGroupChat(
 	const uniqueMembers = Array.from(new Set([...memberIds, creatorId]));
 
 	const chat = await prisma.chat.create({
-	data: {
-		chatType: 'group',
-		chatName: name,
-		createdBy: creatorId,
+		data: {
+			chatType: 'group',
+			chatName: name,
+			createdBy: creatorId,
 
-		// 1. create chat members
-		members: {
-		create: uniqueMembers.map((userId) => ({
-			userId,
-			joinedAt: new Date()
-			}))
-		},
-
-		//2. create roles rows for all chat members
-		roles: {
+			// 1. create chat members
+			members: {
 			create: uniqueMembers.map((userId) => ({
-				userId,
-				role: userId === creatorId ? chat_role_type.owner : chat_role_type.member,
-				attributedBy: creatorId
-			}))
-		}
-	},
-	// 3. Return full chat info
-	select: {
-		chatId: true,
-		chatType: true,
-		chatName: true,
-		createdAt: true,
-		deletedAt: true,
+					userId,
+					joinedAt: new Date()
+				}))
+			},
 
-		creator: {
-		select: {
-			appUserId: true,
-			username: true,
-			avatarUrl: true,
-			availability: true
-		}
+			//2. create roles rows for all chat members
+			roles: {
+				create: uniqueMembers.map((userId) => ({
+					userId,
+					role: userId === creatorId ? chat_role_type.owner : chat_role_type.member,
+					attributedBy: creatorId
+				}))
+			}
 		},
-
-		members: {
-		select: {
-			chatMemberId: true,
-			joinedAt: true,
-			leftAt: true,
-			user: {
-			select: {
-				appUserId: true,
-				username: true,
-				avatarUrl: true,
-				availability: true
-			}
-			}
-		}
-		},
-
-		roles: {
-		select: {
-			userId: true,
-			role: true
-			}
-		}
-	}
+		// 3. Return full chat info
+		select: chatSelect
 	});
 	return chat;
 }
@@ -86,12 +44,12 @@ export async function createGroupChat(
 export async function disbandGroupChat(chatId: string, userId: string) {
 	// 1. Load chat
 	const chat = await prisma.chat.findUnique({
-	where: { chatId },
-	select: {
-		chatId: true,
-		chatType: true,
-		createdBy: true
-	}
+		where: { chatId, deletedAt: null },
+		select: {
+			chatId: true,
+			chatType: true,
+			createdBy: true
+		}
 	});
 
 	if (!chat) {
@@ -150,12 +108,12 @@ export async function disbandGroupChat(chatId: string, userId: string) {
 export async function quitGroupChat(chatId: string, userId: string) {
 	// 1. Load chat
 	const chat = await prisma.chat.findUnique({
-	where: { chatId },
-	select: {
-		chatId: true,
-		chatType: true,
-		createdBy: true
-	}
+	where: { chatId, deletedAt: null },
+		select: {
+			chatId: true,
+			chatType: true,
+			createdBy: true
+		}
 	});
 
 	if (!chat) {
@@ -168,7 +126,7 @@ export async function quitGroupChat(chatId: string, userId: string) {
 
 	// 2. Check membership
 	const member = await prisma.chatMember.findFirst({
-	where: { chatId, userId, deletedAt: null }
+		where: { chatId, userId, deletedAt: null }
 	});
 
 	if (!member) {
@@ -184,15 +142,15 @@ export async function quitGroupChat(chatId: string, userId: string) {
 
 	// 4. Soft-delete membership + role
 	await prisma.$transaction(async (tx) => {
-	await tx.chatMember.updateMany({
-		where: { chatId, userId },
-		data: { deletedAt: now, leftAt: now }
-	});
+		await tx.chatMember.updateMany({
+			where: { chatId, userId },
+			data: { deletedAt: now, leftAt: now }
+		});
 
-	await tx.chatRole.updateMany({
-		where: { chatId, userId },
-		data: { deletedAt: now }
-	});
+		await tx.chatRole.updateMany({
+				where: { chatId, userId },
+				data: { deletedAt: now }
+		});
 	});
 
 	return { success: true };
