@@ -72,7 +72,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
 			setTimeout(() => {
 				setIsTyping(false);
-			}, 2000);
+			}, 3000);
 		});
 
 		// socket.on("chat_typing", ({ userId, username }) => {

@@ -44,7 +44,7 @@ export async function createGroupChat(
 export async function disbandGroupChat(chatId: string, userId: string) {
 	// 1. Load chat
 	const chat = await prisma.chat.findUnique({
-		where: { chatId },
+		where: { chatId, deletedAt: null },
 		select: {
 			chatId: true,
 			chatType: true,
@@ -108,7 +108,7 @@ export async function disbandGroupChat(chatId: string, userId: string) {
 export async function quitGroupChat(chatId: string, userId: string) {
 	// 1. Load chat
 	const chat = await prisma.chat.findUnique({
-	where: { chatId },
+	where: { chatId, deletedAt: null },
 		select: {
 			chatId: true,
 			chatType: true,

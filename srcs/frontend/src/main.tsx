@@ -1,5 +1,4 @@
 // sert a faire le rendu de la page (details dans App.tsx)
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -36,7 +35,9 @@ import ProfileUpdate from './profile/ProfileUpdate.tsx';
 import { Toaster } from "sonner";
 import { ChatProvider } from './chat/ChatContext.tsx';
 import GroupChatCreation from './chat/components/GroupChatCreation.tsx';
-// import { GroupChatInvitation } from './chat/components/GroupChatInvitation.tsx';
+import GroupChatInvitations from './chat/components/GroupChatInvitations.tsx';
+import InviteToGroupChat from './chat/components/GroupChatCreation.tsx';
+
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -59,14 +60,15 @@ const AppEntryPoint = () => {
 				<Route path="/join/:roomId" element={<JoinRoom />} />
 				<Route path="/game" element={<Game />} />
 
-				<Route path="/friends" element={<FriendList />} />
+				<Route path="/friends/list" element={<FriendList />} />
 				<Route path="/friends/requests/" element={<FriendRequest />} />
 				<Route path="/friends/requests/update/:id" element={<UpdateRequest />} />
 				<Route path="/friends/remove/:id" element={<RemoveFriend />} />
 				<Route path="/friends/add/:id" element={<AddFriend />} />
-				{/* <Route path="/chat/:chatId/invite/:friendId" element={<GroupChatInvitation />} />
-				<Route path="/chat/invitations" element={<GroupChatInvitation />} /> */}
 
+				<Route path="/group/:chatId/invite/:friendId" element={<InviteToGroupChat />} />
+				<Route path="/group/invitations" element={<GroupChatInvitations />} />
+				
 				<Route path="/chat/:chatId/info" element={<ChatView />} />
 				<Route path="/chat/list" element={<ChatList />} />
 				<Route path="/chat/group/new" element={<GroupChatCreation />} />

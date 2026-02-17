@@ -12,10 +12,10 @@ async function createFixedUsers() {
     { firstName: "Tom", lastName: "Tom", username: "tom", email: "tom@example.com", password: "tom12345", region: "OCE" },
 
     { firstName: "Alice", lastName: "Wonder", username: "alice", email: "alice@example.com", password: "alice123", region: "EU" },
-    { firstName: "Bob", lastName: "Builder", username: "bob", email: "bob@example.com", password: "bob123", region: "NA" },
+    { firstName: "Bob", lastName: "Builder", username: "bob", email: "bob@example.com", password: "bob12345", region: "NA" },
     { firstName: "Charlie", lastName: "Day", username: "charlie", email: "charlie@example.com", password: "charlie123", region: "EU" },
-    { firstName: "Diana", lastName: "Prince", username: "diana", email: "diana@example.com", password: "diana123", region: "APAC" },
-    { firstName: "Eve", lastName: "Hacker", username: "eve", email: "eve@example.com", password: "eve123", region: "OCE" },
+    { firstName: "Diana", lastName: "Prince", username: "diana", email: "diana@example.com", password: "diana1234", region: "APAC" },
+    { firstName: "Eve", lastName: "Hacker", username: "eve", email: "eve@example.com", password: "eve12345", region: "OCE" },
   ];
 
   const created = [];
@@ -68,7 +68,6 @@ async function seedFriendships(users) {
     [users[0], users[1], "accepted"],
     [users[0], users[2], "accepted"],
     [users[0], users[3], "accepted"],
-    [users[0], users[4], "accepted"],
     [users[5], users[0], "accepted"],
     [users[0], users[6], "accepted"],
     [users[0], users[7], "accepted"],

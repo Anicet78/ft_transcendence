@@ -4,8 +4,11 @@ import type { GetResponse } from '../types/GetType'
 import api from '../serverApi';
 import { Box } from '@allxsmith/bestax-bulma';
 import { Link } from 'react-router';
+// import { useAuth } from '../auth/AuthContext';
 
 type ChatListResponseType = GetResponse<"/chat/list", "get">;
+
+// const { user } = useAuth();
 
 const ChatList = () => {
 	
@@ -34,9 +37,11 @@ const ChatList = () => {
 			Create Group Chat
 			</Link>
 
-			{/* <Link to="/chat/invitations" className="button is-small is-warning">
+			<Link
+				to="/group/invitations" className="button is-small is-warning"
+			>
 			Group Chat Invitations
-			</Link> */}
+			</Link>
 
 
 			{/* LIST CHATS */}
@@ -57,6 +62,16 @@ const ChatList = () => {
 				>
 				Open chat
 				</Link>
+{/* 
+				{chat.chatType === "group" && user?.role !== "owner" && (
+					<button
+						className="button is-warning is-light is-small ml-2"
+						// onClick={() => quitMutation.mutate(chat.chatId)}
+					>
+						Quit
+					</button>
+				)} */}
+
 			</Box>
 			))}
 		</Box>
@@ -64,43 +79,3 @@ const ChatList = () => {
 };
 
 export default ChatList;
-
-
-// import { useQuery } from "@tanstack/react-query";
-// import api from "../serverApi";
-// import type { GetResponse } from "../types/GetType";
-
-// export type ChatListResponse = GetResponse<"/chat/list", "get">;
-
-// export function useChatList() {
-// 	return useQuery({
-// 	queryKey: ["chat-list"],
-// 	queryFn: async () => {
-// 		const res = await api.get<ChatListResponse>("/chat/list");
-// 		return res.data;
-// 	}
-// 	});
-// }
-
-
-// import { useChatList } from "./useChatList";
-
-// const ChatList = () => {
-// 	const { data, isLoading, isError, error } = useChatList();
-
-// 	if (isLoading) return <div>Loading chats...</div>;
-// 	if (isError || !data) return <div>Error: {error?.message}</div>;
-
-// 	return (
-// 	<div>
-// 		<h1>Your chats</h1>
-
-// 		{data.map(chat => (
-// 		<div key={chat.chatId}>
-// 			<h2>{chat.chatName || chat.chatType}</h2>
-// 			<p>Members: {chat.members.length}</p>
-// 		</div>
-// 		))}
-// 	</div>
-// 	);
-// };

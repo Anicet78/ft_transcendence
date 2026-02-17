@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Box } from "@allxsmith/bestax-bulma";
 import { useAuth } from "../../auth/AuthContext";
 
-export default function GroupChatCreation() {
+export default function InviteToGroupChat() {
 
 	const navigate = useNavigate();
 	const [name, setName] = useState("");
@@ -16,7 +16,7 @@ export default function GroupChatCreation() {
 	const { data: friends } = useQuery({
 		queryKey: ["friends"],
 		queryFn: async () => {
-			const res = await api.get("/friends");
+			const res = await api.get("/friends/list");
 			const friendships = res.data;
 
 			return friendships.map((f: any) =>

@@ -7,14 +7,14 @@ import api, { getAccessToken } from '../serverApi.ts';
 import type { GetResponse } from '../types/GetType.ts'
 import { useAuth } from "../auth/AuthContext.tsx";
 
-type FriendsListResponseType = GetResponse<"/friends", "get">;
+type FriendsListResponseType = GetResponse<"/friends/list", "get">;
 
 const FriendList = () => {
 	const { user } = useAuth()
 
 	const { data, isLoading, isError, error } = useQuery({
 		queryKey: ['friends', getAccessToken()],
-		queryFn: () => api.get("/friends"),
+		queryFn: () => api.get("/friends/list"),
 	});
 
 	if (isLoading) return <div>Loading...</div>;

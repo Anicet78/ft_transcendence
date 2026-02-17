@@ -1745,7 +1745,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/friends": {
+    "/friends/list": {
         parameters: {
             query?: never;
             header?: never;
@@ -2740,7 +2740,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/group/{chatId}/{memberId}/invite": {
+    "/group/{chatId}/invite/{memberId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -2842,7 +2842,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/group/{chatInvitationId}": {
+    "/group/answer/{chatInvitationId}": {
         parameters: {
             query?: never;
             header?: never;
