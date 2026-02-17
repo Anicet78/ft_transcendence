@@ -31,11 +31,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		navigate("/home");
 	}, [navigate]);
 
-	const logout = useCallback(() => {
-		setUser(null);
-		setToken(null);
-		setAccessToken(null);
-		navigate("/");
+	const logout = useCallback(async () => {
+		try {
+			await api.post('/auth/logout');
+		} finally {
+			setUser(null);
+			setToken(null);
+			setAccessToken(null);
+			navigate("/");
+		}
 	}, [navigate]);
 
 	const { data, isLoading, isError } = useQuery({
@@ -56,7 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	}, [logout]);
 
 	useEffect(() => {
-		if (data) {
+		if (data?.data?.user && data.data.token) {
 			setUser(data.data.user);
 			setToken(data.data.token);
 			setAccessToken(data.data.token);
@@ -66,6 +70,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			setIsInitializing(false);
 		}
 		if (isError) {
+			setUser(null);
+			setToken(null);
+			setAccessToken(null);
 			navigate('/');
 		}
 
