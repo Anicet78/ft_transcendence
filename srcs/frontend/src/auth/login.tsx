@@ -14,6 +14,7 @@ import type { GetBody, GetResponse } from '../types/GetType.ts';
 import { useAuth } from './AuthContext.tsx';
 import { useState } from 'react';
 import toast from '../Notifications.tsx';
+import { useNavigate } from 'react-router';
 
 type LoginBodyType = GetBody<"/auth/login", "post">;
 type LoginResponseType = GetResponse<"/auth/login", "post">;
@@ -51,12 +52,31 @@ function Login() {
 		mutation.mutate({ email: formData.email, password: formData.password });
 	};
 
+	const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+	const REDIRECT_URI = "http://localhost:5173/callback"; // change with https://localhost:8443/callback
+	const SCOPE = "openid email profile";
+
+	const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+		`client_id=${CLIENT_ID}&` +
+		`redirect_uri=${encodeURIComponent(REDIRECT_URI)}&` +
+		`response_type=code&` +
+		`scope=${encodeURIComponent(SCOPE)}&` +
+		`access_type=offline&` +
+		`prompt=consent`;
+
+	const handleLogin = () => {
+		if (!CLIENT_ID)
+			toast({ title: "Redirection error", message: "Google identifiers are not setup", type: "is-danger" });
+		else
+			window.location.href = authUrl;
+	}
+
 	return (
 		<>
 			<div className="card">
 				<div>
-					<Button color='primary' isOutlined className='login-button'>Login with Google</Button>
-					<Button color='primary' isOutlined className='login-button'>Login with 42</Button>
+				<Button color='primary' isOutlined className='login-button' onClick={handleLogin}>Login with Google</Button>
+				<Button color='primary' isOutlined className='login-button'>Login with 42</Button>
 				</div>
 				<br />
 				<form onSubmit={loginSubmit}>

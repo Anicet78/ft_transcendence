@@ -13,7 +13,7 @@ model AppUser {
   lastName                                              String           @map("last_name")
   username                                              String           @unique
   mail                                                  String           @unique @map("mail_address") @db.Citext
-  passwordHash                                          String           @map("password_hash")
+  passwordHash                                          String?          @map("password_hash")
   avatarUrl                                             String?          @map("avatar_url")
   availability                                          Boolean          @default(false)
   playing                                               Boolean          @default(false)
@@ -38,6 +38,7 @@ model AppUser {
   friendshipsSent                                       Friendship[]     @relation("FriendshipSender")
   gameProfile                                           GameProfile?
   gameResults                                           GameResult[]
+  identify                                              identify[]
   privateChatsAsUser1                                   PrivateChat[]    @relation("PrivateChatUser1")
   privateChatsAsUser2                                   PrivateChat[]    @relation("PrivateChatUser2")
   refreshTokens                                         RefreshToken[]   @relation("UserToken")
@@ -269,6 +270,15 @@ model RefreshToken {
   @@map("refresh_token")
 }
 
+model identify {
+  provider   auth_provider
+  providerId String        @map("provider_id")
+  userId     String        @map("user_id") @db.Uuid
+  app_user   AppUser       @relation(fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_identify")
+
+  @@id([provider, providerId])
+}
+
 enum type_list {
   private
   group
@@ -312,4 +322,9 @@ enum roles {
   guest
   user
   admin
+}
+
+enum auth_provider {
+  google
+  // 42 @map("42")
 }

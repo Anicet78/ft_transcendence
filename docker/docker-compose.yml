@@ -29,6 +29,7 @@ services:
       - db_password
       - jwt_secret
       - cookie_secret
+      - google_secret
     volumes:
       - ../srcs/frontend:/front
     networks:
@@ -46,6 +47,7 @@ services:
   #     - db_password
   #     - jwt_secret
   #     - cookie_secret
+  #     - google_secret
   #   volumes:
   #     - ../srcs/backend:/app
   #   working_dir: /app
@@ -123,6 +125,8 @@ secrets:
     file: ./secrets/jwt_secret.txt
   cookie_secret:
     file: ./secrets/cookie_secret.txt
+  google_secret:
+    file: ./secrets/google_secret.txt
   pgadmin_password:
     file: ./secrets/pgadmin_password.txt
 
