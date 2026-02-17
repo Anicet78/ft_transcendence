@@ -9,11 +9,11 @@ export default function GroupChatInvitations() {
 
 	//get all invitations
 	const { data: invitations } = useQuery({
-	queryKey: ["group-invitations"],
-	queryFn: async () => {
-		const res = await api.get("/group/invitations");
-		return res.data;
-	}
+		queryKey: ["group-invitations"],
+		queryFn: async () => {
+			const res = await api.get("/group/invitations");
+			return res.data;
+		}
 	});
 
 	const acceptMutation = useMutation({
