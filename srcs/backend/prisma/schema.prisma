@@ -80,32 +80,32 @@ model GameProfile {
 }
 
 model GameResult {
-  gameResultId   String       @id @default(dbgenerated("uuid_generate_v4()")) @map("game_result_id") @db.Uuid
-  gameId         String?      @map("game_id") @db.Uuid
-  playerId       String?      @map("player_id") @db.Uuid
-  createdAt      DateTime?    @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime?    @default(now()) @map("updated_at") @db.Timestamptz(6)
-  deletedAt      DateTime?    @map("deleted_at") @db.Timestamptz(6)
-  completionTime Int?         @map("completion_time")
-  enemiesKilled  Int          @default(0) @map("ennemies_killed")
-  gainedXp       Int          @default(0) @map("gained_xp")
-  isWinner       Boolean      @default(false) @map("is_winner")
-  gameSession    GameSession? @relation(fields: [gameId], references: [sessionId], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_result_match")
-  player         AppUser?     @relation(fields: [playerId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_result_user")
+  gameResultId   String      @id @default(dbgenerated("uuid_generate_v4()")) @map("game_result_id") @db.Uuid
+  gameId         String      @map("game_id") @db.Uuid
+  playerId       String      @map("player_id") @db.Uuid
+  createdAt      DateTime?   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime?   @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt      DateTime?   @map("deleted_at") @db.Timestamptz(6)
+  completionTime Int?        @map("completion_time")
+  enemiesKilled  Int         @default(0) @map("ennemies_killed")
+  gainedXp       Int         @default(0) @map("gained_xp")
+  isWinner       Boolean     @default(false) @map("is_winner")
+  gameSession    GameSession @relation(fields: [gameId], references: [sessionId], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_result_match")
+  player         AppUser     @relation(fields: [playerId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_result_user")
 
   @@map("game_result")
 }
 
 model GameSession {
-  sessionId String       @id @default(dbgenerated("uuid_generate_v4()")) @map("session_id") @db.Uuid
-  createdAt DateTime?    @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime?    @default(now()) @map("updated_at") @db.Timestamptz(6)
-  deletedAt DateTime?    @map("deleted_at") @db.Timestamptz(6)
-  mapName   String       @map("map_name") @db.VarChar(100)
-  startedAt DateTime     @default(now()) @map("started_at") @db.Timestamptz(6)
-  endedAt   DateTime?    @map("ended_at") @db.Timestamptz(6)
-  status    String       @default("finished") @db.VarChar(20)
-  results   GameResult[]
+  sessionId     String       @id @default(dbgenerated("uuid_generate_v4()")) @map("session_id") @db.Uuid
+  sessionGameId String       @unique @map("session_game_id") @db.Citext
+  createdAt     DateTime?    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime?    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt     DateTime?    @map("deleted_at") @db.Timestamptz(6)
+  startedAt     DateTime     @default(now()) @map("started_at") @db.Timestamptz(6)
+  endedAt       DateTime?    @map("ended_at") @db.Timestamptz(6)
+  status        String       @default("finished") @db.VarChar(20)
+  results       GameResult[]
 
   @@map("game_session")
 }
