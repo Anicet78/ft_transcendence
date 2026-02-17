@@ -3,15 +3,17 @@ import '../App.css'
 import type { GetResponse } from '../types/GetType'
 import api from '../serverApi';
 import { Box } from '@allxsmith/bestax-bulma';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 // import { useAuth } from '../auth/AuthContext';
 
 type ChatListResponseType = GetResponse<"/chat/list", "get">;
 
 // const { user } = useAuth();
 
-const ChatList = () => {
+const ChatList = ({ onSelectChat }: { onSelectChat?: (id: string) => void }) => {
 	
+	const navigate = useNavigate();
+
 	const { data, isLoading, isError, error } = useQuery({
 		queryKey: ['chat-list'],
 		queryFn: async () => {
@@ -56,12 +58,23 @@ const ChatList = () => {
 				<p>Type: {chat.chatType}</p>
 				<p>Members: {chat.members.length}</p>
 
-				<Link
+				{/* <Link
 					to={`/chat/${chat.chatId}/info`}
 					className="button is-dark is-small mt-2"
 				>
 				Open chat
-				</Link>
+				</Link> */}
+
+				<button
+				className="button is-dark is-small mt-2"
+				onClick={() => {
+					if (onSelectChat) onSelectChat(chat.chatId);
+					else navigate(`/chat/${chat.chatId}/info`);
+				}}
+				>
+				Open chat
+				</button>
+
 {/* 
 				{chat.chatType === "group" && user?.role !== "owner" && (
 					<button
