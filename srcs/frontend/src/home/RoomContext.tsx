@@ -5,6 +5,7 @@ import type { GetResponse } from '../types/GetType';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../auth/AuthContext';
+import toast from '../Notifications.tsx';
 
 export type Room = GetResponse<"/room/new", "post">;
 
@@ -120,6 +121,7 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 		socket.on('kicked', () => newRoom());
 		socket.on('launch', () => {
 			setStart(true);
+			toast({ title: `Joining the game` });
 			navigate("/game");
 		});
 

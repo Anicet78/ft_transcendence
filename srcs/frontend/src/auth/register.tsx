@@ -9,17 +9,14 @@ import api from '../serverApi.ts';
 import { useMutation } from '@tanstack/react-query';
 import type {UseMutationResult} from '@tanstack/react-query';
 import { useAuth } from './AuthContext.tsx';
-<<<<<<< HEAD
 import { useForm } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import InputText from '../components/InputText.tsx';
 import InputPassword from '../components/InputPassword.tsx';
 import SelectRegion from '../components/SelectRegion.tsx';
-=======
-import { useState } from 'react';
->>>>>>> a78a13d (Fix password don't match)
+import toast from '../Notifications.tsx';
 
 type RegisterBodyType = GetBody<"/auth/register", "post">;
 type RegisterResponseType = GetResponse<"/auth/register", "post">;
@@ -79,7 +76,6 @@ interface FormValues {
 function Register() {
 	const { login } = useAuth();
 
-<<<<<<< HEAD
 	const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({
     	resolver: yupResolver(schema),
 	});
@@ -90,11 +86,13 @@ function Register() {
 	const mutation: UseMutationResult<RegisterResponseType, any, RegisterBodyType> = useMutation({
 		mutationFn: (data: RegisterBodyType) => api.post("/auth/register", data),
 		onSuccess: (data) => {
-		const response: RegisterResponseType = data;
-		toast.success(`You registered successfully!`);
-		login(response.user, response.token);
+			const response: RegisterResponseType = data;
+			toast({ title: `Your account has been successfully created`, type: "is-success" })
+			login(response.user, response.token);
 		},
-		onError: (err: any) => toast.error(err.response?.data?.error || "Registration failed"),
+		onError: (error: Error) => {
+			toast({ title: `An error occurred`, message: error.message, type: "is-warning" })
+		}
 	});
 
 	const onSubmit = (data: FormValues) => {
@@ -140,29 +138,7 @@ function Register() {
 					<button type="submit" disabled={mutation.status === 'pending'}>{mutation.status === 'pending' ? "Registering..." : "Sign up"}</button>
 				</form>
 			</div>
-<<<<<<< HEAD
 		</>
-=======
-			<br />
-			<form onSubmit={registerSubmit}>
-			<div className='inputs'>
-				<InputName label="First name" type="text" name="firstname" value={formData.firstname} onChange={handleChange} placeholder="Firstname" />
-				<InputName label="Last name" type="text" name="lastname" value={formData.lastname} onChange={handleChange} placeholder="Lastname" />
-				<InputName label="User name" type="text" name="username" value={formData.username} onChange={handleChange} placeholder="Username" />
-				<InputEmail label="Email" type="email" name="email" value={formData.email} onChange={handleChange} placeholder="example@transcendence.com" />
-				<InputPassword label="Password" type="password" name="password" value={formData.password} onChange={handleChange} placeholder="••••••••••••" />
-				<InputPassword label="Confirm password" type="password" name="confirm_password" value={formData.confirm_password} onChange={handleChange} placeholder="••••••••••••" />
-			</div>
-			<div>
-				<br></br>
-				<SelectRegion />
-				{passwordError && <span>Password don't match</span>}
-				<br></br>
-				<ButtonSubmit name='Sign up' />
-			</div>
-			</form>
-		</div>
->>>>>>> a78a13d (Fix password don't match)
 	)
 }
 

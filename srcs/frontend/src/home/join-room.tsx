@@ -7,6 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import api from '../serverApi.ts';
 import { useRoom } from './RoomContext.tsx';
 import { useEffect } from 'react';
+import toast from '../Notifications.tsx';
 
 export type Room = GetResponse<"/room/new", "post">;
 
@@ -20,6 +21,7 @@ const JoinRoom = () => {
 		onSuccess: (data) => {
 			const newRoom: Room = data.data;
 			joinRoom(newRoom);
+			toast({ title: `Added to room`, message: `You joined ${newRoom.players.find((player) => player.id === newRoom.hostId)?.username}'s room`, type: "is-success" })
 			navigate("/home");
 			return ;
 		},
@@ -27,14 +29,19 @@ const JoinRoom = () => {
 
 	useEffect(() => {
 		mutation.mutate();
-		navigate("/home");
 	}, [])
 
 	if (mutation.isPending) return <p>Joining room...</p>;
 
+	if (mutation.isError) {
+		toast({ title: `An error occurred`, message:`${mutation.isError ? mutation.error.message : 'Unknown error'}`, type: "is-warning" })
+		navigate("/home");
+		return ;
+	}
+
 	return (
 		<p style={{ color: 'red' }}>
-			An error occurred{mutation.isError ? ` (${mutation.error.message})`: ''}, please refresh.
+			An error occurred, please refresh.
 		</p>
 	)
 }
