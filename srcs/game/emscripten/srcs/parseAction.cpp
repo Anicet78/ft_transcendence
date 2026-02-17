@@ -114,16 +114,16 @@ void	loopRoomState(Game &game, val roomUpdate)
 		for (int i = 0; i < nbrMob; i++)
 		{
 			val monster = horde[i];
-
 			int id = monster["mob_id"].as<int>();
 
 			if (!monster.hasOwnProperty(std::string("deathsended").c_str()))
 			{
 				float x = monster["mob_x"].as<float>();
 				float y = monster["mob_y"].as<float>();
-
-				if (monster["damaged"].as<int>() == 1)
-					mobs[id]->damaged(true);
+				mobs[id]->updateLastDir(monster["last_dir"].as<int>());
+				mobs[id]->setAnim(monster["mob_anim"].as<int>());
+				// if (monster["damaged"].as<int>() == 1)
+				// 	mobs[id]->damaged(true);
 				
 				if (monster["isdead"].as<int>() == 1)
 					mobs[id]->setIsDead(true);

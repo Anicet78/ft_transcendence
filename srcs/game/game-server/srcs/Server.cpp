@@ -11,18 +11,18 @@ void	Server::addPlayerOnQueue(std::shared_ptr<Player> player)
 {
 	if (!player)
 		throw std::runtime_error("the player does not exists");
-	if (!player->getPartyName().empty())
+	if (!player->getPartyId().empty())
 	{
 		for (Party &party : _matchMakingQueue)
 		{
-			if (!party.getPartyName().empty() && player->getPartyName() == party.getPartyName())
+			if (!party.getPartyId().empty() && player->getPartyId() == party.getPartyId())
 			{
 				party.addPlayer(player);
 				return ;
 			}
 		}
 	}
-	Party nParty(player->getPartyName(), player->getGroupSize());
+	Party nParty(player->getPartyId(), player->getGroupSize(), player->getSessionSize());
 	nParty.addPlayer(player);
 	this->_matchMakingQueue.emplace_back(nParty);
 }
@@ -41,7 +41,7 @@ static void addPartyMulti(std::list<Party> &matchMakingQueue, std::vector<Sessio
 		bool placed = false;
 		for (Session &session : sessions)
 		{
-			if (!session.isRunning() && session.getPlaceLeft() >= party.getPartySize())
+			if (!session.isRunning() && session.getPlaceLeft() >= party.getPartySize() && session.getMaxNumPlayer() == party.getSessionSize())
 			{
 				party.setPlayerSession();
 				session.addParty(party);
@@ -51,7 +51,7 @@ static void addPartyMulti(std::list<Party> &matchMakingQueue, std::vector<Sessio
 		}
 		if (!placed)
 		{
-			sessions.emplace_back();
+			sessions.emplace_back(party.getSessionSize());
 			party.setPlayerSession();
 			sessions.back().addParty(party);
 		}
@@ -73,7 +73,7 @@ static void addPartySolo(int &sumSolo, std::list<Party> &matchMakingQueue, std::
 		bool placed = false;
 		for (Session &session : sessions)
 		{
-			if (!session.isRunning() && session.getPlaceLeft())
+			if (!session.isRunning() && session.getPlaceLeft() && session.getMaxNumPlayer() == party.getSessionSize())
 			{
 				party.setPlayerSession();
 				session.addParty(party);
@@ -87,7 +87,7 @@ static void addPartySolo(int &sumSolo, std::list<Party> &matchMakingQueue, std::
 		else if (sumSolo >= 1)
 		{
 			party.setPlayerSession();
-			sessions.emplace_back();
+			sessions.emplace_back(party.getSessionSize());
 			sessions.back().addParty(party);
 			it = matchMakingQueue.erase(it);
 			sumSolo--;
@@ -110,54 +110,135 @@ void	Server::manageQueue()
 	}
 	addPartyMulti(this->_matchMakingQueue, this->_sessions);
 	addPartySolo(sumSolo, this->_matchMakingQueue, this->_sessions);
-
 }
 
-void	Server::removePlayer(std::string &uid, uWS::App &app)
+bool	Server::playerInServer(std::string uid)
 {
-    for (auto it = _players.begin(); it != _players.end(); it++)
+	for (auto player : this->_players)
+	{
+		if (player->getUid() == uid)
+			return 1;
+	}
+	return 0;
+}
+
+void	Server::reconnectPlayer(std::string &uid, uWS::WebSocket<false, true, PerSocketData> *ws)
+{
+	for (auto &player : this->_players)
+	{
+		if (player->getUid() != uid)
+			continue ;
+		if (player->isInQueue() || !player->isInSession())
+			return ;
+		player->setWs(ws);
+		for (auto &session : this->_sessions)
+		{
+			if (!session.isPlayerInSession(uid))
+				continue ;
+			std::string msg;
+			if (!session.isRunning())
+				msg = session.sendMaps();
+			else
+			{
+				msg = session.sendMaps();
+				msg.replace(12, 7, "reconnect");
+				msg.pop_back();
+				msg += ", \"player_floor\":" + std::to_string(player->getFloor())
+					+ ", \"map_x\" : " + std::to_string(player->getNode()->getX())
+					+ ", \"map_y\" : " + std::to_string(player->getNode()->getY())
+					+ ", \"room_x\" : " + std::to_string(player->getX()) 
+					+ ", \"room_y\" : " + std::to_string(player->getY()) + '}';
+			}
+			ws->send("You have been reconnected to a session !", uWS::OpCode::TEXT);
+			ws->send(msg);
+			return ;
+		}
+	}
+}
+
+void Server::removePlayer(std::string uid)
+{
+    for (auto it = _players.begin(); it != _players.end(); )
     {
-        if (*it && it->get()->getUid() == uid)
-        {
-            if (it->get()->isInQueue())
-            {
-                for (Party &party : _matchMakingQueue)
-                {
-                    if (party.isPlayerInParty(uid))
-                    {
-                        party.removePlayer(uid);
-                        if (!party.getPartySize())
-                            _matchMakingQueue.remove(party);
-                        else
-                            party.setPartySize(party.getPartySize());
-                        break ;
-                    }
-                }
-            }
-            else if (it->get()->isInSession())
-            {
-                for (auto itS = _sessions.begin(); itS != _sessions.end(); it++)
-                {
-                    if (itS->isPlayerInSession(uid))
-                    {
-						std::string topic = (*it)->getRoom().getRoomId();
-						sendLeaveUpdate(*(*it).get(), app, topic);
-						(*it)->getWs()->unsubscribe(topic);
-                        // itS->sendToAll(*(*it).get());
-                        itS->removePlayer(*it);
-                        if (itS->isRunning() && itS->getNumPlayers() < 1)
-						{
-							std::cout << "session erased by no players left" << std::endl;
-                            this->_sessions.erase(itS);
-						}
-                        break ;
-                    }
-                }
-            }
-            this->_players.erase(it);
-            return ;
+        if (!*it)
+		{
+            it = _players.erase(it);
+            continue;
         }
+
+		if (it == _players.end())
+			break ;
+
+        if ((*it)->getUid() == uid)
+            it = _players.erase(it);
+		else
+            ++it;
     }
+}
+
+
+// void	Server::removePlayer(std::string &uid, uWS::App &app)
+// {
+//     for (auto it = _players.begin(); it != _players.end(); it++)
+//     {
+//         if (*it && it->get()->getUid() == uid)
+//         {
+//             if (it->get()->isInQueue())
+//             {
+//                 for (Party &party : _matchMakingQueue)
+//                 {
+//                     if (party.isPlayerInParty(uid))
+//                     {
+//                         party.removePlayer(uid);
+//                         if (!party.getPartySize())
+//                             _matchMakingQueue.remove(party);
+//                         else
+//                             party.setPartySize(party.getPartySize());
+//                         break ;
+//                     }
+//                 }
+//             }
+//             else if (it->get()->isInSession())
+//             {
+//                 for (auto itS = _sessions.begin(); itS != _sessions.end(); it++)
+//                 {
+//                     if (itS->isPlayerInSession(uid))
+//                     {
+// 						std::string topic = (*it)->getRoom().getRoomId();
+// 						sendLeaveUpdate(*(*it).get(), app, topic);
+// 						(*it)->getWs()->unsubscribe(topic);
+//                         // itS->sendToAll(*(*it).get());
+//                         itS->removePlayer(*it);
+//                         if (itS->isRunning() && itS->getNumPlayers() < 1)
+// 						{
+// 							std::cout << "session erased by no players left" << std::endl;
+//                             this->_sessions.erase(itS);
+// 						}
+//                         break ;
+//                     }
+//                 }
+//             }
+//             this->_players.erase(it);
+//             return ;
+//         }
+//     }
+// }
+
+std::vector<Session>::iterator	Server::endSession(std::string sessionId)
+{
+	for (auto it = this->_sessions.begin(); it != this->_sessions.end(); it++)
+	{
+		if (it->getSessionId() != sessionId)
+			continue ;
+		for (auto &p : it->getPlayers())
+		{
+			if (p.expired())
+				continue ;
+			this->removePlayer(p.lock()->getUid());
+		}
+		return this->_sessions.erase(it);
+	}
+	return this->_sessions.end();
 }
 
 Player	&Server::getPlayer(std::string &uid)
@@ -168,49 +249,26 @@ Player	&Server::getPlayer(std::string &uid)
 	return *this->_players[0];
 }
 
-void	moveMobs(std::vector<std::string> const &map, Mob &mob, int destX, int destY)
+std::weak_ptr<Player> findClosestPlayer(std::vector<std::weak_ptr<Player>> &allPlayer, Mob &mob)
 {
-	float x = mob.getX();
-	float y = mob.getY();
-	(void)x;
-	(void)y;
-	(void)map, (void)destX, (void)destY;
-
-	// y -= 0.1;
-	// if (map[y][x] == '1' || map[y][x] == 'E')
-	// 	y += 0.1;
-	// else
-	// {
-	// 	mob.setPos(x,y);
-	// 	return ;
-	// }
-	// y += 0.1;
-	// if (map[y][x] == '1' || map[y][x] == 'E')
-	// 	y -= 0.1;
-	// else
-	// {
-	// 	mob.setPos(x,y);
-	// 	return ;
-	// }
-	// x -= 0.1;
-	// if (map[y][x] == '1' || map[y][x] == 'E')
-	// 	x += 0.1;
-	// else
-	// {
-	// 	mob.setPos(x,y);
-	// 	return ;
-	// }
-	// x += 0.1;
-	// if (map[y][x] == '1' || map[y][x] == 'E')
-	// 	x -= 0.1;
-	// else
-	// {
-	// 	mob.setPos(x,y);
-	// 	return ;
-	// }
+	float dis = 2147483647.f;
+	int pos = 0;
+	for (size_t i = 0; i < allPlayer.size(); i++)
+	{
+		if (allPlayer[i].expired())
+			continue ;
+		Player &p = *allPlayer[i].lock();
+		float nDist = dist(p.getX(), p.getY(), mob);
+		if (nDist < dis)
+		{
+			dis = nDist;
+			pos = i;
+		}
+	}
+	return allPlayer[pos];
 }
 
-void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer, uWS::App *app, Session &session, int const &isRunning)
+void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, uWS::App *app, Session &session, int const &isRunning)
 {
 	std::string msg = "{\"action\": \"loop_action\"";
 
@@ -221,8 +279,11 @@ void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer,
 	if (player_size)
 	{
 		std::string player_update = "\"player_update\": { \"player_status\": [";
-		for (const auto &player : allPlayer)
+		for (const auto &p : allPlayer)
 		{
+			if (p.expired())
+				continue ;
+			std::shared_ptr<Player> player = p.lock();
 			player_update += "{\"player_uid\":\"" + player->getUid() + '\"';
 			player_update += ",\"player_name\":\"" + player->getName() + '\"';
 			player_update += ",\"player_x\":" + std::to_string(player->getX());
@@ -275,6 +336,7 @@ void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer,
 					if (mob->isDamaged() == true)
 					{
 						damaged = 1;
+						mob->setState(MOB_HURT);
 						mob->damaged(false);
 					}
 
@@ -284,10 +346,34 @@ void	roomLoopUpdate(Room &room, std::vector<std::shared_ptr<Player>> &allPlayer,
 						dead = 1;
 						mob->setSendDeath(true);
 					}
-
+					else
+					{
+						std::weak_ptr<Player> player = findClosestPlayer(allPlayer, *mob);
+						if (player_size && !player.expired())
+							mob->MobAction(player.lock()->getX(), player.lock()->getY(), map);
+						else
+							mob->MobAction(-1, -1, map);
+					}
+					int mobAnim = 0;
+					if (mob->getRoutine() == MOB_CHASING)
+					{
+						if (mob->getState() != MOB_HURT)
+							mobAnim = MOB_WALKING;
+						else
+							mobAnim = mob->getState();
+					}
+					else
+					{
+						if (mob->getState() != MOB_CHASE_LAST)
+							mobAnim = mob->getState();
+						else
+							mobAnim = MOB_WALKING;
+					}
 					std::string m = "{ \"mob_id\":" + std::to_string(id)
 							+ ",\"mob_x\":" + std::to_string(mob->getX())
 							+ ",\"mob_y\":" + std::to_string(mob->getY())
+							+ ",\"last_dir\":" + std::to_string(mob->getLastDir())
+							+ ",\"mob_anim\":" + std::to_string(mobAnim)
 							+ ",\"damaged\":" + std::to_string(damaged)
 							+ ",\"isdead\":" + std::to_string(dead) + "},";
 					mobs_update.append(m);
@@ -345,23 +431,23 @@ void	Server::run(void)
 				std::cout << "ended" << std::endl;
 				continue ;
 			}
-			std::unordered_map<Room *, std::vector<std::shared_ptr<Player>> > PlayerPerRoom;
-			for (auto player : session.getPlayers())
+			std::unordered_map<Room *, std::vector<std::weak_ptr<Player>> > PlayerPerRoom;
+			for (auto p : session.getPlayers())
 			{
-				if (player->getFinished())
-				{
+				if (p.expired())
 					continue ;
-				}
-				Room &room = player->getRoomRef();
+				if (p.lock()->getFinished())
+					continue ;
+				Room &room = p.lock()->getRoomRef();
 				auto i = PlayerPerRoom.find(&room);
 				if (i == PlayerPerRoom.end())
 				{
-					std::vector<std::shared_ptr<Player>> lol;
-					lol.push_back(player);
+					std::vector<std::weak_ptr<Player>> lol;
+					lol.push_back(p);
 					PlayerPerRoom.emplace(&room, lol);
 				}
 				else
-					PlayerPerRoom[i->first].push_back(player);
+					PlayerPerRoom[i->first].push_back(p);
 			}
 			for (auto i : PlayerPerRoom)
 			{
@@ -372,7 +458,7 @@ void	Server::run(void)
 		{
 			if (it->hasEnded())
 			{
-				it = data->server->_sessions.erase(it);
+				it = data->server->endSession(it->getSessionId());
 			}
 			if (it != data->server->_sessions.end())
 				it++;
@@ -403,9 +489,12 @@ void	Server::run(void)
 			},
 			.close = [this, &app](auto *ws, int code, std::string_view msg)
 			{
-				(void)ws, (void)code, (void)msg;
+				(void)ws, (void)code, (void)msg, (void)app;
 				auto *data = (PerSocketData *)ws->getUserData();
-				this->removePlayer(data->playerId, app);
+				Player &player = this->getPlayer(data->playerId);
+				player.setConnexion(0);
+				if (player.getFinished())
+					this->removePlayer(data->playerId);
 				std::cout << "Client déconnecté\n";
 			}
 		})
