@@ -37,7 +37,7 @@ function Login() {
 		password: '',
 	});
 
-	const handleChange = (e) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		setFormData((prevState) => ({
 			...prevState,
@@ -73,6 +73,7 @@ function Login() {
 								maxLength={80}
 								value={formData.password}
 								onChange={handleChange}
+								placeholder="Enter your password"
 							/>
 							<span className="icon is-small is-left">
 								<i className="fas fa-lock"></i>

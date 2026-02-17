@@ -50,7 +50,7 @@ const ProfilePublic = () => {
 	const totalWins = userData.gameProfile?.totalWins || '0';
 	const totalLoses = userData.gameProfile?.totalLoses || '0';
 	const friendshipStatus = friendshipQuery.isSuccess ? friendshipData.status : 'unknown';
-	const blockStatus = false;
+	const blockStatus = userData.blocked;
 
 	console.log("friendshipQuery:", friendshipQuery);
 	console.log("friendship data:", friendshipQuery.data);

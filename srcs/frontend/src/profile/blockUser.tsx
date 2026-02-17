@@ -1,5 +1,5 @@
 import { Box } from "@allxsmith/bestax-bulma"
-import "./friendList.css"
+import './profile.css'
 
 import { NavLink, useLocation } from "react-router";
 import { useQuery } from '@tanstack/react-query';
@@ -20,7 +20,7 @@ const BlockUser = () => {
 
 	return (
 		<Box bgColor="grey" textColor="black" className="wrapbox">
-			<Box m="4" p="6"  className="friendbox" bgColor="grey-light" textColor="black" justifyContent='space-between'>
+			<Box m="4" p="6"  className="has-text-centered" bgColor="grey-light" textColor="black">
 				{requestedAction === 'block' &&"User successfully blocked!"}
 				{requestedAction === 'unblock' &&"User successfully unblocked!"}
 				

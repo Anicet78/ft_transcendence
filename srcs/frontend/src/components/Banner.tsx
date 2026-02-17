@@ -1,16 +1,22 @@
 import { useState } from 'react'
-import { NavLink } from 'react-router';
+import { NavLink, useNavigate } from 'react-router';
 import { Navbar, Icon } from '@allxsmith/bestax-bulma';
 import '../styles/Banner.css'
 import SearchBar from '../search/SearchBar.tsx';
 import { useAuth } from '../auth/AuthContext.tsx';
 
 const Banner = () => {
-	const { user } = useAuth()
+	const { user, logout } = useAuth()
 	const [active, setActive] = useState(true)
 	const connected = false
 	const username = user?.username || 'Username'
 	let path = user ? "/home" : "/";
+	const navigate = useNavigate()
+
+	const handleClick = () => {
+		logout()
+		navigate("/")
+	}
 
 	return (
 		<Navbar color='dark' role='navigation' aria-label='main navigation'>
@@ -45,8 +51,7 @@ const Banner = () => {
 							<span>Menu</span>
 							</Navbar.Item>
 							<Navbar.DropdownMenu>
-								<Navbar.Item href="#">Language</Navbar.Item>
-								<Navbar.Item href="#">Dark mode</Navbar.Item>
+								<Navbar.Item onClick={handleClick}>Logout</Navbar.Item>
 								<Navbar.Divider />
 								<Navbar.Item href="#">About the game</Navbar.Item>
 								<Navbar.Item href="#">Credentials</Navbar.Item>

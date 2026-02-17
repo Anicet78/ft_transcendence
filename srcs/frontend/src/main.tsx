@@ -36,6 +36,7 @@ import ProfileUpdate from './profile/ProfileUpdate.tsx';
 import { Toaster } from "sonner";
 import { ChatProvider } from './chat/ChatContext.tsx';
 import GroupChatCreation from './chat/components/GroupChatCreation.tsx';
+import BlockUser from './profile/blockUser.tsx';
 // import { GroupChatInvitation } from './chat/components/GroupChatInvitation.tsx';
 
 const queryClient = new QueryClient({
@@ -74,6 +75,8 @@ const AppEntryPoint = () => {
 				<Route path="/profile" element={<ProfilePrivate />} />
 				<Route path="/profile/update/:field" element={<ProfileUpdate />} />
 				<Route path="/profile/:username" element={<ProfilePublic />} />
+				<Route path="/profile/:id/unblock" element={<BlockUser />} />
+				<Route path="/profile/:id/block" element={<BlockUser />} />
 				<Route path="/terms_of_service" element={<TermsService />} />
 				<Route path="/privacy_policy" element={<Privacy />} />
 				<Route path="*" element={<Error />} />
