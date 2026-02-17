@@ -92,7 +92,8 @@ quadList Player::getNode() const
 	return this->_node;
 }
 
-Camera	&Player::getCamera(void) {
+Camera	&Player::getCamera(void)
+{
 	return (_camera);
 }
 

@@ -17,7 +17,8 @@ SRCS		=	main.cpp \
 				engine/Assets.cpp \
 				engine/sdlLoop.cpp \
 				engine/load_image.cpp \
-				engine/initSdl.cpp \
+				engine/initSdl.cpp \s
+				
 				engine/keyAction.cpp \
 				engine/mapPrinter.cpp \
 				engine/SDLTimer.cpp \

@@ -60,7 +60,7 @@ class Player
 		int				_prev_state;
 	
 	//player kills
-		int		_kills;
+		int				_kills;
 
 	public:
 		Player(std::string uid, std::string name, SDL_Color color);

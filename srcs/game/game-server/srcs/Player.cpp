@@ -273,7 +273,8 @@ void	Player::setDef(int def)
 	return ;
 }
 
-void	Player::setWallHitBox(void) {
+void	Player::setWallHitBox(void)
+{
 	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
 	return ;
 }

@@ -22,18 +22,20 @@ int						Mob::_idleImgH;
 int						Mob::_hurtImgW;
 int						Mob::_hurtImgH;
 
-Mob::Mob(int id, float x, float y, int hp) : _id(id), _x(x), _y(y), _screenX(0), _screenY(0), _hp(hp), _last_dir(0), _frame(0), _isInvinsible(false), _isDead(false), _tookDamage(false) {
-	return ;
+Mob::Mob(int id, float x, float y, int hp) : _id(id), _x(x), _y(y),
+		_screenX(0), _screenY(0), _hp(hp), _last_dir(0), _anim(MOB_IDLE),
+		_prev_state(MOB_IDLE), _frame(0), _isDead(false)
+{
+	(void)_id;
 }
 
-Mob::~Mob(void) {
-
-}
+Mob::~Mob(void)
+{}
 
 //------------------------assets importation related---------------------
 
-void	Mob::importMobsWalkAssets(int tile_size) {
-
+void	Mob::importMobsWalkAssets(int tile_size)
+{
 	_mobWalkText = loadTexture("assets/sprite/mobs/Orc-Walk.bmp", _walkImgW, _walkImgH);
 
 	//define every tile asset position and stock it in _mapAssets
@@ -44,7 +46,8 @@ void	Mob::importMobsWalkAssets(int tile_size) {
 		int x = 0;
 		while (x * tile_size < _walkImgW)
 		{
-			SDL_Rect rect = {x * tile_size, y * tile_size, tile_size, tile_size};
+			SDL_Rect rect =
+			{x * tile_size, y * tile_size, tile_size, tile_size};
 			_mobWalk.emplace(i, rect);
 			i++;
 			x++;
@@ -53,8 +56,8 @@ void	Mob::importMobsWalkAssets(int tile_size) {
 	}
 }
 
-void	Mob::importMobsIdleAssets(int tile_size) {
-
+void	Mob::importMobsIdleAssets(int tile_size)
+{
 	_mobIdleText = loadTexture("assets/sprite/mobs/Orc-Idle.bmp", _idleImgW, _idleImgH);
 
 	//define every tile asset position and stock it in _mapAssets
@@ -65,7 +68,8 @@ void	Mob::importMobsIdleAssets(int tile_size) {
 		int x = 0;
 		while (x * tile_size < _idleImgW)
 		{
-			SDL_Rect rect = {x * tile_size, y * tile_size, tile_size, tile_size};
+			SDL_Rect rect =
+			{x * tile_size, y * tile_size, tile_size, tile_size};
 			_mobIdle.emplace(i, rect);
 			i++;
 			x++;
@@ -74,8 +78,8 @@ void	Mob::importMobsIdleAssets(int tile_size) {
 	}
 }
 
-void	Mob::importMobsAttackAssets(int tile_size) {
-
+void	Mob::importMobsAttackAssets(int tile_size)
+{
 	_mobAttackText = loadTexture("assets/sprite/mobs/Orc-Attack01.bmp", _atkImgW, _atkImgH);
 
 	//define every tile asset position and stock it in _mapAssets
@@ -86,7 +90,8 @@ void	Mob::importMobsAttackAssets(int tile_size) {
 		int x = 0;
 		while (x * tile_size < _atkImgW)
 		{
-			SDL_Rect rect = {x * tile_size, y * tile_size, tile_size, tile_size};
+			SDL_Rect rect =
+			{x * tile_size, y * tile_size, tile_size, tile_size};
 			_mobAttack.emplace(i, rect);
 			i++;
 			x++;
@@ -95,7 +100,8 @@ void	Mob::importMobsAttackAssets(int tile_size) {
 	}
 }
 
-void	Mob::importMobsHurtAssets(int tile_size) {
+void	Mob::importMobsHurtAssets(int tile_size)
+{
 
 	_mobHurtText = loadTexture("assets/sprite/mobs/Orc-Hurt.bmp", _hurtImgW, _hurtImgH);
 
@@ -129,81 +135,152 @@ void	Mob::importMobsAssets(int tile_size)
 
 //----------------------------setter-------------------------------------
 
-void	Mob::setPos(float x, float y) {
+void	Mob::setPos(float x, float y)
+{
 	_x = x;
 	_y = y;
 	return ;
 }
 
-void	Mob::setHp(int hp) {
+void	Mob::setAnim(int anim)
+{
+	this->_anim = anim;
+}
+
+void	Mob::setHp(int hp)
+{
 	_hp = hp;
 	return ;
 }
 
-float	Mob::getX(void) const {
+void	Mob::updateLastDir(int dir)
+{
+	this->_last_dir = dir;
+}
+
+//----------------------------getter-------------------------------------
+
+float	Mob::getX(void) const
+{
 	return (_x);
 }
 
-float	Mob::getY(void) const {
+float	Mob::getY(void) const
+{
 	return (_y);
 }
 
-int		Mob::getHp(void) const {
+int		Mob::getHp(void) const
+{
 	return (_hp);
 }
 
-int		Mob::getLastDir(void) const {
+int		Mob::getLastDir(void) const
+{
 	return (_last_dir);
 }
 
-float	Mob::getScreenX(void) const {
+int		Mob::getAnim(void) const
+{
+	return this->_anim;
+}
+
+float	Mob::getScreenX(void) const
+{
 	return (_screenX);
 }
 
-float	Mob::getScreenY(void) const {
+float	Mob::getScreenY(void) const
+{
 	return (_screenY);
 }
 
-int		Mob::getFrame(void) const {
+int		Mob::getFrame(void) const
+{
 	return (_frame);
 }
 
 //-----------------------------------------------------------------------
 
-void	Mob::updateScreenPos(float camX, float camY, int tile_s) {
+void	Mob::updateScreenPos(float camX, float camY, int tile_s)
+{
 	_screenX = (_x - camX) * tile_s;
 	_screenY = (_y - camY) * tile_s;
 	return ;
 }
 
-void	Mob::startInvinsibleFrame(void) {
-	this->_isInvinsible = true;
-	this->_frame = -1;
-}
-
-void	Mob::endInvinsibleFrame(void) {
-	this->_isInvinsible = false;
-	this->_frame = 0;
-}
-
-bool	Mob::checkInvinsibleFrame(void) {
-	return (this->_isInvinsible);
-}
-
 //-------------printer and render----------------------------------------
+
+// void	Mob::printMob(float camX, float camY, int tile_size, int flag)
+// {
+// 	if (!flag && this->_frame >= 24)
+// 		this->_frame = 0;
+// 	float x = ((this->_x - camX) * tile_size) - (0.5f * tile_size);
+// 	float y = ((this->_y - camY) * tile_size) - (0.5f * tile_size);
+// 	if (checkInvinsibleFrame())
+// 		this->rendMobHurt(x, y, this->_frame / 4, 2, flag);
+// 	else
+// 		this->rendMobIdle(x, y, this->_frame / 4, 2, flag);
+// 	if (!flag)
+// 		this->_frame++;
+// 	return ;
+// }
 
 void	Mob::printMob(float camX, float camY, int tile_size, int flag)
 {
-	if (!flag && this->_frame >= 20)
-		this->_frame = 0;
-	if (!flag)
-		this->_frame++;
 	float x = ((this->_x - camX) * tile_size) - (0.5f * tile_size);
 	float y = ((this->_y - camY) * tile_size) - (0.5f * tile_size);
-	if (checkInvinsibleFrame())
-		this->rendMobHurt(x, y, this->_frame / 4, 2, flag);
-	else
-		this->rendMobIdle(x, y, this->_frame / 4, 2, flag);
+
+	if (this->_anim == MOB_IDLE)
+	{
+		if (!flag && this->_prev_state != MOB_IDLE)
+		{
+			this->_frame = 0;
+			this->_prev_state = MOB_IDLE;
+		}
+		if (!flag && this->_frame >= 24)
+			this->_frame = 0;
+		int frame = (flag) ? ((!this->_frame) ? 23 : this->_frame - 1) : this->_frame;
+		this->rendMobIdle(x, y, frame / 4, 2, flag);
+	}
+	else if (this->_anim == MOB_WALKING)
+	{
+		if (!flag && this->_prev_state != MOB_WALKING)
+		{
+			this->_frame = 0;
+			this->_prev_state = MOB_WALKING;
+		}
+		if (!flag && this->_frame >= 32)
+			this->_frame = 0;
+		int frame = (flag) ? ((!this->_frame) ? 31 : this->_frame - 1) : this->_frame;
+		this->rendMobWalk(x, y, frame / 4, 2, flag);
+	}
+	else if (this->_anim == MOB_ATTACKING)
+	{
+		if (!flag && this->_prev_state != MOB_ATTACKING)
+		{
+			this->_frame = 0;
+			this->_prev_state = MOB_ATTACKING;
+		}
+		if (!flag && this->_frame >= 24)
+			this->_frame = 0;
+		int frame = (flag) ? ((!this->_frame) ? 23 : this->_frame - 1) : this->_frame;
+		this->rendMobAttack(x, y, frame / 4, 2, flag);
+	}
+	else if (this->_anim == MOB_HURT)
+	{
+		if (!flag && this->_prev_state != MOB_HURT)
+		{
+			this->_frame = 0;
+			this->_prev_state = MOB_HURT;
+		}
+		if (!flag && this->_frame >= 32)
+			this->_frame = 0;
+		int frame = (flag) ? ((!this->_frame) ? 31 : this->_frame - 1) : this->_frame;
+		this->rendMobHurt(x, y, frame / 8, 2, flag);
+	}
+	if (!flag)
+		this->_frame++;
 	return ;
 }
 
@@ -225,7 +302,8 @@ void	Mob::rendMobWalk(int x, int y, int assetIndex, float scale, int flag)
 		return ;
 	}
 
-	SDL_Rect	renderRect = {x - 84, y - 84, _walkImgW, _walkImgH};
+	SDL_Rect	renderRect =
+	{x - 84, y - 84, _walkImgW, _walkImgH};
 	SDL_Rect	*rect = &_mobWalk[assetIndex];
 
 	if (rect != NULL)
@@ -261,7 +339,8 @@ void	Mob::rendMobIdle(int x, int y, int assetIndex, float scale, int flag)
 		return ;
 	}
 
-	SDL_Rect	renderRect = {x - 84, y - 84, _idleImgW, _idleImgH};
+	SDL_Rect	renderRect =
+	{x - 84, y - 84, _idleImgW, _idleImgH};
 	SDL_Rect	*rect = &_mobIdle[assetIndex];
 
 	if (rect != NULL)
@@ -297,7 +376,8 @@ void	Mob::rendMobAttack(int x, int y, int assetIndex, float scale, int flag)
 		return ;
 	}
 
-	SDL_Rect	renderRect = {x - 84, y - 84, _atkImgW, _atkImgH};
+	SDL_Rect	renderRect =
+	{x - 84, y - 84, _atkImgW, _atkImgH};
 	SDL_Rect	*rect = &_mobAttack[assetIndex];
 
 	if (rect != NULL)
@@ -333,7 +413,8 @@ void	Mob::rendMobHurt(int x, int y, int assetIndex, float scale, int flag)
 		return ;
 	}
 
-	SDL_Rect	renderRect = {x - 84, y - 84, _hurtImgW, _hurtImgH};
+	SDL_Rect	renderRect =
+	{x - 84, y - 84, _hurtImgW, _hurtImgH};
 	SDL_Rect	*rect = &_mobHurt[assetIndex];
 
 	if (rect != NULL)
@@ -362,20 +443,6 @@ void	Mob::setIsDead(bool value)
 bool	Mob::isDead(void) const
 {
 	return (this->_isDead);
-}
-
-//-----------------------------------------------------------------------
-
-//-------------Mob take damage flag----------------
-
-void	Mob::damaged(bool value)
-{
-	this->_tookDamage = value;
-}
-
-bool	Mob::isDamaged(void) const
-{
-	return (this->_tookDamage);
 }
 
 //-----------------------------------------------------------------------

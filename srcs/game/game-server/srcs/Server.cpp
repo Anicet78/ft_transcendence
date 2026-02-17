@@ -249,46 +249,23 @@ Player	&Server::getPlayer(std::string &uid)
 	return *this->_players[0];
 }
 
-void	moveMobs(std::vector<std::string> const &map, Mob &mob, int destX, int destY)
+std::weak_ptr<Player> findClosestPlayer(std::vector<std::weak_ptr<Player>> &allPlayer, Mob &mob)
 {
-	float x = mob.getX();
-	float y = mob.getY();
-	(void)x;
-	(void)y;
-	(void)map, (void)destX, (void)destY;
-
-	// y -= 0.1;
-	// if (map[y][x] == '1' || map[y][x] == 'E')
-	// 	y += 0.1;
-	// else
-	// {
-	// 	mob.setPos(x,y);
-	// 	return ;
-	// }
-	// y += 0.1;
-	// if (map[y][x] == '1' || map[y][x] == 'E')
-	// 	y -= 0.1;
-	// else
-	// {
-	// 	mob.setPos(x,y);
-	// 	return ;
-	// }
-	// x -= 0.1;
-	// if (map[y][x] == '1' || map[y][x] == 'E')
-	// 	x += 0.1;
-	// else
-	// {
-	// 	mob.setPos(x,y);
-	// 	return ;
-	// }
-	// x += 0.1;
-	// if (map[y][x] == '1' || map[y][x] == 'E')
-	// 	x -= 0.1;
-	// else
-	// {
-	// 	mob.setPos(x,y);
-	// 	return ;
-	// }
+	float dis = 2147483647.f;
+	int pos = 0;
+	for (size_t i = 0; i < allPlayer.size(); i++)
+	{
+		if (allPlayer[i].expired())
+			continue ;
+		Player &p = *allPlayer[i].lock();
+		float nDist = dist(p.getX(), p.getY(), mob);
+		if (nDist < dis)
+		{
+			dis = nDist;
+			pos = i;
+		}
+	}
+	return allPlayer[pos];
 }
 
 void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, uWS::App *app, Session &session, int const &isRunning)
@@ -362,6 +339,7 @@ void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, u
 					if (mob->isDamaged() == true)
 					{
 						damaged = 1;
+						mob->setState(MOB_HURT);
 						mob->damaged(false);
 					}
 
@@ -371,10 +349,34 @@ void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, u
 						dead = 1;
 						mob->setSendDeath(true);
 					}
-
+					else
+					{
+						std::weak_ptr<Player> player = findClosestPlayer(allPlayer, *mob);
+						if (player_size && !player.expired())
+							mob->MobAction(player.lock()->getX(), player.lock()->getY(), map);
+						else
+							mob->MobAction(-1, -1, map);
+					}
+					int mobAnim = 0;
+					if (mob->getRoutine() == MOB_CHASING)
+					{
+						if (mob->getState() != MOB_HURT)
+							mobAnim = MOB_WALKING;
+						else
+							mobAnim = mob->getState();
+					}
+					else
+					{
+						if (mob->getState() != MOB_CHASE_LAST)
+							mobAnim = mob->getState();
+						else
+							mobAnim = MOB_WALKING;
+					}
 					std::string m = "{ \"mob_id\":" + std::to_string(id)
 							+ ",\"mob_x\":" + std::to_string(mob->getX())
 							+ ",\"mob_y\":" + std::to_string(mob->getY())
+							+ ",\"last_dir\":" + std::to_string(mob->getLastDir())
+							+ ",\"mob_anim\":" + std::to_string(mobAnim)
 							+ ",\"damaged\":" + std::to_string(damaged)
 							+ ",\"isdead\":" + std::to_string(dead) + "},";
 					mobs_update.append(m);
