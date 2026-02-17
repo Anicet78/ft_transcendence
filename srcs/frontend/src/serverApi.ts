@@ -83,7 +83,7 @@ api.interceptors.response.use(
 			}
 		}
 
-		const errorMessage = error.response?.data?.error || error.message;
+		const errorMessage = error.response?.data?.message ?? error.response?.data?.error;
 		return Promise.reject(new Error(errorMessage));
 	}
 );

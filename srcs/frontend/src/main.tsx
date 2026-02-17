@@ -32,6 +32,7 @@ import { SocketProvider } from './socket/SocketContext.tsx';
 import { RoomProvider } from './home/RoomContext.tsx';
 import SearchComponent from './search/searchComponent.tsx';
 import ProfileUpdate from './profile/ProfileUpdate.tsx';
+import { Toaster } from "sonner";
 import { ChatProvider } from './chat/ChatContext.tsx';
 import GroupChatCreation from './chat/components/GroupChatCreation.tsx';
 import GroupChatInvitations from './chat/components/GroupChatInvitations.tsx';
@@ -88,6 +89,7 @@ createRoot(document.getElementById('root') as HTMLElement).render(
 	// <StrictMode>
 		<QueryClientProvider client={queryClient}>
 			<Router>
+				<Toaster />
 				<AuthProvider>
 					<SocketProvider>
 						<ChatProvider>
