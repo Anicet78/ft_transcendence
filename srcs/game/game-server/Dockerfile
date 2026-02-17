@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates \
+	&& rm -rf /app/uWebSockets \
 	&& git clone --recurse-submodules https://github.com/uNetworking/uWebSockets.git /app/uWebSockets \
 	&& rm -rf /var/lib/apt/lists/*-
 
