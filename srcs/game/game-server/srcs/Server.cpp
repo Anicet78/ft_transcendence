@@ -323,7 +323,6 @@ void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, u
 			room_update.append("\"room_event\":\"MobRush\", \"cleared\":\"false\"");
 		MobRush &rush = dynamic_cast<MobRush &>(*event);
 		std::unordered_map<int, std::unique_ptr<Mob>> &Mobs = rush.getMobs();
-		int	amount = 0;
 		const int mob_size = Mobs.size();
 		if (mob_size)
 		{
@@ -333,8 +332,6 @@ void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, u
 			{
 				if (!mob->isDeathSend())
 				{
-					amount++;
-
 					int damaged = 0;
 					if (mob->isDamaged() == true)
 					{
@@ -469,7 +466,7 @@ void	Server::run(void)
 	}, 500, 50);
 
 	app.ws<PerSocketData>("/*", uWS::App::WebSocketBehavior<PerSocketData> {
-			.open = [](auto *ws) 
+			.open = [](auto *ws)
 			{
 				(void)ws;
 				std::cout << "Client connecté\n";
@@ -501,11 +498,11 @@ void	Server::run(void)
 				std::cout << "Client déconnecté\n";
 			}
 		})
-		.listen(3000, [](auto *token)
+		.listen(4444, [](auto *token)
 		{
 			if (token)
 			{
-				std::cout << "Serveur WebSocket sur le port 3000\n";
+				std::cout << "Serveur WebSocket sur le port 4444" << std::endl;
 			}
 		});
 

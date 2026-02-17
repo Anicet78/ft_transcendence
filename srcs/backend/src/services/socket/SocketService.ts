@@ -16,7 +16,7 @@ export const SocketService = {
 		await userSocket.leave(roomId);
 	},
 
-	send(receiver: string, event: string, data: object): void {
+	send(receiver: string, event: string, data: object = {}): void {
 		this.io?.sockets.to(receiver).emit(event, data);
 	}
 };

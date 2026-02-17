@@ -94,20 +94,39 @@ export async function getFriendshipById(friendshipId: string) {
 export async function getFriendshipStatus(userA: string, userB: string) {
   const friendship = await findExistingFriendship(userA, userB);
 
-  if (!friendship)
-    return 'none';
-
-  if (friendship.status === 'accepted')
-    return 'friends';
-
-  if (friendship.status === 'waiting') {
-    if (friendship.senderId === userA)
-      return 'sent';
-    if (friendship.receiverId === userA)
-      return 'received';
+  if (!friendship) {
+    return {
+      status: 'none',
+      friendshipId: null
+    };
   }
 
-  return 'none';
+  if (friendship.status === 'accepted') {
+    return {
+      status: 'friends',
+      friendshipId: friendship.friendshipId
+    };
+  }
+
+  if (friendship.status === 'waiting') {
+    if (friendship.senderId === userA) {
+      return {
+        status: 'sent',
+        friendshipId: friendship.friendshipId
+      };
+    }
+    if (friendship.receiverId === userA) {
+      return {
+        status: 'received',
+        friendshipId: friendship.friendshipId
+      };
+    }
+  }
+
+  return{
+    status: 'none',
+    friendshipId: null
+  };
 }
 
 //SEND FRIENDSHIP REQUEST
@@ -121,7 +140,7 @@ export async function sendRequest(senderId: string, receiverId: string) {
   });
 }
 
-export async function updateRequestStatus(friendshipId: string, status: string) {
+export async function updateFriendshipRequestStatus(friendshipId: string, status: string) {
   return prisma.friendship.updateMany({
     where: {
       friendshipId,

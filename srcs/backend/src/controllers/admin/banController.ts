@@ -1,4 +1,4 @@
-import type { FastifyReply, FastifyRequest } from "fastify";
+/* import type { FastifyReply, FastifyRequest } from "fastify";
 import type { User } from "../../schema/userSchema.js";
 import type { LoginResponseType, LoginType } from "../../routes/auth/loginRoute.js";
 import { verifyPassword } from "../../services/auth/password.js";
@@ -72,3 +72,4 @@ export async function unbanController(
 
 	return reply.status(200).send(response);
 }
+ */

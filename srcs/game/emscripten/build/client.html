@@ -1,33 +1,33 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Test wasm</title>
-    <style>
-        body
-        {
-            font-family: sans-serif;
-            margin: 20px;
-        }
+	<meta charset="UTF-8">
+	<title>Test wasm</title>
+	<style>
+		body
+		{
+			font-family: sans-serif;
+			margin: 20px;
+		}
 
-        #game-canvas
-        {
-            display: block;
-            margin: 0 auto;
-        }
+		#game-canvas
+		{
+			display: block;
+			margin: 0 auto;
+		}
 
-        #log
-        {
-            border: 1px solid #ccc;
-            padding: 10px;
-            height: 200px;
-            overflow-y: auto;
-            margin: 20px auto 0 auto;
-        }
+		#log
+		{
+			border: 1px solid #ccc;
+			padding: 10px;
+			height: 200px;
+			overflow-y: auto;
+			margin: 20px auto 0 auto;
+		}
 
-        #msg {width: 300px;}
+		#msg {width: 300px;}
 
-    </style>
+	</style>
 </head>
 <body>
     <form id="myForm">
@@ -56,7 +56,7 @@
         const disconnectBtn = document.getElementById('disconnectBtn');
         const logDiv = document.getElementById('log');
 
-        let Module = null;
+		let Module = null;
 
         const form = document.getElementById('myForm');
         let name;
@@ -89,18 +89,18 @@
             });
         }
 
-        
-        function log(text)
-        {
-            if (logDiv.childElementCount > 25) {
-                logDiv.removeChild(logDiv.firstChild);
-            }
 
-            const p = document.createElement('p');
-            p.textContent = text;
-            logDiv.appendChild(p);
-            logDiv.scrollTop = logDiv.scrollHeight;
-        }
+		function log(text)
+		{
+			if (logDiv.childElementCount > 25) {
+				logDiv.removeChild(logDiv.firstChild);
+			}
+
+			const p = document.createElement('p');
+			p.textContent = text;
+			logDiv.appendChild(p);
+			logDiv.scrollTop = logDiv.scrollHeight;
+		}
 
 
 		function onCppMessage(obj)
@@ -111,105 +111,105 @@
 			socket.send(payload);
 		}
 
-        function sendResults(obj)
+		function sendResults(obj)
 		{
 			const payload = JSON.stringify(obj);
 
 			log('End of game !! \n ' + payload);
-            disconnect();
+			disconnect();
 		}
 
-        function disconnect()
-        {
-            if (socket)
-            {
-                socket.close();
-                socket = null;
-            }
+		function disconnect()
+		{
+			if (socket)
+			{
+				socket.close();
+				socket = null;
+			}
 
-            if (Module)
-            {
-                if (Module.finishGame)
-                    Module.finishGame();
+			if (Module)
+			{
+				if (Module.finishGame)
+					Module.finishGame();
 
-                if (Module.ctx)
-                {
-                    const ext = Module.ctx.getExtension('WEBGL_lose_context');
-                    if (ext)
-                        ext.loseContext();
-                }
+				if (Module.ctx)
+				{
+					const ext = Module.ctx.getExtension('WEBGL_lose_context');
+					if (ext)
+						ext.loseContext();
+				}
 
-                Module = null;
-            }
+				Module = null;
+			}
 
-            const oldCanvas = document.getElementById("game-canvas");
-            const newCanvas = oldCanvas.cloneNode(true);
-            oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
-        }
-
-
-        connectBtn.onclick = () => {
-            socket = new WebSocket('ws://localhost:3000');
-
-           socket.onopen = () => {
-                log('✅ Connecté au serveur');
-                connectBtn.disabled = true;
-                disconnectBtn.disabled = false;
-
-                startGame();
-            };
+			const oldCanvas = document.getElementById("game-canvas");
+			const newCanvas = oldCanvas.cloneNode(true);
+			oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+		}
 
 
-            socket.onmessage = async (event) => {
-                let data = event.data;
+		connectBtn.onclick = () => {
+			socket = new WebSocket('ws://localhost:3000');
 
-                if (data instanceof Blob)
-                    data = await data.text();
+		   socket.onopen = () => {
+				log('✅ Connecté au serveur');
+				connectBtn.disabled = true;
+				disconnectBtn.disabled = false;
 
-                try {
-                    const json = JSON.parse(data);
-                    log('📥 Reçu JSON : ' + JSON.stringify(json, null, 2));
-
-                    if (Module && Module.getMessage) {
-                        Module.getMessage(json);
-                    } else {
-                        log("⚠️ Module pas encore prêt, message ignoré");
-                    }
-                }
-                // catch {
-                //     log('📥 Reçu (non-JSON) : ' + data);
-                // }
-                catch (e) {
-                    console.error("❌ JSON.parse error:", e);
-                    console.log("Type:", typeof data);
-                    console.log("Raw data:", data);
-                    log('📥 Reçu (non-JSON) : ' + data);
-                }
-            };
+				startGame();
+			};
 
 
-            socket.onclose = () => {
-                log('❌ Déconnecté du serveur');
-                connectBtn.disabled = false;
-                disconnectBtn.disabled = true;
-            };
+			socket.onmessage = async (event) => {
+				let data = event.data;
 
-            socket.onerror = (err) => {
-                log('⚠️ Erreur WebSocket');
-                console.error(err);
-            };
-        };
+				if (data instanceof Blob)
+					data = await data.text();
+
+				try {
+					const json = JSON.parse(data);
+					log('📥 Reçu JSON : ' + JSON.stringify(json, null, 2));
+
+					if (Module && Module.getMessage) {
+						Module.getMessage(json);
+					} else {
+						log("⚠️ Module pas encore prêt, message ignoré");
+					}
+				}
+				// catch {
+				//     log('📥 Reçu (non-JSON) : ' + data);
+				// }
+				catch (e) {
+					console.error("❌ JSON.parse error:", e);
+					console.log("Type:", typeof data);
+					console.log("Raw data:", data);
+					log('📥 Reçu (non-JSON) : ' + data);
+				}
+			};
 
 
-        disconnectBtn.onclick = () =>
-        {
-            disconnect();
-        };
+			socket.onclose = () => {
+				log('❌ Déconnecté du serveur');
+				connectBtn.disabled = false;
+				disconnectBtn.disabled = true;
+			};
+
+			socket.onerror = (err) => {
+				log('⚠️ Erreur WebSocket');
+				console.error(err);
+			};
+		};
 
 
+		disconnectBtn.onclick = () =>
+		{
+			disconnect();
+		};
 
 
 
-    </script>
+
+
+	</script>
 </body>
 </html>

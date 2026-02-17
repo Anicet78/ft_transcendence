@@ -9,6 +9,7 @@ export const profileSelect = Prisma.validator<Prisma.AppUserSelect>()({
   mail: true,
   avatarUrl: true,
   availability: true,
+  playing: true,
   region: true,
   createdAt: true,
   updatedAt: true,
@@ -38,9 +39,9 @@ export async function getProfile(userId: string) {
 
 // Retrieve another user's public profile
 //rename with getPublicProfileById
-export async function getPublicProfile(userId: string) {
+export async function getPublicProfile(userName: string) {
   return prisma.appUser.findUnique({
-    where: { appUserId: userId },
+    where: { username:  userName},
     select: profileSelect
   });
 }
@@ -80,7 +81,7 @@ export async function softDeleteProfile(userId: string) {
 }
 
 export async function getLastBlock(userId: string, targetId: string): Promise<string | null> {
-  const lastblock: { blockedListId: string, deletedAt: Date | null } | null = 
+  const lastblock: { blockedListId: string, deletedAt: Date | null } | null =
     await prisma.blockedList.findFirst({
     where: {
       blocker: userId,

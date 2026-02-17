@@ -9,6 +9,8 @@ EMFLAGS =	-s WASM=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -lembind \
 			-s EXPORTED_RUNTIME_METHODS='["callMain"]' \
 			-s EXIT_RUNTIME=1 \
 			-s EXPORT_NAME="createModule" \
+			-s EXPORT_ES6=1 \
+			-s ENVIRONMENT='web' \
 			$(CXXFLAGS) -O3
 
 
@@ -60,7 +62,6 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 wasm:
-	mkdir -p build
 	$(EMSCRIPTEN) $(EMSRCS) $(EMFLAGS) --preload-file ../assets -o $(EMNAME)
 
 clean:
