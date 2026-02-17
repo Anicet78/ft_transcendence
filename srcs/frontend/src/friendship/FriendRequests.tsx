@@ -51,7 +51,7 @@ const FriendRequest = () => {
 				<br />
 			</ul>
 			</Box>
-			<NavLink to="/friends" className="button is-medium">Back to friends list</NavLink>
+			<NavLink to="/friends/list" className="button is-medium">Back to friends list</NavLink>
 		</Box>
 	)
 }

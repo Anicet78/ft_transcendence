@@ -89,7 +89,7 @@ const ProfilePrivate = () => {
 				<p>Total wins: {totalWins}</p>
 				<p>Total loses: {totalLoses}</p>
 			</Box>
-			<NavLink to="/friends" className="button is-large">Friends list</NavLink>
+			<NavLink to="/friends/list" className="button is-large">Friends list</NavLink>
 			<NavLink
 				to="/chat/list"
 				className="button is-dark is-medium is-outlined mt-4"

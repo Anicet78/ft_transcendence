@@ -59,7 +59,7 @@ const AppEntryPoint = () => {
 				<Route path="/join/:roomId" element={<JoinRoom />} />
 				<Route path="/game" element={<Game />} />
 
-				<Route path="/friends" element={<FriendList />} />
+				<Route path="/friends/list" element={<FriendList />} />
 				<Route path="/friends/requests/" element={<FriendRequest />} />
 				<Route path="/friends/requests/update/:id" element={<UpdateRequest />} />
 				<Route path="/friends/remove/:id" element={<RemoveFriend />} />

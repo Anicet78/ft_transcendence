@@ -35,7 +35,7 @@ const UpdateRequest = () => {
 			<Box m="4" p="6"  className="friendbox" bgColor="grey-light" textColor="black" justifyContent='space-between'>
 				{"Friend request successfully " + action}
 			</Box>
-			<NavLink to="/friends" className="button is-medium">Back to friends list</NavLink>
+			<NavLink to="/friends/list" className="button is-medium">Back to friends list</NavLink>
 		</Box>
 	)
 }

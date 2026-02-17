@@ -16,7 +16,7 @@ export default function InviteToGroupChat() {
 	const { data: friends } = useQuery({
 		queryKey: ["friends"],
 		queryFn: async () => {
-			const res = await api.get("/friends");
+			const res = await api.get("/friends/list");
 			const friendships = res.data;
 
 			return friendships.map((f: any) =>

@@ -1745,7 +1745,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/friends": {
+    "/friends/list": {
         parameters: {
             query?: never;
             header?: never;
