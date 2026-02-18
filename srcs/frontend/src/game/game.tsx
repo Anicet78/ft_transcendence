@@ -80,8 +80,8 @@ const Game = () => {
 				(window as any).sendResults = (mod as any).sendResults;
 
 				setModule(mod);
-				// Add session size
-				mod.callMain([user.id, user.username, room.roomId, room.players.length.toString(), "5"]);
+				// Add username and session size
+				mod.callMain([user.id, 'username', room.roomId, room.players.length.toString(), "1"]);
 			} catch (e) {
 				console.error("Wasm Error:", e);
 			}

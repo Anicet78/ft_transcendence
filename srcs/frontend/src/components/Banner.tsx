@@ -6,11 +6,14 @@ import SearchBar from '../search/SearchBar.tsx';
 import { useAuth } from '../auth/AuthContext.tsx';
 
 const Banner = () => {
-	const { user } = useAuth()
+	const { user, logout } = useAuth()
 	const [active, setActive] = useState(true)
-	const connected = false
 	const username = user?.username || 'Username'
 	let path = user ? "/home" : "/";
+
+	const handleClick = () => {
+		logout()
+	}
 
 	return (
 		<Navbar color='dark' role='navigation' aria-label='main navigation'>
@@ -27,9 +30,7 @@ const Banner = () => {
 			</Navbar.Brand>
 			<Navbar.Menu active={active}>
 				<Navbar.Start>
-					<Navbar.Item hidden={!connected}>
-						<SearchBar />
-					</Navbar.Item>
+					{user && (<Navbar.Item><SearchBar /></Navbar.Item>)}
 				</Navbar.Start>
 				<Navbar.End>
 						<NavLink to='/profile' aria-label='profile button' className='button is-primary is-medium is-centered'>
@@ -45,8 +46,7 @@ const Banner = () => {
 							<span>Menu</span>
 							</Navbar.Item>
 							<Navbar.DropdownMenu>
-								<Navbar.Item href="#">Language</Navbar.Item>
-								<Navbar.Item href="#">Dark mode</Navbar.Item>
+								<Navbar.Item onClick={handleClick}>Logout</Navbar.Item>
 								<Navbar.Divider />
 								<Navbar.Item href="#">About the game</Navbar.Item>
 								<Navbar.Item href="#">Credentials</Navbar.Item>

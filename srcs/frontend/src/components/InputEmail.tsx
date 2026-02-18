@@ -1,11 +1,11 @@
-const InputEmail = ({ label, type, name, value, onChange, placeholder }) => {
+const InputEmail = ({ label, name, value, onChange, placeholder }) => {
 	return (
 		<div className="field">
 			<label htmlFor={name}>{label}</label>
 			<p className="control has-icons-left">
 				<input
 					className="input"
-					type={type}
+					type="email"
 					id={name}
 					name={name}
 					required

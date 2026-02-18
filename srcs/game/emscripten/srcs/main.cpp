@@ -89,8 +89,13 @@ int main(int ac, char **av)
 		importAssetsAndRoom();
 
 		#ifdef __EMSCRIPTEN__
-		id = std::to_string(rand() % 500);
-		name = "guest_" + id;
+		int groupSize, sessionSize;
+		std::string groupId;
+		id = av[1];
+		name = av[2];
+		groupId = av[3];
+		groupSize = std::atoi(av[4]);
+		sessionSize = std::atoi(av[5]);
 		gSdl.setPlayerName(name);
 		gSdl.setPlayerId(id);
 		EM_ASM_({
@@ -98,9 +103,11 @@ int main(int ac, char **av)
 				action: "join_queue",
 				player_name: UTF8ToString($0),
 				player_id: UTF8ToString($1),
-				group_size: 1
+				group_size: $2,
+				group_id: UTF8ToString($3),
+				session_size: $4
 			});
-		}, name.c_str(), id.c_str());
+		}, name.c_str(), id.c_str(), groupSize, groupId.c_str(), sessionSize);
 		#endif
 
 	}

@@ -171,7 +171,7 @@ function buildSorting(query: SearchUsersQuery): Prisma.AppUserOrderByWithRelatio
 	const orderBy: Prisma.AppUserOrderByWithRelationInput[] =
 		sortBy === 'createdAt'
 			? [{ createdAt: sortOrder }]
-			: [{ gameProfile: { [sortBy]: sortOrder } }];
+			: [{ gameProfile: { [sortBy]: sortOrder } }]; // is it possible that game profile is null? if yes could be a problem
 
 	//if 2 users have the same level, sort by username
 	orderBy.push({ username: 'asc' });
