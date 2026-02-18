@@ -65,13 +65,19 @@ void	Session::launch()
 			continue ;
 		if (pos >= this->_players.size())
 			break ;
-		std::string roomId = this->_players[pos]->getRoom().getRoomId();
-		this->_players[pos]->setNode(node);
+		if (this->_players[pos].expired())
+		{
+			pos++;
+			continue ;
+		}
+		std::shared_ptr<Player> player = this->_players[pos].lock();
+		std::string roomId = player->getRoom().getRoomId();
+		player->setNode(node);
 
-		this->_players[pos]->setStartPos(pos);
+		player->setStartPos(pos);
 
-		this->_players[pos]->getWs()->unsubscribe(roomId);
-		this->_players[pos]->getWs()->subscribe(node->getRoom()->getRoomId());
+		player->getWs()->unsubscribe(roomId);
+		player->getWs()->subscribe(node->getRoom()->getRoomId());
 		// if (this->_players[pos]->getWs()->unsubscribe(roomId))
 		// 	std::cout << "unsubscribe from waiting room" << std::endl;
 		// if (this->_players[pos]->getWs()->subscribe(node->getRoom()->getRoomId()))
@@ -84,9 +90,11 @@ void	Session::sendToAll(Player &sender)
 {
 	for (auto &player : _players)
 	{
-		if (sender.getUid() == player->getUid())
+		if (player.expired())
 			continue ;
-		sendPlayerState(*player, *this, sender.getUid());
+		if (sender.getUid() == player.lock()->getUid())
+			continue ;
+		sendPlayerState(*player.lock(), *this, sender.getUid());
 	}
 }
 
@@ -164,23 +172,27 @@ std::string	Session::sendMaps(void)
 void	Session::addParty(Party &newParty)
 {
 	std::string msg;
-	for (std::shared_ptr<Player> &player : newParty.getPlayers())
+	for (std::weak_ptr<Player> &player : newParty.getPlayers())
 	{
-		player->setNode(this->_maps[0].getNodes()[0]);
-		if (player->getWs()->subscribe(player->getRoom().getRoomId()))
+		if (player.expired())
+			continue ;
+		player.lock()->setNode(this->_maps[0].getNodes()[0]);
+		if (player.lock()->getWs()->subscribe(player.lock()->getRoom().getRoomId()))
 			std::cout << "added to the waiting room" << std::endl;
 		this->_players.push_back(player);
 		msg = this->sendMaps();
-		player->getWs()->send(msg);
-        player->getWs()->send("You have been added to a session !", uWS::OpCode::TEXT);
+		player.lock()->getWs()->send(msg);
+        player.lock()->getWs()->send("You have been added to a session !", uWS::OpCode::TEXT);
 	}
 }
 
-bool	Session::removePlayer(std::shared_ptr<Player> rmPlayer)
+bool	Session::removePlayer(std::weak_ptr<Player> rmPlayer)
 {
 	for (size_t i = 0; i < this->_players.size(); i++)
 	{
-		if (this->_players[i]->getUid() == rmPlayer->getUid())
+		if (this->_players[i].expired())
+			continue ;
+		if (this->_players[i].lock()->getUid() == rmPlayer.lock()->getUid())
 		{
 			this->_players.erase(this->_players.begin() + i);
 			return 1;
@@ -189,16 +201,18 @@ bool	Session::removePlayer(std::shared_ptr<Player> rmPlayer)
 	return 0;
 }
 
-std::vector<std::shared_ptr<Player>>	Session::getPlayers() const
+std::vector<std::weak_ptr<Player>>	Session::getPlayers() const
 {
 	return this->_players;
 }
 
-std::shared_ptr<Player> &Session::getPlayer(std::string &uid)
+std::weak_ptr<Player> &Session::getPlayer(std::string &uid)
 {
 	for (auto &player : _players)
 	{
-		if (player->getUid() == uid)
+		if (player.expired())
+			continue ;
+		if (player.lock()->getUid() == uid)
 		{
 			return player;
 			break ;
@@ -229,6 +243,11 @@ int	Session::getNumPlayers() const
 	return this->_players.size();
 }
 
+std::string	const	&Session::getSessionId(void) const
+{
+	return this->_sessionId;
+}
+
 bool	Session::hasEnded() const
 {
 	return this->_ended;
@@ -247,29 +266,41 @@ bool Session::isReadyToRun() const
 bool Session::doesAllPlayersConnected() const
 {
 	for (auto &player : this->_players)
-		if (!player->isConnected())
+	{
+		if (player.expired())
+			continue ;
+		if (!player.lock()->isConnected())
 			return false;
+	}
 	return true;
 }
 
 bool	Session::isPlayerInSession(std::string &uid) const
 {
 	for (auto &player : _players)
-		if (player->getUid() == uid)
+	{
+		if (player.expired())
+			continue ;
+		if (player.lock()->getUid() == uid)
 			return true;
+	}
 	return false;
 }
 
 void	Session::checkFinishedPlayers(uWS::App &app)
 {
-	std::vector<std::shared_ptr<Player>> finishedPlayers;
-	for (auto &player : this->_players)
+	std::vector<std::weak_ptr<Player>> finishedPlayers;
+	for (auto &p : this->_players)
 	{
+		if (p.expired() || !p.lock()->isConnected())
+			continue ;
+		std::shared_ptr<Player> player = p.lock();
 		if (player->getFinished())
 		{
 			this->_numPlayersFinished++;
 			int win = (this->_numPlayersFinished == 1) ? true : false;
 			player->setHasWin(win);
+			player->setFinalRanking(this->_numPlayersFinished);
 			std::string msg = "{ \"action\": \"finished\", \"time\": "
 				+ std::to_string(this->getActualTime()) + ", \"win\": "
 				+ std::to_string(win) + "}";
@@ -279,13 +310,18 @@ void	Session::checkFinishedPlayers(uWS::App &app)
 			player->getWs()->unsubscribe(oldTopic);
 			// if (player->getWs()->unsubscribe(oldTopic))
 			// 	std::cout << "unsibscribe from " << oldTopic << std::endl;
-			finishedPlayers.push_back(player);
+			finishedPlayers.push_back(p);
 			std::cout << player->getName() << ": " << std::endl
 				<< "Kills: " << player->getKills() << "Place :" << player->getFinalRanking() << std::endl;
 		}
 	}
-	
-	if (!this->_players.size() && this->_running)
+	int count = 0;
+
+	for (auto player : this->_players)
+		if (!player.expired() && player.lock()->isConnected())
+			count++;
+
+	if (!count && this->_running)
 	{
 		std::cout << "SESSION STOP" << std::endl;
 		this->_ended = 1;
