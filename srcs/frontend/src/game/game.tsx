@@ -10,6 +10,8 @@ import type { GameModule } from './build/game';
 import createModule from './build/game';
 import toast from '../Notifications.tsx';
 import { SidebarChat } from '../chat/components/SidebarChat';
+import wasmUrl from './build/game.wasm?url';
+import dataUrl from './build/game.data?url';
 
 const Game = () => {
 	const navigate = useNavigate();
@@ -34,7 +36,8 @@ const Game = () => {
 			return ;
 		}
 
-		const socket = new WebSocket('wss://localhost:8443/ws/');
+		const socketUrl = `wss://${window.location.host}/ws/`;
+		const socket = new WebSocket(socketUrl);
 		setGameSocket(socket);
 
 		if (!socket) return ;
@@ -64,9 +67,10 @@ const Game = () => {
 				const mod = await createModule({
 					canvas: canvasRef.current,
 					noInitialRun: true,
-					locateFile: (path: string, prefix: string) => {
-						if (path.endsWith(".data")) return `http://localhost:5173/game/build/${path}`;
-						return prefix + path;
+					locateFile: (path: string) => {
+						if (path.endsWith('.wasm')) return wasmUrl;
+						if (path.endsWith('.data')) return dataUrl;
+						return path;
 					},
 					onCppMessage: (obj: Object) => gameSocket.send(JSON.stringify(obj)),
 					sendResults: (obj: Object) => {
@@ -80,8 +84,8 @@ const Game = () => {
 				(window as any).sendResults = (mod as any).sendResults;
 
 				setModule(mod);
-				// Add username and session size
-				mod.callMain([user.id, 'username', room.roomId, room.players.length.toString(), "1"]);
+				// Add session size
+				mod.callMain([user.id, user.username, room.roomId, room.players.length.toString(), room.players.length.toString()]);
 			} catch (e) {
 				console.error("Wasm Error:", e);
 			}
@@ -132,7 +136,7 @@ const Game = () => {
 	// )
 	return (
 		<div style={{ display: "flex", height: "100vh" }}>
-			
+
 			{/* GAME CANVAS */}
 			<div style={{ flex: 1, overflow: "hidden" }}>
 			<Box m="4" p="6" bgColor="grey-light">

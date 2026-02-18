@@ -179,7 +179,7 @@ model ChatInvitation {
   senderId         String?        @map("sender_id") @db.Uuid
   receiverId       String?        @map("receiver_id") @db.Uuid
   chatId           String?        @map("chat_id") @db.Uuid
-  status           invite_status  @default(waiting)
+  status           invite_status? @default(waiting)
   createdAt        DateTime?      @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt        DateTime?      @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt        DateTime?      @map("deleted_at") @db.Timestamptz(6)

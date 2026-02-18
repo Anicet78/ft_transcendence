@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { globalSocketId } from './socket/SocketContext';
 
-export const ServerUrl= "https://localhost:8443"
-
 let accessToken: string | null = null;
 export const getAccessToken = () => accessToken;
 export const setAccessToken = (token: string | null) => accessToken = token;
@@ -37,7 +35,7 @@ const waitForSocketId = (): Promise<string | null> => {
 };
 
 const api = axios.create({
-	baseURL: `${ServerUrl}/api`,
+	baseURL: `/api`,
 	withCredentials: true,
 	timeout: 5000,
 	headers: {
@@ -70,7 +68,7 @@ api.interceptors.response.use(
 			originalRequest._retry = true;
 
 			try {
-				const res = await axios.post(`${ServerUrl}/api/auth/refresh`, {}, { withCredentials: true });
+				const res = await axios.post(`/api/auth/refresh`, {}, { withCredentials: true });
 
 				accessToken = res.data.token;
 				if (onRefreshSuccessCallback) onRefreshSuccessCallback(accessToken!);
