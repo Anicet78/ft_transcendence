@@ -1,4 +1,4 @@
-import type { PrismaProfile } from '../../services/db/profileService.js';
+import type { PrismaProfile, PrismaPublicProfile } from '../../services/db/profileService.js';
 import type { ProfileResponse, PublicProfileResponse } from '../../schema/profileSchema.js';
 
 export function mapProfileToResponse(profile: PrismaProfile): ProfileResponse {
@@ -29,7 +29,7 @@ export function mapProfileToResponse(profile: PrismaProfile): ProfileResponse {
   };
 }
 
-export function mapPublicProfileToResponse(profile: PrismaProfile): PublicProfileResponse {
+export function mapPublicProfileToResponse(profile: PrismaPublicProfile): PublicProfileResponse {
   return {
     appUserId: profile.appUserId,
     username: profile.username,
@@ -37,6 +37,7 @@ export function mapPublicProfileToResponse(profile: PrismaProfile): PublicProfil
     availability: profile.availability,
     playing: profile.playing,
     region: profile.region,
+    blocked: profile.usersWhoBlockedYou.length >= 1 ? true : false,
     createdAt: profile.createdAt.toISOString(),
     gameProfile: profile.gameProfile
     ? {

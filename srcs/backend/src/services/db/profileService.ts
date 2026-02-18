@@ -1,5 +1,7 @@
 import { prisma } from './prisma.js';
 import { Prisma } from '@prisma/client';
+import path from 'path';
+import fs from 'fs';
 
 export const profileSelect = Prisma.validator<Prisma.AppUserSelect>()({
   appUserId: true,
@@ -24,9 +26,37 @@ export const profileSelect = Prisma.validator<Prisma.AppUserSelect>()({
       level: true,
       bestTime: true
     }
-  }
+  },
 });
 export type PrismaProfile = Prisma.AppUserGetPayload<{ select: typeof profileSelect }>;
+
+export const publicProfileSelect = Prisma.validator<Prisma.AppUserSelect>()({
+  appUserId: true,
+  firstName: true,
+  lastName: true,
+  username: true,
+  mail: true,
+  avatarUrl: true,
+  availability: true,
+  playing: true,
+  region: true,
+  createdAt: true,
+  updatedAt: true,
+  lastConnectedAt: true,
+  usersWhoBlockedYou: true,
+  gameProfile: {
+    select: {
+      totalGames: true,
+      totalWins: true,
+      totalLoses: true,
+      totalEnemiesKilled: true,
+      totalXp: true,
+      level: true,
+      bestTime: true
+    }
+  },
+});
+export type PrismaPublicProfile = Prisma.AppUserGetPayload<{ select: typeof publicProfileSelect }>;
 
 // Access authenticated user's to its own profile
 //rename with getPublicProfile
@@ -39,24 +69,50 @@ export async function getProfile(userId: string) {
 
 // Retrieve another user's public profile
 //rename with getPublicProfileById
-export async function getPublicProfile(userName: string) {
+export async function getPublicProfile(userName: string, fetcherId: string) {
   return prisma.appUser.findUnique({
     where: { username:  userName},
-    select: profileSelect
+    select: { ...profileSelect, usersWhoBlockedYou: {
+      where: {
+        app_user_blocked_list_blockerToapp_user: {
+          appUserId: fetcherId
+        },
+        deletedAt: null
+      },
+    }},
   });
 }
 
 // Update user's own profile
 export async function updateProfile(userId: string, data: Record<string, unknown>) {
-  return prisma.appUser.update({
-    where: { appUserId: userId },
-    data: {
-      ...data,
-      updatedAt: new Date()
-    },
-    select: profileSelect
-  });
-}
+	//Check if we are updating avatarUrl
+	if (data.avatarUrl) {
+		const user = await prisma.appUser.findUnique({
+		where: { appUserId: userId },
+		select: { avatarUrl: true }
+		});
+
+    // Delete old file if exists
+    if (user?.avatarUrl) {
+      const oldFilePath = path.join(process.cwd(), "uploads", user.avatarUrl);
+      if (fs.existsSync(oldFilePath)) {
+        try {
+          fs.unlinkSync(oldFilePath);
+        } catch (err) {
+          console.error('Failed to delete old avatar', err);
+        }
+      }
+    }
+	}
+	return prisma.appUser.update({
+		where: { appUserId: userId },
+		data: {
+		...data,
+		updatedAt: new Date()
+		},
+		select: profileSelect
+	});
+	}
 
 // Soft-delete the user: anonymize but keep rows for FK integrity
 export async function softDeleteProfile(userId: string) {

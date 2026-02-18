@@ -8,6 +8,8 @@ import { useMutation } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import type { GameModule } from './build/game';
 import createModule from './build/game';
+import toast from '../Notifications.tsx';
+import { SidebarChat } from '../chat/components/SidebarChat';
 
 const Game = () => {
 	const navigate = useNavigate();
@@ -27,6 +29,7 @@ const Game = () => {
 			mutation.mutate();
 		}
 		else if (!start) {
+			toast({ title: `An error occurred`, message: 'No active game has been found', type: "is-warning" })
 			navigate("/home");
 			return ;
 		}
@@ -68,6 +71,7 @@ const Game = () => {
 					onCppMessage: (obj: Object) => gameSocket.send(JSON.stringify(obj)),
 					sendResults: (obj: Object) => {
 						console.log(JSON.stringify(obj))
+						toast({ title: `Game finished !`, type: "is-info" })
 						navigate("/home");
 					}
 				});
@@ -116,15 +120,32 @@ const Game = () => {
 	}
 
 	if (mutation.isError) {
+		toast({ title: `An error occured`, message: "Cannot join the game !", type: "is-danger" })
 		navigate("/home");
 		return;
 	}
 
+	// return (
+	// 	<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between'>
+	// 		<canvas ref={canvasRef} id="game-canvas" width="800" height="950" tabIndex={1}></canvas>
+	// 	</Box>
+	// )
 	return (
-		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between'>
-			<canvas ref={canvasRef} id="game-canvas" width="800" height="950" tabIndex={1}></canvas>
-		</Box>
+		<div style={{ display: "flex", height: "100vh" }}>
+			
+			{/* GAME CANVAS */}
+			<div style={{ flex: 1, overflow: "hidden" }}>
+			<Box m="4" p="6" bgColor="grey-light">
+				<canvas ref={canvasRef} id="game-canvas" width="800" height="950" tabIndex={1}></canvas>
+			</Box>
+			</div>
+
+			{/* CHAT SIDEBAR */}
+			<SidebarChat />
+
+		</div>
 	)
+
 }
 
 export default Game;

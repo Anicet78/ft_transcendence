@@ -10,6 +10,12 @@ async function createFixedUsers() {
     { firstName: "Maxime", lastName: "Maxime", username: "maxime", email: "maxime@example.com", password: "maxime123", region: "EU" },
     { firstName: "Julie", lastName: "Julie", username: "julie", email: "julie@example.com", password: "julie1234", region: "APAC" },
     { firstName: "Tom", lastName: "Tom", username: "tom", email: "tom@example.com", password: "tom12345", region: "OCE" },
+
+    { firstName: "Alice", lastName: "Wonder", username: "alice", email: "alice@example.com", password: "alice123", region: "EU" },
+    { firstName: "Bob", lastName: "Builder", username: "bob", email: "bob@example.com", password: "bob12345", region: "NA" },
+    { firstName: "Charlie", lastName: "Day", username: "charlie", email: "charlie@example.com", password: "charlie123", region: "EU" },
+    { firstName: "Diana", lastName: "Prince", username: "diana", email: "diana@example.com", password: "diana1234", region: "APAC" },
+    { firstName: "Eve", lastName: "Hacker", username: "eve", email: "eve@example.com", password: "eve12345", region: "OCE" },
   ];
 
   const created = [];
@@ -34,11 +40,38 @@ async function createFixedUsers() {
   return created;
 }
 
+console.log(Object.keys(prisma));
+
+//BLOCKLIST
+async function seedBlocks(users) {
+  const blocks = [
+    [users[0], users[3]], // Nina blocks Julie
+    [users[5], users[0]], // Alice blocks Nina
+    [users[1], users[6]], // Anicet blocks Bob
+    [users[7], users[2]], // Charlie blocks Maxime
+    [users[9], users[3]], // Eve blocks Julie
+  ];
+
+  for (const [blocker, blocked] of blocks) {
+    await prisma.blockedList.create({
+      data: {
+        blocker: blocker.appUserId,
+        blocked: blocked.appUserId,
+      },
+    });
+  }
+}
+
 // FRIENDSHIPS
 async function seedFriendships(users) {
   const pairs = [
     [users[0], users[1], "accepted"],
-	  [users[0], users[3], "waiting"],
+    [users[0], users[2], "accepted"],
+    [users[0], users[3], "accepted"],
+    [users[5], users[0], "accepted"],
+    [users[0], users[6], "accepted"],
+    [users[0], users[7], "accepted"],
+	  [users[0], users[8], "waiting"],
 	  [users[4], users[0], "waiting"],
     [users[1], users[3], "accepted"],
     [users[2], users[4], "waiting"],
@@ -252,6 +285,8 @@ async function main() {
   await prisma.chatInvitation.deleteMany();
 
 
+  await seedBlocks(users);
+  console.log(" Blocks created!");
   await seedFriendships(users);
   console.log(" Friendships created!");
   await seedPrivateChats(users);

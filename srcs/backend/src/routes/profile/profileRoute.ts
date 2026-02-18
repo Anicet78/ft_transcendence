@@ -79,4 +79,19 @@ export async function profileRoutes(fastify: FastifyInstance) {
     },
     handler: profileController.unblockProfile
   });
+
+	fastify.post('/profile/avatar', {
+	schema: {
+		response: {
+		200: ProfileResponseSchema,
+		400: AppErrorSchema,
+		500: AppErrorSchema
+		}
+	},
+	handler: profileController.updateAvatar,
+	});
+
+	// no schema because it returns a file
+	fastify.get('/profile/avatar/:filename', 
+		{ handler: profileController.getAvatar });
 }

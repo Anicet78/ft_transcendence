@@ -3,12 +3,17 @@ import '../App.css'
 import type { GetResponse } from '../types/GetType'
 import api from '../serverApi';
 import { Box } from '@allxsmith/bestax-bulma';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+// import { useAuth } from '../auth/AuthContext';
 
 type ChatListResponseType = GetResponse<"/chat/list", "get">;
 
-const ChatList = () => {
+// const { user } = useAuth();
+
+const ChatList = ({ onSelectChat }: { onSelectChat?: (id: string) => void }) => {
 	
+	const navigate = useNavigate();
+
 	const { data, isLoading, isError, error } = useQuery({
 		queryKey: ['chat-list'],
 		queryFn: async () => {
@@ -26,6 +31,22 @@ const ChatList = () => {
 		<Box m="4" p="6" bgColor="white">
 			<h1 className="title">Your chats</h1>
 
+			{/* CREATE GROUP CHAT BUTTON */}
+			<Link
+				to="/chat/group/new"
+				className="button is-primary is-small mb-4"
+			>
+			Create Group Chat
+			</Link>
+
+			<Link
+				to="/group/invitations" className="button is-small is-warning"
+			>
+			Group Chat Invitations
+			</Link>
+
+
+			{/* LIST CHATS */}
 			{data.length === 0 && <p>You have no chats yet.</p>}
 
 			{data.map(chat => (
@@ -37,12 +58,33 @@ const ChatList = () => {
 				<p>Type: {chat.chatType}</p>
 				<p>Members: {chat.members.length}</p>
 
-				<Link
-				to={`/chat/${chat.chatId}/info`}
-				className="button is-dark is-small mt-2"
+				{/* <Link
+					to={`/chat/${chat.chatId}/info`}
+					className="button is-dark is-small mt-2"
 				>
 				Open chat
-				</Link>
+				</Link> */}
+
+				<button
+				className="button is-dark is-small mt-2"
+				onClick={() => {
+					if (onSelectChat) onSelectChat(chat.chatId);
+					else navigate(`/chat/${chat.chatId}/info`);
+				}}
+				>
+				Open chat
+				</button>
+
+{/* 
+				{chat.chatType === "group" && user?.role !== "owner" && (
+					<button
+						className="button is-warning is-light is-small ml-2"
+						// onClick={() => quitMutation.mutate(chat.chatId)}
+					>
+						Quit
+					</button>
+				)} */}
+
 			</Box>
 			))}
 		</Box>
@@ -50,43 +92,3 @@ const ChatList = () => {
 };
 
 export default ChatList;
-
-
-// import { useQuery } from "@tanstack/react-query";
-// import api from "../serverApi";
-// import type { GetResponse } from "../types/GetType";
-
-// export type ChatListResponse = GetResponse<"/chat/list", "get">;
-
-// export function useChatList() {
-// 	return useQuery({
-// 	queryKey: ["chat-list"],
-// 	queryFn: async () => {
-// 		const res = await api.get<ChatListResponse>("/chat/list");
-// 		return res.data;
-// 	}
-// 	});
-// }
-
-
-// import { useChatList } from "./useChatList";
-
-// const ChatList = () => {
-// 	const { data, isLoading, isError, error } = useChatList();
-
-// 	if (isLoading) return <div>Loading chats...</div>;
-// 	if (isError || !data) return <div>Error: {error?.message}</div>;
-
-// 	return (
-// 	<div>
-// 		<h1>Your chats</h1>
-
-// 		{data.map(chat => (
-// 		<div key={chat.chatId}>
-// 			<h2>{chat.chatName || chat.chatType}</h2>
-// 			<p>Members: {chat.members.length}</p>
-// 		</div>
-// 		))}
-// 	</div>
-// 	);
-// };
