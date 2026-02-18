@@ -39,7 +39,7 @@ const ProfilePublic = () => {
 	const userData: ProfileResponseType = userQuery.data;
 	const friendshipData: any = friendshipQuery.data;
 
-	const avatar = userData.avatarUrl || '../assets/skull.svg';
+	const avatar = userData.avatarUrl ? `http://localhost:3000/uploads/${userData.avatarUrl}` : '../assets/skull.svg';
 	const level = userData.gameProfile?.level || '0';
 	const xp = userData.gameProfile?.totalXp || '0';
 	const isConnected = userData.availability || false;

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router';
+import { NavLink } from 'react-router';
 import { Navbar, Icon } from '@allxsmith/bestax-bulma';
 import '../styles/Banner.css'
 import SearchBar from '../search/SearchBar.tsx';
@@ -8,10 +8,8 @@ import { useAuth } from '../auth/AuthContext.tsx';
 const Banner = () => {
 	const { user, logout } = useAuth()
 	const [active, setActive] = useState(true)
-	const connected = false
 	const username = user?.username || 'Username'
 	let path = user ? "/home" : "/";
-	const navigate = useNavigate()
 
 	const handleClick = () => {
 		logout()
@@ -32,9 +30,7 @@ const Banner = () => {
 			</Navbar.Brand>
 			<Navbar.Menu active={active}>
 				<Navbar.Start>
-					<Navbar.Item hidden={!connected}>
-						<SearchBar />
-					</Navbar.Item>
+					{user && (<Navbar.Item><SearchBar /></Navbar.Item>)}
 				</Navbar.Start>
 				<Navbar.End>
 						<NavLink to='/profile' aria-label='profile button' className='button is-primary is-medium is-centered'>

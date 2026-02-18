@@ -63,16 +63,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	});
 
 	useEffect(() => {
-		setOnLogout(logout);
-		setOnRefreshSuccess((newToken) => setToken(newToken));
-
-		return () => {
-			setOnLogout(null as any);
-			setOnRefreshSuccess(null as any);
-		};
-	}, [logout]);
-
-	useEffect(() => {
 		if (data?.data?.user && data.data.token) {
 			setUser(data.data.user);
 			setToken(data.data.token);
