@@ -34,13 +34,25 @@ const onPlayerJoined = (data: { playerId: string, playerUsername: string }, setR
 	});
 };
 
-const onPlayerQuit = (data: { playerId: string }, setRoom: React.Dispatch<React.SetStateAction<Room | null>>) => {
+const onPlayerQuit = (data: { playerId: string, newHost: string }, setRoom: React.Dispatch<React.SetStateAction<Room | null>>) => {
 	setRoom((prev) => {
 		if (!prev) return prev;
 
 		return {
 			...prev,
+			hostId: data.newHost,
 			players: prev.players.filter(players => players.id !== data.playerId)
+		};
+	});
+};
+
+const onHostChanged = (data: { newHost: string }, setRoom: React.Dispatch<React.SetStateAction<Room | null>>) => {
+	setRoom((prev) => {
+		if (!prev) return prev;
+
+		return {
+			...prev,
+			hostId: data.newHost
 		};
 	});
 };
@@ -104,6 +116,8 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 
 		socket.on('player_joined', (data) => onPlayerJoined(data, setRoom));
 		socket.on('player_left', (data) => onPlayerQuit(data, setRoom));
+		socket.on('host_changed', (data) => onHostChanged(data, setRoom));
+		socket.on('kicked', () => newRoom);
 		socket.on('launch', () => {
 			setStart(true);
 			navigate("/game");

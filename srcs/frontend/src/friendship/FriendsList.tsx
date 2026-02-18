@@ -5,11 +5,12 @@ import { NavLink } from "react-router";
 import { useQuery } from '@tanstack/react-query';
 import api, { getAccessToken } from '../serverApi.ts';
 import type { GetResponse } from '../types/GetType.ts'
+import { useAuth } from "../auth/AuthContext.tsx";
 
 type FriendsListResponseType = GetResponse<"/friends", "get">;
 
 const FriendList = () => {
-	const myUsername = "nina"
+	const { user } = useAuth()
 
 	const { data, isLoading, isError, error } = useQuery({
 		queryKey: ['friends', getAccessToken()],
@@ -23,8 +24,8 @@ const FriendList = () => {
 	const listItems = userData.map(friend => {
 		return (
 		<li key={friend.friendshipId}>
-			{friend.sender.username !== myUsername && <NavLink to={"/profile/" + friend.sender.username}>{friend.sender.username}</NavLink>}
-			{friend.receiver.username !== myUsername && <NavLink to={"/profile/" + friend.receiver.username}>{friend.receiver.username}</NavLink>}
+			{friend.sender.appUserId !== user?.id && <NavLink to={"/profile/" + friend.sender.username}>{friend.sender.username}</NavLink>}
+			{friend.receiver.appUserId !== user?.id && <NavLink to={"/profile/" + friend.receiver.username}>{friend.receiver.username}</NavLink>}
 			<Button>Join</Button>
 			<Button>Spectate</Button>
 		</li>

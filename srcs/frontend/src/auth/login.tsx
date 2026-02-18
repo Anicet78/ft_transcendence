@@ -12,50 +12,60 @@ import api from '../serverApi.ts';
 
 import type { GetBody, GetResponse } from '../types/GetType.ts';
 import { useAuth } from './AuthContext.tsx';
+import { useState } from 'react';
 
 type LoginBodyType = GetBody<"/auth/login", "post">;
 type LoginResponseType = GetResponse<"/auth/login", "post">;
 
 function Login() {
-  const { login } = useAuth();
+	const { login } = useAuth();
 
-  const mutation = useMutation({
-    mutationFn: (data: LoginBodyType) => api.post("/auth/login", data),
-    onSuccess: (data) => {
-      const response: LoginResponseType = data.data;
-      login(response.user, response.token);
-    },
-  });
+	const mutation = useMutation({
+		mutationFn: (data: LoginBodyType) => api.post("/auth/login", data),
+		onSuccess: (data) => {
+			const response: LoginResponseType = data.data;
+			login(response.user, response.token);
+		},
+	});
 
-	const loginAction = (formData: FormData) => {
-		let email = formData.get("email");
-		let password = formData.get("pwd");
+	const [formData, setFormData] = useState({
+		email: '',
+		password: '',
+	});
 
-		if (!email || !password) return ;
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setFormData((prevState) => ({
+			...prevState,
+			[name]: value,
+		}));
+	};
 
-		mutation.mutate({ email: email.toString(), password: password.toString() });
+	const loginSubmit = (e) => {
+		e.preventDefault();
+		mutation.mutate({ email: formData.email, password: formData.password });
 	};
 
 	return (
 		<>
 			<div className="card">
 				<div>
-				<Button color='primary' isOutlined className='login-button'>Login with Google</Button>
-				<Button color='primary' isOutlined className='login-button'>Login with 42</Button>
+					<Button color='primary' isOutlined className='login-button'>Login with Google</Button>
+					<Button color='primary' isOutlined className='login-button'>Login with 42</Button>
 				</div>
 				<br />
-				<form action={loginAction}>
-				<InputEmail label="Email"/>
-				<InputPassword label="Password" id="pwd"/>
+				<form onSubmit={loginSubmit}>
+					<InputEmail label="Email" type="email" name="email" value={formData.email} onChange={handleChange} placeholder="example@transcendence.com" />
+					<InputPassword label="Password" type="password" name="password" value={formData.password} onChange={handleChange} placeholder="••••••••••••" />
 
-				{mutation.isError && (
-					<div style={{ color: 'red' }}>
-					Erreur : {mutation.error instanceof Error ? mutation.error.message : 'Unknown'}
-					</div>
-				)}
-				<ButtonSubmit
-					name={mutation.isPending ? 'Loading...' : 'Sign in'}
-				/>
+					{mutation.isError && (
+						<div style={{ color: 'red' }}>
+							Erreur : {mutation.error instanceof Error ? mutation.error.message : 'Unknown'}
+						</div>
+					)}
+					<ButtonSubmit
+						name={mutation.isPending ? 'Loading...' : 'Sign in'}
+					/>
 				</form>
 			</div>
 		</>
