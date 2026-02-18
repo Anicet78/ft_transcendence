@@ -50,7 +50,7 @@ CREATE TABLE app_user (
 	CHECK (trim(mail_address) <> '')
 );
 
-CREATE TYPE auth_provider AS ENUM ('google', '42');
+CREATE TYPE auth_provider AS ENUM ('google', 'fortyTwo');
 
 CREATE TABLE identify (
 	"provider" auth_provider NOT NULL,

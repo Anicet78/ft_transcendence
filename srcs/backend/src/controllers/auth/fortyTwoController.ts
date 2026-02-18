@@ -1,12 +1,12 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import "@fastify/cookie";
-import type { GoogleType } from "../../routes/auth/googleRoute.js";
+import type { FortyTwoType } from "../../routes/auth/fortyTwoRoute.js";
 import { AppError } from "../../schema/errorSchema.js";
 import { UserService } from "../../services/db/userService.js";
 import { createRefreshToken } from "../../services/auth/token.js";
 import type { LoginResponseType } from "../../routes/auth/loginRoute.js";
 
-interface GoogleTokensResult {
+interface FortyTwoTokensResult {
 	access_token: string;
 	expires_in: number;
 	refresh_token?: string;
@@ -15,88 +15,92 @@ interface GoogleTokensResult {
 	id_token: string;
 }
 
-interface GoogleErrorResponse {
+interface FortyTwoErrorResponse {
 	error: string;
 	error_description: string;
 }
 
-interface GoogleUserInfo {
-	sub: string;
-	name?: string;
-	given_name: string;
-	family_name?: string;
-	picture?: string;
+interface FortyTwoUserInfo {
+	id: string;
 	email: string;
-	email_verified: boolean;
-	locale?: string;
+	login: string;
+	first_name: string;
+	last_name: string;
+	image: { link: string };
 }
 
-export async function googleCallbackController(
-	request: FastifyRequest<{ Body: GoogleType }>,
+export async function fortyTwoCallbackController(
+	request: FastifyRequest<{ Body: FortyTwoType }>,
 	reply: FastifyReply
 ) {
-	if (!process.env.VITE_GOOGLE_CLIENT_ID || !process.env.GOOGLE_SECRET)
-		return reply.code(500).send({ error: "Google identifiers are not setup" });
+	if (!process.env.VITE_42_CLIENT_ID || !process.env.SECRET_42)
+		return reply.code(500).send({ error: "42 identifiers are not setup" });
 
 	const { code } = request.body;
 
-	const response = await fetch('https://oauth2.googleapis.com/token', {
+	const response = await fetch('https://api.intra.42.fr/oauth/token', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 		body: new URLSearchParams({
 			code,
-			client_id: process.env.VITE_GOOGLE_CLIENT_ID,
-			client_secret: process.env.GOOGLE_SECRET,
-			redirect_uri: 'http://localhost:5173/callbackGoogle', // change with https://localhost:8443/callbackGoogle
+			client_id: process.env.VITE_42_CLIENT_ID,
+			client_secret: process.env.SECRET_42,
+			redirect_uri: 'http://localhost:5173/callback42', // change with https://localhost:8443/callback42
 			grant_type: 'authorization_code',
 		}),
 	});
 
 	if (!response.ok) {
-		const errorData = await response.json() as GoogleErrorResponse;
+		const errorData = await response.json() as FortyTwoErrorResponse;
 
-		throw new AppError(`Google Auth failed: ${errorData.error_description || errorData.error}`);
+		throw new AppError(`42 Auth failed: ${errorData.error_description || errorData.error}`);
 	}
 
-	const googleTokens = await response.json() as GoogleTokensResult;
+	const fortyTwoTokens = await response.json() as FortyTwoTokensResult;
 
-	const userRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-		headers: { Authorization: `Bearer ${googleTokens.access_token}` }
+	const userResponse = await fetch('https://api.intra.42.fr/v2/me', {
+		headers: {
+			'Authorization': `Bearer ${fortyTwoTokens.access_token}`
+		}
 	});
 
-	const googleUser = (await userRes.json()) as GoogleUserInfo;
+	if (!userResponse.ok) {
+		throw new Error("Cannot fetch the 42 user's infos");
+	}
 
-	const providerUser = (await UserService.getUserByProviderId("google", googleUser.sub))?.app_user;
+	const fortyTwoUser = (await userResponse.json()) as FortyTwoUserInfo;
+
+	const providerUser = (await UserService.getUserByProviderId("fortyTwo", fortyTwoUser.id))?.app_user;
 	let loginResponse: LoginResponseType;
 
 	if (providerUser) {
 		loginResponse = { token: "", user: { id: providerUser.appUserId, email: providerUser.mail, username: providerUser.username, role: providerUser.rolesReceived[0]?.role ?? 'user' } };
 	}
 	else {
-		const userByMail = await UserService.getUserByMail(googleUser.email);
+		const userByMail = await UserService.getUserByMail(fortyTwoUser.email);
 
 		if (userByMail)
 			loginResponse = { token: "", user: { id: userByMail.appUserId, email: userByMail.mail, username: userByMail.username, role: userByMail.rolesReceived[0]?.role ?? 'user' } };
 		else {
-			let currentUsername = googleUser.given_name;
+			let currentUsername = fortyTwoUser.login;
 			let searchUser = await UserService.getUserByUsername(currentUsername);
 			let i = 1;
 			while (searchUser) {
-				currentUsername = googleUser.given_name + i.toString();
+				currentUsername = fortyTwoUser.login + i.toString();
 				searchUser = await UserService.getUserByUsername(currentUsername);
 				i++;
 			}
 
 			const createdUser = await UserService.createUserWithProvider({
 				id: "",
-				email: googleUser.email,
-				firstname: googleUser.given_name,
-				lastname: googleUser.family_name ?? "",
+				email: fortyTwoUser.email,
+				firstname: fortyTwoUser.first_name,
+				lastname: fortyTwoUser.last_name,
 				passwordHash: "",
 				region: "EU",
 				role: 'user',
 				username: currentUsername
-			}, "google", googleUser.sub);
+			}, "fortyTwo", fortyTwoUser.id);
 
 			loginResponse = { token: "", user: { id: createdUser.appUserId, email: createdUser.mail, username: createdUser.username, role: 'user'} };
 

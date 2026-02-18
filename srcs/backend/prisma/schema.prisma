@@ -326,5 +326,5 @@ enum roles {
 
 enum auth_provider {
   google
-  // 42 @map("42")
+  fortyTwo
 }

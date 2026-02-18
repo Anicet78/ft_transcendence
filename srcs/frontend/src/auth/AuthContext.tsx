@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		setUser(userData);
 		setToken(userToken);
 		setAccessToken(userToken);
+		toast({ title: `Welcome ${userData.username}` });
 		navigate("/home");
 	}, [navigate]);
 
@@ -55,18 +56,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		};
 	}, [logout]);
 
+	const publicRoutes = ['/login', '/register', '/callback42', '/callbackGoogle'];
+
 	useEffect(() => {
 		if (data) {
 			setUser(data.data.user);
 			setToken(data.data.token);
 			setAccessToken(data.data.token);
-			toast({ title: `Welcome ${data.data.user.username}` });
 		}
 		if (!isLoading) {
+			if (data && !publicRoutes.includes(window.location.pathname))
+				toast({ title: `Welcome ${data.data.user.username}` });
 			setIsInitializing(false);
 		}
 		if (isError) {
-			navigate('/');
+			if (!publicRoutes.includes(window.location.pathname))
+				navigate('/');
 		}
 
 		return () => {

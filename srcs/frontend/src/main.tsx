@@ -37,7 +37,8 @@ import { ChatProvider } from './chat/ChatContext.tsx';
 import GroupChatCreation from './chat/components/GroupChatCreation.tsx';
 import GroupChatInvitations from './chat/components/GroupChatInvitations.tsx';
 import InviteToGroupChat from './chat/components/GroupChatCreation.tsx';
-import Callback from './auth/callback.tsx';
+import CallbackGoogle from './auth/callbackGoogle.tsx';
+import Callback42 from './auth/callback42.tsx';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -56,7 +57,8 @@ const AppEntryPoint = () => {
 				<Route path="/test" element={<SearchComponent />} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/register" element={<Register />} />
-				<Route path="/callback" element={<Callback />} />
+				<Route path="/callbackGoogle" element={<CallbackGoogle />} />
+				<Route path="/callback42" element={<Callback42 />} />
 
 				<Route path="/home" element={<Home />} />
 				<Route path="/join/:roomId" element={<JoinRoom />} />

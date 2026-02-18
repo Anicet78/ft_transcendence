@@ -56,7 +56,7 @@ export const UserService = {
 			where: {
 				provider_providerId: {
 					provider: provider,
-					providerId: providerId
+					providerId: providerId.toString()
 			} },
 			select: {
 				app_user: {
@@ -108,7 +108,7 @@ export const UserService = {
 				identify: {
 					create: {
 						provider: provider,
-						providerId: providerId,
+						providerId: providerId.toString(),
 					}
 				}
 			},

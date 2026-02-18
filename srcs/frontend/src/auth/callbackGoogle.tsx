@@ -9,7 +9,7 @@ import toast from "../Notifications";
 type GoogleBodyType = GetBody<"/auth/google", "post">;
 type GoogleResponseType = GetResponse<"/auth/google", "post">;
 
-function Callback() {
+function CallbackGoogle() {
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
 	const { login } = useAuth();
@@ -37,8 +37,8 @@ function Callback() {
 	if (mutation.isPending)
 		return <div>Logging with google...</div>
 
-	if (mutation.error) {
-		toast({ title: "An error occured", message: "Connection failed", type: "is-danger"})
+	if (mutation.isError) {
+		toast({ title: "An error occured", message: mutation.error.message, type: "is-danger"})
 		navigate("/login");
 		return ;
 	}
@@ -48,4 +48,4 @@ function Callback() {
 	)
 }
 
-export default Callback
+export default CallbackGoogle

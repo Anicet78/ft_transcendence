@@ -39,7 +39,7 @@ export default fp(async (fastify) => {
 	fastify.addHook("onRequest", async (request: FastifyRequest, reply: FastifyReply) => {
 		const currentRoute = request.routeOptions.url;
 
-		const publicRoutes = ['/auth/register', '/auth/login', '/auth/refresh', '/auth/google', '/documentation/json', '/'];
+		const publicRoutes = ['/auth/register', '/auth/login', '/auth/refresh', '/auth/42', '/auth/google', '/documentation/json', '/'];
 
 		if (currentRoute && publicRoutes.includes(currentRoute)) return;
 
