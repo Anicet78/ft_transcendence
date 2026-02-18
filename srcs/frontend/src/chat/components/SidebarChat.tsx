@@ -47,8 +47,9 @@ export function SidebarChat() {
         background: "white",
         display: "flex",
         flexDirection: "column",
-        position: "relative",
-        overflow: "hidden"
+        overflowY: "auto",
+        overflowX: "hidden"
+
       }}
     >
       {/* COLLAPSE BUTTON */}

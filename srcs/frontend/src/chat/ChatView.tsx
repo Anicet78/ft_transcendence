@@ -5,10 +5,10 @@ import { useChatMessages } from "./hooks/useChatMessages";
 import { Box } from "@allxsmith/bestax-bulma";
 
 import { useChatSocket } from "./hooks/useChatSocket";
-import { InviteToGroupChat } from "./components/InviteToGroupChat";
 import { useGroupChatMutations } from "./hooks/useGroupChatMutations";
 import { ChatMembers } from "./components/ChatMembers";
 import { ChatRoom } from "./components/ChatRoom";
+import { InviteToGroupChat } from "./components/InviteToGroupChat";
 
 // const ChatView = () => {
 const ChatView = ({ chatId: propChatId, onClose }: {
@@ -40,6 +40,16 @@ const ChatView = ({ chatId: propChatId, onClose }: {
 
 	return (
 		<Box m="4" p="6" bgColor="white">
+
+			{onClose && (
+				<button
+					className="button is-light is-small mb-3"
+					onClick={onClose}
+				>
+				Back to chats
+				</button>
+			)}
+
 			<h1 className="title">
 				{chat.chatName || (chat.chatType === "private" ? "Private chat" : "Group chat")}
 			</h1>

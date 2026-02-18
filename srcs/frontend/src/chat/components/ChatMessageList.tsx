@@ -39,6 +39,7 @@ export function MessageList({
 	onModerate,
 	onRestore
 }: MessageListProps) {
+
 	const { user } = useAuth();
 
 	// const isModerator = ["owner", "admin", "moderator"].includes(role ?? "");
@@ -50,69 +51,69 @@ export function MessageList({
 	<>
 		{messages?.map(msg => {
 
-		return (
-			<Box key={msg.messageId} className="box" m="2" p="3">
-			<strong>
-				<Link
-				to={`/profile/${encodeURIComponent(msg.author.username)}`}
-				className="has-text-dark"
-				>
-				{msg.author.username}
-				</Link>
-			</strong>
-
-			<p>{/*msg.status === "moderated" ? "Message moderated" : */msg.content}</p>
-			<small>
-				{msg.postedAt ? new Date(msg.postedAt).toLocaleString() : ""}
-			</small>
-
-			{/* AUTHOR ACTIONS */}
-			{msg.userId === user?.id && msg.status === "posted" && (
-				<>
-				<button
-					className="button is-warning is-small mt-2"
-					onClick={() => {
-					const newContent = prompt("Edit message:", msg.content);
-					if (newContent)
-						onEdit({ messageId: msg.messageId, content: newContent });
-					}}
-				>
-					Edit
-				</button>
-
-				<button
-					className="button is-danger is-small mt-2"
-					onClick={() => onDelete(msg.messageId)}
-				>
-					Delete
-				</button>
-				</>
-			)}
-
-			{/* MODERATOR ACTIONS */}
-			{permissions.canModerate && (
-				<>
-				{msg.status !== "moderated" && (
-					<button
-					className="button is-danger is-small mt-2 ml-2"
-					onClick={() => onModerate(msg.messageId)}
+			return (
+				<Box key={msg.messageId} className="box" m="2" p="3">
+				<strong>
+					<Link
+					to={`/profile/${encodeURIComponent(msg.author.username)}`}
+					className="has-text-dark"
 					>
-					Moderate
+					{msg.author.username}
+					</Link>
+				</strong>
+
+				<p>{/*msg.status === "moderated" ? "Message moderated" : */msg.content}</p>
+				<small>
+					{msg.postedAt ? new Date(msg.postedAt).toLocaleString() : ""}
+				</small>
+
+				{/* AUTHOR ACTIONS */}
+				{msg.userId === user?.id && msg.status === "posted" && (
+					<>
+					<button
+						className="button is-warning is-small mt-2"
+						onClick={() => {
+						const newContent = prompt("Edit message:", msg.content);
+						if (newContent)
+							onEdit({ messageId: msg.messageId, content: newContent });
+						}}
+					>
+						Edit
 					</button>
+
+					<button
+						className="button is-danger is-small mt-2"
+						onClick={() => onDelete(msg.messageId)}
+					>
+						Delete
+					</button>
+					</>
 				)}
 
-				{msg.status === "moderated" && (
-					<button
-					className="button is-success is-small mt-2 ml-2"
-					onClick={() => onRestore(msg.messageId)}
-					>
-					Restore
-					</button>
+				{/* MODERATOR ACTIONS */}
+				{permissions.canModerate && (
+					<>
+					{msg.status !== "moderated" && (
+						<button
+						className="button is-danger is-small mt-2 ml-2"
+						onClick={() => onModerate(msg.messageId)}
+						>
+						Moderate
+						</button>
+					)}
+
+					{msg.status === "moderated" && (
+						<button
+						className="button is-success is-small mt-2 ml-2"
+						onClick={() => onRestore(msg.messageId)}
+						>
+						Restore
+						</button>
+					)}
+					</>
 				)}
-				</>
-			)}
-			</Box>
-		);
+				</Box>
+			);
 		})}
 	</>
 	);

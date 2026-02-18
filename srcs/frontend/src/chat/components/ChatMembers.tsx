@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import { useChat } from "../ChatContext";
 import { useChatRoleMutation } from "../hooks/useChatRoleMutations";
@@ -11,14 +12,31 @@ export function ChatMembers({ chatId }) {
 	const roleMutation = useChatRoleMutation(chatId);
 	const {kickMutation} = useGroupChatMutations(chatId);
 
+	 const [open, setOpen] = useState(false); 
+
 	if (!chat)
 		return null; //<div>Loading chat...</div>;
 
 	return (
 		<div className="mb-4">
-			<strong>Members:</strong>
+		{/* HEADER */}
+			<div onClick={() => setOpen(!open)}
+				style={{
+					cursor: "pointer",
+					fontWeight: "bold",
+					display: "flex",
+					alignItems: "center",
+					userSelect: "none",
+					marginBottom: "6px"
+				}}
+			>
+				<span style={{ marginRight: "6px" }}>
+					{open ? "▼" : "▶"}
+				</span>
+					Members ({chat.members.length})
+			</div>
 
-			<ul>
+			{open && (<ul>
 				{chat.members.map(m => (
 				<li key={m.chatMemberId} className="mb-1">
 					{m.user.username} - <em>{m.role}</em>
@@ -54,6 +72,7 @@ export function ChatMembers({ chatId }) {
 				</li>
 				))}
 			</ul>
+			)}
 		</div>
 	);
 }
