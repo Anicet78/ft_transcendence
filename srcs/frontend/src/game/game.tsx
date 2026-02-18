@@ -134,11 +134,9 @@ const Game = () => {
 		<div style={{ display: "flex", height: "100vh" }}>
 			
 			{/* GAME CANVAS */}
-			<div style={{ flex: 1, overflow: "hidden" }}>
-			<Box m="4" p="6" bgColor="grey-light">
+			<Box p="6" bgColor="grey-light" style={{ height: "100%", width: "100%" }}>
 				<canvas ref={canvasRef} id="game-canvas" width="800" height="950" tabIndex={1}></canvas>
 			</Box>
-			</div>
 
 			{/* CHAT SIDEBAR */}
 			<SidebarChat />

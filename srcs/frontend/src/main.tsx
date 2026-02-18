@@ -35,7 +35,7 @@ import { Toaster } from "sonner";
 import { ChatProvider } from './chat/ChatContext.tsx';
 import GroupChatCreation from './chat/components/GroupChatCreation.tsx';
 import GroupChatInvitations from './chat/components/GroupChatInvitations.tsx';
-import InviteToGroupChat from './chat/components/GroupChatCreation.tsx';
+import { InviteToGroupChat } from './chat/components/InviteToGroupChat.tsx';
 import BlockUser from './profile/blockUser.tsx';
 import SearchPage from './search/SearchPage.tsx';
 
