@@ -21,27 +21,33 @@ const FriendList = () => {
 	if (isError || !data) return <div>Error: {error?.message || 'unknown'}</div>;
 
 	const userData: FriendsListResponseType = data.data;
-	const listItems = userData.map(friend => {
-		return (
-		<li key={friend.friendshipId}>
-			{friend.sender.appUserId !== user?.id && <NavLink to={"/profile/" + friend.sender.username}>{friend.sender.username}</NavLink>}
-			{friend.receiver.appUserId !== user?.id && <NavLink to={"/profile/" + friend.receiver.username}>{friend.receiver.username}</NavLink>}
-			<Button>Join</Button>
-			<Button>Spectate</Button>
-		</li>
-		)
-	})
 
 	return (
 		<Box bgColor="grey" textColor="black" className="wrapbox">
-			<h1>
-			My friends list
-			</h1>
+			<h1>My friends list</h1>
 			<Box m="4" p="6"  className="friendbox" bgColor="grey-light" textColor="black" justifyContent='space-between'>
-			<ul>
-				{listItems}
-				<br />
-			</ul>
+			<ul className="user_list">
+					{userData.map(friend => {
+						const friendUser = friend.sender.appUserId !== user?.id ? friend.sender : friend.receiver;
+						const avatarUrl = friendUser.avatarUrl 
+							? `http://localhost:3000/uploads/${friendUser.avatarUrl}`
+							: '../assets/skull.svg';
+
+						return (
+							<li key={friend.friendshipId} className="user_item_card">
+								<img src={avatarUrl} alt={friendUser.username} className="user_avatar"/>
+								<p className="username">{friendUser.username}</p>
+								<div className="friend_actions">
+									<Button className="interaction_btn">Join</Button>
+									<Button className="interaction_btn">Spectate</Button>
+									<NavLink to={"/profile/" + friendUser.username} className="view_profile_btn">
+										View Profile
+									</NavLink>
+								</div>
+							</li>
+						)
+					})}
+				</ul>
 			</Box>
 			<NavLink to="/friends/requests" className="button is-medium">View ongoing friend requests</NavLink>
 		</Box>
