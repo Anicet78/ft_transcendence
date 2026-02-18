@@ -36,7 +36,7 @@ import { Toaster } from "sonner";
 import { ChatProvider } from './chat/ChatContext.tsx';
 import GroupChatCreation from './chat/components/GroupChatCreation.tsx';
 import GroupChatInvitations from './chat/components/GroupChatInvitations.tsx';
-import InviteToGroupChat from './chat/components/GroupChatCreation.tsx';
+import { InviteToGroupChat } from './chat/components/InviteToGroupChat.tsx';
 
 
 const queryClient = new QueryClient({
