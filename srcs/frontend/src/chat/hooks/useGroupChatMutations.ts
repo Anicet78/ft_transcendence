@@ -1,10 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
 import { useChat } from "../ChatContext";
 import api from "../../serverApi";
+import { useMessagesMutations } from "./useMessagesMutations";
+import toast from '../../Notifications.tsx';
 
 export function useGroupChatMutations(chatId?: string) {
 	
 	const { joinChat, leaveChat } = useChat();
+	const { sendMessageMutation } = useMessagesMutations(chatId); 
 
 	const kickMutation = useMutation({
 		mutationFn: async (memberId: string) => {
@@ -38,5 +41,18 @@ export function useGroupChatMutations(chatId?: string) {
 		}
 	});
 
-	return { kickMutation, quitChatMutation, disbandMutation };
+	const gameInviteMutation = useMutation({
+		mutationFn: async () => {
+			const result = await api.get("/room/me");
+			const  roomId = result.data.roomId;
+
+			const content = `Join my game 🎮 http://localhost:5173/join/${roomId}`;
+			return sendMessageMutation.mutateAsync(content);
+		},
+		onSuccess: () => {
+			toast({ title: `Game invite sent`, type: "is-info" });
+		}
+	});
+
+	return { kickMutation, quitChatMutation, disbandMutation, gameInviteMutation };
 }

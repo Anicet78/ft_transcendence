@@ -21,7 +21,7 @@ const ChatView = ({ chatId: propChatId, onClose }: {
 	const { chat, role, joinChat } = useChat();
 
 	const { isLoading, isError } = useChatMessages(chatId);
-	const { quitChatMutation, disbandMutation } = useGroupChatMutations(chatId);
+	const { quitChatMutation, disbandMutation, gameInviteMutation } = useGroupChatMutations(chatId);
 
 	useChatSocket(chatId);
 
@@ -55,6 +55,14 @@ const ChatView = ({ chatId: propChatId, onClose }: {
 			</h1>
 
 			<ChatMembers chatId={chatId} />
+
+			{/* GAME INVITE */}
+			<button
+				className="button is-info is-small mb-3"
+				onClick={() => gameInviteMutation.mutate()}
+			>
+			Invite to play game 🎮
+			</button>
 
 			{/* QUIT CHAT */}
 			{chat.chatType === "group" && role !== "owner" && (
