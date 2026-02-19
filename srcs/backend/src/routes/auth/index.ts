@@ -11,7 +11,6 @@ export async function authRouter(fastify: FastifyInstance) {
 	fastify.register(registerRoutes);
 	fastify.register(loginRoutes);
 	fastify.register(refreshRoutes);
-	fastify.register(offlineRoutes);
 	fastify.register(googleRoutes);
 	fastify.register(fortyTwoRoutes);
 }
