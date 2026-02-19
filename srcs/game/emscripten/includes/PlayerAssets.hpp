@@ -63,17 +63,17 @@ class PlayerAssets
 
 		static void	importPlayersAssets(int tile_size);
 
-		static void	rendPlayerWalk(int playerNum, int x, int y, int index, float scale, int player_dir);
-		static void	rendPlayerAttack(int playerNum, int x, int y, int index, float scale, int player_dir);
-		static void	rendPlayerIdle(int playerNum, int x, int y, int index, float scale, int player_dir);
+		static void	rendPlayerWalk(int playerNum, int x, int y, int index, float scale, int player_dir, int flag);
+		static void	rendPlayerAttack(int playerNum, int x, int y, int index, float scale, int player_dir, int flag);
+		static void	rendPlayerIdle(int playerNum, int x, int y, int index, float scale, int player_dir, int flag);
 
-		static void	rendPlayerWalkFront(int playerNum, int x, int y, int index, float scale);
-		static void	rendPlayerAttackFront(int playerNum, int x, int y, int index, float scale);
-		static void	rendPlayerIdleFront(int playerNum, int x, int y, int index, float scale);
+		static void	rendPlayerWalkFront(int playerNum, int x, int y, int index, float scale, int flag);
+		static void	rendPlayerAttackFront(int playerNum, int x, int y, int index, float scale, int flag);
+		static void	rendPlayerIdleFront(int playerNum, int x, int y, int index, float scale, int flag);
 
-		static void	rendPlayerWalkBack(int playerNum, int x, int y, int index, float scale);
-		static void	rendPlayerAttackBack(int playerNum, int x, int y, int index, float scale);
-		static void	rendPlayerIdleBack(int playerNum, int x, int y, int index, float scale);
+		static void	rendPlayerWalkBack(int playerNum, int x, int y, int index, float scale, int flag);
+		static void	rendPlayerAttackBack(int playerNum, int x, int y, int index, float scale, int flag);
+		static void	rendPlayerIdleBack(int playerNum, int x, int y, int index, float scale, int flag);
 
 };
 

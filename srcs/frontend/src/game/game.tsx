@@ -80,8 +80,8 @@ const Game = () => {
 				(window as any).sendResults = (mod as any).sendResults;
 
 				setModule(mod);
-				// Add session size
-				mod.callMain([user.id, user.username, room.roomId, room.players.length.toString(), "5"]);
+				// Add username and session size
+				mod.callMain([user.id, 'username', room.roomId, room.players.length.toString(), "1"]);
 			} catch (e) {
 				console.error("Wasm Error:", e);
 			}
@@ -134,11 +134,9 @@ const Game = () => {
 		<div style={{ display: "flex", height: "100vh" }}>
 			
 			{/* GAME CANVAS */}
-			<div style={{ flex: 1, overflow: "hidden" }}>
-			<Box m="4" p="6" bgColor="grey-light">
+			<Box p="6" bgColor="grey-light" style={{ height: "100%", width: "100%" }}>
 				<canvas ref={canvasRef} id="game-canvas" width="800" height="950" tabIndex={1}></canvas>
 			</Box>
-			</div>
 
 			{/* CHAT SIDEBAR */}
 			<SidebarChat />

@@ -30,15 +30,16 @@ import AddFriend from './friendship/AddFriend.tsx';
 import { AuthProvider } from './auth/AuthContext.tsx';
 import { SocketProvider } from './socket/SocketContext.tsx';
 import { RoomProvider } from './home/RoomContext.tsx';
-import SearchComponent from './search/searchComponent.tsx';
 import ProfileUpdate from './profile/ProfileUpdate.tsx';
 import { Toaster } from "sonner";
 import { ChatProvider } from './chat/ChatContext.tsx';
 import GroupChatCreation from './chat/components/GroupChatCreation.tsx';
 import GroupChatInvitations from './chat/components/GroupChatInvitations.tsx';
-import InviteToGroupChat from './chat/components/GroupChatCreation.tsx';
 import CallbackGoogle from './auth/callbackGoogle.tsx';
 import Callback42 from './auth/callback42.tsx';
+import { InviteToGroupChat } from './chat/components/InviteToGroupChat.tsx';
+import BlockUser from './profile/blockUser.tsx';
+import SearchPage from './search/SearchPage.tsx';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -51,10 +52,9 @@ const queryClient = new QueryClient({
 const AppEntryPoint = () => {
 	return (
 		<>
-			<h1><Banner /></h1>
+			<Banner />
 			<Routes>
 				<Route path="/" element={<App />} />
-				<Route path="/test" element={<SearchComponent />} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/register" element={<Register />} />
 				<Route path="/callbackGoogle" element={<CallbackGoogle />} />
@@ -63,6 +63,7 @@ const AppEntryPoint = () => {
 				<Route path="/home" element={<Home />} />
 				<Route path="/join/:roomId" element={<JoinRoom />} />
 				<Route path="/game" element={<Game />} />
+				<Route path="/search" element={<SearchPage />} />
 
 				<Route path="/friends/list" element={<FriendList />} />
 				<Route path="/friends/requests/" element={<FriendRequest />} />
@@ -80,6 +81,9 @@ const AppEntryPoint = () => {
 				<Route path="/profile" element={<ProfilePrivate />} />
 				<Route path="/profile/update/:field" element={<ProfileUpdate />} />
 				<Route path="/profile/:username" element={<ProfilePublic />} />
+				<Route path="/profile/:id/unblock" element={<BlockUser />} />
+				<Route path="/profile/:id/block" element={<BlockUser />} />
+
 				<Route path="/terms_of_service" element={<TermsService />} />
 				<Route path="/privacy_policy" element={<Privacy />} />
 				<Route path="*" element={<Error />} />

@@ -2,7 +2,6 @@ import type { FastifyInstance } from 'fastify';
 import { loginRoutes } from './loginRoute.js';
 import { registerRoutes } from './registerRoute.js';
 import { meRoutes } from './meRoute.js';
-import { offlineRoutes } from './offlineRoute.js';
 import { refreshRoutes } from './refreshRoute.js';
 import { googleRoutes } from './googleRoute.js';
 import { fortyTwoRoutes } from './fortyTwoRoute.js';

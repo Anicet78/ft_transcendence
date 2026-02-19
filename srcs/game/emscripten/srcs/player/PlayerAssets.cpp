@@ -266,9 +266,14 @@ void	PlayerAssets::importPlayersAssets(int tile_size)
 
 
 
-void	PlayerAssets::rendPlayerWalk(int playerNum, int x, int y, int assetIndex, float scale, int player_dir)
+void	PlayerAssets::rendPlayerWalk(int playerNum, int x, int y, int assetIndex, float scale, int player_dir, int flag)
 {
 	(void)playerNum;
+	if (flag)
+	{
+		SDL_SetTextureBlendMode(_playerWalkText, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(_playerWalkText, 128);
+	}
 	if (assetIndex < 0)
 	{
 		std::cerr << "Invalid index" << std::endl;
@@ -292,11 +297,18 @@ void	PlayerAssets::rendPlayerWalk(int playerNum, int x, int y, int assetIndex, f
 		SDL_RenderCopy(gSdl.renderer, _playerWalkText, rect, &renderRect);
 	else
 		SDL_RenderCopyEx(gSdl.renderer, _playerWalkText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
+	if (flag)
+		SDL_SetTextureAlphaMod(_playerWalkText, 255);
 }
 
-void	PlayerAssets::rendPlayerWalkFront(int playerNum, int x, int y, int assetIndex, float scale)
+void	PlayerAssets::rendPlayerWalkFront(int playerNum, int x, int y, int assetIndex, float scale, int flag)
 {
 	(void)playerNum;
+	if (flag)
+	{
+		SDL_SetTextureBlendMode(_playerWalkFrontText, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(_playerWalkFrontText, 128);
+	}
 	if (assetIndex < 0)
 	{
 		std::cerr << "Invalid index" << std::endl;
@@ -317,11 +329,18 @@ void	PlayerAssets::rendPlayerWalkFront(int playerNum, int x, int y, int assetInd
 	}
 
 	SDL_RenderCopy(gSdl.renderer, _playerWalkFrontText, rect, &renderRect);
+	if (flag)
+		SDL_SetTextureAlphaMod(_playerWalkFrontText, 255);
 }
 
-void	PlayerAssets::rendPlayerWalkBack(int playerNum, int x, int y, int assetIndex, float scale)
+void	PlayerAssets::rendPlayerWalkBack(int playerNum, int x, int y, int assetIndex, float scale, int flag)
 {
 	(void)playerNum;
+	if (flag)
+	{
+		SDL_SetTextureBlendMode(_playerWalkBackText, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(_playerWalkBackText, 128);
+	}
 	if (assetIndex < 0)
 	{
 		std::cerr << "Invalid index" << std::endl;
@@ -342,11 +361,19 @@ void	PlayerAssets::rendPlayerWalkBack(int playerNum, int x, int y, int assetInde
 	}
 
 	SDL_RenderCopy(gSdl.renderer, _playerWalkBackText, rect, &renderRect);
+	if (flag)
+		SDL_SetTextureAlphaMod(_playerWalkBackText, 255);
 }
 
-void	PlayerAssets::rendPlayerAttack(int playerNum, int x, int y, int assetIndex, float scale, int player_dir)
+void	PlayerAssets::rendPlayerAttack(int playerNum, int x, int y, int assetIndex, float scale, int player_dir, int flag)
 {
 	(void)playerNum;
+	
+	if (flag)
+	{
+		SDL_SetTextureBlendMode(_playerAttackText, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(_playerAttackText, 128);
+	}
 	if (assetIndex < 0)
 	{
 		std::cerr << "Invalid index" << std::endl;
@@ -370,11 +397,18 @@ void	PlayerAssets::rendPlayerAttack(int playerNum, int x, int y, int assetIndex,
 		SDL_RenderCopy(gSdl.renderer, _playerAttackText, rect, &renderRect);
 	else
 		SDL_RenderCopyEx(gSdl.renderer, _playerAttackText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
+	if (flag)
+		SDL_SetTextureAlphaMod(_playerAttackText, 255);
 }
 
-void	PlayerAssets::rendPlayerAttackFront(int playerNum, int x, int y, int assetIndex, float scale)
+void	PlayerAssets::rendPlayerAttackFront(int playerNum, int x, int y, int assetIndex, float scale, int flag)
 {
 	(void)playerNum;
+	if (flag)
+	{
+		SDL_SetTextureBlendMode(_playerAttackFrontText, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(_playerAttackFrontText, 128);
+	}
 	if (assetIndex < 0)
 	{
 		std::cerr << "Invalid index" << std::endl;
@@ -395,11 +429,18 @@ void	PlayerAssets::rendPlayerAttackFront(int playerNum, int x, int y, int assetI
 	}
 
 	SDL_RenderCopy(gSdl.renderer, _playerAttackFrontText, rect, &renderRect);
+	if (flag)
+		SDL_SetTextureAlphaMod(_playerAttackFrontText, 255);
 }
 
-void	PlayerAssets::rendPlayerAttackBack(int playerNum, int x, int y, int assetIndex, float scale)
+void	PlayerAssets::rendPlayerAttackBack(int playerNum, int x, int y, int assetIndex, float scale, int flag)
 {
 	(void)playerNum;
+	if (flag)
+	{
+		SDL_SetTextureBlendMode(_playerAttackBackText, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(_playerAttackBackText, 128);
+	}
 	if (assetIndex < 0)
 	{
 		std::cerr << "Invalid index" << std::endl;
@@ -420,11 +461,18 @@ void	PlayerAssets::rendPlayerAttackBack(int playerNum, int x, int y, int assetIn
 	}
 
 	SDL_RenderCopy(gSdl.renderer, _playerAttackBackText, rect, &renderRect);
+	if (flag)
+		SDL_SetTextureAlphaMod(_playerAttackBackText, 255);
 }
 
-void	PlayerAssets::rendPlayerIdle(int playerNum, int x, int y, int assetIndex, float scale, int player_dir)
+void	PlayerAssets::rendPlayerIdle(int playerNum, int x, int y, int assetIndex, float scale, int player_dir, int flag)
 {
 	(void)playerNum;
+	if (flag)
+	{
+		SDL_SetTextureBlendMode(_playerIdleText, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(_playerIdleText, 128);
+	}
 	if (assetIndex < 0)
 	{
 		std::cerr << "Invalid index" << std::endl;
@@ -449,11 +497,18 @@ void	PlayerAssets::rendPlayerIdle(int playerNum, int x, int y, int assetIndex, f
 		SDL_RenderCopy(gSdl.renderer, _playerIdleText, rect, &renderRect);
 	else
 		SDL_RenderCopyEx(gSdl.renderer, _playerIdleText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
+	if (flag)
+		SDL_SetTextureAlphaMod(_playerIdleText, 255);
 }
 
-void	PlayerAssets::rendPlayerIdleFront(int playerNum, int x, int y, int assetIndex, float scale)
+void	PlayerAssets::rendPlayerIdleFront(int playerNum, int x, int y, int assetIndex, float scale, int flag)
 {
 	(void)playerNum;
+	if (flag)
+	{
+		SDL_SetTextureBlendMode(_playerIdleFrontText, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(_playerIdleFrontText, 128);
+	}
 	if (assetIndex < 0)
 	{
 		std::cerr << "Invalid index" << std::endl;
@@ -475,11 +530,18 @@ void	PlayerAssets::rendPlayerIdleFront(int playerNum, int x, int y, int assetInd
 	}
 
 	SDL_RenderCopy(gSdl.renderer, _playerIdleFrontText, rect, &renderRect);
+	if (flag)
+		SDL_SetTextureAlphaMod(_playerIdleFrontText, 255);
 }
 
-void	PlayerAssets::rendPlayerIdleBack(int playerNum, int x, int y, int assetIndex, float scale)
+void	PlayerAssets::rendPlayerIdleBack(int playerNum, int x, int y, int assetIndex, float scale, int flag)
 {
 	(void)playerNum;
+	if (flag)
+	{
+		SDL_SetTextureBlendMode(_playerIdleBackText, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(_playerIdleBackText, 128);
+	}
 	if (assetIndex < 0)
 	{
 		std::cerr << "Invalid index" << std::endl;
@@ -501,4 +563,6 @@ void	PlayerAssets::rendPlayerIdleBack(int playerNum, int x, int y, int assetInde
 	}
 
 	SDL_RenderCopy(gSdl.renderer, _playerIdleBackText, rect, &renderRect);
+	if (flag)
+		SDL_SetTextureAlphaMod(_playerIdleBackText, 255);
 }

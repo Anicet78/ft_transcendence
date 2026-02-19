@@ -33,6 +33,7 @@ services:
       - secret_42
     volumes:
       - ../srcs/frontend:/front
+      - ./uploads:/usr/src/app/uploads
     networks:
       - transcendence
     depends_on:

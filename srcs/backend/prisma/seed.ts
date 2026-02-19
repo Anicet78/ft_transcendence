@@ -169,16 +169,26 @@ async function seedGroupChat(users) {
     },
   });
 
-  // Static messages
-  await prisma.chatMessage.createMany({
-    data: [
-      { chatId: chat.chatId, userId: owner.appUserId, content: "Welcome everyone!" },
-      { chatId: chat.chatId, userId: admin.appUserId, content: "Glad to be here." },
-      { chatId: chat.chatId, userId: moderator.appUserId, content: "Let's keep things clean." },
-      { chatId: chat.chatId, userId: writer.appUserId, content: "Ready to play!" },
-      { chatId: chat.chatId, userId: member.appUserId, content: "Hi all!" },
-    ],
-  });
+  // 100 deterministic messages
+  const messageAuthors = [owner, admin, moderator, writer, member];
+  const messages = Array.from({ length: 100 }).map((_, i) => ({
+    chatId: chat.chatId,
+    userId: messageAuthors[i % messageAuthors.length].appUserId,
+    content: `Gamers United message #${i + 1}`,
+  }));
+    
+  await prisma.chatMessage.createMany({ data: messages }); 
+
+  // // Static messages
+  // await prisma.chatMessage.createMany({
+  //   data: [
+  //     { chatId: chat.chatId, userId: owner.appUserId, content: "Welcome everyone!" },
+  //     { chatId: chat.chatId, userId: admin.appUserId, content: "Glad to be here." },
+  //     { chatId: chat.chatId, userId: moderator.appUserId, content: "Let's keep things clean." },
+  //     { chatId: chat.chatId, userId: writer.appUserId, content: "Ready to play!" },
+  //     { chatId: chat.chatId, userId: member.appUserId, content: "Hi all!" },
+  //   ],
+  // });
 
   // Ban one user (Tom)
   await prisma.chatBan.create({
