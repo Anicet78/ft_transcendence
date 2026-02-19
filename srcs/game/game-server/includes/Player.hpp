@@ -28,10 +28,12 @@ class Player
 		bool										_inSession;
 		bool										_launched;
 		bool										_connected;
+		bool										_reConnected;
 		bool										_finished;
 		bool										_hasWin;
 		int											_finalRanking;
 		char										_exit;
+		std::chrono::_V2::steady_clock::time_point	_timeDeconnection;
 		uWS::WebSocket<false, true, PerSocketData>	*_ws;
 
 	//player pos
@@ -78,6 +80,7 @@ class Player
 		int			getSessionSize(void) const;
 		bool		HasWin(void) const;
 		bool		isConnected(void) const;
+		bool		isReConnected(void) const;
 		int			getFinalRanking(void) const;
 		char		getExit(void) const;
 		int			getGroupSize() const;
@@ -102,10 +105,12 @@ class Player
 		Room		&getRoomRef(void);
 		HitBox		&getHitBox(void);
 		int			getKills(void) const;
+		double		getTimeDeconnection(void) const;
 
 	//setter
 		void		setWs(uWS::WebSocket<false, true, PerSocketData> *ws);
 		void		setConnexion(bool c);
+		void		setReconnexion(bool c);
 		void		setLaunched(bool flag);
 		void		setFinished(bool flag);
 		void		setHasWin(bool flag);

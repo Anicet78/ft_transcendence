@@ -37,8 +37,10 @@ class Session
 		void									addParty(Party &newParty);
 		std::string								sendMaps(void);
 		void									checkFinishedPlayers(uWS::App &app);
+		void									sendEndResults(uWS::App &app, std::shared_ptr<Player> &player, bool abort);
 		bool									removePlayer(std::weak_ptr<Player> rmPlayer);
-		bool									isPlayerInSession(std::string &uid) const;
+		bool									removePlayer(std::string uid);
+		bool									isPlayerInSession(std::string uid) const;
 		void									sendToAll(Player &sender);
 		std::weak_ptr<Player>					&getPlayer(std::string &uid);
 		std::vector<std::weak_ptr<Player>>		getPlayers(void) const;

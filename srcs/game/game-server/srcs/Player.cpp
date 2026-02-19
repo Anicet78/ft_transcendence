@@ -2,11 +2,12 @@
 
 Player::Player(std::string uid, int partySize, std::string partyId, std::string name, int sessionSize, uWS::WebSocket<false, true, PerSocketData> *ws)
 				: _uid(uid), _sessionSize(sessionSize), _partySize(partySize),  _partyId(partyId), _name(name), _inQueue(true), _inSession(false),
-					_launched(0), _connected(1), _finished(0), _hasWin(0), _finalRanking(0), _exit(' '), _ws(ws), _x(0), _y(0),
+					_launched(0), _connected(0), _reConnected(1), _finished(0), _hasWin(0), _finalRanking(0), _exit(' '), _timeDeconnection(std::chrono::steady_clock::time_point{}), _ws(ws), _x(0), _y(0),
 					_floor(0), _startPos(-1), _anim(0), _last_dir(0), _hp(3), _atk(1), _def(0), _box(_x, _y, _last_dir),
 					_isAttacking(false), _atkFrame(0), _kills(0)
 {
-	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
+	_wallHitBox =
+	{_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
 	return ;
 }
 
@@ -120,12 +121,20 @@ HitBox	&Player::getHitBox(void)
 	return (_box);
 }
 
+double	Player::getTimeDeconnection(void) const
+{
+	if (this->_timeDeconnection == std::chrono::_V2::steady_clock::time_point{})
+		return 0;
+	return std::chrono::duration<double>(std::chrono::steady_clock::now() - this->_timeDeconnection).count();
+}
+
 FRect	&Player::getWallHitBox(void)
 {
 	return (this->_wallHitBox);
 }
 
-int		Player::getKills(void) const {
+int		Player::getKills(void) const
+{
 	return (this->_kills);
 }
 
@@ -142,6 +151,11 @@ bool Player::isInSession(void) const
 bool Player::isConnected(void) const
 {
 	return this->_connected;
+}
+
+bool Player::isReConnected(void) const
+{
+	return this->_reConnected;
 }
 
 uWS::WebSocket<false, true, PerSocketData> *Player::getWs() const
@@ -174,6 +188,15 @@ void	Player::setWs(uWS::WebSocket<false, true, PerSocketData> *ws)
 void	Player::setLaunched(bool flag)
 {
 	this->_launched = flag;
+}
+
+void	Player::setReconnexion(bool c)
+{
+	this->_reConnected = c;
+	if (!c)
+		this->_timeDeconnection = std::chrono::steady_clock::now();
+	else
+		this->_timeDeconnection = std::chrono::steady_clock::time_point{};
 }
 
 void	Player::setConnexion(bool c)
@@ -275,7 +298,8 @@ void	Player::setDef(int def)
 
 void	Player::setWallHitBox(void)
 {
-	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
+	_wallHitBox =
+	{_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
 	return ;
 }
 
@@ -380,7 +404,8 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &r
 void	Player::updateAnim(std::string const &req)
 {
     if (!req.empty())
-    {
+
+	{
         if (req == "idling")
             this->setAnim(0);
         else if (req == "walking")
@@ -390,7 +415,8 @@ void	Player::updateAnim(std::string const &req)
     }
 }
 
-void	Player::move(std::map<std::string, std::string> &req) {
+void	Player::move(std::map<std::string, std::string> &req)
+{
     Room room = this->getRoom();
 	float x = this->_x, y = this->_y;
 	auto plan = room.getRoomPlan();
@@ -428,15 +454,18 @@ void	Player::move(std::map<std::string, std::string> &req) {
 	
 }
 
-bool	Player::getIsAttacking(void) const {
+bool	Player::getIsAttacking(void) const
+{
 	return (_isAttacking);
 }
 
-void	Player::endAttacking(void) {
+void	Player::endAttacking(void)
+{
 	this->_isAttacking = false;
 }
 
-void	Player::attack(void) {
+void	Player::attack(void)
+{
 	_box.updateAtkHitBox();
 	_isAttacking = true;
 }

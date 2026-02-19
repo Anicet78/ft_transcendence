@@ -156,9 +156,7 @@ std::string	Session::sendMaps(void)
 				+ "\"y\": " + std::to_string(node->getY()) + ", "
 				+ "\"rot\": " + std::to_string(room->getRotated());
 			if (room->getRoomEvent())
-			{
 				putRoomEvent(msg, room);
-			}
 			msg += '}';
 			j++;
 		}
@@ -181,7 +179,7 @@ void	Session::addParty(Party &newParty)
 			std::cout << "added to the waiting room" << std::endl;
 		this->_players.push_back(player);
 		msg = this->sendMaps();
-		player.lock()->getWs()->send(msg);
+		player.lock()->getWs()->send(msg, uWS::OpCode::TEXT);
         player.lock()->getWs()->send("You have been added to a session !", uWS::OpCode::TEXT);
 	}
 }
@@ -193,6 +191,21 @@ bool	Session::removePlayer(std::weak_ptr<Player> rmPlayer)
 		if (this->_players[i].expired())
 			continue ;
 		if (this->_players[i].lock()->getUid() == rmPlayer.lock()->getUid())
+		{
+			this->_players.erase(this->_players.begin() + i);
+			return 1;
+		}
+	}
+	return 0;
+}
+
+bool	Session::removePlayer(std::string uid)
+{
+	for (size_t i = 0; i < this->_players.size(); i++)
+	{
+		if (this->_players[i].expired())
+			continue ;
+		if (this->_players[i].lock()->getUid() == uid)
 		{
 			this->_players.erase(this->_players.begin() + i);
 			return 1;
@@ -269,13 +282,13 @@ bool Session::doesAllPlayersConnected() const
 	{
 		if (player.expired())
 			continue ;
-		if (!player.lock()->isConnected())
+		if (!player.lock()->isReConnected())
 			return false;
 	}
 	return true;
 }
 
-bool	Session::isPlayerInSession(std::string &uid) const
+bool	Session::isPlayerInSession(std::string uid) const
 {
 	for (auto &player : _players)
 	{
@@ -287,41 +300,52 @@ bool	Session::isPlayerInSession(std::string &uid) const
 	return false;
 }
 
+void	Session::sendEndResults(uWS::App &app, std::shared_ptr<Player> &player, bool abort)
+{
+	int win = 0;
+
+	if (!abort)
+	{
+		this->_numPlayersFinished++;
+		win = (this->_numPlayersFinished == 1) ? true : false;
+	}
+	else
+		win = false;
+
+	player->setHasWin(win);
+	player->setFinalRanking(this->_maxNumPlayer);
+
+	std::string msg = "{ \"action\": \"finished\", \"time\": "
+		+ std::to_string(this->getActualTime()) + ", \"win\": "
+		+ std::to_string(win) + "}";
+	
+	player->getWs()->send(msg, uWS::OpCode::TEXT);
+	std::string	oldTopic = player->getRoomRef().getRoomId();
+	sendLeaveUpdate(*player, app, oldTopic);
+	player->getWs()->unsubscribe(oldTopic);
+
+	std::cout << player->getName() << ": " << std::endl
+		<< "Kills: " << player->getKills() << "Place :" << player->getFinalRanking() << std::endl;
+}
+
 void	Session::checkFinishedPlayers(uWS::App &app)
 {
-	std::vector<std::weak_ptr<Player>> finishedPlayers;
+	int count = 0;
+
 	for (auto &p : this->_players)
 	{
-		if (p.expired() || !p.lock()->isConnected())
+		if (p.expired() || !p.lock()->isReConnected())
 			continue ;
 		std::shared_ptr<Player> player = p.lock();
 		if (player->getFinished())
-		{
-			this->_numPlayersFinished++;
-			int win = (this->_numPlayersFinished == 1) ? true : false;
-			player->setHasWin(win);
-			player->setFinalRanking(this->_numPlayersFinished);
-			std::string msg = "{ \"action\": \"finished\", \"time\": "
-				+ std::to_string(this->getActualTime()) + ", \"win\": "
-				+ std::to_string(win) + "}";
-			player->getWs()->send(msg);
-			std::string	oldTopic = player->getRoomRef().getRoomId();
-			sendLeaveUpdate(*player, app, oldTopic);
-			player->getWs()->unsubscribe(oldTopic);
-			// if (player->getWs()->unsubscribe(oldTopic))
-			// 	std::cout << "unsibscribe from " << oldTopic << std::endl;
-			finishedPlayers.push_back(p);
-			std::cout << player->getName() << ": " << std::endl
-				<< "Kills: " << player->getKills() << "Place :" << player->getFinalRanking() << std::endl;
-		}
+			this->sendEndResults(app, player, 0);
 	}
-	int count = 0;
 
 	for (auto player : this->_players)
-		if (!player.expired() && player.lock()->isConnected())
+		if ((!player.expired() && player.lock()->isReConnected()) || (!player.expired() && player.lock()->getTimeDeconnection() < 7.f))
 			count++;
 
-	if (!count && this->_running)
+	if ((!count && this->_running) || this->getActualTime() > 1200.f)
 	{
 		std::cout << "SESSION STOP" << std::endl;
 		this->_ended = 1;
