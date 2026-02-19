@@ -72,6 +72,11 @@ int		Player::getAtk(void) const
 	return (_atk);
 }
 
+int		Player::getPrevState(void) const
+{
+	return (_prev_state);
+}
+
 int		Player::getDef(void) const
 {
 	return (_def);
@@ -126,13 +131,15 @@ int	Player::getFrame(void) const
 
 void	Player::updateLastDir(void)
 {
+	if (this->_atkState)
+		return ;
 	if (gSdl.key.d_key)
 		_last_dir = 0;
 	else if (gSdl.key.a_key)
 		_last_dir = 1;
-	if (gSdl.key.w_key)
+	else if (gSdl.key.w_key)
 		_last_dir = 2;
-	if (gSdl.key.s_key)
+	else if (gSdl.key.s_key)
 		_last_dir = 3;
 }
 
@@ -189,6 +196,7 @@ void	Player::setKills(int kills)
 	this->_kills = kills;
 	return ;
 }
+
 
 void	Player::setAnim(int anim)
 {

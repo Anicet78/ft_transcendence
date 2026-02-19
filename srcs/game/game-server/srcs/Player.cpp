@@ -438,9 +438,9 @@ void	Player::updateAnim(std::string const &req)
             this->setAnim(1);
         else if (req == "attacking")
 		{
-			if (this->_atkFrame != 2 && this->getTimeAttack() > 0.3f)
+			if (this->_atkFrame != 2 && this->getTimeAttack() > 0.2f)
 				this->setAnim(2);
-			else if (this->_atkFrame == 2 && this->getTimeAttack() > 0.3f)
+			else if (this->_atkFrame == 2 && this->getTimeAttack() > 0.2f)
 			{
 				this->resetTimeAttack();
             	this->setAnim(0);

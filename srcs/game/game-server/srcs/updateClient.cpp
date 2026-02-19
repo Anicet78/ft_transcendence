@@ -158,7 +158,7 @@ static void	mobInteraction(MobRush &rush, int id, Mob &mob, Player &player)
 		{
 			HitBox	&box = mob.getBox();
 			box.updateHurtBox();
-			if (!mob.isDead() || !mob.checkInvinsibleFrame())
+			if (!mob.isDead() && !mob.checkInvinsibleFrame())
 			{
 				if (box.isDmgHit(player.getHitBox().getAtkHitBox()))
 				{

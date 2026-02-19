@@ -81,6 +81,7 @@ clean:
 
 wfclean:
 	rm -f ./build/game.js
+	rm -rf ./$(ASM_OBJ_DIR)
 	rm -f ./build/game.wasm
 	rm -f ./build/game.data
 
