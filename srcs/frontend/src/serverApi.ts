@@ -48,7 +48,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
 	async (config) => {
-		const publicRoutes = ['/auth/login', '/auth/register', '/auth/refresh', '/'];
+		const publicRoutes = ['/auth/login', '/auth/register', '/auth/refresh', '/auth/42', '/auth/google', '/'];
 		if (config.url && !publicRoutes.includes(config.url) && accessToken) {
 			config.headers.Authorization = `Bearer ${accessToken}`;
 			config.headers['x-socket-id'] = await waitForSocketId();
@@ -66,7 +66,10 @@ api.interceptors.response.use(
 	async (error) => {
 		const originalRequest = error.config;
 
-		if (error.response && error.response.status === 401 && !originalRequest._retry) {
+		const isRefreshRequest = originalRequest.url.includes('/auth/refresh');
+		const isLogoutRequest = originalRequest.url.includes('/auth/logout');
+
+		if (error.response && error.response.status === 401 && !originalRequest._retry && !isRefreshRequest && !isLogoutRequest) {
 			originalRequest._retry = true;
 
 			try {
