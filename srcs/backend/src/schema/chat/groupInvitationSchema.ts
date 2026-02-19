@@ -35,15 +35,28 @@ export const ChatInvitationPreviewSchema = Type.Object({
 	chatName: Type.Union([Type.String(), Type.Null()])
   })
 });
-export const ChatInvitationListResponseSchema = ChatInvitationPreviewSchema;
+
+export const ChatInvitationListResponseSchema = Type.Array(ChatInvitationPreviewSchema);
 
 
 //ANSWER GROUP CHAT INVITATION
-export const AcceptInvitationParamsSchema = Type.Object({
+export const UpdateInvitationParamsSchema = Type.Object({
 	chatInvitationId: Type.String({ format: 'uuid' })
 });
-export type AcceptInvitationParams = Static<typeof AcceptInvitationParamsSchema>;
+export type UpdateInvitationParams = Static<typeof UpdateInvitationParamsSchema>;
 
+export const UpdateInvitationBodySchema = Type.Object({
+	action: Type.Union([
+		Type.Literal("accept"),
+		Type.Literal("reject"),
+		Type.Literal("cancel") ])
+});
+export type UpdateInvitationBody = Static<typeof UpdateInvitationBodySchema>;
+
+
+export const InvitationStatusResponseSchema = Type.Object({ status: Type.String() });
+
+//in case of "accept", respond with created member
 export const ChatMemberResponseSchema = Type.Object({
 	chatMemberId: Type.String(),
 	chatId: Type.String(),
@@ -51,3 +64,4 @@ export const ChatMemberResponseSchema = Type.Object({
 	role: Type.String(),
 	joinedAt: Type.String()
 });
+

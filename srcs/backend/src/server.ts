@@ -5,6 +5,8 @@ import authPlugin from './plugins/auth.js';
 import socketPlugin from './plugins/socket.js';
 import { router } from './routes/index.js';
 import swagger from './plugins/swagger.js';
+import multipart from "@fastify/multipart";
+import fastifyStatic from "@fastify/static";
 
 export const fastify = Fastify({
 	logger: true,
@@ -19,6 +21,15 @@ const start = async () => {
 		await fastify.register(errorPlugin);
 		await fastify.register(authPlugin);
 		await fastify.register(socketPlugin);
+		// Serve uploads folder
+		await fastify.register(fastifyStatic, {
+			root: '/usr/src/app/uploads',
+			prefix: "/uploads/",
+		});
+		// Register multipart support
+		await fastify.register(multipart, {
+			limits: { fileSize: 5_000_000 } // 5MB max
+		});
 		await fastify.register(router);
 
 		await fastify.listen({ port: 3000, host: '0.0.0.0' });

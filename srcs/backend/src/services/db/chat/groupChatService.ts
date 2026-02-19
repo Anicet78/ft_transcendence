@@ -1,11 +1,7 @@
 import { prisma } from '../prisma.js';
 import { chat_role_type } from '@prisma/client';
 import { AppError } from '../../../schema/errorSchema.js';
-// import {
-// 	ROLE_RANK,
-// 	getRoleRank/*,
-// 	type ChatRole */} from '../../../utils/chatRoles.js';
-
+import { chatSelect } from './chatService.js';
 
 //GROUP CREATION
 export async function createGroupChat(
@@ -39,45 +35,7 @@ export async function createGroupChat(
 			}
 		},
 		// 3. Return full chat info
-		select: {
-			chatId: true,
-			chatType: true,
-			chatName: true,
-			createdAt: true,
-			deletedAt: true,
-
-			creator: {
-				select: {
-					appUserId: true,
-					username: true,
-					avatarUrl: true,
-					availability: true
-				}
-			},
-
-			members: {
-				select: {
-					chatMemberId: true,
-					joinedAt: true,
-					leftAt: true,
-					user: {
-						select: {
-							appUserId: true,
-							username: true,
-							avatarUrl: true,
-							availability: true
-						}
-					}
-				}
-			},
-
-			roles: {
-				select: {
-					userId: true,
-					role: true
-					}
-			}
-		}
+		select: chatSelect
 	});
 	return chat;
 }
@@ -86,7 +44,7 @@ export async function createGroupChat(
 export async function disbandGroupChat(chatId: string, userId: string) {
 	// 1. Load chat
 	const chat = await prisma.chat.findUnique({
-		where: { chatId },
+		where: { chatId, deletedAt: null },
 		select: {
 			chatId: true,
 			chatType: true,
@@ -150,7 +108,7 @@ export async function disbandGroupChat(chatId: string, userId: string) {
 export async function quitGroupChat(chatId: string, userId: string) {
 	// 1. Load chat
 	const chat = await prisma.chat.findUnique({
-	where: { chatId },
+	where: { chatId, deletedAt: null },
 		select: {
 			chatId: true,
 			chatType: true,

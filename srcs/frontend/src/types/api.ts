@@ -1745,7 +1745,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/friends": {
+    "/friends/list": {
         parameters: {
             query?: never;
             header?: never;
@@ -2325,7 +2325,7 @@ export interface paths {
         };
         trace?: never;
     };
-    "/chat/{messageId}": {
+    "/chat/{chatId}/message/{messageId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -2340,6 +2340,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
+                    chatId: string;
                     messageId: string;
                 };
                 cookie?: never;
@@ -2739,7 +2740,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/group/{chatId}/{memberId}/invite": {
+    "/group/{chatId}/invite/{memberId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -2841,7 +2842,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/group/{chatInvitationId}": {
+    "/group/answer/{chatInvitationId}": {
         parameters: {
             query?: never;
             header?: never;

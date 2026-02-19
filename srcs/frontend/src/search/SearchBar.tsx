@@ -1,24 +1,37 @@
-import { Button } from "@allxsmith/bestax-bulma"
-import "./SearchBar.css"
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import './SearchBar.css';
+import { Button } from '@allxsmith/bestax-bulma';
 
 const SearchBar = () => {
+	const [search, setSearch] = useState('');
+	const navigate = useNavigate();
+
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		if (!search.trim()) return; // removes unecessary whitespaces
+
+		// encodeURIComponent: encodes a string so it can be safely used 
+		// as part of a URL in query parameters even if the user used
+		// characters which has special meaning in URLs
+		navigate(`/search?q=${encodeURIComponent(search.trim())}`);
+		setSearch('');
+	};
 
 	return (
-		<form action="/" method="get" className="search_bar">
-				<label htmlFor="header-search">
-					<span className="visually-hidden">Search blog posts</span>
-				</label>
-				<input
-					type="text"
-					id="header-search"
-					placeholder="Search user profile"
-					name="header-search" 
-				/>
-				<Button type="submit" size="small" className="search_button">
-					<i className="fa-solid fa-magnifying-glass"></i>
-				</Button>
+		<form onSubmit={handleSubmit} className="search_form">
+		<input
+			className="search_input"
+			type="text"
+			placeholder="Search players..."
+			value={search}
+			onChange={(e) => setSearch(e.target.value)}
+		/>
+		<Button type="submit" className="is-primary">
+			<i className="fas fa-search"></i>
+		</Button>
 		</form>
-	)
-}
+	);
+};
 
 export default SearchBar

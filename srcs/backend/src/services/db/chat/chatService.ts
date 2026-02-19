@@ -35,17 +35,17 @@ export const chatSelect = {
 	},
 
 	roles: {
-	select: {
-		userId: true,
-		role: true
-	}
+		select: {
+			userId: true,
+			role: true
+		}
 	}
 };
 
 export async function getChatByIdForUser(chatId: string, userId: string) {
 	// Ensure user is a member
 	const isMember = await prisma.chatMember.findFirst({
-		where: { chatId, userId }
+		where: { chatId, userId, deletedAt: null }
 	});
 
 	if (!isMember)
@@ -60,16 +60,83 @@ export async function getChatByIdForUser(chatId: string, userId: string) {
 	if (!chat)
 		throw new AppError('Chat not found', 404);
 
+	//check if there is a blocking relation preventing user to access chat (for private chat only)
+	if (chat.chatType == "private") {
+		const privateChat = await prisma.privateChat.findUnique({
+			where: { privateChatId: chatId},
+			select: {
+				privateChatId: true,
+				user1Id: true,
+				user2Id: true
+			}
+		});
+
+		const otherUserId = privateChat?.user1Id === userId
+			? privateChat.user2Id
+			: privateChat?.user1Id;
+
+		if (otherUserId) {
+			const isBlocked = await prisma.blockedList.findFirst({
+				where: {
+					OR: [
+						{ blocker: userId, blocked: otherUserId },
+						{ blocker: otherUserId, blocked: userId }
+					]
+				}
+			});
+
+		if (isBlocked)
+			throw new AppError("You cannot access this chat due to a block", 403);
+		//add user message
+		}
+	}
+
 	return chat;
 }
 
 
 //RETURN USER'S CHAT LIST
 export async function listUserChats(userId: string) {
+
+	const blocked = await prisma.blockedList.findMany({
+		where: {
+			OR: [
+				{ blocker: userId },
+				{ blocked: userId }
+			]
+		}
+	});
+
+	const blockedIds = blocked
+		.map(b => (b.blocker === userId ? b.blocked : b.blocker))
+		.filter((id): id is string => id !== null && id !== undefined);
+
+	// const chats = await prisma.chat.findMany({
+	// 	where: {
+	// 		members: {
+	// 		some: { userId }
+	// 		}
+	// 	},
+	// 	select: chatSelect
+	// });
+
 	const chats = await prisma.chat.findMany({
 		where: {
-			members: {
-			some: { userId }
+			members: { some: { userId, deletedAt: null } },
+			NOT: {
+				AND: [
+					{ chatType: "private" },
+					{
+					privateChat: {
+						some: {
+							OR: [
+							{ user1Id: { in: blockedIds } },
+							{ user2Id: { in: blockedIds } }
+							]
+						}
+					}
+					}
+				]
 			}
 		},
 		select: chatSelect

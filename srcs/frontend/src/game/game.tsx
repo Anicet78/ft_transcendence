@@ -8,6 +8,10 @@ import { useMutation } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import type { GameModule } from './build/game';
 import createModule from './build/game';
+import toast from '../Notifications.tsx';
+import { SidebarChat } from '../chat/components/SidebarChat';
+import wasmUrl from './build/game.wasm?url';
+import dataUrl from './build/game.data?url';
 
 const Game = () => {
 	const navigate = useNavigate();
@@ -31,10 +35,13 @@ const Game = () => {
 			mutation.mutate();
 		}
 		else if (!start) {
+			toast({ title: `An error occurred`, message: 'No active game has been found', type: "is-warning" })
 			navigate("/home");
 			return ;
 		}
-		const socket = new WebSocket('wss://localhost:8443/ws/');
+
+		const socketUrl = `wss://${window.location.host}/ws/`;
+		const socket = new WebSocket(socketUrl);
 		setGameSocket(socket);
 
 		if (!socket) return ;
@@ -64,9 +71,10 @@ const Game = () => {
 				const mod = await createModule({
 					canvas: canvasRef.current,
 					noInitialRun: true,
-					locateFile: (path: string, prefix: string) => {
-						if (path.endsWith(".data")) return `http://localhost:5173/game/build/${path}`;
-						return prefix + path;
+					locateFile: (path: string) => {
+						if (path.endsWith('.wasm')) return wasmUrl;
+						if (path.endsWith('.data')) return dataUrl;
+						return path;
 					},
 					onCppMessage: (obj: Object) => gameSocket.send(JSON.stringify(obj)),
 					sendResults: (obj: Object) => 
@@ -131,6 +139,7 @@ const Game = () => {
 	}
 
 	if (mutation.isError) {
+		toast({ title: `An error occured`, message: "Cannot join the game !", type: "is-danger" })
 		navigate("/home");
 		return;
 	}
@@ -154,6 +163,7 @@ const Game = () => {
 			<canvas ref={canvasRef} id="game-canvas" width="800" height="950" tabIndex={1}></canvas>
 		</Box>
 	)
+
 }
 
 export default Game;

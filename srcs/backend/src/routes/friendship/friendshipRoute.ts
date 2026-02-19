@@ -14,7 +14,7 @@ import {
 async function friendshipRoutes(fastify: FastifyInstance) {
 
   //GET FRIENDS LIST
-  fastify.get('/friends', {
+  fastify.get('/friends/list', {
     schema: {
       response: {
         200: FriendsListResponseSchema
