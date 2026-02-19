@@ -93,7 +93,7 @@ class Player
 		int			getAnim(void) const;
 		int			getFrame(void) const;
 		int			getLastDir(void) const;
-
+		int			getPrevState(void) const;
 		int			getKills(void) const;
 
 		int			getFloor(void) const;

@@ -305,21 +305,21 @@ void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, u
 					{
 						std::weak_ptr<Player> player = findClosestPlayer(allPlayer, *mob);
 						if (player_size && !player.expired())
-							mob->MobAction(player.lock()->getX(), player.lock()->getY(), map);
-						else
-							mob->MobAction(-1, -1, map);
+							mob->MobAction(*player.lock(), map);
+						// else
+						// 	mob->MobAction(-1, -1, map);
 					}
 					int mobAnim = 0;
 					if (mob->getRoutine() == MOB_CHASING)
 					{
-						if (mob->getState() != MOB_HURT)
+						if (mob->getState() != MOB_HURT && mob->getState() != MOB_ATTACKING)
 							mobAnim = MOB_WALKING;
 						else
 							mobAnim = mob->getState();
 					}
 					else
 					{
-						if (mob->getState() != MOB_CHASE_LAST)
+						if (mob->getState() != MOB_CHASE_LAST && mob->getState() != MOB_DODGE)
 							mobAnim = mob->getState();
 						else
 							mobAnim = MOB_WALKING;
