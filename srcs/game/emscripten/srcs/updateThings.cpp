@@ -23,12 +23,18 @@ void	updateRoomState(Game &game, val msg)
 					float y = monster["mob_y"].as<float>();
 
 					if (monster["isdead"].as<int>() == 1)
+					{
+						if (mobs[id]->isDead() == false)
+							mobs[id]->setInDeathAnim(true);
 						mobs[id]->setIsDead(true);
+					}
 					mobs[id]->setPos(x, y);
 				}
 				else
 				{
 					int id = monster["mob_id"].as<int>();
+					if (mobs[id]->isDead() == false)
+						mobs[id]->setInDeathAnim(true);
 					mobs[id]->setIsDead(true);
 				}
 			}
