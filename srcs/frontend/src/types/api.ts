@@ -29,6 +29,7 @@ export interface paths {
                         "application/json": {
                             user: {
                                 id: string;
+                                username: string;
                                 email: string;
                                 role: string;
                             };
@@ -113,6 +114,7 @@ export interface paths {
                             token: string;
                             user: {
                                 id: string;
+                                username: string;
                                 email: string;
                                 role: string;
                             };
@@ -216,6 +218,7 @@ export interface paths {
                             token: string;
                             user: {
                                 id: string;
+                                username: string;
                                 email: string;
                                 role: string;
                             };
@@ -311,6 +314,7 @@ export interface paths {
                             token: string;
                             user: {
                                 id: string;
+                                username: string;
                                 email: string;
                                 role: string;
                             };

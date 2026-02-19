@@ -80,7 +80,7 @@ async function chatMessageRoutes(fastify: FastifyInstance) {
 	});
 
 	//DELETE MESSAGE
-	fastify.delete('/chat/:messageId', {
+	fastify.delete('/chat/:chatId/message/:messageId', {
 		schema: {
 		params: DeleteMessageParamsSchema,
 		response: {

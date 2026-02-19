@@ -66,13 +66,16 @@ export const RoomService = {
 		for (const [roomId, room] of rooms.entries()) {
 			if (room.players.map(players => players.id).includes(userId))
 			{
+				if (room.hostId == userId)
+					room.hostId = room.players[1]?.id || "";
 				room.players = room.players.filter(players => players.id !== userId);
 				if (userSocket)
 				{
 					await SocketService.rmFromRoom(roomId, userSocket);
 					SocketService.send(roomId, "player_left", {
 						playerId: userId,
-						reason: reason
+						reason: reason,
+						newHost: room.hostId
 					});
 				}
 			}
