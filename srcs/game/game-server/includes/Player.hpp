@@ -54,6 +54,8 @@ class Player
 	//player stat
 		int			_hp;
 		int			_atk;
+		bool		_isInvinsible;
+		std::chrono::_V2::steady_clock::time_point	_timeInvincible;
 		int			_def;
 	//wall hitbox
 		FRect		_wallHitBox;
@@ -62,6 +64,7 @@ class Player
 	//atk state
 		bool		_isAttacking;
 		int			_atkFrame;
+		std::chrono::_V2::steady_clock::time_point	_timeAttack;
 
 	//nbr kill
 		int			_kills;
@@ -99,6 +102,8 @@ class Player
 
 		int			getHp(void) const;
 		int			getAtk(void) const;
+		bool		checkInvinsibleFrame(void) const;
+		int			getAtkFrame(void) const;
 		int			getDef(void) const;
 		int			getLastDir(void) const;
 		FRect		&getWallHitBox(void);
@@ -106,6 +111,8 @@ class Player
 		HitBox		&getHitBox(void);
 		int			getKills(void) const;
 		double		getTimeDeconnection(void) const;
+		double		getTimeInvincible(void) const;
+		double		getTimeAttack(void) const;
 
 	//setter
 		void		setWs(uWS::WebSocket<false, true, PerSocketData> *ws);
@@ -125,6 +132,7 @@ class Player
 
 		void		setHp(int hp);
 		void		setAtk(int atk);
+		void		setAtkFrame(int frame);
 		void		setDef(int def);
 		void		setWallHitBox(void);
 		void		setInQueue(bool flag);
@@ -133,10 +141,12 @@ class Player
 		void		setLastDir(int dir);
 
 		void		addKills(void);
+		void		resetTimeAttack(void);
+		void		startInvinsibleFrame(void);
+		void		endInvinsibleFrame(void);
 
 	//action
 		void		findP(void);
-		void		move(void);
 
 		void		attack(void);
 		bool		getIsAttacking(void) const;

@@ -339,6 +339,8 @@ void	Session::checkFinishedPlayers(uWS::App &app)
 		std::shared_ptr<Player> player = p.lock();
 		if (player->getFinished())
 			this->sendEndResults(app, player, 0);
+		if (player->checkInvinsibleFrame() && player->getTimeInvincible() > 1.0f)
+			player->endInvinsibleFrame();
 	}
 
 	for (auto player : this->_players)

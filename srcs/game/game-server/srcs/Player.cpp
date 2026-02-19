@@ -3,8 +3,8 @@
 Player::Player(std::string uid, int partySize, std::string partyId, std::string name, int sessionSize, uWS::WebSocket<false, true, PerSocketData> *ws)
 				: _uid(uid), _sessionSize(sessionSize), _partySize(partySize),  _partyId(partyId), _name(name), _inQueue(true), _inSession(false),
 					_launched(0), _connected(0), _reConnected(1), _finished(0), _hasWin(0), _finalRanking(0), _exit(' '), _timeDeconnection(std::chrono::steady_clock::time_point{}), _ws(ws), _x(0), _y(0),
-					_floor(0), _startPos(-1), _anim(0), _last_dir(0), _hp(3), _atk(1), _def(0), _box(_x, _y, _last_dir),
-					_isAttacking(false), _atkFrame(0), _kills(0)
+					_floor(0), _startPos(-1), _anim(0), _last_dir(0), _hp(3), _atk(1), _isInvinsible(false), _timeInvincible(std::chrono::steady_clock::time_point{}), _def(0), _box(_x, _y, _last_dir),
+					_isAttacking(false), _atkFrame(0), _timeAttack(std::chrono::steady_clock::now()), _kills(0)
 {
 	_wallHitBox =
 	{_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
@@ -128,6 +128,23 @@ double	Player::getTimeDeconnection(void) const
 	return std::chrono::duration<double>(std::chrono::steady_clock::now() - this->_timeDeconnection).count();
 }
 
+double	Player::getTimeInvincible(void) const
+{
+	if (this->_timeInvincible == std::chrono::_V2::steady_clock::time_point{})
+		return 0;
+	return std::chrono::duration<double>(std::chrono::steady_clock::now() - this->_timeInvincible).count();
+}
+
+double	Player::getTimeAttack(void) const
+{
+	return	std::chrono::duration<double>(std::chrono::steady_clock::now() - this->_timeAttack).count();
+}
+
+bool	Player::checkInvinsibleFrame(void) const
+{
+	return this->_isInvinsible;
+}
+
 FRect	&Player::getWallHitBox(void)
 {
 	return (this->_wallHitBox);
@@ -151,6 +168,11 @@ bool Player::isInSession(void) const
 bool Player::isConnected(void) const
 {
 	return this->_connected;
+}
+
+int	Player::getAtkFrame(void) const
+{
+	return this->_atkFrame;
 }
 
 bool Player::isReConnected(void) const
@@ -284,6 +306,11 @@ void	Player::setHp(int hp)
 	return ;
 }
 
+void	Player::setAtkFrame(int frame)
+{
+	this->_atkFrame = frame;
+}
+
 void	Player::setAtk(int atk)
 {
 	_atk = atk;
@@ -404,14 +431,21 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &r
 void	Player::updateAnim(std::string const &req)
 {
     if (!req.empty())
-
 	{
         if (req == "idling")
             this->setAnim(0);
         else if (req == "walking")
             this->setAnim(1);
         else if (req == "attacking")
-            this->setAnim(2);
+		{
+			if (this->_atkFrame != 2 && this->getTimeAttack() > 0.2f)
+				this->setAnim(2);
+			else if (this->_atkFrame == 2 && this->getTimeAttack() > 0.2f)
+			{
+				this->resetTimeAttack();
+            	this->setAnim(0);
+			}
+		}
     }
 }
 
@@ -452,6 +486,23 @@ void	Player::move(std::map<std::string, std::string> &req)
     if (!req["last_dir"].empty())
 		this->setLastDir(std::atoi(req["last_dir"].c_str()));
 	
+}
+
+void	Player::resetTimeAttack(void)
+{
+	this->_timeAttack = std::chrono::steady_clock::now();
+}
+
+void	Player::startInvinsibleFrame(void)
+{
+	this->_isInvinsible = true;
+	this->_timeInvincible = std::chrono::steady_clock::now();
+}
+
+void	Player::endInvinsibleFrame(void)
+{
+	this->_isInvinsible = false;
+	this->_timeInvincible = std::chrono::steady_clock::time_point{};
 }
 
 bool	Player::getIsAttacking(void) const
