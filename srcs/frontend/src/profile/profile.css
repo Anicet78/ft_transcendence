@@ -12,11 +12,13 @@
 }
 
 .image-box figure img {
-  max-width: 100%;   /* scale down when needed */
-  height: auto;
-  border-radius: 50%; /* keep circular */
+  width: 20vw;       /* 20% of viewport width */
+  height: 20vw;
+  max-width: 128px;  /* cap the size */
+  max-height: 128px;
+  border-radius: 50%;
+  object-fit: cover;
 }
-
 
 .head-text {
   display: flex;

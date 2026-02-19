@@ -6,7 +6,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import 'bulma/css/bulma.min.css'; // bulma style css
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './index.css'
-import './App.css'
 import App from './App.tsx'
 import Login from './auth/login.tsx';
 import Register from './auth/register.tsx';

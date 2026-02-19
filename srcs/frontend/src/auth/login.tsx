@@ -3,8 +3,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import './login.css'
 import '../index.css'
 
-import { Button } from '@allxsmith/bestax-bulma';
-import ButtonSubmit from '../components/ButtonSubmit.tsx';
+import { Button, Box } from '@allxsmith/bestax-bulma';
 import InputEmail from '../components/InputEmail.tsx';
 import { useMutation } from '@tanstack/react-query';
 import api from '../serverApi.ts';
@@ -51,9 +50,9 @@ function Login() {
 	};
 
 	return (
-		<>
-			<div className="card">
-				<div>
+		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='center' textSize='3' textWeight='bold'>
+			<div className='login-box'>
+				<div className='social-buttons'>
 					<Button color='primary' isOutlined className='login-button'>Login with Google</Button>
 					<Button color='primary' isOutlined className='login-button'>Login with 42</Button>
 				</div>
@@ -82,15 +81,14 @@ function Login() {
 					</div>
 					{mutation.isError && (
 						<div style={{ color: 'red' }}>
-							Erreur : {mutation.error instanceof Error ? mutation.error.message : 'Unknown'}
+							{/* this part only show 'Error:' when nginx isn't running */}
+							Error : {mutation.error instanceof Error ? mutation.error.message : 'Unknown'}
 						</div>
 					)}
-					<ButtonSubmit
-						name={mutation.isPending ? 'Loading...' : 'Sign in'}
-					/>
+					<Button type="submit" color="primary" isOutlined className="submit-wrapper">{mutation.isPending ? 'Loading...' : 'Sign in'}</Button>
 				</form>
 			</div>
-		</>
+		</Box>
 	)
 }
 
