@@ -9,7 +9,7 @@ import type { RequestUser } from "../schema/userSchema.js";
 export default fp(async (fastify) => {
 	// CORS
 	await fastify.register(fastifyCors, {
-		origin: "http://localhost:5173",
+		origin: "https://localhost:8443",
 		methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 		credentials: true
 	});

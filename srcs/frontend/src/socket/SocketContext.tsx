@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { ServerUrl } from '../serverApi';
 import { useAuth } from '../auth/AuthContext';
 
 export let globalSocketId: string | null = null;
@@ -19,7 +18,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 			return;
 		}
 
-		const newSocket = io(ServerUrl, {
+		const newSocket = io({
 			path: "/api/socket.io/",
 			auth: { token }
 		});

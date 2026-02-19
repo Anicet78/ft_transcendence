@@ -64,7 +64,7 @@ fclean:
 	@$(DOCKER_COMPOSE) down --rmi all -v
 	$(INFO) "Cleanup complete."
 
-r: down up
+r: down build up
 
 re: fclean all
 
