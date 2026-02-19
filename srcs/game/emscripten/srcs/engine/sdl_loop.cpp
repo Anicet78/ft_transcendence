@@ -48,6 +48,7 @@ void updateRoom(Game &game, Player &player, std::string dir)
 void	updatePlayerPosition(Player &player, double deltaTime)
 {
 	static int isIdling = 1;
+	int	HitFrame = 0;
 	std::string w_key, a_key, s_key, d_key, anim = "idling", lastDir;
 
 	//player movement
@@ -64,8 +65,14 @@ void	updatePlayerPosition(Player &player, double deltaTime)
 		d_key = "true";
 
 	//player attack
-	if (player.checkAtkState() == true)
+	if (gSdl.key.attacking() || player.checkAtkState())
+	{
 		anim = "attacking";
+		if (player.getFrame() >= 14 && player.getFrame() < 18)
+			HitFrame = 1;
+		if (player.getFrame() == 24)
+			HitFrame = 2;
+	}
 	else if (gSdl.key.w_key || gSdl.key.a_key || gSdl.key.s_key || gSdl.key.d_key)
 		anim = "walking";
 	
@@ -82,9 +89,10 @@ void	updatePlayerPosition(Player &player, double deltaTime)
 				d_key: UTF8ToString($3),
 				anim: UTF8ToString($4),
 				last_dir: UTF8ToString($5),
-				deltaTime: $6
+				deltaTime: $6,
+				attack_frame : $7
 			});
-		}, w_key.c_str(), a_key.c_str(), s_key.c_str(), d_key.c_str(), anim.c_str(), lastDir.c_str(), deltaTime);
+		}, w_key.c_str(), a_key.c_str(), s_key.c_str(), d_key.c_str(), anim.c_str(), lastDir.c_str(), deltaTime, HitFrame);
 		isIdling = 0;
 	}
 	else if (!isIdling)
@@ -98,20 +106,10 @@ void	updatePlayerPosition(Player &player, double deltaTime)
 				s_key: UTF8ToString($2),
 				d_key: UTF8ToString($3),
 				anim: UTF8ToString($4),
-				last_dir: UTF8ToString($5),
-				attackFrame : UTF8ToString($6)
+				last_dir: UTF8ToString($5)
 			});
 		}, w_key.c_str(), a_key.c_str(), s_key.c_str(), d_key.c_str(), anim.c_str(), lastDir.c_str());
 	}
-}
-
-void	playerAction(Player &player)
-{
-	//manage player atk state
-	if (player.checkAtkState() == true && player.getFrame() >= 23)
-		player.endAtk();
-	if (gSdl.key.attacking() && player.checkAtkState() == false)
-		player.startAtk();
 }
 
 float	dist(float x1, float y1, float x2, float y2)
@@ -181,11 +179,7 @@ void	game_loop(Game &game, double deltaTime)
 	Player	&player = game.getPlayer();
 	Camera	&camera = player.getCamera();
 
-	playerAction(player);
-	#ifdef __EMSCRIPTEN__
-
 	updatePlayerPosition(game.getPlayer(), deltaTime); 
-	#endif
 	updateOtherPlayer(game.getOtherPlayers(), deltaTime);
 	SDL_SetRenderTarget(gSdl.renderer, gSdl.game);
 	SDL_RenderClear(gSdl.renderer);
