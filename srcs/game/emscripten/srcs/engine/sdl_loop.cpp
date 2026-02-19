@@ -9,6 +9,16 @@ void updateRoom(Game &game, Player &player, std::string dir)
 
 	auto exitsLoc = room.getExitsLoc();
 
+	if (room.getRoomEvent())
+	{
+		MobRush &mobrush = dynamic_cast<MobRush &>(*room.getRoomEvent());
+		for (auto &mob : mobrush.getMobs())
+		{
+			mob.second->setIsDead(true);
+			mob.second->setInDeathAnim(false);
+		}
+	}
+
 	if (dir == "S")
 	{
 		game.clearOtherPlayers();

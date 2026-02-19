@@ -9,6 +9,7 @@ enum stateMob
 	MOB_WALKING,
 	MOB_ATTACKING,
 	MOB_HURT,
+	MOB_DEATH,
 	MOB_WANDERING,
 	MOB_CHASING
 };
@@ -20,11 +21,13 @@ class Mob
 		static std::unordered_map<int, SDL_Rect>	_mobAttack;
 		static std::unordered_map<int, SDL_Rect>	_mobIdle;
 		static std::unordered_map<int, SDL_Rect>	_mobHurt;
+		static std::unordered_map<int, SDL_Rect>	_mobDeath;
 
 		static SDL_Texture	*_mobWalkText;
 		static SDL_Texture	*_mobAttackText;
 		static SDL_Texture	*_mobIdleText;
 		static SDL_Texture	*_mobHurtText;
+		static SDL_Texture	*_mobDeathText;
 
 		static int						_walkImgW;
 		static int						_walkImgH;
@@ -38,10 +41,14 @@ class Mob
 		static int						_hurtImgW;
 		static int						_hurtImgH;
 
+		static int						_deathImgW;
+		static int						_deathImgH;
+
 		static void	importMobsWalkAssets(int tile_size);
 		static void	importMobsAttackAssets(int tile_size);
 		static void	importMobsIdleAssets(int tile_size);
 		static void	importMobsHurtAssets(int tile_size);
+		static void	importMobsDeathAssets(int tile_size);
 
 	//----------------------------------------------------
 		const int	_id;
@@ -62,6 +69,8 @@ class Mob
 
 		bool	_isDead;
 
+		bool	_inDeathAnimation;
+
 	public:
 
 		Mob(int id, float x, float y, int hp);
@@ -77,6 +86,7 @@ class Mob
 		int		getHp(void) const;
 		int		getAnim(void) const;
 		int		getFrame(void) const;
+		bool	getInDeathAnim(void) const;
 		void	updateScreenPos(float camX, float camY, int tile_s);
 
 
@@ -85,16 +95,17 @@ class Mob
 		void	setAnim(int anim);
 		void	updateLastDir(int dir);
 
-	//make the mob invinsible after getting attacked
-
 		bool	isDead(void) const;
 		void	setIsDead(bool value);
+
+		void	setInDeathAnim(bool value);
 
 	//mob renderer
 		void	rendMobWalk(int x, int y, int index, float scale, int flag);
 		void	rendMobAttack(int x, int y, int index, float scale, int flag);
 		void	rendMobIdle(int x, int y, int index, float scale, int flag);
 		void	rendMobHurt(int x, int y, int index, float scale, int flag);
+		void	rendMobDeath(int x, int y, int index, float scale, int flag);
 
 		void	printMob(float camX, float camY, int tile_size, int flag);
 };

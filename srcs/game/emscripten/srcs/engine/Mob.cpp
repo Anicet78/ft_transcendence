@@ -4,11 +4,13 @@ std::unordered_map<int, SDL_Rect>	Mob::_mobWalk;
 std::unordered_map<int, SDL_Rect>	Mob::_mobAttack;
 std::unordered_map<int, SDL_Rect>	Mob::_mobIdle;
 std::unordered_map<int, SDL_Rect>	Mob::_mobHurt;
+std::unordered_map<int, SDL_Rect>	Mob::_mobDeath;
 
 SDL_Texture	*Mob::_mobWalkText;
 SDL_Texture	*Mob::_mobAttackText;
 SDL_Texture	*Mob::_mobIdleText;
 SDL_Texture	*Mob::_mobHurtText;
+SDL_Texture	*Mob::_mobDeathText;
 
 int						Mob::_walkImgW;
 int						Mob::_walkImgH;
@@ -22,9 +24,12 @@ int						Mob::_idleImgH;
 int						Mob::_hurtImgW;
 int						Mob::_hurtImgH;
 
+int						Mob::_deathImgW;
+int						Mob::_deathImgH;
+
 Mob::Mob(int id, float x, float y, int hp) : _id(id), _x(x), _y(y),
 		_screenX(0), _screenY(0), _hp(hp), _last_dir(0), _anim(MOB_IDLE),
-		_prev_state(MOB_IDLE), _frame(0), _isDead(false)
+		_prev_state(MOB_IDLE), _frame(0), _isDead(false), _inDeathAnimation(false)
 {
 	(void)_id;
 }
@@ -122,12 +127,35 @@ void	Mob::importMobsHurtAssets(int tile_size)
 	}
 }
 
+void	Mob::importMobsDeathAssets(int tile_size)
+{
+
+	_mobDeathText = loadTexture("assets/sprite/mobs/Orc-Death.bmp", _deathImgW, _deathImgH);
+
+	//define every tile asset position and stock it in _mapAssets
+	int y = 0;
+	int i = 0;
+	while (y * tile_size < _deathImgH)
+	{
+		int x = 0;
+		while (x * tile_size < _deathImgW)
+		{
+			SDL_Rect rect = {x * tile_size, y * tile_size, tile_size, tile_size};
+			_mobDeath.emplace(i, rect);
+			i++;
+			x++;
+		}
+		y++;
+	}
+}
+
 void	Mob::importMobsAssets(int tile_size)
 {
 	importMobsIdleAssets(tile_size);
 	importMobsWalkAssets(tile_size);
 	importMobsAttackAssets(tile_size);
 	importMobsHurtAssets(tile_size);
+	importMobsDeathAssets(tile_size);
 	return ;
 }
 
@@ -198,6 +226,11 @@ float	Mob::getScreenY(void) const
 int		Mob::getFrame(void) const
 {
 	return (_frame);
+}
+
+bool	Mob::getInDeathAnim(void) const
+{
+	return (_inDeathAnimation);
 }
 
 //-----------------------------------------------------------------------
@@ -278,6 +311,21 @@ void	Mob::printMob(float camX, float camY, int tile_size, int flag)
 			this->_frame = 0;
 		int frame = (flag) ? ((!this->_frame) ? 31 : this->_frame - 1) : this->_frame;
 		this->rendMobHurt(x, y, frame / 8, 2, flag);
+	}
+	else if (this->_anim == MOB_DEATH)
+	{
+		if (!flag && this->_prev_state != MOB_DEATH)
+		{
+			this->_frame = 0;
+			this->_prev_state = MOB_DEATH;
+		}
+		if (!flag && this->_frame >= 32)
+		{
+			this->_inDeathAnimation = false;
+			this->_frame = 0;
+		}
+		int frame = (flag) ? ((!this->_frame) ? 31 : this->_frame - 1) : this->_frame;
+		this->rendMobDeath(x, y, frame / 8, 2, flag);
 	}
 	if (!flag)
 		this->_frame++;
@@ -431,6 +479,43 @@ void	Mob::rendMobHurt(int x, int y, int assetIndex, float scale, int flag)
 		SDL_SetTextureAlphaMod(_mobHurtText, 255);
 }
 
+void	Mob::rendMobDeath(int x, int y, int assetIndex, float scale, int flag)
+{
+	if (flag)
+	{
+		SDL_SetTextureBlendMode(_mobDeathText, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(_mobDeathText, 128);
+	}
+
+	if (assetIndex < 0)
+	{
+		std::cerr << "Invalid index" << std::endl;
+		return ;
+	}
+	if (scale <= 0)
+	{
+		std::cerr << "Invalid scale" << std::endl;
+		return ;
+	}
+
+	SDL_Rect	renderRect =
+	{x - 84, y - 84, _deathImgW, _deathImgH};
+	SDL_Rect	*rect = &_mobDeath[assetIndex];
+
+	if (rect != NULL)
+	{
+		renderRect.w = rect->w * scale;
+		renderRect.h = rect->h * scale;
+	}
+
+	if (!_last_dir)
+		SDL_RenderCopy(gSdl.renderer, _mobDeathText, rect, &renderRect);
+	else
+		SDL_RenderCopyEx(gSdl.renderer, _mobDeathText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
+	if (flag)
+		SDL_SetTextureAlphaMod(_mobDeathText, 255);
+}
+
 //-----------------------------------------------------------------------
 
 //-------------Mob death  flag----------------
@@ -438,6 +523,11 @@ void	Mob::rendMobHurt(int x, int y, int assetIndex, float scale, int flag)
 void	Mob::setIsDead(bool value)
 {
 	this->_isDead = value;
+}
+
+void	Mob::setInDeathAnim(bool value)
+{
+	this->_inDeathAnimation = value;
 }
 
 bool	Mob::isDead(void) const
