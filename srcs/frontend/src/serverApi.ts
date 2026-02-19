@@ -66,7 +66,10 @@ api.interceptors.response.use(
 	async (error) => {
 		const originalRequest = error.config;
 
-		if (error.response && error.response.status === 401 && !originalRequest._retry) {
+		const isRefreshRequest = originalRequest.url.includes('/auth/refresh');
+		const isLogoutRequest = originalRequest.url.includes('/auth/logout');
+
+		if (error.response && error.response.status === 401 && !originalRequest._retry && !isRefreshRequest && !isLogoutRequest) {
 			originalRequest._retry = true;
 
 			try {

@@ -13,7 +13,6 @@ import type { GetBody, GetResponse } from '../types/GetType.ts';
 import { useAuth } from './AuthContext.tsx';
 import { useState } from 'react';
 import toast from '../Notifications.tsx';
-import { useNavigate } from 'react-router';
 
 type LoginBodyType = GetBody<"/auth/login", "post">;
 type LoginResponseType = GetResponse<"/auth/login", "post">;
@@ -25,7 +24,6 @@ function Login() {
 		mutationFn: (data: LoginBodyType) => api.post("/auth/login", data),
 		onSuccess: (data) => {
 			const response: LoginResponseType = data.data;
-			toast({ title: `Welcome ${response.user.username}` })
 			login(response.user, response.token);
 		},
 		onError: (error: Error) => {

@@ -33,14 +33,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	}, [navigate]);
 
 	const logout = useCallback(async () => {
-		try {
-			await api.post('/auth/logout');
-		} finally {
-			setUser(null);
-			setToken(null);
-			setAccessToken(null);
-			navigate("/");
-		}
+		await api.post('/auth/logout');
+		setUser(null);
+		setToken(null);
+		setAccessToken(null);
+		navigate("/");
 	}, [navigate]);
 
 	const { data, isLoading, isError } = useQuery({
@@ -74,7 +71,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			setIsInitializing(false);
 		}
 		if (isError) {
-      setUser(null);
+			setUser(null);
 			setToken(null);
 			setAccessToken(null);
 			if (!publicRoutes.includes(window.location.pathname))
