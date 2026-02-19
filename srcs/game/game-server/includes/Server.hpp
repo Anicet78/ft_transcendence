@@ -19,7 +19,7 @@ class Server
 		bool							playerInServer(std::string uid);
 		void							removePlayer(std::string uid);
 		void							reconnectPlayer(std::string &uid, uWS::WebSocket<false, true, PerSocketData> *ws);
-		std::vector<Session>::iterator	endSession(std::string sessionId);
+		std::vector<Session>::iterator	endSession(std::string sessionId, uWS::App &app);
 		Player							&getPlayer(std::string &uid);
 
 
