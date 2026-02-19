@@ -249,6 +249,42 @@ static bool checkWallHitBox2(std::vector<std::string> const &plan,
 			!isBlocked(y2, x1) && !isBlocked(y2, x2));
 }
 
+bool	Mob::move(std::vector<std::string> const &map, float px, float py, float scaleX, float scaleY)
+{
+	float dx = px - this->_x;
+	float dy = py - this->_y;
+	float len = sqrt(dx * dx + dy * dy);
+	if (len > 0.00001f)
+	{
+		dx /= len;
+		dy /= len;
+	}
+	float stepX = dx * scaleX;
+	float stepY = dy * scaleY;
+
+	bool changed = false;
+	if (checkWallHitBox2(map, this->_wallHitBox, stepX, stepY))
+	{
+		this->_x += stepX;
+		this->_y += stepY;
+		changed = true;
+	}
+	else
+	{
+		if (checkWallHitBox2(map, this->_wallHitBox, stepX, 0.0f))
+		{
+			changed  = true;
+			this->_x += stepX;
+		}
+
+		if (checkWallHitBox2(map, this->_wallHitBox, 0.0f, stepY))
+		{
+			changed  = true;
+			this->_y += stepY;
+		}
+	}
+	return changed;
+}
 
 static void changeMobAction(Mob &mob)
 {
@@ -277,39 +313,7 @@ void	Mob::wanderingRoutine(std::vector<std::string> const &map)
 
 	if (this->_state == MOB_CHASE_LAST)
 	{
-		float dx = this->_lastPlayerX - x;
-		float dy = this->_lastPlayerY - y;
-		float len = sqrt(dx * dx + dy * dy);
-		if (len > 0.00001f)
-		{
-			dx /= len;
-			dy /= len;
-		}
-		float stepX = dx * 0.20f;
-		float stepY = dy * 0.20f;
-
-		bool changed = false;
-		if (checkWallHitBox2(map, this->_wallHitBox, stepX, stepY))
-		{
-			this->_x += stepX;
-			this->_y += stepY;
-			changed = true;
-		}
-		else
-		{
-			if (checkWallHitBox2(map, this->_wallHitBox, stepX, 0.0f))
-			{
-				changed  = true;
-				this->_x += stepX;
-			}
-
-			if (checkWallHitBox2(map, this->_wallHitBox, 0.0f, stepY))
-			{
-				changed  = true;
-				this->_y += stepY;
-			}
-
-		}
+		bool changed = this->move(map, this->_lastPlayerX, this->_lastPlayerY, 0.20f, 0.20f);
 
 		if (!changed || (static_cast<int>(this->_x) == static_cast<int>(this->_lastPlayerX) && static_cast<int>(this->_y) == static_cast<int>(this->_lastPlayerY)))
 		{
@@ -367,6 +371,8 @@ void	Mob::chasingRoutine(float px, float py, std::vector<std::string> const &map
 {
 	if (this->_state == MOB_HURT)
 	{
+		float scale = -0.20f * (1.f - (this->getTimeLastAction() / 0.7333));
+		this->move(map, px, py, scale, scale);
 		if (this->getTimeLastAction() > 0.7333)
 			this->setState(MOB_WALKING);
 		return ;
@@ -374,34 +380,13 @@ void	Mob::chasingRoutine(float px, float py, std::vector<std::string> const &map
 	if (this->isInSight(px, py, map))
 	{
 		float dx = px - this->_x;
-		float dy = py - this->_y;
 		if (dx >= 0)
 			this->_last_dir = 0;
 		else
 			this->_last_dir = 1;
 		this->_lastPlayerX = px;
 		this->_lastPlayerY = py;
-		float len = sqrt(dx * dx + dy * dy);
-		if (len > 0.00001f)
-		{
-			dx /= len;
-			dy /= len;
-		}
-		float stepX = dx * 0.2f;
-		float stepY = dy * 0.2f;
-		if (checkWallHitBox2(map, this->_wallHitBox, stepX, stepY))
-		{
-			this->_x += stepX;
-			this->_y += stepY;
-		}
-		else
-		{
-			if (checkWallHitBox2(map, this->_wallHitBox, stepX, 0.0f))
-				this->_x += stepX;
-			
-			if (checkWallHitBox2(map, this->_wallHitBox, 0.0f, stepY))
-				this->_y += stepY;
-		}
+		this->move(map, px, py, 0.20f, 0.20f);
 	}
 	else
 	{

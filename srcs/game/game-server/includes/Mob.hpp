@@ -50,6 +50,7 @@ class Mob
 		void	wanderingRoutine(std::vector<std::string> const &map);
 		void	chasingRoutine(float px, float py, std::vector<std::string> const &map);
 		bool	isInSight(float px, float py, std::vector<std::string> const &map);
+		bool	move(std::vector<std::string> const &map, float px, float py, float scaleX, float scaleY);
 
 	public:
 

@@ -98,7 +98,8 @@ void	updatePlayerPosition(Player &player, double deltaTime)
 				s_key: UTF8ToString($2),
 				d_key: UTF8ToString($3),
 				anim: UTF8ToString($4),
-				last_dir: UTF8ToString($5)
+				last_dir: UTF8ToString($5),
+				attackFrame : UTF8ToString($6)
 			});
 		}, w_key.c_str(), a_key.c_str(), s_key.c_str(), d_key.c_str(), anim.c_str(), lastDir.c_str());
 	}

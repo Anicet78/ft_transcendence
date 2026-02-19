@@ -60,8 +60,6 @@ void	fillMapInfos(val &msg, Game &game)
 	fillMap(vmaps, maps, "floor_0");
 	fillMap(vmaps, maps, "floor_1");
 	vmaps[1].link(vmaps[2]);
-	// printMap(vmaps[1]);
-	// printMap(vmaps[2]);
 }
 
 void	launchGame(Game &game, val msg)
@@ -107,14 +105,19 @@ void	endGame(val &msg, Game &game)
 	Player &player = game.getPlayer();
 	float	time = msg["time"].as<float>();
 	int		win = msg["win"].as<int>();
+	int min, sec;
+	min = static_cast<int>(time / 60);
+	sec = static_cast<int>(std::fmod(time, 60));
+	float mil = std::fmod(time, 60) - sec;
 	EM_ASM_({
 			sendResults({
-				session_id: UTF8ToString($0),
-				player_id: UTF8ToString($1),
-				completion_time: $2,
-				is_winner: $3
+				mob_killed: $0,
+				completion_time_min: $1,
+				completion_time_sec: $2,
+				completion_time_mil: $3,
+				is_winner: $4
 			});
-		}, game.getSessionId().c_str(), player.getUid().c_str(), time, win);
+		}, player.getKills(),  min, sec, mil, win);
 	finishGame();
 }
 
