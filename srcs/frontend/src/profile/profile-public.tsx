@@ -6,6 +6,7 @@ import { useParams } from 'react-router';
 import type { GetResponse } from '../types/GetType';
 import api from '../serverApi';
 import { NavLink } from 'react-router';
+import skull from '../assets/skull.svg';
 
 type ProfileResponseType = GetResponse<"/profile/{username}", "get">;
 
@@ -39,7 +40,7 @@ const ProfilePublic = () => {
 	const userData: ProfileResponseType = userQuery.data;
 	const friendshipData: any = friendshipQuery.data;
 
-	const avatar = userData.avatarUrl ? `http://localhost:3000/uploads/${userData.avatarUrl}` : '../assets/skull.svg';
+	const avatar = userData.avatarUrl ? `https://${window.location.host}/uploads/${userData.avatarUrl}` : skull;
 	const level = userData.gameProfile?.level || '0';
 	const xp = userData.gameProfile?.totalXp || '0';
 	const isConnected = userData.availability || false;
@@ -67,7 +68,7 @@ const ProfilePublic = () => {
 						<i className={`fa-solid fa-circle status-circle ${isPlaying ? 'playing' : isConnected ? 'online' : 'offline'}`}  aria-label="status" />
 						{username}
 					</p>
-					
+
 					<p className="level">Lvl {level}</p>
 					<p className="xp">{xp} XP</p>
 				</Box>
@@ -82,7 +83,7 @@ const ProfilePublic = () => {
 			{friendshipStatus !== 'self' &&
 				<>
 					<div className="button-group">
-						{(friendshipStatus === 'sent') && 
+						{(friendshipStatus === 'sent') &&
 							<div className="button-row">
 								<Button color="dark" disabled size='large'>Request pending</Button>
 								<NavLink to={"/friends/requests/update/" + friendshipData.friendshipId} state={{requestedAction: "cancel"}} className="button is-medium">Cancel request</NavLink>
@@ -97,7 +98,7 @@ const ProfilePublic = () => {
 									<Button color='primary' isInverted aria-label='spectate button' size='medium'>Spectate</Button>
 								</div>
 							</div>}
-						{friendshipStatus === 'received' && 
+						{friendshipStatus === 'received' &&
 							<div className="button-row">
 								<NavLink to={"/friends/requests/update/" + friendshipData.friendshipId} state={{requestedAction: "accept"}} className="button is-medium">Accept request</NavLink>
 								<NavLink to={"/friends/requests/update/" + friendshipData.friendshipId} state={{requestedAction: "reject"}} className="button is-medium">Reject request</NavLink>

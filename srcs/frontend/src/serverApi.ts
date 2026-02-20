@@ -35,7 +35,7 @@ const waitForSocketId = (): Promise<string | null> => {
 };
 
 const api = axios.create({
-	baseURL: `/api`,
+	baseURL: (window.location.port == "5173" ? 'https://localhost:8443' : '') + `/api`,
 	withCredentials: true,
 	timeout: 5000,
 	headers: {
@@ -71,7 +71,7 @@ api.interceptors.response.use(
 			originalRequest._retry = true;
 
 			try {
-				const res = await axios.post(`/api/auth/refresh`, {}, { withCredentials: true });
+				const res = await axios.post(`${window.location.port == "5173" ? 'https://localhost:8443' : ''}/api/auth/refresh`, {}, { withCredentials: true });
 
 				accessToken = res.data.token;
 				if (onRefreshSuccessCallback) onRefreshSuccessCallback(accessToken!);

@@ -33,7 +33,7 @@ services:
       - secret_42
     volumes:
       - ../srcs/frontend:/front
-      - ./uploads:/usr/src/app/uploads
+      - ../srcs/backend/uploads:/app/uploads
     networks:
       - transcendence
     depends_on:
@@ -113,14 +113,13 @@ services:
     container_name: nginx-c
     restart: on-failure
     ports:
-      - 8080:80
       - 8443:443
     env_file:
       - .env
     volumes:
-      - ../srcs/frontend/build:/var/www/html
       - ./nginx/conf/:/etc/nginx/conf.d/:ro
       - ./certs:/etc/nginx/certs
+      - ../srcs/backend/uploads:/usr/share/nginx/uploads
     networks:
       - transcendence
     depends_on:
