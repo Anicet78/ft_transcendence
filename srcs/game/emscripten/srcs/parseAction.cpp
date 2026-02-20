@@ -126,7 +126,11 @@ void	loopRoomState(Game &game, val roomUpdate)
 				// 	mobs[id]->damaged(true);
 				
 				if (monster["isdead"].as<int>() == 1)
+				{
+					if (mobs[id]->isDead() == false)
+						mobs[id]->setInDeathAnim(true);
 					mobs[id]->setIsDead(true);
+				}
 				mobs[id]->setPos(x, y);
 			}
 			else
