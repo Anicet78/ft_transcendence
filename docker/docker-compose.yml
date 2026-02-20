@@ -37,7 +37,8 @@ services:
     networks:
       - transcendence
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
 
   # node-dev:
   #   image: node:25.2.1
@@ -79,7 +80,8 @@ services:
     networks:
       - transcendence
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
 
   emscripten:
     image: emscripten/emsdk:4.0.23
@@ -105,7 +107,9 @@ services:
       - transcendence
 
   nginx:
-    image: nginx:1.29.4
+    build:
+      context: ../srcs/frontend
+      dockerfile: Dockerfile
     container_name: nginx-c
     restart: on-failure
     ports:
@@ -114,12 +118,18 @@ services:
     env_file:
       - .env
     volumes:
+      - ../srcs/frontend/build:/var/www/html
       - ./nginx/conf/:/etc/nginx/conf.d/:ro
       - ./certs:/etc/nginx/certs
     networks:
       - transcendence
     depends_on:
-      - emscripten
+      node:
+        condition: service_started
+      game-server:
+        condition: service_started
+      emscripten:
+        condition: service_completed_successfully
 
 secrets:
   db_password:

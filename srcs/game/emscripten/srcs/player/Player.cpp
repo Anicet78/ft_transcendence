@@ -72,6 +72,11 @@ int		Player::getAtk(void) const
 	return (_atk);
 }
 
+int		Player::getPrevState(void) const
+{
+	return (_prev_state);
+}
+
 int		Player::getDef(void) const
 {
 	return (_def);
@@ -126,13 +131,15 @@ int	Player::getFrame(void) const
 
 void	Player::updateLastDir(void)
 {
+	if (this->_atkState)
+		return ;
 	if (gSdl.key.d_key)
 		_last_dir = 0;
 	else if (gSdl.key.a_key)
 		_last_dir = 1;
-	if (gSdl.key.w_key)
+	else if (gSdl.key.w_key)
 		_last_dir = 2;
-	if (gSdl.key.s_key)
+	else if (gSdl.key.s_key)
 		_last_dir = 3;
 }
 
@@ -190,6 +197,7 @@ void	Player::setKills(int kills)
 	return ;
 }
 
+
 void	Player::setAnim(int anim)
 {
 	this->_anim = anim;
@@ -230,21 +238,26 @@ void	Player::printPlayer(float px, float py, int flag)
 	const float x = px - (0.5f * tile_s);
 	const float y = py - (0.5f * tile_s);
 
-	if (!flag && this->_frame >= 24)
-		this->_frame = 0;
-
 	if (flag)
 	{
 		SDL_SetTextureBlendMode(this->_nameTexture, SDL_BLENDMODE_BLEND);
 		SDL_SetTextureAlphaMod(this->_nameTexture, 128);
 	}
 	
-	if (this->_anim == 2)
+	if (this->_anim == PLAYER_ATTACKING)
 	{
 		if (!flag && this->_prev_state != PLAYER_ATTACKING)
+		{
 			this->_frame = 0;
+			this->_prev_state = PLAYER_ATTACKING;
+			this->startAtk();
+		}
+		if (!flag && this->_frame >= 24)
+		{
+			this->_frame = 0;
+			this->endAtk();
+		}
 		int frame = (flag) ? ((!this->_frame) ? 23 : this->_frame - 1) : this->_frame;
-		this->_prev_state = PLAYER_ATTACKING;
 		if (this->_last_dir < 2)
 			PlayerAssets::rendPlayerAttack(0, x, y, frame / 4, 2, this->_last_dir, flag);
 		else if (this->_last_dir == 3)
@@ -252,12 +265,17 @@ void	Player::printPlayer(float px, float py, int flag)
 		else if (this->_last_dir == 2)
 			PlayerAssets::rendPlayerAttackBack(0, x, y, frame / 4, 2, flag);
 	}
-	else if (this->_anim == 1)
+	else if (this->_anim == PLAYER_WALKING)
 	{
 		if (!flag && this->_prev_state != PLAYER_WALKING)
+		{
 			this->_frame = 0;
-		int frame = (flag) ? ((!this->_frame) ? 23 : this->_frame - 1) : this->_frame;
-		this->_prev_state = PLAYER_WALKING;
+			this->endAtk();
+			this->_prev_state = PLAYER_WALKING;
+		}
+		if (!flag && this->_frame >= 32)
+			this->_frame = 0;
+		int frame = (flag) ? ((!this->_frame) ? 31 : this->_frame - 1) : this->_frame;
 		if (this->_last_dir < 2)
 			PlayerAssets::rendPlayerWalk(0, x, y, frame / 4, 2, this->_last_dir, flag);
 		else if (this->_last_dir == 3)
@@ -265,12 +283,17 @@ void	Player::printPlayer(float px, float py, int flag)
 		else if (this->_last_dir == 2)
 			PlayerAssets::rendPlayerWalkBack(0, x, y, frame / 4, 2, flag);
 	}
-	else
+	else if (this->_anim == PLAYER_IDLE)
 	{
 		if (!flag && this->_prev_state != PLAYER_IDLE)
+		{
+			this->_frame = 0;
+			this->endAtk();
+			this->_prev_state = PLAYER_IDLE;
+		}
+		if (!flag && this->_frame >= 24)
 			this->_frame = 0;
 		int frame = (flag) ? ((!this->_frame) ? 23 : this->_frame - 1) : this->_frame;
-		this->_prev_state = PLAYER_IDLE;
 		if (this->_last_dir < 2)
 			PlayerAssets::rendPlayerIdle(0, x, y, frame / 4, 2, this->_last_dir, flag);
 		else if (this->_last_dir == 3)

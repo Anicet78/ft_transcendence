@@ -5,9 +5,9 @@ import { useMessagesMutations } from "./useMessagesMutations";
 import toast from '../../Notifications.tsx';
 
 export function useGroupChatMutations(chatId?: string) {
-	
+
 	const { joinChat, leaveChat } = useChat();
-	const { sendMessageMutation } = useMessagesMutations(chatId); 
+	const { sendMessageMutation } = useMessagesMutations(chatId);
 
 	const kickMutation = useMutation({
 		mutationFn: async (memberId: string) => {

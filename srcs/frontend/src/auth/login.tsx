@@ -51,7 +51,7 @@ function Login() {
 
 	const GOOGLE_CLIENT_ID = window._env_?.VITE_GOOGLE_CLIENT_ID || import.meta.env.VITE_GOOGLE_CLIENT_ID;
 	const FORTYTWO_CLIENT_ID = window._env_?.VITE_42_CLIENT_ID || import.meta.env.VITE_42_CLIENT_ID;
-	const REDIRECT_URI = "http://localhost:5173/callback"; // change with https://localhost:8443/callback
+	const REDIRECT_URI = "https://localhost:8443/callback";
 	const SCOPE = "openid email profile";
 
 	const googleUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +

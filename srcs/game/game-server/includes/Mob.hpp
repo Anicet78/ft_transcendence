@@ -1,7 +1,8 @@
 #ifndef MOB_HPP
 # define MOB_HPP
 
-#include"HitBox.hpp"
+# include "HitBox.hpp"
+class Player;
 
 enum state
 {
@@ -9,6 +10,8 @@ enum state
 	MOB_WALKING,
 	MOB_ATTACKING,
 	MOB_HURT,
+	MOB_DODGE,
+	MOB_RUNNING,
 	MOB_CHASE_LAST,
 	MOB_WANDERING,
 	MOB_CHASING
@@ -21,6 +24,8 @@ class Mob
 	//mob pos
 		float	_x;
 		float	_y;
+		float	_lastX;
+		float	_lastY;
 
 		int		_hp;
 
@@ -48,8 +53,12 @@ class Mob
 
 	private:
 		void	wanderingRoutine(std::vector<std::string> const &map);
-		void	chasingRoutine(float px, float py, std::vector<std::string> const &map);
-		bool	isInSight(float px, float py, std::vector<std::string> const &map);
+		void	chasingRoutine(Player &player, std::vector<std::string> const &map);
+		bool	isInSight(Player &player, std::vector<std::string> const &map);
+		void	move(std::vector<std::string> const &map, float px, float py, float scaleX, float scaleY);
+		void	moveDodge(std::vector<std::string> const &map, float px, float py, float scaleX, float scaleY);
+		void	attack(Player &player);
+		void	dodge(Player &player, std::vector<std::string> const &map);
 
 	public:
 
@@ -82,7 +91,7 @@ class Mob
 	//make the mob invinsible after getting attacked
 		void	startInvinsibleFrame(void);
 		void	endInvinsibleFrame(void);
-		void	MobAction(float px, float py, std::vector<std::string> const &map);
+		void	MobAction(Player &player, std::vector<std::string> const &map);
 		bool	checkInvinsibleFrame(void);
 
 	//mob die and damage interaction

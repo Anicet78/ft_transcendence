@@ -148,7 +148,7 @@ void sendPlayerState(Player &player, Session &session, std::string uid_leave)
 
 	msg += '}';
 
-	player.getWs()->send(msg);
+	player.getWs()->send(msg, uWS::OpCode::TEXT);
 }
 
 int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSocketData> *ws, uWS::App &app)
@@ -167,7 +167,7 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
 		{
 			this->reconnectPlayer(data->playerId, ws);
 			Player &player = this->getPlayer(data->playerId);
-			player.setConnexion(1);
+			player.setReconnexion(1);
 			data->jsonMsg.clear();
 			return 1;
 		}

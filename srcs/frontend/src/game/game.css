@@ -8,3 +8,36 @@
 .card {
   padding: 2em;
 }
+
+#end-results {
+  background: #3712dd;
+  margin: auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 500px;
+  color: rgba(11, 2, 63, 0.94);
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(16, 10, 51, 0.94);
+}
+
+#home-button {
+  display: "flex";
+  position: "relative";
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 4px 10px rgba(16, 10, 51, 0.94);
+}
+
+#home-button:hover {
+  background-color: #2816ca;
+}
+
+#home-button:active {
+  transform: scale(0.97);
+}
