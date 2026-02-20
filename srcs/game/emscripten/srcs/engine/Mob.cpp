@@ -35,7 +35,13 @@ Mob::Mob(int id, float x, float y, int hp) : _id(id), _x(x), _y(y),
 }
 
 Mob::~Mob(void)
-{}
+{
+	SDL_DestroyTexture(_mobWalkText);
+	SDL_DestroyTexture(_mobIdleText);
+	SDL_DestroyTexture(_mobDeathText);
+	SDL_DestroyTexture(_mobHurtText);
+	SDL_DestroyTexture(_mobAttackText);
+}
 
 //------------------------assets importation related---------------------
 
