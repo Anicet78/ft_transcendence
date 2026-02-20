@@ -23,7 +23,9 @@ export const InputPassword: React.FC<PasswordInputProps> = ({ placeholder, error
   ];
 
   return (
-    <div style={{ position: "relative", marginBottom: "12px" }}>
+    <div style={{ position: "relative"}}>
+		<label htmlFor={placeholder}>{placeholder}</label>
+		<br />
       <input
         {...register}
         type={show ? "text" : "password"}

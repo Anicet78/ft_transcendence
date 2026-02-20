@@ -1,12 +1,64 @@
 .box-head {
-	columns: 2;
-	align-items: center;
-	width: 60%;
-	margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;          /* allow full width */
+  max-width: 400px;     /* optional: limit maximum width */
+  margin: auto;
+  padding: 16px;        /* add some padding */
+  gap: 16px;
+  box-sizing: border-box; /* ensure padding is included in width */
+  background-color: white; /* just to keep it inside white box */
 }
 
-.head-text{
-	width: 100%;
+.image-box figure img {
+  width: 20vw;       /* 20% of viewport width */
+  height: 20vw;
+  max-width: 128px;  /* cap the size */
+  max-height: 128px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  flex-shrink: 1; /* allows text box to shrink when space is tight */
+  min-width: 0;   /* ensures text wraps properly */
+}
+
+
+.head-text .username {
+  font-weight: bold;
+  font-size: 1.7rem;
+  margin: 0;
+}
+
+.status-circle {
+  font-size: 16px; /* circle size */
+  margin-right: 8px; /* space between circle and username */
+  vertical-align: middle; /* keeps it aligned with text */
+}
+
+/* Colors for different statuses */
+.status-circle.playing {
+  color: orange;
+}
+
+.status-circle.online {
+  color: green;
+}
+
+.status-circle.offline {
+  color: red;
+}
+
+.head-text .level,
+.head-text .xp {
+  margin: 0;
+  font-size: 1.2rem;
 }
 
 .info {
@@ -17,9 +69,23 @@
 	margin: auto;
 }
 
-.profile_username {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin: auto;
+.button-group {
+  display: flex;
+  flex-direction: column;   /* stack main groups vertically */
+  gap: 12px;                /* vertical space between button groups */
+  padding: 12px 0;
+  align-items: center;      /* center everything horizontally */
+}
+
+.button-row {
+  display: flex;
+  gap: 12px;                /* horizontal spacing between buttons in the row */
+  padding: 12px 0;
+  flex-wrap: wrap;           /* wrap if too narrow */
+  justify-content: center;   /* center buttons horizontally */
+}
+
+.button-group .button,
+.button-group button {
+  min-width: 140px;     /* optional: make buttons consistent width */
 }
