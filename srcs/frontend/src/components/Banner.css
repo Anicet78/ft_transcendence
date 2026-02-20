@@ -5,6 +5,8 @@
   max-width: 100%;
   background-color: #3D3C3C;
   box-sizing: border-box;
+  height: 60px;
+  min-height: 60px;
 }
 
 /* Remove Bulma internal container constraint */
@@ -31,4 +33,10 @@
   display: flex;
   align-items: center;
   gap: 16px; /* space between user button and menu */
+}
+
+/* Force navbar dropdown to align to right edge */
+.navbar-end .navbar-dropdown {
+  right: 0 !important;
+  left: auto !important;
 }
