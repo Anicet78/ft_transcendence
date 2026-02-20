@@ -23,6 +23,7 @@ class Minimap
 	
 	public:
 		void	printMinimap(std::vector<Map> const &maps, Player const  &player);
+		
 };
 
 class Hud
@@ -30,13 +31,19 @@ class Hud
 	private:
 		Minimap		_minimap;
 		SDL_Texture	*_placeHolderTexture;
+		SDL_Texture	*_healthTexture;
+
+	private:
+		void	printTimer(float time);
+		void	printHealthBar(Player const &player);
 
 	public:
 		Hud(void);
 		~Hud();
 	
 	public:
-		void	print(std::vector<Map> const &maps, Player const  &player, int launched);
+		void	print(std::vector<Map> const &maps, Player const  &player, int launched, float time);
+		
 
 };
 

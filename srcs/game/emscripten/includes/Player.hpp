@@ -12,6 +12,8 @@ enum state
 	PLAYER_DEATH
 };
 
+#define MAX_PLAYER_HP 3
+
 class Player
 {
 	private:

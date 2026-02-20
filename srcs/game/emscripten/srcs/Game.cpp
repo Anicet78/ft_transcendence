@@ -100,33 +100,7 @@ void Game::suppOtherPlayer(std::string &uid)
 
 void	Game::drawHud()
 {
-	this->_hud.print(_maps, _player, this->_launched);
-	//this->_hud.printTimer(this->_time_in_s);
-	std::string secM, minM, milM;
-	int min = static_cast<int>(this->_time_in_s / 60);
-	float sec = std::fmod(this->_time_in_s, 60);
-	float mil = sec - (int)sec;
-	milM = std::to_string(mil).substr(2, 2);
-	secM = (sec < 10) ? '0' + std::to_string(sec).substr(0, 1) : std::to_string(sec).substr(0, 2);
-	minM = (min < 10) ? '0' + std::to_string(min) : std::to_string(min);
-
-	std::string timer = minM + ':' + secM + ':' + milM;
-	SDL_Surface* surf = TTF_RenderText_Blended(gSdl.font, timer.c_str(), (SDL_Color){0, 255, 0, 255});
-	if (!surf)
-	{
-		SDL_Log("RenderText error: %s", TTF_GetError());
-		return ;
-	}
-
-	SDL_Texture *time = SDL_CreateTextureFromSurface(gSdl.renderer, surf);
-
-	int w, h;
-	SDL_QueryTexture(time, nullptr, nullptr, &w, &h);
-	SDL_Rect dst = {static_cast<int>(300 - (w / 6)), static_cast<int>(75 - (h / 6)), w / 3, h / 3};
-	SDL_RenderCopy(gSdl.renderer, time, nullptr, &dst);
-
-	SDL_FreeSurface(surf);
-	SDL_DestroyTexture(time);
+	this->_hud.print(_maps, _player, this->_launched, this->_time_in_s);
 }
 
 bool Game::isInOtherPlayers(std::string &uid) const
