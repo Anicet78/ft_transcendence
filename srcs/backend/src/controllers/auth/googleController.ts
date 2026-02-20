@@ -47,7 +47,7 @@ export async function googleCallbackController(
 			code,
 			client_id: process.env.VITE_GOOGLE_CLIENT_ID,
 			client_secret: process.env.GOOGLE_SECRET,
-			redirect_uri: 'http://localhost:5173/callbackGoogle', // change with https://localhost:8443/callbackGoogle
+			redirect_uri: 'https://localhost:8443/callbackGoogle',
 			grant_type: 'authorization_code',
 		}),
 	});
