@@ -145,7 +145,7 @@ static void	mobInteraction(MobRush &rush, int id, Mob &mob, Player &player)
 	{
 		if (abs_dist(player, mob) > 2)
 			return ;
-		int dodge = rand() % 10;
+		int dodge = rand() % 15;
 		if (!dodge)
 		{
 			mob.setState(MOB_DODGE);

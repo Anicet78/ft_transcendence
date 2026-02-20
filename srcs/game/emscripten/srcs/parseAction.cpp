@@ -7,10 +7,13 @@ void	setPlayerState(Player &player, val &pStatus, int flag)
 	int hp = pStatus["player_health"].as<int>();
 	int	anim = pStatus["player_anim"].as<int>();
 	int kills = pStatus["player_kills"].as<int>();
-
+	std::string hurtS = pStatus["player_hurt"].as<std::string>();
+	bool hurt = (hurtS == "true") ? true : false;
 	player.setHp(hp);
-	player.setAnim(anim);
 	player.setKills(kills);
+	player.setHurt(hurt);
+	player.setAnim(anim);
+	
 	if (flag == 1)
 	{
 		int dir = pStatus["player_dir"].as<int>();

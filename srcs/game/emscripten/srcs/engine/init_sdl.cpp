@@ -42,8 +42,6 @@ int	init_sdl(Engine &gSdl)
 
     SDL_GetRendererInfo(gSdl.renderer, &info);
 
-	std::cout << info.max_texture_width << " " << info.max_texture_height << std::endl;
-
 	if (info.max_texture_width > 16384)
 	{
 		gSdl.maxTexWidth = info.max_texture_width / 2;
@@ -54,8 +52,6 @@ int	init_sdl(Engine &gSdl)
 		gSdl.maxTexWidth = info.max_texture_width;
 		gSdl.maxTexHeight = info.max_texture_height;
 	}
-
-	std::cout << gSdl.maxTexHeight << " " << gSdl.maxTexWidth << std::endl;
 
 	if (!gSdl.timer.getStarted())
 		gSdl.timer.startTimer();

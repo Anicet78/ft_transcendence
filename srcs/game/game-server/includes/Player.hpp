@@ -15,6 +15,15 @@ typedef struct PerSocketData
     std::map<std::string, std::string>	jsonMsg;
 } PerSocketData;
 
+enum statePlayer
+{
+	PLAYER_IDLE,
+	PLAYER_WALKING,
+	PLAYER_ATTACKING,
+	PLAYER_HURT,
+	PLAYER_DEATH
+};
+
 class Player
 {
 	private:
@@ -68,6 +77,8 @@ class Player
 
 	//nbr kill
 		int			_kills;
+	
+	
 	public:
 		Player(std::string uid, int partySize, std::string partyId, std::string name,
 				int sessionSize, uWS::WebSocket<false, true, PerSocketData> *ws);
@@ -153,6 +164,7 @@ class Player
 		void		endAttacking(void);
 
 		void		updateAnim(std::string const &req);
+		bool		updateHurt(void);
 		void		move(std::map<std::string, std::string> &req);
 		void		takeDamage(int amount);
 		void		heal(int amount);

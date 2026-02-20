@@ -453,7 +453,7 @@ void	Mob::chasingRoutine(Player &player, std::vector<std::string> const &map)
 	}
 	if (this->isInSight(player, map))
 	{
-		if (dist(player.getX(), player.getY(), *this) > 1.2)
+		if (dist(player.getX(), player.getY(), *this) > 1.1f)
 		{
 			if (this->_state != MOB_RUNNING)
 				this->_state = MOB_RUNNING;

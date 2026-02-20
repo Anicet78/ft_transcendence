@@ -433,20 +433,28 @@ void	Player::updateAnim(std::string const &req)
     if (!req.empty())
 	{
         if (req == "idling")
-            this->setAnim(0);
+            this->setAnim(PLAYER_IDLE);
         else if (req == "walking")
-            this->setAnim(1);
+            this->setAnim(PLAYER_WALKING);
         else if (req == "attacking")
 		{
 			if (this->_atkFrame != 2 && this->getTimeAttack() > 0.2f)
-				this->setAnim(2);
+				this->setAnim(PLAYER_ATTACKING);
 			else if (this->_atkFrame == 2 && this->getTimeAttack() > 0.2f)
 			{
 				this->resetTimeAttack();
-            	this->setAnim(0);
+            	this->setAnim(PLAYER_IDLE);
 			}
 		}
     }
+}
+
+bool	Player::updateHurt(void)
+{
+	if (this->_isInvinsible && this->getTimeInvincible() > 0.f && this->getTimeInvincible() <= 0.5f)
+		return true;
+
+	return false;
 }
 
 void	Player::move(std::map<std::string, std::string> &req)
@@ -456,7 +464,7 @@ void	Player::move(std::map<std::string, std::string> &req)
 	auto plan = room.getRoomPlan();
     this->setWallHitBox();
 	float deltaTime = std::atof(req["deltaTime"].c_str());
-	(void)deltaTime;
+
 
 	if (req["w_key"] == "true")
 	{
@@ -483,9 +491,8 @@ void	Player::move(std::map<std::string, std::string> &req)
 			x -= 6.0f * deltaTime;
 	}
 	this->setPos(x, y);
-    if (!req["last_dir"].empty())
+	if (!req["last_dir"].empty())
 		this->setLastDir(std::atoi(req["last_dir"].c_str()));
-	
 }
 
 void	Player::resetTimeAttack(void)

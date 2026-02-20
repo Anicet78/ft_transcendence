@@ -12,6 +12,8 @@ class PlayerAssets
 		static std::unordered_map<int, SDL_Rect>	_playerWalk;
 		static std::unordered_map<int, SDL_Rect>	_playerAttack;
 		static std::unordered_map<int, SDL_Rect>	_playerIdle;
+		static std::unordered_map<int, SDL_Rect>	_playerHurt;
+		static std::unordered_map<int, SDL_Rect>	_playerDeath;
 
 		static std::unordered_map<int, SDL_Rect>	_playerWalkFront;
 		static std::unordered_map<int, SDL_Rect>	_playerAttackFront;
@@ -24,6 +26,8 @@ class PlayerAssets
 		static SDL_Texture	*_playerWalkText;
 		static SDL_Texture	*_playerAttackText;
 		static SDL_Texture	*_playerIdleText;
+		static SDL_Texture	*_playerHurtText;
+		static SDL_Texture	*_playerDeathText;
 
 		static SDL_Texture	*_playerWalkFrontText;
 		static SDL_Texture	*_playerAttackFrontText;
@@ -33,8 +37,6 @@ class PlayerAssets
 		static SDL_Texture	*_playerAttackBackText;
 		static SDL_Texture	*_playerIdleBackText;
 		
-		static SDL_Texture* mapRenderTexture;
-
 		static int						_walkImgW;
 		static int						_walkImgH;
 
@@ -44,36 +46,34 @@ class PlayerAssets
 		static int						_idleImgW;
 		static int						_idleImgH;
 
+		static int						_hurtImgW;
+		static int						_hurtImgH;
+
+		static int						_deathImgW;
+		static int						_deathImgH;
+
 		PlayerAssets(void);
 		~PlayerAssets();
 
-		static void	importPlayersWalkAssets(int tile_size);
-		static void	importPlayersAttackAssets(int tile_size);
-		static void	importPlayersIdleAssets(int tile_size);
-
-		static void	importPlayersWalkFrontAssets(int tile_size);
-		static void	importPlayersAttackFrontAssets(int tile_size);
-		static void	importPlayersIdleFrontAssets(int tile_size);
-
-		static void	importPlayersWalkBackAssets(int tile_size);
-		static void	importPlayersAttackBackAssets(int tile_size);
-		static void	importPlayersIdleBackAssets(int tile_size);
+		static void importAssets(std::string path, int tile_size, SDL_Texture *&texture,  std::unordered_map<int, SDL_Rect> &map, int &imgW, int &imgH);
 
 	public:
 
 		static void	importPlayersAssets(int tile_size);
 
-		static void	rendPlayerWalk(int playerNum, int x, int y, int index, float scale, int player_dir, int flag);
-		static void	rendPlayerAttack(int playerNum, int x, int y, int index, float scale, int player_dir, int flag);
-		static void	rendPlayerIdle(int playerNum, int x, int y, int index, float scale, int player_dir, int flag);
+		static void	rendPlayerWalk(int x, int y, int index, float scale, int player_dir, int flag);
+		static void	rendPlayerAttack(int x, int y, int index, float scale, int player_dir, int flag);
+		static void	rendPlayerIdle(int x, int y, int index, float scale, int player_dir, int flag);
+		static void	rendPlayerHurt(int x, int y, int index, float scale, int player_dir, int flag);
+		static void	rendPlayerDeath(int x, int y, int index, float scale, int player_dir, int flag);
 
-		static void	rendPlayerWalkFront(int playerNum, int x, int y, int index, float scale, int flag);
-		static void	rendPlayerAttackFront(int playerNum, int x, int y, int index, float scale, int flag);
-		static void	rendPlayerIdleFront(int playerNum, int x, int y, int index, float scale, int flag);
+		static void	rendPlayerWalkFront(int x, int y, int index, float scale, int flag);
+		static void	rendPlayerAttackFront(int x, int y, int index, float scale, int flag);
+		static void	rendPlayerIdleFront(int x, int y, int index, float scale, int flag);
 
-		static void	rendPlayerWalkBack(int playerNum, int x, int y, int index, float scale, int flag);
-		static void	rendPlayerAttackBack(int playerNum, int x, int y, int index, float scale, int flag);
-		static void	rendPlayerIdleBack(int playerNum, int x, int y, int index, float scale, int flag);
+		static void	rendPlayerWalkBack(int x, int y, int index, float scale, int flag);
+		static void	rendPlayerAttackBack(int x, int y, int index, float scale, int flag);
+		static void	rendPlayerIdleBack(int x, int y, int index, float scale, int flag);
 
 };
 
