@@ -62,7 +62,7 @@ const Game = () => {
 			}
 		};
 	}, []);
-	
+
 	useEffect(() => {
 		if (!canvasRef.current || mutation.isPending || !gameSocket || !user || !room) return;
 
@@ -77,7 +77,7 @@ const Game = () => {
 						return path;
 					},
 					onCppMessage: (obj: Object) => gameSocket.send(JSON.stringify(obj)),
-					sendResults: (obj: Object) => 
+					sendResults: (obj: Object) =>
 					{
 						setJsonEnd(obj);
 						console.log(JSON.stringify(obj))
@@ -110,7 +110,7 @@ const Game = () => {
 	}, [mutation.isPending, gameSocket]);
 
 	useEffect(() => {
-		
+
 		if (!gameSocket || !Module || !user || !room) return;
 		gameSocket.onmessage = async (event) => {
 			let data = event.data;
@@ -131,7 +131,7 @@ const Game = () => {
 			console.error(err);
 		};
 
-		Module.callMain([user.id, 'username', room.roomId, room.players.length.toString(), "1"]);
+		Module.callMain([user.id, user.username, room.roomId, room.players.length.toString(), room.players.length.toString()]);
 	}, [gameSocket, Module]);
 
 	if (mutation.isPending) {

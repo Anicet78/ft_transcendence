@@ -5,6 +5,7 @@ import { NavLink } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import api from '../serverApi.ts';
 import type { GetResponse } from '../types/GetType.ts';
+import skull from '../assets/skull.svg';
 
 type ProfileResponseType = GetResponse<"/profile", "get">;
 
@@ -20,8 +21,10 @@ const ProfilePrivate = () => {
 
 	const userData: ProfileResponseType = data.data;
 
+	console.log(`https://${window.location.host}/uploads/${userData.avatarUrl}`);
+
 	const username = userData.username;
-	const avatar = userData.avatarUrl ? `http://localhost:3000/uploads/${userData.avatarUrl}` : '../assets/skull.svg';
+	const avatar = userData.avatarUrl ? `https://${window.location.host}/uploads/${userData.avatarUrl}` : skull;
 	const level = userData.gameProfile?.level || '0';
 	const xp = userData.gameProfile?.totalXp || '0';
 	const firstname = userData.firstName;

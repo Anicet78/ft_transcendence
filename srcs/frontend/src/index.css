@@ -1,33 +1,45 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  font-family: system-ui, Helvetica, Arial, sans-serif; /* default font stack */
+  line-height: 1.5; /* default line spacing */
+  font-weight: 400; /* default font weight */
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: light dark; /* can support both light and dark modes */
+  color: rgba(255, 255, 255, 0.87); /* white with slight transparency */
+  background-color: #242424; /* dark gray */
 
-  font-synthesis: none;
+  font-synthesis: none; /* Prevents the browser from faking bold or italic styles if they aren’t available in the font */
   text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased; /* Enhances font rendering on WebKit browsers */
+  -moz-osx-font-smoothing: grayscale; /* Enhances font rendering on macOS browsers */
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+/* The !important ensures nothing overrides it.*/
+html, body, #root {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  margin: 0; /* Removes the browser’s default body margin */
+  min-width: 320px; 
+  min-height: 100vh; /* fills the screen height */
+  width: 100%; /* spans full width */
+  display: block;
+  background-color: #242424;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+a {
+  font-weight: 500; /* slightly bold */
+  color: #646cff; /* blue/purple */
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2; /* slightly darker blue */
 }
 
 h1 {
@@ -36,33 +48,44 @@ h1 {
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
+  border-radius: 8px; /* Rounded */
+  border: 1px solid transparent; /* initially border invisible */
+  padding: 0.6em 1.2em; /* (0.6em top/bottom, 1.2em left/right) */
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #1a1a1a; /* Dark gray */
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  transition: border-color 0.25s; /* Smooth transition on border color changes */
 }
 
+button:hover {
+  border-color: #646cff; /* blue/purple */
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color; /* focus outline (important for accessibility) when using keyboard navigation or focusing programmatically */
+}
+
+/* Applies styles only if the user prefers light mode */
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: #213547; /* text to dark gray */
+    background-color: #ffffff; /* bg to white */
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
-    background-color: #f9f9f9;
+    background-color: #e0e0e0; /* light gray button background */
+    color: #213547; /* dark text for contrast */
+    border-color: transparent; /* keep hover effect intact */
+  }
+
+  button:hover {
+    border-color: #747bff; /* maintain hover border */
   }
 }
