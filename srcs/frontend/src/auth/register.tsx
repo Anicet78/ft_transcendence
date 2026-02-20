@@ -16,6 +16,8 @@ import InputText from '../components/InputText.tsx';
 import InputPassword from '../components/InputPassword.tsx';
 import SelectRegion from '../components/SelectRegion.tsx';
 import toast from '../Notifications.tsx';
+import { handleGoogleLogin } from './callbackGoogle.tsx';
+import { handle42Login } from './callback42.tsx';
 
 type RegisterBodyType = GetBody<"/auth/register", "post">;
 type RegisterResponseType = GetResponse<"/auth/register", "post">;
@@ -82,10 +84,10 @@ function Register() {
 	const password = watch("password");
 	const confirmPassword = watch("confirmPassword");
 
-	const mutation: UseMutationResult<RegisterResponseType, any, RegisterBodyType> = useMutation({
+	const mutation = useMutation({
 		mutationFn: (data: RegisterBodyType) => api.post("/auth/register", data),
 		onSuccess: (data) => {
-			const response: RegisterResponseType = data;
+			const response: RegisterResponseType = data.data;
 			toast({ title: `Your account has been successfully created`, type: "is-success" })
 			login(response.user, response.token);
 		},
@@ -111,8 +113,8 @@ function Register() {
 		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='center' textSize='3' textWeight='bold'>
 			<div className="register-box">
 				<div className='social-buttons'>
-					<Button color='primary' isOutlined className='login-button'>Login with Google</Button>
-					<Button color='primary' isOutlined className='login-button'>Login with 42</Button>
+					<Button color='primary' isOutlined className='login-button' onClick={handleGoogleLogin}>Login with Google</Button>
+					<Button color='primary' isOutlined className='login-button' onClick={handle42Login}>Login with 42</Button>
 				</div>
 				<br />
 				<form onSubmit={handleSubmit(onSubmit)}>
