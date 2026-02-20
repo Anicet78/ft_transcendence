@@ -4,6 +4,7 @@ import api from '../serverApi';
 import { Box } from '@allxsmith/bestax-bulma';
 import '../App.css'
 import './SearchPage.css'
+import skull from '../assets/skull.svg';
 
 type UserItem = {
 	appUserId: string;
@@ -73,9 +74,9 @@ const SearchPage = () => {
 				{results?.length > 0 && results.map((user) => (
 					<div key={user.appUserId} className="user_item_card">
 						{user.avatarUrl && (
-							<img src={'http://localhost:3000/uploads/' + user.avatarUrl} alt={user.username} className="user_avatar"/>)}
+							<img src={`https://${window.location.host}/uploads/` + user.avatarUrl} alt={user.username} className="user_avatar"/>)}
 						{!user.avatarUrl && (
-							<img src='../assets/skull.svg' alt={user.username} className="user_avatar"/>)}
+							<img src={skull} alt={user.username} className="user_avatar"/>)}
 							<p className="username">{user.username}</p>
 							<NavLink to={"/profile/" + user.username} className="view_profile_btn">View Profile</NavLink>
 					</div>

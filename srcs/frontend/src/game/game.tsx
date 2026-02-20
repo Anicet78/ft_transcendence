@@ -131,7 +131,7 @@ const Game = () => {
 			console.error(err);
 		};
 
-		Module.callMain([user.id, 'username', room.roomId, room.players.length.toString(), "1"]);
+		Module.callMain([user.id, user.username, room.roomId, room.players.length.toString(), room.players.length.toString()]);
 	}, [gameSocket, Module]);
 
 	if (mutation.isPending) {
