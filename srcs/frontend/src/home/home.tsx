@@ -5,11 +5,11 @@ import { NavLink } from 'react-router';
 
 import { useRoom } from './RoomContext.tsx';
 import { useAuth } from '../auth/AuthContext.tsx';
-// import api, { ServerUrl } from '../serverApi.ts';
 import { PlayerDropdown } from '../components/PlayerDropdown.tsx';
 import { useMutation } from '@tanstack/react-query';
 import toast from '../Notifications.tsx';
 import { SidebarChat } from '../chat/components/SidebarChat.tsx';
+import api from '../serverApi.ts';
 
 const Home = () => {
 	const { user } = useAuth();
@@ -31,13 +31,13 @@ const Home = () => {
 	}
 
 	const CopyRoomUrl = () => {
-		navigator.clipboard.writeText(`http://localhost:5173/join/${room.roomId}`); // `${ServerUrl}/join/${room.roomId}`
+		navigator.clipboard.writeText(`https://${window.location.host}/join/${room.roomId}`);
 		toast({ title: "Link copied", message: "The room link has been copied to clipboard", type: "is-info" });
 	}
 
 	return (
 			<div style={{ display: "flex", height: "100vh" }}>
-				
+
 			{/* LEFT SIDE — GAME / ROOM CONTENT */}
 			<div style={{ flex: 1, overflow: "auto" }}>
 				<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' alignItems='center'>
@@ -58,23 +58,6 @@ const Home = () => {
 		</div>
 	)
 
-
-	// return (
-	// 	<div style={{ flex: 1 }}>
-	// 		<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' alignItems='center'>
-	// 			{room.players.map(players => players.username).map((username: string) => (
-	// 				<p>{username}</p>
-	// 			))}
-	// 			{room.hostId === user?.id &&
-	// 				<NavLink to="/game" color='primary' className='button is-dark is-medium is-outlined' aria-label='spectate button'>Launch Game</NavLink>
-	// 			}
-	// 			<Button color='link' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={newRoom}>Quit room</Button>
-	// 			{/* <Button color='primary' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={() => {navigator.clipboard.writeText(`${ServerUrl}/join/${room.roomId}`)}}>Copy invite link</Button> */}
-	// 			<Button color='link' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={() => {navigator.clipboard.writeText(`http://localhost:5173/join/${room.roomId}`)}}>Copy invite link</Button>
-	// 		</Box>
-	// 		<SidebarChat />
-	// 	</div>
-	// )
 }
 
 export default Home

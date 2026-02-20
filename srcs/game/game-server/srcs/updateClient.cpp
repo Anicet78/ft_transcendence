@@ -3,6 +3,10 @@
 void updatePlayer(Player &player, std::map<std::string, std::string> &req)
 {
 	player.move(req);
+
+	if (!req["attack_frame"].empty())
+		player.setAtkFrame(std::atoi(req["attack_frame"].c_str()));
+
 	player.updateAnim(req["anim"]);
 	int anim = player.getAnim();
 	if (anim == 0)
@@ -16,9 +20,8 @@ void updatePlayer(Player &player, std::map<std::string, std::string> &req)
 			player.endAttacking();
 	}
 	else if (anim == 2)
-	{
 		player.attack();
-	}
+
 }
 
 void	sendLeaveUpdate(Player &player, uWS::App &app, std::string &topic)
@@ -100,6 +103,7 @@ void updateRoom(Player &player, uWS::App &app)
 			return ;
 		std::string oldTopic = player.getRoomRef().getRoomId();
 		player.setExit('U');
+		player.incrementFloor();
 		player.setPrevNode(player.getNode());
 		player.setNode(player.getNode()->up.lock());
 		player.findP();
@@ -137,13 +141,24 @@ static void	mobInteraction(MobRush &rush, int id, Mob &mob, Player &player)
 		else
 			mob.setInvFrame(invFrame + 1);
 	}
-	else if (player.getIsAttacking() == true)
+	else if (!mob.isDead() && player.getIsAttacking() && player.getAtkFrame() != 1 && mob.getState() != MOB_DODGE)
+	{
+		if (abs_dist(player, mob) > 2)
+			return ;
+		int dodge = rand() % 10;
+		if (!dodge)
+		{
+			mob.setState(MOB_DODGE);
+			return ;
+		}
+	}
+	else if (player.getIsAttacking() == true && player.getAtkFrame() == 1)
 	{
 		if (abs_dist(player, mob) <= 2)
 		{
 			HitBox	&box = mob.getBox();
 			box.updateHurtBox();
-			if (!mob.isDead())
+			if (!mob.isDead() && !mob.checkInvinsibleFrame())
 			{
 				if (box.isDmgHit(player.getHitBox().getAtkHitBox()))
 				{

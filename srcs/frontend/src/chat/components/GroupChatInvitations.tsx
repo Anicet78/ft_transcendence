@@ -3,6 +3,7 @@ import api from "../../serverApi";
 import { Box } from "@allxsmith/bestax-bulma";
 import { useAuth } from "../../auth/AuthContext";
 
+// Fetch all chat invitations (pending and not pending at now)
 export default function GroupChatInvitations() {
 
 	const { user } = useAuth();

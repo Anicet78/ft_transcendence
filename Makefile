@@ -7,7 +7,7 @@ CERT_PATH = ./docker/certs
 DOMAIN = localhost
 
 SECRET_PATH = docker/secrets
-SECRET_NAMES = db_password.txt jwt_secret.txt cookie_secret.txt pgadmin_password.txt
+SECRET_NAMES = db_password.txt google_secret.txt jwt_secret.txt cookie_secret.txt secret_42.txt pgadmin_password.txt
 SECRETS = $(patsubst %, $(SECRET_PATH)/%, $(SECRET_NAMES))
 
 INFO = @printf '\033[1;35m⮑ %s\033[0m\n'
@@ -29,6 +29,14 @@ cert:
 
 doc:
 	@docker exec -it node-c npx --prefix /front openapi-typescript http://node:3000/documentation/json --output /front/src/types/api.ts
+
+$(SECRET_PATH)/secret_42.txt:
+	@mkdir -p $(SECRET_PATH)
+	@touch $@
+
+$(SECRET_PATH)/google_secret.txt:
+	@mkdir -p $(SECRET_PATH)
+	@touch $@
 
 $(SECRET_PATH)/%_secret.txt:
 	@mkdir -p $(SECRET_PATH)
@@ -56,7 +64,7 @@ fclean:
 	@$(DOCKER_COMPOSE) down --rmi all -v
 	$(INFO) "Cleanup complete."
 
-r: down up
+r: down build up
 
 re: fclean all
 

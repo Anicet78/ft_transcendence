@@ -60,8 +60,6 @@ void	fillMapInfos(val &msg, Game &game)
 	fillMap(vmaps, maps, "floor_0");
 	fillMap(vmaps, maps, "floor_1");
 	vmaps[1].link(vmaps[2]);
-	// printMap(vmaps[1]);
-	// printMap(vmaps[2]);
 }
 
 void	launchGame(Game &game, val msg)
@@ -107,14 +105,19 @@ void	endGame(val &msg, Game &game)
 	Player &player = game.getPlayer();
 	float	time = msg["time"].as<float>();
 	int		win = msg["win"].as<int>();
+	int min, sec;
+	min = static_cast<int>(time / 60);
+	sec = static_cast<int>(std::fmod(time, 60));
+	float mil = std::fmod(time, 60) - sec;
 	EM_ASM_({
 			sendResults({
-				session_id: UTF8ToString($0),
-				player_id: UTF8ToString($1),
-				completion_time: $2,
-				is_winner: $3
+				mob_killed: $0,
+				completion_time_min: $1,
+				completion_time_sec: $2,
+				completion_time_mil: $3,
+				is_winner: $4
 			});
-		}, game.getSessionId().c_str(), player.getUid().c_str(), time, win);
+		}, player.getKills(),  min, sec, mil, win);
 	finishGame();
 }
 
@@ -122,24 +125,39 @@ void	parseJson(bool &init, Game &game)
 {
 	if (!msgJson.size())
 		return ;
-
 	val msg = msgJson.front();
 	msgJson.pop();
 	if (msg.isUndefined() || msg.isNull())
 		return ;
-
 	if (!msg.hasOwnProperty("action"))
-	{
-		// msgJson = val::undefined();
 		return;
-	}
 	std::string action = msg["action"].as<std::string>();
-	if (action == "waiting")
+	if (action == "waiting" || action == "reconnect")
 	{
 		init = true;
 		fillMapInfos(msg, game);
-		game.getPlayer().setNode(game.getMaps()[0].getNodes()[0]);
-		EM_ASM_({onCppMessage({action: "connected"});});
+		if (action == "waiting")
+		{
+			game.getPlayer().setNode(game.getMaps()[0].getNodes()[0]);
+			EM_ASM_({onCppMessage({action: "connected"});});
+		}
+		else
+		{
+			int floor = msg["player_floor"].as<int>();
+			int x = msg["map_x"].as<int>();
+			int y = msg["map_y"].as<int>();
+			Map &map = game.getMaps()[floor + 1];
+			int w = map.getWidth();
+			game.getPlayer().setNode(map.getNodes()[y * w + x]);
+			float px = msg["room_x"].as<float>();
+			float py = msg["room_y"].as<float>();
+			game.getPlayer().setPos(px, py);
+			while (floor--)
+				game.getPlayer().incrementFloor();
+			game.setLaunched(1);
+			gSdl.enableIsRunning();
+			EM_ASM_({onCppMessage({action: "reconnected"});});
+		}
 	}
 	else if (action == "loop_action")
 	{
@@ -164,5 +182,4 @@ void	parseJson(bool &init, Game &game)
 		endGame(msg, game);
 	else if (action == "room_change")
 		changeRoom(game, msg["player_leave"]);
-	// msgJson = val::undefined();
 }

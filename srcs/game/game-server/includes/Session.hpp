@@ -9,7 +9,7 @@ class Session
 	private:
 		int											_maxNumPlayer;
 		std::vector<std::string>					_spectators;//maybe spectator class later
-		std::vector<std::shared_ptr<Player>>		_players;
+		std::vector<std::weak_ptr<Player>>			_players;
 		std::vector<Map>							_maps;
 		std::string									_sessionId;
 		bool										_running;
@@ -25,7 +25,6 @@ class Session
 
 	private:
 		void									linkMaps(Map &down, Map &up);
-		std::string								sendMaps(void);
 
 
 	public:
@@ -36,16 +35,20 @@ class Session
 	public:
 		void									launch();
 		void									addParty(Party &newParty);
+		std::string								sendMaps(void);
 		void									checkFinishedPlayers(uWS::App &app);
-		bool									removePlayer(std::shared_ptr<Player> rmPlayer);
-		bool									isPlayerInSession(std::string &uid) const;
+		void									sendEndResults(uWS::App &app, std::shared_ptr<Player> &player, bool abort);
+		bool									removePlayer(std::weak_ptr<Player> rmPlayer);
+		bool									removePlayer(std::string uid);
+		bool									isPlayerInSession(std::string uid) const;
 		void									sendToAll(Player &sender);
-		std::shared_ptr<Player>					&getPlayer(std::string &uid);
-		std::vector<std::shared_ptr<Player>>	getPlayers(void) const;
+		std::weak_ptr<Player>					&getPlayer(std::string &uid);
+		std::vector<std::weak_ptr<Player>>		getPlayers(void) const;
 		int										getMaxNumPlayer(void) const;
 		int										getPlaceLeft(void) const;
 		double									getActualTime(void) const;
 		int										getNumPlayers(void) const;
+		std::string	const						&getSessionId(void) const;
 		bool									isRunning(void) const;
 		bool									isReadyToRun(void) const;
 		bool									doesAllPlayersConnected() const;

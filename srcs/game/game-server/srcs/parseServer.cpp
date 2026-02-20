@@ -120,8 +120,11 @@ void sendPlayerState(Player &player, Session &session, std::string uid_leave)
 						+ "\"player_exit\" : \"" + player.getExit() + "\"";
 		
 	int sumPlayer = 1;
-	for (auto &oplayer : session.getPlayers())
+	for (auto &op : session.getPlayers())
 	{
+		if (op.expired())
+			continue ;
+		std::shared_ptr<Player> oplayer = op.lock();
 		if (oplayer->getUid() == player.getUid())
 			continue ;
 		if (oplayer->getNode() == player.getNode() || (oplayer->getPrevNode() == player.getNode() && oplayer->getExit() > 32))
@@ -145,7 +148,7 @@ void sendPlayerState(Player &player, Session &session, std::string uid_leave)
 
 	msg += '}';
 
-	player.getWs()->send(msg);
+	player.getWs()->send(msg, uWS::OpCode::TEXT);
 }
 
 int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSocketData> *ws, uWS::App &app)
@@ -157,23 +160,37 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
 	{
 		data->pseudo = req["player_name"];
         data->playerId = req["player_id"];
-        data->group = req["group_id"];
+        data->groupId = req["group_id"];
         data->groupSize = std::atoi(req["group_size"].c_str());
+		data->sessionSize = std::atoi(req["session_size"].c_str());
+		if (this->playerInServer(data->playerId))
+		{
+			this->reconnectPlayer(data->playerId, ws);
+			Player &player = this->getPlayer(data->playerId);
+			player.setReconnexion(1);
+			data->jsonMsg.clear();
+			return 1;
+		}
         ws->send("You have been added in the queue !", uWS::OpCode::TEXT);
-        this->_players.emplace_back(std::make_shared<Player>(data->playerId, data->groupSize, data->group, data->pseudo, ws));
+        this->_players.emplace_back(std::make_shared<Player>(data->playerId, data->groupSize, data->groupId, data->pseudo, data->sessionSize, ws));
         this->addPlayerOnQueue(_players.back());
         data->jsonMsg.clear();
         return 0;
     }
+	else if (action == "reconnected")
+		ws->subscribe(this->getPlayer(data->playerId).getRoomRef().getRoomId());
     else if (action == "player_move" || action == "connected" || action == "launched")
     {
         for (Session &session : _sessions)
         {
             if (session.isPlayerInSession(ws->getUserData()->playerId))
             {
-                std::shared_ptr<Player> player = session.getPlayer(ws->getUserData()->playerId);
+                std::shared_ptr<Player> player = session.getPlayer(ws->getUserData()->playerId).lock();
                 if (action == "connected")
+				{
                     player->setConnexion(1);
+					player->getWs()->subscribe(player->getRoomRef().getRoomId());
+				}
                 else if (action == "launched")
                     player->setLaunched(1);
                 else if (action == "player_move")

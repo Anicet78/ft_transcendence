@@ -3,95 +3,111 @@
 
 #include"PlayerAssets.hpp"
 
+enum stateMob
+{
+	MOB_IDLE,
+	MOB_WALKING,
+	MOB_ATTACKING,
+	MOB_HURT,
+	MOB_DEATH,
+	MOB_WANDERING,
+	MOB_CHASING
+};
+
 class Mob
 {
-private:
-	static std::unordered_map<int, SDL_Rect>	_mobWalk;
-	static std::unordered_map<int, SDL_Rect>	_mobAttack;
-	static std::unordered_map<int, SDL_Rect>	_mobIdle;
-	static std::unordered_map<int, SDL_Rect>	_mobHurt;
+	private:
+		static std::unordered_map<int, SDL_Rect>	_mobWalk;
+		static std::unordered_map<int, SDL_Rect>	_mobAttack;
+		static std::unordered_map<int, SDL_Rect>	_mobIdle;
+		static std::unordered_map<int, SDL_Rect>	_mobHurt;
+		static std::unordered_map<int, SDL_Rect>	_mobDeath;
 
-	static SDL_Texture	*_mobWalkText;
-	static SDL_Texture	*_mobAttackText;
-	static SDL_Texture	*_mobIdleText;
-	static SDL_Texture	*_mobHurtText;
+		static SDL_Texture	*_mobWalkText;
+		static SDL_Texture	*_mobAttackText;
+		static SDL_Texture	*_mobIdleText;
+		static SDL_Texture	*_mobHurtText;
+		static SDL_Texture	*_mobDeathText;
 
-	static int						_walkImgW;
-	static int						_walkImgH;
+		static int						_walkImgW;
+		static int						_walkImgH;
 
-	static int						_atkImgW;
-	static int						_atkImgH;
+		static int						_atkImgW;
+		static int						_atkImgH;
 
-	static int						_idleImgW;
-	static int						_idleImgH;
+		static int						_idleImgW;
+		static int						_idleImgH;
 
-	static int						_hurtImgW;
-	static int						_hurtImgH;
+		static int						_hurtImgW;
+		static int						_hurtImgH;
 
-	static void	importMobsWalkAssets(int tile_size);
-	static void	importMobsAttackAssets(int tile_size);
-	static void	importMobsIdleAssets(int tile_size);
-	static void	importMobsHurtAssets(int tile_size);
+		static int						_deathImgW;
+		static int						_deathImgH;
 
-//----------------------------------------------------
-	const int	_id;
-	
-	float	_x;
-	float	_y;
+		static void	importMobsWalkAssets(int tile_size);
+		static void	importMobsAttackAssets(int tile_size);
+		static void	importMobsIdleAssets(int tile_size);
+		static void	importMobsHurtAssets(int tile_size);
+		static void	importMobsDeathAssets(int tile_size);
 
-	float	_screenX;
-	float	_screenY;
+	//----------------------------------------------------
+		const int	_id;
+		
+		float	_x;
+		float	_y;
 
-	int		_hp;
+		float	_screenX;
+		float	_screenY;
 
-	int		_last_dir;
+		int		_hp;
 
-	// int		_anim;
-	int		_frame;
+		int		_last_dir;
 
-	bool	_isInvinsible;
-	bool	_isDead;
-	bool	_tookDamage;
+		int		_anim;
+		int		_prev_state;
+		int		_frame;
 
-public:
+		bool	_isDead;
 
-	Mob(int id, float x, float y, int hp);
-	~Mob();
+		bool	_inDeathAnimation;
 
-	static void	importMobsAssets(int tile_size);
+	public:
 
-	float	getX(void) const;
-	float	getY(void) const;
-	float	getScreenX(void) const;
-	float	getScreenY(void) const;
-	int		getHp(void) const;
-	int		getLastDir(void) const;
-	int		getFrame(void) const;
-	void	updateScreenPos(float camX, float camY, int tile_s);
+		Mob(int id, float x, float y, int hp);
+		~Mob();
+
+		static void	importMobsAssets(int tile_size);
+
+		float	getX(void) const;
+		float	getY(void) const;
+		float	getScreenX(void) const;
+		float	getScreenY(void) const;
+		int		getLastDir(void) const;
+		int		getHp(void) const;
+		int		getAnim(void) const;
+		int		getFrame(void) const;
+		bool	getInDeathAnim(void) const;
+		void	updateScreenPos(float camX, float camY, int tile_s);
 
 
-	void	setPos(float x, float y);
-	void	setHp(int hp);
-	void	updateLastDir(void);
+		void	setPos(float x, float y);
+		void	setHp(int hp);
+		void	setAnim(int anim);
+		void	updateLastDir(int dir);
 
-//make the mob invinsible after getting attacked
-	void	startInvinsibleFrame(void);
-	void	endInvinsibleFrame(void);
-	bool	checkInvinsibleFrame(void);
+		bool	isDead(void) const;
+		void	setIsDead(bool value);
 
-	bool	isDead(void) const;
-	void	setIsDead(bool value);
+		void	setInDeathAnim(bool value);
 
-	void	damaged(bool value);
-	bool	isDamaged(void) const;
+	//mob renderer
+		void	rendMobWalk(int x, int y, int index, float scale, int flag);
+		void	rendMobAttack(int x, int y, int index, float scale, int flag);
+		void	rendMobIdle(int x, int y, int index, float scale, int flag);
+		void	rendMobHurt(int x, int y, int index, float scale, int flag);
+		void	rendMobDeath(int x, int y, int index, float scale, int flag);
 
-//mob renderer
-	void	rendMobWalk(int x, int y, int index, float scale);
-	void	rendMobAttack(int x, int y, int index, float scale);
-	void	rendMobIdle(int x, int y, int index, float scale);
-	void	rendMobHurt(int x, int y, int index, float scale);
-
-	void	printMob(float camX, float camY, int tile_size);
+		void	printMob(float camX, float camY, int tile_size, int flag);
 };
 
 

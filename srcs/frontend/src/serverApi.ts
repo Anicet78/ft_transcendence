@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { globalSocketId } from './socket/SocketContext';
 
-export const ServerUrl= "https://localhost:8443"
-
 let accessToken: string | null = null;
 export const getAccessToken = () => accessToken;
 export const setAccessToken = (token: string | null) => accessToken = token;
@@ -37,7 +35,7 @@ const waitForSocketId = (): Promise<string | null> => {
 };
 
 const api = axios.create({
-	baseURL: `${ServerUrl}/api`,
+	baseURL: `/api`,
 	withCredentials: true,
 	timeout: 5000,
 	headers: {
@@ -48,7 +46,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
 	async (config) => {
-		const publicRoutes = ['/auth/login', '/auth/register', '/auth/refresh', '/'];
+		const publicRoutes = ['/auth/login', '/auth/register', '/auth/refresh', '/auth/42', '/auth/google', '/'];
 		if (config.url && !publicRoutes.includes(config.url) && accessToken) {
 			config.headers.Authorization = `Bearer ${accessToken}`;
 			config.headers['x-socket-id'] = await waitForSocketId();
@@ -66,11 +64,14 @@ api.interceptors.response.use(
 	async (error) => {
 		const originalRequest = error.config;
 
-		if (error.response && error.response.status === 401 && !originalRequest._retry) {
+		const isRefreshRequest = originalRequest.url.includes('/auth/refresh');
+		const isLogoutRequest = originalRequest.url.includes('/auth/logout');
+
+		if (error.response && error.response.status === 401 && !originalRequest._retry && !isRefreshRequest && !isLogoutRequest) {
 			originalRequest._retry = true;
 
 			try {
-				const res = await axios.post(`${ServerUrl}/api/auth/refresh`, {}, { withCredentials: true });
+				const res = await axios.post(`/api/auth/refresh`, {}, { withCredentials: true });
 
 				accessToken = res.data.token;
 				if (onRefreshSuccessCallback) onRefreshSuccessCallback(accessToken!);

@@ -23,7 +23,6 @@ function Login() {
 		mutationFn: (data: LoginBodyType) => api.post("/auth/login", data),
 		onSuccess: (data) => {
 			const response: LoginResponseType = data.data;
-			toast({ title: `Welcome ${response.user.username}` })
 			login(response.user, response.token);
 		},
 		onError: (error: Error) => {
@@ -49,12 +48,45 @@ function Login() {
 		mutation.mutate({ email: formData.email, password: formData.password });
 	};
 
+	const GOOGLE_CLIENT_ID = window._env_?.VITE_GOOGLE_CLIENT_ID || import.meta.env.VITE_GOOGLE_CLIENT_ID;
+	const FORTYTWO_CLIENT_ID = window._env_?.VITE_42_CLIENT_ID || import.meta.env.VITE_42_CLIENT_ID;
+	const REDIRECT_URI = "https://localhost:8443/callback";
+	const SCOPE = "openid email profile";
+
+	const googleUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+		`client_id=${GOOGLE_CLIENT_ID}&` +
+		`redirect_uri=${encodeURIComponent(REDIRECT_URI)}Google&` +
+		`response_type=code&` +
+		`scope=${encodeURIComponent(SCOPE)}&` +
+		`access_type=offline&` +
+		`prompt=consent`;
+
+	const fortyTwoUrl = `https://api.intra.42.fr/oauth/authorize?` +
+		`client_id=${FORTYTWO_CLIENT_ID}&` +
+		`redirect_uri=${encodeURIComponent(REDIRECT_URI)}42&` +
+		// `scope=${encodeURIComponent(SCOPE)}&` +
+		`response_type=code`
+
+	const handleGoogleLogin = () => {
+		if (!GOOGLE_CLIENT_ID)
+			toast({ title: "Redirection error", message: "Google identifiers are not setup", type: "is-danger" });
+		else
+			window.location.href = googleUrl;
+	}
+
+	const handle42Login = () => {
+		if (!FORTYTWO_CLIENT_ID)
+			toast({ title: "Redirection error", message: "42 identifiers are not setup", type: "is-danger" });
+		else
+			window.location.href = fortyTwoUrl;
+	}
+
 	return (
 		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='center' textSize='3' textWeight='bold'>
 			<div className='login-box'>
 				<div className='social-buttons'>
-					<Button color='primary' isOutlined className='login-button'>Login with Google</Button>
-					<Button color='primary' isOutlined className='login-button'>Login with 42</Button>
+					<Button color='primary' isOutlined className='login-button' onClick={handleGoogleLogin}>Login with Google</Button>
+					<Button color='primary' isOutlined className='login-button' onClick={handle42Login}>Login with 42</Button>
 				</div>
 				<br />
 				<form onSubmit={loginSubmit}>

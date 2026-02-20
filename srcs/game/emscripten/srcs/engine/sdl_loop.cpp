@@ -9,6 +9,16 @@ void updateRoom(Game &game, Player &player, std::string dir)
 
 	auto exitsLoc = room.getExitsLoc();
 
+	if (room.getRoomEvent())
+	{
+		MobRush &mobrush = dynamic_cast<MobRush &>(*room.getRoomEvent());
+		for (auto &mob : mobrush.getMobs())
+		{
+			mob.second->setIsDead(true);
+			mob.second->setInDeathAnim(false);
+		}
+	}
+
 	if (dir == "S")
 	{
 		game.clearOtherPlayers();
@@ -48,6 +58,7 @@ void updateRoom(Game &game, Player &player, std::string dir)
 void	updatePlayerPosition(Player &player, double deltaTime)
 {
 	static int isIdling = 1;
+	int	HitFrame = 0;
 	std::string w_key, a_key, s_key, d_key, anim = "idling", lastDir;
 
 	//player movement
@@ -64,8 +75,24 @@ void	updatePlayerPosition(Player &player, double deltaTime)
 		d_key = "true";
 
 	//player attack
-	if (player.checkAtkState() == true)
+	if (gSdl.key.attacking() || player.checkAtkState())
+	{
 		anim = "attacking";
+		if (player.getPrevState() == PLAYER_ATTACKING)
+		{
+			std::cout << player.getFrame() << std::endl;
+			if (player.getFrame() >= 14 && player.getFrame() < 18)
+			{
+				std::cout << "hit !" << std::endl;
+				HitFrame = 1;
+			}
+			if (player.getFrame() == 24)
+			{
+				std::cout << "end !" << std::endl;
+				HitFrame = 2;
+			}
+		}
+	}
 	else if (gSdl.key.w_key || gSdl.key.a_key || gSdl.key.s_key || gSdl.key.d_key)
 		anim = "walking";
 	
@@ -82,9 +109,10 @@ void	updatePlayerPosition(Player &player, double deltaTime)
 				d_key: UTF8ToString($3),
 				anim: UTF8ToString($4),
 				last_dir: UTF8ToString($5),
-				deltaTime: $6
+				deltaTime: $6,
+				attack_frame : $7
 			});
-		}, w_key.c_str(), a_key.c_str(), s_key.c_str(), d_key.c_str(), anim.c_str(), lastDir.c_str(), deltaTime);
+		}, w_key.c_str(), a_key.c_str(), s_key.c_str(), d_key.c_str(), anim.c_str(), lastDir.c_str(), deltaTime, HitFrame);
 		isIdling = 0;
 	}
 	else if (!isIdling)
@@ -102,15 +130,6 @@ void	updatePlayerPosition(Player &player, double deltaTime)
 			});
 		}, w_key.c_str(), a_key.c_str(), s_key.c_str(), d_key.c_str(), anim.c_str(), lastDir.c_str());
 	}
-}
-
-void	playerAction(Player &player)
-{
-	//manage player atk state
-	if (player.checkAtkState() == true && player.getFrame() >= 23)
-		player.endAtk();
-	if (gSdl.key.attacking() && player.checkAtkState() == false)
-		player.startAtk();
 }
 
 float	dist(float x1, float y1, float x2, float y2)
@@ -158,31 +177,50 @@ void	drawHud(Game &game)
 	SDL_RenderCopy(gSdl.renderer, gSdl.hud, NULL, &dstHud);
 }
 
+bool isUnderTree(std::vector<std::string> plan, int x, int y)
+{
+	for (int i = y; i < y + 4; i++)
+	{
+		if (i < 0 || i >= static_cast<int>(plan.size()))
+			continue ;
+		for (int j = x - 1; j <= x + 1; j++)
+		{
+			if (j < 0 || j >= static_cast<int>(plan[i].size()))
+				continue ;
+			if (plan[i][j] == '1' && i != y)
+				return 1;
+		}
+	}
+	return 0;
+}
+
 void	game_loop(Game &game, double deltaTime)
 {
 	Player	&player = game.getPlayer();
 	Camera	&camera = player.getCamera();
-	//updateRoom(player);
-	playerAction(player);
-	#ifdef __EMSCRIPTEN__
 
 	updatePlayerPosition(game.getPlayer(), deltaTime); 
-	#endif
 	updateOtherPlayer(game.getOtherPlayers(), deltaTime);
-
 	SDL_SetRenderTarget(gSdl.renderer, gSdl.game);
 	SDL_RenderClear(gSdl.renderer);
-
 	print_map(player);
 	if (player.getRoom().getRoomEvent())
 	{
 		MobRush &mobrush = dynamic_cast<MobRush &>(*player.getRoom().getRoomEvent());
-		print_mobs(mobrush, player);
+		print_mobs(mobrush, player, 0);
 	}
-	print_others(player, game.getOtherPlayers());
-	player.printPlayer(player.getScreenX(), player.getScreenY());
+	print_others(player, game.getOtherPlayers(), 0);
+	player.printPlayer(player.getScreenX(), player.getScreenY(), 0);
 	SDL_Rect dst = {0, 0, SCREEN_WIDTH, GAME_HEIGHT};
 	SDL_RenderCopy(gSdl.renderer, gSdl.texture2, &camera.getCamera(), &dst);
+	if (player.getRoom().getRoomEvent())
+	{
+		MobRush &mobrush = dynamic_cast<MobRush &>(*player.getRoom().getRoomEvent());
+		print_mobs(mobrush, player, 1);
+	}
+	print_others(player, game.getOtherPlayers(), 1);
+	if (isUnderTree(player.getRoomRef().getRoomPlan(), player.getX(), player.getY()))
+		player.printPlayer(player.getScreenX(), player.getScreenY(), 1);
 	SDL_SetRenderTarget(gSdl.renderer, NULL);
 	SDL_Rect dstGame = {0, 0, SCREEN_WIDTH, GAME_HEIGHT};
 	SDL_RenderCopy(gSdl.renderer, gSdl.game, &dstGame, &dstGame);

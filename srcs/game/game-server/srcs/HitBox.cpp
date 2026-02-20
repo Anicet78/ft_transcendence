@@ -25,12 +25,26 @@ void	HitBox::updateAtkHitBox(void) {
 		_atkHitBox.w = 1.2f * _tile_s;
 		_atkHitBox.h = 1.f * _tile_s;
 	}
-	else
+	else if (_last_dir == 1)
 	{
 		_atkHitBox.x = (_x - 1.4f) * _tile_s;
 		_atkHitBox.y = (_y - 0.5f) * _tile_s;
 		_atkHitBox.w = 1.2f * _tile_s;
 		_atkHitBox.h = 1.f * _tile_s;
+	}
+	else if (_last_dir == 2)
+	{
+		_atkHitBox.x = (_x - 0.7f) * _tile_s;
+		_atkHitBox.y = (_y - 1.0f) * _tile_s;
+		_atkHitBox.w = 1.4f * _tile_s;
+		_atkHitBox.h = 1.0f * _tile_s;
+	}
+	else if (_last_dir == 3)
+	{
+		_atkHitBox.x = (_x - 0.7f) * _tile_s;
+		_atkHitBox.y = _y * _tile_s;
+		_atkHitBox.w = 1.4f * _tile_s;
+		_atkHitBox.h = 1.0f * _tile_s;
 	}
 }
 
