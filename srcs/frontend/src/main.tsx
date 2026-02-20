@@ -1,5 +1,4 @@
 // sert a faire le rendu de la page (details dans App.tsx)
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -7,7 +6,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import 'bulma/css/bulma.min.css'; // bulma style css
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './index.css'
-import './App.css'
 import App from './App.tsx'
 import Login from './auth/login.tsx';
 import Register from './auth/register.tsx';
@@ -31,8 +29,16 @@ import AddFriend from './friendship/AddFriend.tsx';
 import { AuthProvider } from './auth/AuthContext.tsx';
 import { SocketProvider } from './socket/SocketContext.tsx';
 import { RoomProvider } from './home/RoomContext.tsx';
-import SearchComponent from './search/searchComponent.tsx';
 import ProfileUpdate from './profile/ProfileUpdate.tsx';
+import { Toaster } from "sonner";
+import { ChatProvider } from './chat/ChatContext.tsx';
+import GroupChatCreation from './chat/components/GroupChatCreation.tsx';
+import GroupChatInvitations from './chat/components/GroupChatInvitations.tsx';
+import CallbackGoogle from './auth/callbackGoogle.tsx';
+import Callback42 from './auth/callback42.tsx';
+import { InviteToGroupChat } from './chat/components/InviteToGroupChat.tsx';
+import BlockUser from './profile/blockUser.tsx';
+import SearchPage from './search/SearchPage.tsx';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -45,25 +51,38 @@ const queryClient = new QueryClient({
 const AppEntryPoint = () => {
 	return (
 		<>
-			<h1><Banner /></h1>
+			<Banner />
 			<Routes>
 				<Route path="/" element={<App />} />
-				<Route path="/test" element={<SearchComponent />} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/register" element={<Register />} />
+				<Route path="/callbackGoogle" element={<CallbackGoogle />} />
+				<Route path="/callback42" element={<Callback42 />} />
+
 				<Route path="/home" element={<Home />} />
 				<Route path="/join/:roomId" element={<JoinRoom />} />
 				<Route path="/game" element={<Game />} />
-				<Route path="/friends" element={<FriendList />} />
+				<Route path="/search" element={<SearchPage />} />
+
+				<Route path="/friends/list" element={<FriendList />} />
 				<Route path="/friends/requests/" element={<FriendRequest />} />
 				<Route path="/friends/requests/update/:id" element={<UpdateRequest />} />
 				<Route path="/friends/remove/:id" element={<RemoveFriend />} />
 				<Route path="/friends/add/:id" element={<AddFriend />} />
+
+				<Route path="/group/:chatId/invite/:friendId" element={<InviteToGroupChat />} />
+				<Route path="/group/invitations" element={<GroupChatInvitations />} />
+
 				<Route path="/chat/:chatId/info" element={<ChatView />} />
 				<Route path="/chat/list" element={<ChatList />} />
+				<Route path="/chat/group/new" element={<GroupChatCreation />} />
+
 				<Route path="/profile" element={<ProfilePrivate />} />
 				<Route path="/profile/update/:field" element={<ProfileUpdate />} />
 				<Route path="/profile/:username" element={<ProfilePublic />} />
+				<Route path="/profile/:id/unblock" element={<BlockUser />} />
+				<Route path="/profile/:id/block" element={<BlockUser />} />
+
 				<Route path="/terms_of_service" element={<TermsService />} />
 				<Route path="/privacy_policy" element={<Privacy />} />
 				<Route path="*" element={<Error />} />
@@ -77,11 +96,14 @@ createRoot(document.getElementById('root') as HTMLElement).render(
 	// <StrictMode>
 		<QueryClientProvider client={queryClient}>
 			<Router>
+				<Toaster />
 				<AuthProvider>
 					<SocketProvider>
-						<RoomProvider>
-							<AppEntryPoint />
-						</RoomProvider>
+						<ChatProvider>
+							<RoomProvider>
+								<AppEntryPoint />
+							</RoomProvider>
+						</ChatProvider>
 					</SocketProvider>
 				</AuthProvider>
 			</Router>

@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { ServerUrl } from '../serverApi';
 import { useAuth } from '../auth/AuthContext';
 
 export let globalSocketId: string | null = null;
@@ -19,8 +18,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 			return;
 		}
 
-		const newSocket = io(ServerUrl, {
-			path: "/api/socket.io/",
+		const newSocket = io(`${window.location.port == "5173" ? 'https://localhost:8443' : ''}`, {
+			path: '/api/socket.io/',
 			auth: { token }
 		});
 

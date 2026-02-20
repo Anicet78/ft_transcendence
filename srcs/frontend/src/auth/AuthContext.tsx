@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import api, { setAccessToken, setOnLogout, setOnRefreshSuccess } from '../serverApi';
 import { useQuery } from '@tanstack/react-query';
 import type { GetResponse } from '../types/GetType';
+import toast from '../Notifications';
 
 export type User = GetResponse<"/auth/refresh", "post">["user"];
 
@@ -27,10 +28,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		setUser(userData);
 		setToken(userToken);
 		setAccessToken(userToken);
+		toast({ title: `Welcome ${userData.username}` });
 		navigate("/home");
 	}, [navigate]);
 
-	const logout = useCallback(() => {
+	const logout = useCallback(async () => {
+		await api.post('/auth/logout');
 		setUser(null);
 		setToken(null);
 		setAccessToken(null);
@@ -54,17 +57,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		};
 	}, [logout]);
 
+	const publicRoutes = ['/login', '/register', '/callback42', '/callbackGoogle'];
+
 	useEffect(() => {
-		if (data) {
+		if (data?.data?.user && data.data.token) {
 			setUser(data.data.user);
 			setToken(data.data.token);
 			setAccessToken(data.data.token);
 		}
 		if (!isLoading) {
+			if (data && !publicRoutes.includes(window.location.pathname))
+				toast({ title: `Welcome ${data.data.user.username}` });
 			setIsInitializing(false);
 		}
 		if (isError) {
-			navigate('/');
+			setUser(null);
+			setToken(null);
+			setAccessToken(null);
+			if (!publicRoutes.includes(window.location.pathname))
+				navigate('/');
 		}
 
 		return () => {

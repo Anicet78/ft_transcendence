@@ -23,7 +23,7 @@ async function groupChatRoutes(fastify: FastifyInstance) {
 	schema: {
 		body: CreateGroupChatBodySchema,
 		response: {
-		201: CreateGroupChatResponseSchema
+			201: CreateGroupChatResponseSchema
 		}
 	},
 	handler: createGroupChatController
@@ -35,7 +35,7 @@ async function groupChatRoutes(fastify: FastifyInstance) {
 			params: DisbandGroupParamsSchema,
 			response: {
 				200: DisbandGroupChatSchema,
-		}
+			}
 		},
 		handler: disbandGroupChatController
 	});
@@ -43,10 +43,10 @@ async function groupChatRoutes(fastify: FastifyInstance) {
 	//QUIT GROUP (need to soft delete)
 	fastify.post('/group/:chatId/quit', {
 		schema: {
-		params: QuitGroupParamsSchema,
-		response: {
-			200: QuitGroupResponseSchema
-		}
+			params: QuitGroupParamsSchema,
+			response: {
+				200: QuitGroupResponseSchema
+			}
 		},
 		handler: quitGroupChatController
 	});

@@ -60,7 +60,7 @@ class Player
 		int				_prev_state;
 	
 	//player kills
-		int		_kills;
+		int				_kills;
 
 	public:
 		Player(std::string uid, std::string name, SDL_Color color);
@@ -93,8 +93,8 @@ class Player
 		int			getAnim(void) const;
 		int			getFrame(void) const;
 		int			getLastDir(void) const;
-
-		int		getKills(void) const;
+		int			getPrevState(void) const;
+		int			getKills(void) const;
 
 		int			getFloor(void) const;
 
@@ -114,7 +114,7 @@ class Player
 		void	incrementFloor(void);
 
 	//print
-		void	printPlayer(float px, float py);
+		void	printPlayer(float px, float py, int flag);
 
 	//player attacking action
 		void	startAtk(void);

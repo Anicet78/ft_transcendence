@@ -3,7 +3,7 @@ import { NavLink } from 'react-router';
 
 const MyFooter = () => {
 	return (
-		<Footer>
+		<Footer style={{ backgroundColor: '#3D3C3C', color: '#fff' }}>
 			<Content textAlign="centered">
 				<p>
 				<strong>TransDungeon</strong> a transcendence project by{' '}

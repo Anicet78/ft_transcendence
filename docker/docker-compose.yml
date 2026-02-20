@@ -16,9 +16,8 @@ services:
       - transcendence
 
   node:
-    build:
-      context: ../srcs/backend
-      dockerfile: Dockerfile
+    build: ../srcs/backend
+    image: node
     container_name: node-c
     restart: on-failure
     ports:
@@ -29,12 +28,16 @@ services:
       - db_password
       - jwt_secret
       - cookie_secret
+      - google_secret
+      - secret_42
     volumes:
       - ../srcs/frontend:/front
+      - ../srcs/backend/uploads:/app/uploads
     networks:
       - transcendence
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
 
   # node-dev:
   #   image: node:25.2.1
@@ -46,6 +49,8 @@ services:
   #     - db_password
   #     - jwt_secret
   #     - cookie_secret
+  #     - google_secret
+  #     - secret_42
   #   volumes:
   #     - ../srcs/backend:/app
   #   working_dir: /app
@@ -74,7 +79,8 @@ services:
     networks:
       - transcendence
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
 
   emscripten:
     image: emscripten/emsdk:4.0.23
@@ -89,9 +95,8 @@ services:
     entrypoint: ["make", "wasm"]
 
   game-server:
-    build:
-      context: ../srcs/game/game-server
-      dockerfile: Dockerfile
+    build: ../srcs/game/game-server
+    image: game-server
     container_name: game-server-c
     restart: on-failure
     volumes:
@@ -100,21 +105,28 @@ services:
       - transcendence
 
   nginx:
-    image: nginx:1.29.4
+    build: ../srcs/frontend
+    image: nginx
     container_name: nginx-c
     restart: on-failure
     ports:
-      - 8080:80
       - 8443:443
     env_file:
       - .env
     volumes:
       - ./nginx/conf/:/etc/nginx/conf.d/:ro
       - ./certs:/etc/nginx/certs
+      - ../srcs/backend/uploads:/usr/share/nginx/uploads
+      - ../srcs/frontend/src/game/build:/usr/share/nginx/game
     networks:
       - transcendence
     depends_on:
-      - emscripten
+      node:
+        condition: service_started
+      game-server:
+        condition: service_started
+      emscripten:
+        condition: service_completed_successfully
 
 secrets:
   db_password:
@@ -123,6 +135,10 @@ secrets:
     file: ./secrets/jwt_secret.txt
   cookie_secret:
     file: ./secrets/cookie_secret.txt
+  google_secret:
+    file: ./secrets/google_secret.txt
+  secret_42:
+    file: ./secrets/secret_42.txt
   pgadmin_password:
     file: ./secrets/pgadmin_password.txt
 

@@ -6,15 +6,10 @@ import fastifyCors from "@fastify/cors";
 import cookies from "@fastify/cookie";
 import type { RequestUser } from "../schema/userSchema.js";
 
-export type JWTPayload = {
-	id: string;
-	email: string;
-};
-
 export default fp(async (fastify) => {
 	// CORS
 	await fastify.register(fastifyCors, {
-		origin: "http://localhost:5173",
+		origin: ["https://localhost:8443", "http://localhost:5173"],
 		methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 		credentials: true
 	});
@@ -42,9 +37,13 @@ export default fp(async (fastify) => {
 	});
 
 	fastify.addHook("onRequest", async (request: FastifyRequest, reply: FastifyReply) => {
+		// Skip auth for static files
+		if (request.url.startsWith('/uploads')) {
+			return; // do nothing, allow access
+		}
 		const currentRoute = request.routeOptions.url;
 
-		const publicRoutes = ['/auth/register', '/auth/login', '/auth/refresh', '/documentation/json', '/'];
+		const publicRoutes = ['/auth/register', '/auth/login', '/auth/refresh', '/auth/42', '/auth/google', '/documentation/json', '/'];
 
 		if (currentRoute && publicRoutes.includes(currentRoute)) return;
 

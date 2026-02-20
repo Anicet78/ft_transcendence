@@ -5,27 +5,27 @@
 
 class HitBox
 {
-private:
-	FRect	_atkHitBox;
-	FRect	_hurtBox;
+	private:
+		FRect	_atkHitBox;
+		FRect	_hurtBox;
 
-	bool		_atkActive;
-	float		_tile_s;
+		bool		_atkActive;
+		float		_tile_s;
 
-	float		&_x;
-	float		&_y;
+		float		&_x;
+		float		&_y;
 
-	int			&_last_dir;
-public:
-	HitBox(float &x, float &y, int &last_dir);
-	~HitBox();
+		int			&_last_dir;
+	public:
+		HitBox(float &x, float &y, int &last_dir);
+		~HitBox();
 
-	FRect	&getAtkHitBox(void);
-	FRect	&getDmgHitBox(void);
+		FRect	&getAtkHitBox(void);
+		FRect	&getDmgHitBox(void);
 
-	void		updateAtkHitBox(void);
-	void		updateHurtBox(void);
-	bool		isDmgHit(FRect &rect) const;
+		void		updateAtkHitBox(void);
+		void		updateHurtBox(void);
+		bool		isDmgHit(FRect &rect) const;
 };
 
 

@@ -1,19 +1,106 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.register-box {
+	width: 100%;
+	max-width: 600px; /* controls overall box width */
+	border-radius: 30px; /* rounded borders */
+	background-color: #3D3C3C;
+	display: flex;
+    flex-direction: column; /* stack children vertically */
+    justify-content: center; /* vertical centering */
+    align-items: center; /* horizontal centering */
+	gap: 1.5rem; /* Space between title and buttons */
+	padding: 4rem; /* add some spacing between elements and borders */
+	margin: 0 auto; /* centers the div horizontally inside the Box */
+    box-sizing: border-box; /* Include padding in width */
+	overflow: hidden; /* Prevent children from stick out of the container */
 }
 
-.card {
-  padding: 2em;
+.register-box form {
+	width: 100%;
+	max-width: 700px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem; /* consistent spacing between inputs */
 }
 
-.inputs {
-	columns: 2;
-	margin-bottom: 1rem;
+/* Form fields layout, same as login */
+.register-box form .form-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 equal columns */
+  gap: 1rem 2rem; /* row gap and column gap */
+  width: 100%;
 }
 
-.login-button {
-	margin: 10px;
+/* Label style */
+.register-box label {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+  display: inline-block;
+  color: black;
+}
+
+/* Input style */
+.register-box input, .register-box select {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background-color: #222;
+  color: #eee;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.register-box input:focus, select:focus {
+  outline: none;
+  border-color: #00f0f0;
+  background-color: #333;
+}
+
+.register-box .bottom {
+	display: flex;
+	flex-direction: column; /* vertical stack */
+	justify-content: center; /* vertical centering */
+	align-items: center;
+	gap: 2rem; /* spacing between dropdown and button */
+}
+
+/* Error styles */
+.register-box .error {
+  border-color: #f44336 !important;
+}
+
+.register-box .error-message {
+  color: #f44336;
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+
+/* Password toggle style */
+.register-box .toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 38px;
+  font-size: 0.9rem;
+  color: #00f0f0;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 600;
+}
+
+/* Password feedback style */
+.register-box .password-feedback {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #00f0f0;
+}
+
+.register-box .password-feedback .valid {
+  color: #4caf50;
+}
+
+.register-box .password-feedback .invalid {
+  color: #f44336;
 }

@@ -8,6 +8,54 @@ export async function getFriends(userId: string) {
       OR: [
         { senderId: userId },
         { receiverId: userId }
+      ],
+        AND: [
+        {
+          NOT: {
+            OR: [
+              {
+                sender: {
+                  usersWhoBlockedYou: {
+                    some: {
+                      blocker: userId,
+                      deletedAt: null
+                    }
+                  }
+                }
+              },
+              {
+                receiver: {
+                  usersWhoBlockedYou: {
+                    some: {
+                      blocker: userId,
+                      deletedAt: null
+                    }
+                  }
+                }
+              },
+              {
+                sender: {
+                  usersYouBlocked: {
+                    some: {
+                      blocked: userId,
+                      deletedAt: null
+                    }
+                  }
+                }
+              },
+              {
+                receiver: {
+                  usersYouBlocked: {
+                    some: {
+                      blocked: userId,
+                      deletedAt: null
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
       ]
     },
     select: {

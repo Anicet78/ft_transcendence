@@ -13,7 +13,7 @@ model AppUser {
   lastName                                              String           @map("last_name")
   username                                              String           @unique
   mail                                                  String           @unique @map("mail_address") @db.Citext
-  passwordHash                                          String           @map("password_hash")
+  passwordHash                                          String?          @map("password_hash")
   avatarUrl                                             String?          @map("avatar_url")
   availability                                          Boolean          @default(false)
   playing                                               Boolean          @default(false)
@@ -38,6 +38,7 @@ model AppUser {
   friendshipsSent                                       Friendship[]     @relation("FriendshipSender")
   gameProfile                                           GameProfile?
   gameResults                                           GameResult[]
+  identify                                              identify[]
   privateChatsAsUser1                                   PrivateChat[]    @relation("PrivateChatUser1")
   privateChatsAsUser2                                   PrivateChat[]    @relation("PrivateChatUser2")
   refreshTokens                                         RefreshToken[]   @relation("UserToken")
@@ -80,32 +81,32 @@ model GameProfile {
 }
 
 model GameResult {
-  gameResultId   String       @id @default(dbgenerated("uuid_generate_v4()")) @map("game_result_id") @db.Uuid
-  gameId         String?      @map("game_id") @db.Uuid
-  playerId       String?      @map("player_id") @db.Uuid
-  createdAt      DateTime?    @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime?    @default(now()) @map("updated_at") @db.Timestamptz(6)
-  deletedAt      DateTime?    @map("deleted_at") @db.Timestamptz(6)
-  completionTime Int?         @map("completion_time")
-  enemiesKilled  Int          @default(0) @map("ennemies_killed")
-  gainedXp       Int          @default(0) @map("gained_xp")
-  isWinner       Boolean      @default(false) @map("is_winner")
-  gameSession    GameSession? @relation(fields: [gameId], references: [sessionId], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_result_match")
-  player         AppUser?     @relation(fields: [playerId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_result_user")
+  gameResultId   String      @id @default(dbgenerated("uuid_generate_v4()")) @map("game_result_id") @db.Uuid
+  gameId         String      @map("game_id") @db.Uuid
+  playerId       String      @map("player_id") @db.Uuid
+  createdAt      DateTime?   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime?   @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt      DateTime?   @map("deleted_at") @db.Timestamptz(6)
+  completionTime Int?        @map("completion_time")
+  enemiesKilled  Int         @default(0) @map("ennemies_killed")
+  gainedXp       Int         @default(0) @map("gained_xp")
+  isWinner       Boolean     @default(false) @map("is_winner")
+  gameSession    GameSession @relation(fields: [gameId], references: [sessionId], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_result_match")
+  player         AppUser     @relation(fields: [playerId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_game_result_user")
 
   @@map("game_result")
 }
 
 model GameSession {
-  sessionId String       @id @default(dbgenerated("uuid_generate_v4()")) @map("session_id") @db.Uuid
-  createdAt DateTime?    @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime?    @default(now()) @map("updated_at") @db.Timestamptz(6)
-  deletedAt DateTime?    @map("deleted_at") @db.Timestamptz(6)
-  mapName   String       @map("map_name") @db.VarChar(100)
-  startedAt DateTime     @default(now()) @map("started_at") @db.Timestamptz(6)
-  endedAt   DateTime?    @map("ended_at") @db.Timestamptz(6)
-  status    String       @default("finished") @db.VarChar(20)
-  results   GameResult[]
+  sessionId     String       @id @default(dbgenerated("uuid_generate_v4()")) @map("session_id") @db.Uuid
+  sessionGameId String       @unique @map("session_game_id") @db.Citext
+  createdAt     DateTime?    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime?    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt     DateTime?    @map("deleted_at") @db.Timestamptz(6)
+  startedAt     DateTime     @default(now()) @map("started_at") @db.Timestamptz(6)
+  endedAt       DateTime?    @map("ended_at") @db.Timestamptz(6)
+  status        String       @default("finished") @db.VarChar(20)
+  results       GameResult[]
 
   @@map("game_session")
 }
@@ -175,17 +176,17 @@ model ChatBan {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model ChatInvitation {
-  chatInvitationId String    @id @default(dbgenerated("uuid_generate_v4()")) @map("chat_invitation_id") @db.Uuid
-  senderId         String?   @map("sender_id") @db.Uuid
-  receiverId       String?   @map("receiver_id") @db.Uuid
-  chatId           String?   @map("chat_id") @db.Uuid
-  status           String    @default("waiting") @db.VarChar(10)
-  createdAt        DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
-  deletedAt        DateTime? @map("deleted_at") @db.Timestamptz(6)
-  chat             Chat?     @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_id")
-  receiver         AppUser?  @relation("chat_invitation_receiver_idToapp_user", fields: [receiverId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ivitate_receiver")
-  sender           AppUser?  @relation("chat_invitation_sender_idToapp_user", fields: [senderId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ivitate_sender")
+  chatInvitationId String         @id @default(dbgenerated("uuid_generate_v4()")) @map("chat_invitation_id") @db.Uuid
+  senderId         String?        @map("sender_id") @db.Uuid
+  receiverId       String?        @map("receiver_id") @db.Uuid
+  chatId           String?        @map("chat_id") @db.Uuid
+  status           invite_status? @default(waiting)
+  createdAt        DateTime?      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime?      @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt        DateTime?      @map("deleted_at") @db.Timestamptz(6)
+  chat             Chat?          @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_id")
+  receiver         AppUser?       @relation("chat_invitation_receiver_idToapp_user", fields: [receiverId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ivitate_receiver")
+  sender           AppUser?       @relation("chat_invitation_sender_idToapp_user", fields: [senderId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_chat_ivitate_sender")
 
   @@map("chat_invitation")
 }
@@ -269,6 +270,15 @@ model RefreshToken {
   @@map("refresh_token")
 }
 
+model identify {
+  provider   auth_provider
+  providerId String        @map("provider_id")
+  userId     String        @map("user_id") @db.Uuid
+  app_user   AppUser       @relation(fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_identify")
+
+  @@id([provider, providerId])
+}
+
 enum type_list {
   private
   group
@@ -279,6 +289,14 @@ enum message_status {
   edited
   deleted
   moderated
+}
+
+enum invite_status {
+  waiting
+  accepted
+  rejected
+  cancelled
+  deleted
 }
 
 enum region_list {
@@ -304,4 +322,9 @@ enum roles {
   guest
   user
   admin
+}
+
+enum auth_provider {
+  google
+  fortyTwo
 }

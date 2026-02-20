@@ -14,6 +14,11 @@ srcs/backend/.env
 # Build
 dist/
 build/
+objs/
+objs_wasm/
 
 # Logs
 npm-debug.log*
+
+# Uploads
+srcs/backend/uploads

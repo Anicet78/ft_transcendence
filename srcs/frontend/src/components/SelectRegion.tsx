@@ -1,32 +1,27 @@
-import { useState } from "react"
+import React from "react";
+import type { FieldError, UseFormRegisterReturn } from "react-hook-form";
 
-const SelectRegion = () => {
-	return (
-		<div className="field">
-			<label htmlFor="region">Select your region</label>
-			<div className="control has-icons-left">
-				<div className="select">
-					<div className="icon is-small is-left">
-					<i className="fas fa-globe"></i>
-					</div>
-					<select 
-						aria-label="region selection" 
-						id='region' 
-						name='region' 
-						required
-					>
-					<option defaultValue='EU'>EU</option>
-					<option value='NA'>NA</option>
-					<option value='SAM'>SAM</option>
-					<option value='MENA'>MENA</option>
-					<option value='OCE'>OCE</option>
-					<option value='APAC'>APAC</option>
-					<option value='SSA'>SSA</option>
-					</select>
-				</div>
-			</div>
-		</div>
-	)
+interface SelectInputProps {
+  options: string[];
+  placeholder?: string;
+  error?: FieldError;
+  register: UseFormRegisterReturn;
 }
+
+const SelectRegion: React.FC<SelectInputProps> = ({ options, placeholder, error, register }) => {
+  return (
+    <div>
+		<label htmlFor={placeholder}>{placeholder}</label>
+		<br />
+      <select {...register} defaultValue="" className={error ? "error" : ""} style={{color: '#888'}}>
+        <option value="" disabled>{placeholder}</option>
+        {options.map(opt => (
+          <option key={opt} value={opt}>{opt}</option>
+        ))}
+      </select>
+      {error && <p className="error-message">{error.message}</p>}
+    </div>
+  );
+};
 
 export default SelectRegion

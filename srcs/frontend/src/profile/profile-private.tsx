@@ -5,6 +5,7 @@ import { NavLink } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import api from '../serverApi.ts';
 import type { GetResponse } from '../types/GetType.ts';
+import skull from '../assets/skull.svg';
 
 type ProfileResponseType = GetResponse<"/profile", "get">;
 
@@ -20,8 +21,10 @@ const ProfilePrivate = () => {
 
 	const userData: ProfileResponseType = data.data;
 
+	console.log(`https://${window.location.host}/uploads/${userData.avatarUrl}`);
+
 	const username = userData.username;
-	const avatar = userData.avatarUrl || '../assets/skull.svg';
+	const avatar = userData.avatarUrl ? `https://${window.location.host}/uploads/${userData.avatarUrl}` : skull;
 	const level = userData.gameProfile?.level || '0';
 	const xp = userData.gameProfile?.totalXp || '0';
 	const firstname = userData.firstName;
@@ -34,6 +37,7 @@ const ProfilePrivate = () => {
 	const totalGames = userData.gameProfile?.totalGames || '0';
 	const totalWins = userData.gameProfile?.totalWins || '0';
 	const totalLoses = userData.gameProfile?.totalLoses || '0';
+	console.log("in front end: " + userData.avatarUrl);
 
 	return (
 		<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' alignItems='center'>
@@ -42,7 +46,7 @@ const ProfilePrivate = () => {
 			<Box className='box-head' bgColor="white" justifyContent='center' textSize='4'>
 				<Box bgColor='white' className='image-box'>
 					<figure className='image is-128x128'>
-						<img aria-label='avatar of the user' src={avatar} />
+						<img aria-label='avatar of the user' src={avatar} crossOrigin="anonymous"/>
 					</figure>
 					<NavLink to='/profile/update/avatar' className='button is-small is-white'>
 						<span className="icon">
@@ -89,7 +93,7 @@ const ProfilePrivate = () => {
 				<p>Total wins: {totalWins}</p>
 				<p>Total loses: {totalLoses}</p>
 			</Box>
-			<NavLink to="/friends" className="button is-large">Friends list</NavLink>
+			<NavLink to="/friends/list" className="button is-large">Friends list</NavLink>
 			<NavLink
 				to="/chat/list"
 				className="button is-dark is-medium is-outlined mt-4"

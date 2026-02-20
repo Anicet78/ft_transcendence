@@ -72,6 +72,11 @@ int		Player::getAtk(void) const
 	return (_atk);
 }
 
+int		Player::getPrevState(void) const
+{
+	return (_prev_state);
+}
+
 int		Player::getDef(void) const
 {
 	return (_def);
@@ -92,7 +97,8 @@ quadList Player::getNode() const
 	return this->_node;
 }
 
-Camera	&Player::getCamera(void) {
+Camera	&Player::getCamera(void)
+{
 	return (_camera);
 }
 
@@ -125,13 +131,15 @@ int	Player::getFrame(void) const
 
 void	Player::updateLastDir(void)
 {
+	if (this->_atkState)
+		return ;
 	if (gSdl.key.d_key)
 		_last_dir = 0;
 	else if (gSdl.key.a_key)
 		_last_dir = 1;
-	if (gSdl.key.w_key)
+	else if (gSdl.key.w_key)
 		_last_dir = 2;
-	if (gSdl.key.s_key)
+	else if (gSdl.key.s_key)
 		_last_dir = 3;
 }
 
@@ -189,6 +197,7 @@ void	Player::setKills(int kills)
 	return ;
 }
 
+
 void	Player::setAnim(int anim)
 {
 	this->_anim = anim;
@@ -223,62 +232,91 @@ void	Player::updateScreenPos(int tile_s)
 	return ;
 }
 
-void	Player::printPlayer(float px, float py)
+void	Player::printPlayer(float px, float py, int flag)
 {
 	int			tile_s = gSdl.getMapTileSize() * 2;
-
 	const float x = px - (0.5f * tile_s);
 	const float y = py - (0.5f * tile_s);
-	if (this->_frame >= 24)
-		this->_frame = 0;
-	if (this->_anim == 2)
+
+	if (flag)
 	{
-		if (this->_prev_state != PLAYER_ATTACKING)
-			this->_frame = 0;
-		this->_prev_state = PLAYER_ATTACKING;
-		if (this->_last_dir < 2)
-			PlayerAssets::rendPlayerAttack(0, x, y, this->_frame / 4, 2, this->_last_dir);
-		else if (this->_last_dir == 3)
-			PlayerAssets::rendPlayerAttackFront(0, x, y, this->_frame / 4, 2);
-		else if (this->_last_dir == 2)
-			PlayerAssets::rendPlayerAttackBack(0, x, y, this->_frame / 4, 2);
+		SDL_SetTextureBlendMode(this->_nameTexture, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(this->_nameTexture, 128);
 	}
-	else if (this->_anim == 1)
+	
+	if (this->_anim == PLAYER_ATTACKING)
 	{
-		if (this->_prev_state != PLAYER_WALKING)
+		if (!flag && this->_prev_state != PLAYER_ATTACKING)
+		{
 			this->_frame = 0;
-		this->_prev_state = PLAYER_WALKING;
+			this->_prev_state = PLAYER_ATTACKING;
+			this->startAtk();
+		}
+		if (!flag && this->_frame >= 24)
+		{
+			this->_frame = 0;
+			this->endAtk();
+		}
+		int frame = (flag) ? ((!this->_frame) ? 23 : this->_frame - 1) : this->_frame;
 		if (this->_last_dir < 2)
-			PlayerAssets::rendPlayerWalk(0, x, y, this->_frame / 4, 2, this->_last_dir);
+			PlayerAssets::rendPlayerAttack(0, x, y, frame / 4, 2, this->_last_dir, flag);
 		else if (this->_last_dir == 3)
-			PlayerAssets::rendPlayerWalkFront(0, x, y, this->_frame / 4, 2);
+			PlayerAssets::rendPlayerAttackFront(0, x, y, frame / 4, 2, flag);
 		else if (this->_last_dir == 2)
-			PlayerAssets::rendPlayerWalkBack(0, x, y, this->_frame / 4, 2);
+			PlayerAssets::rendPlayerAttackBack(0, x, y, frame / 4, 2, flag);
 	}
-	else
+	else if (this->_anim == PLAYER_WALKING)
 	{
-		if (this->_prev_state != PLAYER_IDLE)
+		if (!flag && this->_prev_state != PLAYER_WALKING)
+		{
 			this->_frame = 0;
-		this->_prev_state = PLAYER_IDLE;
+			this->endAtk();
+			this->_prev_state = PLAYER_WALKING;
+		}
+		if (!flag && this->_frame >= 32)
+			this->_frame = 0;
+		int frame = (flag) ? ((!this->_frame) ? 31 : this->_frame - 1) : this->_frame;
 		if (this->_last_dir < 2)
-			PlayerAssets::rendPlayerIdle(0, x, y, this->_frame / 4, 2, this->_last_dir);
+			PlayerAssets::rendPlayerWalk(0, x, y, frame / 4, 2, this->_last_dir, flag);
 		else if (this->_last_dir == 3)
-			PlayerAssets::rendPlayerIdleFront(0, x, y, this->_frame / 4, 2);
+			PlayerAssets::rendPlayerWalkFront(0, x, y, frame / 4, 2, flag);
 		else if (this->_last_dir == 2)
-			PlayerAssets::rendPlayerIdleBack(0, x, y, this->_frame / 4, 2);
+			PlayerAssets::rendPlayerWalkBack(0, x, y, frame / 4, 2, flag);
+	}
+	else if (this->_anim == PLAYER_IDLE)
+	{
+		if (!flag && this->_prev_state != PLAYER_IDLE)
+		{
+			this->_frame = 0;
+			this->endAtk();
+			this->_prev_state = PLAYER_IDLE;
+		}
+		if (!flag && this->_frame >= 24)
+			this->_frame = 0;
+		int frame = (flag) ? ((!this->_frame) ? 23 : this->_frame - 1) : this->_frame;
+		if (this->_last_dir < 2)
+			PlayerAssets::rendPlayerIdle(0, x, y, frame / 4, 2, this->_last_dir, flag);
+		else if (this->_last_dir == 3)
+			PlayerAssets::rendPlayerIdleFront(0, x, y, frame / 4, 2, flag);
+		else if (this->_last_dir == 2)
+			PlayerAssets::rendPlayerIdleBack(0, x, y, frame / 4, 2, flag);
 	}
 
-	this->_frame = this->_frame + 1;
+	if (!flag)
+		this->_frame++;
 	int w, h;
 	SDL_QueryTexture(this->_nameTexture, nullptr, nullptr, &w, &h);
 	SDL_Rect dst = {static_cast<int>(x + 16 - (w / 6)), static_cast<int>(y - 16 - (h / 6)), w / 3, h / 3};
 	SDL_RenderCopy(gSdl.renderer, this->_nameTexture, nullptr, &dst);
+	if (flag)
+		SDL_SetTextureAlphaMod(this->_nameTexture, 255);
 }
 
-static bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect const &rect, int const flag, Player &player) {
+static bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect const &rect, int const flag, Player &player, float deltaTime)
+{
 	if (flag == 0)
 	{
-		float y = rect.y - 0.1;
+		float y = rect.y - (6.0f * deltaTime);
 		if (plan[y][rect.x] == '1' || plan[y][rect.x + rect.h] == '1')
 			return (true);
 
@@ -293,7 +331,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect cons
 	}
 	if (flag == 1)
 	{
-		float x = rect.x - 0.1;
+		float x = rect.x - (6.0f * deltaTime);
 		if (plan[rect.y][x] == '1' || plan[rect.y + rect.h][x] == '1')
 			return (true);
 
@@ -308,7 +346,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect cons
 	}
 	if (flag == 2)
 	{
-		float y = rect.y + 0.1;
+		float y = rect.y + (6.0f * deltaTime);
 		if (plan[y + rect.h][rect.x] == '1' || plan[y + rect.h][rect.x + rect.w] == '1')
 			return (true);
 		
@@ -323,7 +361,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect cons
 	}
 	if (flag == 3)
 	{
-		float x = rect.x + 0.1;
+		float x = rect.x + (6.0f * deltaTime);
 		if (plan[rect.y][x + rect.h] == '1' || plan[rect.y + rect.h][x + rect.w] == '1')
 			return (true);
 		
@@ -340,7 +378,8 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect cons
 	return (false);
 }
 
-void	Player::setWallHitBox(void) {
+void	Player::setWallHitBox(void)
+{
 	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
 	return ;
 }
@@ -357,25 +396,25 @@ void	Player::movePrediction(double deltaTime)
 	if (gSdl.key.w_key)
 	{
 		y -= 6.0f * deltaTime;
-		if (!(y >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 0, *this)))
+		if (!(y >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 0, *this, deltaTime)))
 			y += 6.0f * deltaTime;
 	}
 	if (gSdl.key.a_key)
 	{
 		x -= 6.0f * deltaTime;
-		if (!(x >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 1, *this)))
+		if (!(x >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 1, *this, deltaTime)))
 			x += 6.0f * deltaTime;
 	}
 	if (gSdl.key.s_key)
 	{
 		y += 6.0f * deltaTime;
-		if (!(y < room.getHeight() && !checkWallHitBox(plan, this->_wallHitBox, 2, *this)))
+		if (!(y < room.getHeight() && !checkWallHitBox(plan, this->_wallHitBox, 2, *this, deltaTime)))
 			y -= 6.0f * deltaTime;
 	}
 	if (gSdl.key.d_key)
 	{
 		x += 6.0f * deltaTime;
-		if (!(x < room.getWidth() && !checkWallHitBox(plan, this->_wallHitBox, 3, *this)))
+		if (!(x < room.getWidth() && !checkWallHitBox(plan, this->_wallHitBox, 3, *this, deltaTime)))
 			x -= 6.0f * deltaTime;
 	}
 	this->setPos(x, y);
