@@ -7,7 +7,6 @@ import { Button, Box } from '@allxsmith/bestax-bulma';
 import type { GetBody, GetResponse } from '../types/GetType.ts';
 import api from '../serverApi.ts';
 import { useMutation } from '@tanstack/react-query';
-import type {UseMutationResult} from '@tanstack/react-query';
 import { useAuth } from './AuthContext.tsx';
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -82,10 +81,10 @@ function Register() {
 	const password = watch("password");
 	const confirmPassword = watch("confirmPassword");
 
-	const mutation: UseMutationResult<RegisterResponseType, any, RegisterBodyType> = useMutation({
+	const mutation = useMutation({
 		mutationFn: (data: RegisterBodyType) => api.post("/auth/register", data),
 		onSuccess: (data) => {
-			const response: RegisterResponseType = data;
+			const response: RegisterResponseType = data.data;
 			toast({ title: `Your account has been successfully created`, type: "is-success" })
 			login(response.user, response.token);
 		},
@@ -117,10 +116,10 @@ function Register() {
 				<br />
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className="form-fields">
-						<InputText placeholder="First name" register={register("firstname")} error={errors.firstname} />
-						<InputText placeholder="Last name" register={register("lastname")} error={errors.lastname} />
-						<InputText placeholder="Username" register={register("username")} error={errors.username} />
-						<InputText placeholder="Email" type="email" register={register("email")} error={errors.email} />
+						<InputText placeholder="First name" register={register("firstname")} error={errors.firstname} icon='fas fa-user' />
+						<InputText placeholder="Last name" register={register("lastname")} error={errors.lastname} icon='fas fa-user' />
+						<InputText placeholder="Username" register={register("username")} error={errors.username} icon='fas fa-user' />
+						<InputText placeholder="Email" type="email" register={register("email")} error={errors.email} icon='fas fa-envelope' />
 
 						<InputPassword placeholder="Password" register={register("password")} error={errors.password} watchValue={password} />
 						<InputPassword placeholder="Confirm password" register={register("confirmPassword")} error={errors.confirmPassword} watchValue={confirmPassword} />

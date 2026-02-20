@@ -34,7 +34,6 @@ const ProfilePrivate = () => {
 	const totalGames = userData.gameProfile?.totalGames || '0';
 	const totalWins = userData.gameProfile?.totalWins || '0';
 	const totalLoses = userData.gameProfile?.totalLoses || '0';
-	console.log("in front end: " + userData.avatarUrl);
 
 	return (
 		<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' alignItems='center'>
