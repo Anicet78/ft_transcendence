@@ -43,7 +43,6 @@
 /* Input style */
 .register-box input, .register-box select {
   width: 100%;
-  padding: 10px 14px;
   border-radius: 8px;
   border: 1px solid #444;
   background-color: #222;

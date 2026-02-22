@@ -23,6 +23,10 @@
   padding-left: 0;
 }
 
+.navbar-item.has-dropdown {
+  padding: 0.5em;
+}
+
 /* Logo button should align flush left */
 .navbar-brand .button {
   margin-left: 0;
