@@ -27,6 +27,8 @@ export async function kickGroupMemberController(
 
 	const result = await kickGroupMember(chatId, requesterId, memberId);
 
+	SocketService.send(chatId, "chat_member_kicked", { chatId });
+
 	return reply.status(200).send(result);
 }
 
@@ -40,6 +42,9 @@ export async function updateChatMemberRoleController(
 	const { chatId, memberId } = req.params;
 	const { role } = req.body;
 
+	const socket = req.getSocket();
+	await SocketService.addInRoom(chatId, socket);
+
 	if (!(Object.values(chat_role_type).includes(role)))
 		throw new AppError('Invalid role', 400);
 
@@ -47,6 +52,8 @@ export async function updateChatMemberRoleController(
 		throw new AppError('Unauthorized', 401);
 
 	const result = await updateGroupMemberRole(chatId, requesterId, memberId, role);
+
+	SocketService.send(chatId, "chat_member_role_changed", { chatId, userId: memberId, role });
 
 	return reply.status(200).send(result);
 }

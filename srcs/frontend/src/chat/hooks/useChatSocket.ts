@@ -13,6 +13,10 @@ export function useChatSocket(chatId?: string) {
 		if (!socket || !chatId)
 			return;
 
+		const invalidateChatInfo = () => {
+			queryClient.invalidateQueries({ queryKey: ["chat-info", chatId] });
+		};
+
 		//SEND
 		const onMessageCreated = () => {
 	
@@ -70,6 +74,12 @@ export function useChatSocket(chatId?: string) {
 		socket.on("chat_message_moderated", onMessageModerated);
 		socket.on("chat_message_restored", onMessageRestored);
 
+		socket.on("chat_member_joined", invalidateChatInfo);
+		socket.on("chat_member_left", invalidateChatInfo);
+		socket.on("chat_member_kicked", invalidateChatInfo);
+		socket.on("chat_member_role_changed", invalidateChatInfo);
+		socket.on("chat_disbanded", invalidateChatInfo);
+
 
 		return () => {
 			socket.off("chat_message_created", onMessageCreated);
@@ -77,6 +87,12 @@ export function useChatSocket(chatId?: string) {
 			socket.off("chat_message_deleted", onMessageDeleted);
 			socket.off("chat_message_moderated", onMessageModerated);
 			socket.off("chat_message_restored", onMessageRestored);
+
+			socket.off("chat_member_joined", invalidateChatInfo);
+			socket.off("chat_member_left", invalidateChatInfo);
+			socket.off("chat_member_kicked", invalidateChatInfo);
+			socket.off("chat_member_role_changed", invalidateChatInfo);
+			socket.off("chat_disbanded", invalidateChatInfo);
 		}
 
 	}, [socket, chatId, queryClient]);

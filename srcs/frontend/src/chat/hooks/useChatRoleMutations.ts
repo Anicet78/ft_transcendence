@@ -12,7 +12,7 @@ export function useChatRoleMutation(chatId?: string) {
 		},
 		onSuccess: () => {
 			toast({ title: "Role succesfully updated", type: "is-success" });
-			queryClient.invalidateQueries(["chat-info"], chatId);
+			queryClient.invalidateQueries({ queryKey: ["chat-info", chatId] });
 		},
 		onError: (error: Error) => {
 			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });

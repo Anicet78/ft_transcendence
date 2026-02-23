@@ -9,6 +9,7 @@ import { useGroupChatMutations } from "./hooks/useGroupChatMutations";
 import { ChatMembers } from "./components/ChatMembers";
 import { ChatRoom } from "./components/ChatRoom";
 import { InviteToGroupChat } from "./components/InviteToGroupChat";
+import { useChatInfo } from "./hooks/useChatInfo";
 
 // const ChatView = () => {
 const ChatView = ({ chatId: propChatId, onClose }: {
@@ -17,8 +18,9 @@ const ChatView = ({ chatId: propChatId, onClose }: {
 }) => {
 	const params = useParams();
 	const chatId = propChatId ?? params.chatId;
+	const { data: chat } = useChatInfo(chatId);
 
-	const { chat, role, joinChat } = useChat();
+	const { /*chat,*/ role, joinChat } = useChat();
 
 	const { isLoading, isError } = useChatMessages(chatId);
 	const { quitChatMutation, disbandMutation, gameInviteMutation } = useGroupChatMutations(chatId);
@@ -32,11 +34,16 @@ const ChatView = ({ chatId: propChatId, onClose }: {
 	}, [chatId]);
 
 
-	if (isLoading || !chat)
+	if (isLoading)
 		return <div>Loading chat...</div>;
+
+	if (!chat)
+		return <div>Chat Not Found</div>;
 
 	if (isError)
 		return <div>Error loading chat</div>;
+
+	//console.log("chatInfo:", chat);
 
 	return (
 		<Box m="4" p="6" bgColor="white">

@@ -19,19 +19,23 @@ export const chatSelect = {
 	},
 
 	members: {
-	select: {
-		chatMemberId: true,
-		joinedAt: true,
-		leftAt: true,
-		user: {
-			select: {
-				appUserId: true,
-				username: true,
-				avatarUrl: true,
-				availability: true
+		where: {
+			deletedAt: null
+		},
+		select: {
+			chatMemberId: true,
+			joinedAt: true,
+			leftAt: true,
+			deletedAt: true,
+			user: {
+				select: {
+					appUserId: true,
+					username: true,
+					avatarUrl: true,
+					availability: true
+				}
 			}
 		}
-	}
 	},
 
 	roles: {
