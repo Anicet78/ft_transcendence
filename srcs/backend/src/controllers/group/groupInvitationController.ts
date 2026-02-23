@@ -24,7 +24,7 @@ export async function inviteToGroupController(
 
 	if (!senderId) {
 	throw new AppError('Unauthorized', 401);
-	}
+	} 
 
 	const invitation = await inviteToGroupChat(chatId, senderId, receiverId);
 

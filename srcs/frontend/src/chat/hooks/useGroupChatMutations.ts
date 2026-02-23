@@ -16,6 +16,10 @@ export function useGroupChatMutations(chatId?: string) {
 		onSuccess: () => {
 			// Refresh chat info so the kicked member disappears
 			joinChat(chatId!);
+			toast({ title: "Member kicked", type: "is-success" });
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
 		}
 	});
 
@@ -25,8 +29,12 @@ export function useGroupChatMutations(chatId?: string) {
 		},
 		onSuccess: () => {
 			// Refresh chat info so the kicked member disappears
+			toast({ title: "You succesfully quitted chat", type: "is-success" });
 			leaveChat();
 			window.location.href = "/chat/list";
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
 		}
 	});
 
@@ -36,8 +44,12 @@ export function useGroupChatMutations(chatId?: string) {
 		},
 		onSuccess: () => {
 			// Refresh chat info so the kicked member disappears
+			toast({ title: "Chat succesfully disbanded", type: "is-success" });
 			leaveChat();
 			window.location.href = "/chat/list";
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
 		}
 	});
 
@@ -51,6 +63,9 @@ export function useGroupChatMutations(chatId?: string) {
 		},
 		onSuccess: () => {
 			toast({ title: `Game invite sent`, type: "is-info" });
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
 		}
 	});
 
