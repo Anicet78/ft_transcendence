@@ -99,6 +99,22 @@ export default fp(async (fastify) => {
 				});
 			});
 
+			// // chat read receipts
+			// socket.on("chat_read", async ({ chatId, messageId }) => {
+			// 	await prisma.messageRead.upsert({
+			// 		where: { chatId: chatId, userId: userId },
+			// 		update: { messageId },
+			// 		create: { userId: userPayload.id, chatId, messageId }
+			// 	});
+
+			// 	socket.to(chatId).emit("chat_read_update", {
+			// 		userId: userPayload.id,
+			// 		chatId,
+			// 		messageId
+			// 	});
+			// });
+
+
 		} catch (err) {
 			console.log("An error occured:", err);
 			socket.disconnect(true);
