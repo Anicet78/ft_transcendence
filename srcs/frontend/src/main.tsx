@@ -23,7 +23,6 @@ import Home from './home/home.tsx';
 import JoinRoom from './home/join-room.tsx';
 import Game from './game/game.tsx';
 import FriendRequest from './friendship/FriendRequests.tsx';
-import UpdateRequest from './friendship/UpdateRequest.tsx';
 import RemoveFriend from './friendship/RemoveFriend.tsx';
 import AddFriend from './friendship/AddFriend.tsx';
 import { AuthProvider } from './auth/AuthContext.tsx';
@@ -37,7 +36,6 @@ import GroupChatInvitations from './chat/components/GroupChatInvitations.tsx';
 import CallbackGoogle from './auth/callbackGoogle.tsx';
 import Callback42 from './auth/callback42.tsx';
 import { InviteToGroupChat } from './chat/components/InviteToGroupChat.tsx';
-import BlockUser from './profile/blockUser.tsx';
 import SearchPage from './search/SearchPage.tsx';
 
 const queryClient = new QueryClient({
@@ -66,7 +64,6 @@ const AppEntryPoint = () => {
 
 				<Route path="/friends/list" element={<FriendList />} />
 				<Route path="/friends/requests/" element={<FriendRequest />} />
-				<Route path="/friends/requests/update/:id" element={<UpdateRequest />} />
 				<Route path="/friends/remove/:id" element={<RemoveFriend />} />
 				<Route path="/friends/add/:id" element={<AddFriend />} />
 
@@ -80,8 +77,6 @@ const AppEntryPoint = () => {
 				<Route path="/profile" element={<ProfilePrivate />} />
 				<Route path="/profile/update/:field" element={<ProfileUpdate />} />
 				<Route path="/profile/:username" element={<ProfilePublic />} />
-				<Route path="/profile/:id/unblock" element={<BlockUser />} />
-				<Route path="/profile/:id/block" element={<BlockUser />} />
 
 				<Route path="/terms_of_service" element={<TermsService />} />
 				<Route path="/privacy_policy" element={<Privacy />} />

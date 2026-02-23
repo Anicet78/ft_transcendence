@@ -2,45 +2,27 @@ import { Box, Button } from "@allxsmith/bestax-bulma"
 import "./friendList.css"
 
 import { NavLink } from "react-router";
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import api, { getAccessToken } from '../serverApi.ts';
 import type { GetResponse } from '../types/GetType.ts'
 import { useAuth } from "../auth/AuthContext.tsx";
-import toast from '../Notifications.tsx';
-import { useState } from "react";
+import { useFriendshipModification } from "./useFriendshipModification.tsx";
+import type { actionType } from "./friendshipQueries.ts";
 
 type FriendRequestResponseType = GetResponse<"/friends/requests", "get">;
 
 const FriendRequest = () => {
 
-	const { user } = useAuth()
-	const queryClient = useQueryClient();
-
-	const [loadingId, setLoadingId] = useState<string | null>(null);
+	const { user } = useAuth();
+	const friendRequestMutation = useFriendshipModification();
 
 	const { data, isLoading, isError, error } = useQuery({
 		queryKey: ['/friends/requests', getAccessToken()],
 		queryFn: () => api.get("/friends/requests"),
 	});
 
-	const requestMutation = useMutation({
-		mutationFn:({ requestedAction, friendId }: { requestedAction: string; friendId: string }) => 
-    api.patch(`/friends/${friendId}`, { action: requestedAction }),
-		onSuccess: () => {
-			queryClient.invalidateQueries(['/friends/requests', getAccessToken()]);
-			toast({ title: 'Request successful', type: "is-success" });
-		},
-		onError: (error: Error) => {
-			toast({ title: `An error occurred`, message: error.message, type: "is-warning" })
-		}
-	})
-
-	const handleRequest = (action: string, friendId: string) => {
-		setLoadingId(friendId);
-		requestMutation.mutate(
-			{ action, friendId },
-			{ onSettled: () => setLoadingId(null) }
-		);
+	const handleRequest = (action: actionType, id: string) => {
+		friendRequestMutation.run( action, id);
 	};
 	
 	if (isLoading) return <div>Loading...</div>;
@@ -68,26 +50,23 @@ const FriendRequest = () => {
 								<div>
 									<Button 
 										className="interaction_btn" 
-										onClick={() => {handleRequest('accept', friendUser.appUserId)}} 
-										disabled={loadingId === friendUser.appUserId}
+										onClick={() => {handleRequest('accept', friend.friendshipId)}}
 									>
-										{loadingId === friendUser.appUserId ? 'Processing...' : 'Accept request'}
+										Accept request
 									</Button>
 									<Button 
 										className="interaction_btn" 
-										onClick={() => {handleRequest('reject', friendUser.appUserId)}} 
-										disabled={loadingId === friendUser.appUserId}
+										onClick={() => {handleRequest('reject', friend.friendshipId)}}
 									>
-										{loadingId === friendUser.appUserId ? 'Processing...' : 'Reject request'}
+										Reject request
 									</Button>
 								</div>}
 								{friendUser.appUserId !== friend.sender.appUserId && 
 									<Button 
 										className="interaction_btn" 
-										onClick={() => {handleRequest('cancel', friendUser.appUserId)}} 
-										disabled={loadingId === friendUser.appUserId}
+										onClick={() => {handleRequest('cancel', friend.friendshipId)}}
 									>
-										{loadingId === friendUser.appUserId ? 'Processing...' : 'Cancel request'}
+										Cancel request
 									</Button>
 								}
 								
