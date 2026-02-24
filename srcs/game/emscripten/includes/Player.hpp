@@ -7,7 +7,9 @@ enum state
 {
 	PLAYER_IDLE,
 	PLAYER_WALKING,
-	PLAYER_ATTACKING
+	PLAYER_ATTACKING,
+	PLAYER_HURT,
+	PLAYER_DYING
 };
 
 class Player
@@ -37,6 +39,7 @@ class Player
 
 	//pos in map
 		quadList	_node;
+		quadList	_startNode;
 		int			_anim;
 
 	//player stat
@@ -72,6 +75,7 @@ class Player
 		Room		&getRoom() const;
 		Room		&getRoomRef(void);
 		quadList	getNode() const;
+		quadList	getStartNode() const;
 
 		float		getX(void) const;
 		float		getY(void) const;
@@ -100,6 +104,7 @@ class Player
 
 	//setter
 		void	setNode(const quadList &node);
+		void	setStartNode(const quadList &node);
 		void	setPos(float x, float y);
 		void	setTargetPos(float x, float y);
 		void	setTimer(float time);

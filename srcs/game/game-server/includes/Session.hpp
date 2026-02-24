@@ -62,5 +62,6 @@ class Session
 
 void	sendPlayerState(Player &player, Session &session, std::string uid_leave);
 void	sendLeaveUpdate(Player &player, uWS::App &app, std::string &topic);
+// void	sendToBack(std::string url, std::string &msg, std::string method);
 
 # endif

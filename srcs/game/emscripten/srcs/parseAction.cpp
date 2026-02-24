@@ -1,6 +1,22 @@
 #include "Game.hpp"
 
-void	setPlayerState(Player &player, val &pStatus, int flag)
+void	respawnPlayer(Player &player, Game &game)
+{
+	game.clearOtherPlayers();
+	player.setNode(player.getStartNode());
+	std::vector<std::string> plan = player.getRoom().getRoomPlan();
+	for (size_t i = 0; i < plan.size(); i++)
+	{
+		size_t j = plan[i].find('P');
+		if (j != plan[i].npos)
+		{
+			player.setPos(j, i);
+			break;
+		}
+	}
+}
+
+void	setPlayerState(Player &player, Game &game, val &pStatus, int flag)
 {
 	float x = pStatus["player_x"].as<float>();
 	float y = pStatus["player_y"].as<float>();
@@ -27,6 +43,10 @@ void	setPlayerState(Player &player, val &pStatus, int flag)
 	}
 	else
 	{
+		bool died = pStatus["player_died"].as<bool>();
+		if (died == true)
+			respawnPlayer(player, game);
+
 		float pX = player.getX();
 		float pY = player.getY();
 		float dist = SDL_sqrtf(SDL_powf(x - pX, 2) + SDL_powf(y - pY, 2));
@@ -84,18 +104,18 @@ void	loopPlayerState(Game &game, val playerUpdate)
 		if (game.getPlayer().getUid() == uid)
 		{
 			Player &player = game.getPlayer();
-			setPlayerState(player, pStatus, 0);
+			setPlayerState(player, game, pStatus, 0);
 		}
 		else if (game.isInOtherPlayers(uid))
 		{
 			Player &player = game.getOtherPlayer(uid);
-			setPlayerState(player, pStatus, 1);
+			setPlayerState(player, game, pStatus, 1);
 		}
 		else
 		{
 			std::string name = pStatus["player_name"].as<std::string>();
 			game.addOtherPlayer(uid, name);
-			setPlayerState(otherPlayers.back(), pStatus, 2);
+			setPlayerState(otherPlayers.back(), game, pStatus, 2);
 		}
 	}
 	

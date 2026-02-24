@@ -21,6 +21,9 @@ class PlayerAssets
 		static std::unordered_map<int, SDL_Rect>	_playerAttackBack;
 		static std::unordered_map<int, SDL_Rect>	_playerIdleBack;
 
+		static std::unordered_map<int, SDL_Rect>	_playerHurt;
+		static std::unordered_map<int, SDL_Rect>	_playerDie;
+
 		static SDL_Texture	*_playerWalkText;
 		static SDL_Texture	*_playerAttackText;
 		static SDL_Texture	*_playerIdleText;
@@ -32,6 +35,9 @@ class PlayerAssets
 		static SDL_Texture	*_playerWalkBackText;
 		static SDL_Texture	*_playerAttackBackText;
 		static SDL_Texture	*_playerIdleBackText;
+
+		static SDL_Texture	*_playerHurtText;
+		static SDL_Texture	*_playerDieText;
 		
 		static SDL_Texture* mapRenderTexture;
 
@@ -43,6 +49,11 @@ class PlayerAssets
 
 		static int						_idleImgW;
 		static int						_idleImgH;
+
+		static int						_hurtW;
+		static int						_hurtH;
+		static int						_dieW;
+		static int						_dieH;
 
 		PlayerAssets(void);
 		~PlayerAssets();
@@ -59,6 +70,9 @@ class PlayerAssets
 		static void	importPlayersAttackBackAssets(int tile_size);
 		static void	importPlayersIdleBackAssets(int tile_size);
 
+		static void importPlayersHurtAssets(int tile_size);
+		static void	importPlayersDieAssets(int tile_size);	
+
 	public:
 
 		static void	importPlayersAssets(int tile_size);
@@ -74,6 +88,9 @@ class PlayerAssets
 		static void	rendPlayerWalkBack(int playerNum, int x, int y, int index, float scale, int flag);
 		static void	rendPlayerAttackBack(int playerNum, int x, int y, int index, float scale, int flag);
 		static void	rendPlayerIdleBack(int playerNum, int x, int y, int index, float scale, int flag);
+
+		static void	rendPlayerHurt(int playerNum, int x, int y, int assetIndex, float scale, int player_dir, int flag);
+		static void	rendPlayerDie(int playerNum, int x, int y, int assetIndex, float scale, int player_dir, int flag);
 
 };
 

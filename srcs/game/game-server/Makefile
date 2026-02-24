@@ -2,13 +2,17 @@ CXX      = clang++
 CC       = clang
 CXXFLAGS = -Wall -Werror -Wextra -std=c++20 -g
 CFLAGS   = -DLIBUS_USE_EPOLL -DLIBUS_NO_SSL -I./uWebSockets/uSockets/src
-LDFLAGS  = -lpthread -lz
+LDFLAGS  = -lpthread -lz # -lcurl
 
 HEADERS  = ./includes/
 SRC_DIR  = ./srcs/
 OBJ_DIR  = ./objs/
 
 CXXFLAGS += -I$(HEADERS) -I./uWebSockets/src -I./uWebSockets/uSockets/src
+
+# CXXFLAGS += -I$(HOME)/local/include
+
+# LDFLAGS  += -L$(HOME)/local/lib -lcurl
 
 SRCS =  main.cpp \
 		parseServer.cpp \
