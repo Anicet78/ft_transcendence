@@ -430,7 +430,10 @@ void	Mob::attack(Player &player)
 		player.startInvinsibleFrame();
 		std::cout << player.getHp() << std::endl;
 		if (player.getHp() <= 0)
+		{
+			player.dieAction();
 			return ;
+		}
 	}
 }
 

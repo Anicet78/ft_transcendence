@@ -97,6 +97,11 @@ quadList Player::getNode() const
 	return this->_node;
 }
 
+quadList Player::getStartNode() const
+{
+	return this->_startNode;
+}
+
 Camera	&Player::getCamera(void)
 {
 	return (_camera);
@@ -146,6 +151,11 @@ void	Player::updateLastDir(void)
 void Player::setNode(const quadList &node)
 {
 	this->_node = node;
+}
+
+void	Player::setStartNode(const quadList &node)
+{
+	this->_startNode = node;
 }
 
 void	Player::setPos(float x, float y)

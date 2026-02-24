@@ -239,6 +239,7 @@ void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, u
 			if (p.expired())
 				continue ;
 			std::shared_ptr<Player> player = p.lock();
+			bool	died = player->getDied();
 			player_update += "{\"player_uid\":\"" + player->getUid() + '\"';
 			player_update += ",\"player_name\":\"" + player->getName() + '\"';
 			player_update += ",\"player_x\":" + std::to_string(player->getX());
@@ -247,10 +248,14 @@ void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, u
 			player_update += ",\"player_anim\":" + std::to_string(player->getAnim());
 			player_update += ",\"player_dir\":" + std::to_string(player->getLastDir());
 			player_update += ",\"player_kills\":" + std::to_string(player->getKills());
+			player_update += ",\"player_died\":" + std::to_string(died);
 			player_update += ",\"player_start\":" + std::to_string(player->getStartPos());
 			player_update += ",\"player_exit\":\"";
 			player_update.push_back(player->getExit());
 			player_update += "\"},";
+
+			if (died == true)
+				player->setDied(false);
 		}
 		player_update.pop_back();
 		player_update.push_back(']');

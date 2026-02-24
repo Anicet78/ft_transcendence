@@ -106,6 +106,7 @@ void updateRoom(Player &player, uWS::App &app)
 		player.incrementFloor();
 		player.setPrevNode(player.getNode());
 		player.setNode(player.getNode()->up.lock());
+		player.setStartNode(player.getNode());
 		player.findP();
 		sendLeaveUpdate(player, app, oldTopic);
 		player.getWs()->unsubscribe(oldTopic);

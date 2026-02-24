@@ -74,6 +74,8 @@ void	Session::launch()
 		std::string roomId = player->getRoom().getRoomId();
 		player->setNode(node);
 
+		player->setStartNode(node);
+
 		player->setStartPos(pos);
 
 		player->getWs()->unsubscribe(roomId);
