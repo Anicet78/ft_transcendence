@@ -13,7 +13,8 @@ import {
 	ModerateMessageParamsSchema,
 	ModerateMessageResponseSchema,
 	RestoreMessageParamsSchema,
-	RestoreMessageResponseSchema
+	RestoreMessageResponseSchema,
+	ChatReceiptsSchema
 } from '../../schema/chat/chatMessageSchema.js';
 
 import {
@@ -22,7 +23,8 @@ import {
 	getChatMessagesController,
 	editMessageController,
 	moderateMessageController,
-	restoreMessageController
+	restoreMessageController,
+	getChatReceiptsController
 } from '../../controllers/chat/chatMessageController.js';
 
 async function chatMessageRoutes(fastify: FastifyInstance) {
@@ -88,6 +90,17 @@ async function chatMessageRoutes(fastify: FastifyInstance) {
 		}
 		},
 		handler: deleteMessageController
+	});
+
+	//GET USER'S CHATS LIST
+	fastify.get('/chat/:chatId/receipts', {
+		schema: {
+			params: SendMessageParamsSchema,
+			response: {
+				200: ChatReceiptsSchema
+			}
+		},
+		handler: getChatReceiptsController
 	});
 
 } export default chatMessageRoutes;

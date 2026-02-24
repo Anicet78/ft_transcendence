@@ -358,3 +358,14 @@ export async function restoreMessage(
 	});
 	return updated;
 }
+
+//RETURN CHAT RECEIPTS
+export async function chatReceiptsService(chatId: string) {
+
+	const receipts = await prisma.chatReceipt.findMany({
+		where: { chatId },
+		include: { user: true }
+	});
+
+	return receipts;
+}

@@ -43,7 +43,7 @@ model AppUser {
   refreshTokens                                         RefreshToken[]   @relation("UserToken")
   rolesGiven                                            UserRole[]       @relation("UserRoleAttributedBy")
   rolesReceived                                         UserRole[]       @relation("UserRoleAttributedTo")
-  messageReads                                          MessageRead[]
+  chatReceipt                                           ChatReceipt[]
 
   @@map("app_user")
 }
@@ -219,13 +219,13 @@ model ChatMessage {
   chat        Chat           @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction)
   moderator   AppUser?       @relation("chat_message_moderated_byToapp_user", fields: [moderatedBy], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
   author      AppUser        @relation("chat_message_user_idToapp_user", fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
-  reads       MessageRead[]
+  reads       ChatReceipt[]
 
   @@map("chat_message")
 }
 
-model MessageRead {
-  messageReadId  String       @id @default(dbgenerated("uuid_generate_v4()")) @map("message_read_id") @db.Uuid
+model ChatReceipt {
+  messageReadId  String       @default(dbgenerated("uuid_generate_v4()")) @map("message_read_id") @db.Uuid
   chatId         String       @map("chatId") @db.Uuid
   messageId      String       @map("message_id") @db.Uuid
   userId         String       @map("user_id") @db.Uuid
@@ -235,10 +235,10 @@ model MessageRead {
   message        ChatMessage  @relation(fields: [messageId], references: [messageId], onDelete: NoAction, onUpdate: NoAction)
   user           AppUser      @relation(fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
 
-  // @@id([userId, chatId])
-  // @@index([chatId])
+  @@id([userId, chatId])
+  @@index([chatId])
 
-  @@map("message_read")
+  @@map("chat_receipt")
 }
 
 

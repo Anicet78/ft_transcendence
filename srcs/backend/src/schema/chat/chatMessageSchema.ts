@@ -100,3 +100,12 @@ export const DeleteMessageResponseSchema = Type.Object({
 	status: Type.String(),
 	deletedAt: Type.String()
 });
+
+
+//RECEIPTS
+export const ChatReceiptsSchema = Type.Object({
+  chatId: Type.String(),
+  messageId: Type.String()//,
+  //createdAt: Type.String(),
+});
+export type Receipts = Static<typeof ChatReceiptsSchema>;

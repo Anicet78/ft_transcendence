@@ -349,8 +349,8 @@ CREATE TABLE chat_message (
 		REFERENCES app_user(app_user_id)
 );
 
-CREATE TABLE message_read(
-	message_read_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+CREATE TABLE chat_receipt(
+	chat_receipt_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	chat_id UUID NOT NULL,
 	message_id UUID NOT NULL,
 	user_id UUID NOT NULL,
