@@ -23,6 +23,8 @@
 # include <sstream>
 # include <list>
 # include <stack>
+// # include <curl/curl.h>
+// # include <../curl-8.6.0/include/curl/curl.h>
 
 typedef struct FRect
 {

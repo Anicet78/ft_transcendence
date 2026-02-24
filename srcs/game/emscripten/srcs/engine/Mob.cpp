@@ -359,7 +359,12 @@ void	Mob::printMob(float camX, float camY, int tile_size, int flag)
 		if (!flag && this->_frame >= 24)
 			this->_frame = 0;
 		int frame = (flag) ? ((!this->_frame) ? 23 : this->_frame - 1) : this->_frame;
-		this->rendMobAttack(x, y, frame / 4, 2, flag);
+		if (this->_last_dir < 2)
+			this->rendMobAttack(x, y, frame / 4, 2, flag);
+		else if (this->_last_dir == 3)
+			this->rendMobAttackFront(x, y, frame / 4, 2, flag);
+		else if (this->_last_dir == 2)
+			this->rendMobAttackBack(x, y, frame / 4, 2, flag);
 	}
 	else if (this->_anim == MOB_HURT)
 	{
@@ -577,7 +582,7 @@ void	Mob::rendMobDeath(int x, int y, int assetIndex, float scale, int flag)
 		SDL_SetTextureAlphaMod(_mobDeathText, 255);
 }
 
-void	Mob::rendMobAttackFront(int x, int y, int index, float scale, int flag)
+void	Mob::rendMobAttackFront(int x, int y, int assetIndex, float scale, int flag)
 {
 	if (flag)
 	{
@@ -606,15 +611,12 @@ void	Mob::rendMobAttackFront(int x, int y, int index, float scale, int flag)
 		renderRect.h = rect->h * scale;
 	}
 
-	if (!_last_dir)
-		SDL_RenderCopy(gSdl.renderer, _mobAttackFrontText, rect, &renderRect);
-	else
-		SDL_RenderCopyEx(gSdl.renderer, _mobAttackFrontText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
+	SDL_RenderCopy(gSdl.renderer, _mobAttackFrontText, rect, &renderRect);
 	if (flag)
 		SDL_SetTextureAlphaMod(_mobAttackFrontText, 255);
 }
 
-void	Mob::rendMobAttackBack(int x, int y, int index, float scale, int flag)
+void	Mob::rendMobAttackBack(int x, int y, int assetIndex, float scale, int flag)
 {
 	if (flag)
 	{
@@ -643,10 +645,7 @@ void	Mob::rendMobAttackBack(int x, int y, int index, float scale, int flag)
 		renderRect.h = rect->h * scale;
 	}
 
-	if (!_last_dir)
-		SDL_RenderCopy(gSdl.renderer, _mobAttackBackText, rect, &renderRect);
-	else
-		SDL_RenderCopyEx(gSdl.renderer, _mobAttackBackText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
+	SDL_RenderCopy(gSdl.renderer, _mobAttackBackText, rect, &renderRect);
 	if (flag)
 		SDL_SetTextureAlphaMod(_mobAttackBackText, 255);
 }

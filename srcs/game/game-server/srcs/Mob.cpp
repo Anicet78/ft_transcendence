@@ -458,10 +458,29 @@ void	Mob::chasingRoutine(Player &player, std::vector<std::string> const &map)
 			if (this->_state != MOB_RUNNING)
 				this->_state = MOB_RUNNING;
 			float dx = player.getX() - this->_x;
-			if (dx >= 0)
-				this->_last_dir = 0;
+			float dy = player.getY() - this->_y;
+			if (std::fabs(dy) > std::fabs(dx))
+			{
+				if (dy >= 0)
+					this->_last_dir = 3;
+				else
+					this->_last_dir = 2;
+			}
 			else
-				this->_last_dir = 1;
+			{
+				if (dx >= 0)
+					this->_last_dir = 0;
+				else
+					this->_last_dir = 1;
+			}
+			// float dy = player.getY() - this->_y;
+			if (std::fabs(dy) > std::fabs(dx))
+			{
+				if (dy >= 0)
+					this->_last_dir = 3;
+				else
+					this->_last_dir = 2;
+			}
 			this->_lastPlayerX = player.getX();
 			this->_lastPlayerY = player.getY();
 			this->_lastX = this->_x;
