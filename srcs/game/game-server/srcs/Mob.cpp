@@ -1,6 +1,7 @@
 #include "Mob.hpp"
+#include "Player.hpp"
 
-Mob::Mob(float x, float y, int hp) : _x(x), _y(y), _hp(hp), _last_dir(0), _dirWalk(0), _state(MOB_IDLE), _routine(MOB_WANDERING),
+Mob::Mob(float x, float y, int hp) : _x(x), _y(y), _lastX(x), _lastY(y), _hp(hp), _last_dir(0), _dirWalk(0), _state(MOB_IDLE), _routine(MOB_WANDERING),
 	_lastPlayerX(-1), _lastPlayerY(-1), _timeAction(std::chrono::steady_clock::now()),  _frame(0),
 	_isInvinsible(false), _isDead(false), _invFrame(0), _tookDamage(false), _sendDeath(false),
 	_box(_x, _y, _last_dir)
@@ -126,13 +127,11 @@ double	Mob::getTimeLastAction(void) const
 void	Mob::startInvinsibleFrame(void)
 {
 	this->_isInvinsible = true;
-	this->_frame = -1;
 }
 
 void	Mob::endInvinsibleFrame(void)
 {
 	this->_isInvinsible = false;
-	this->_frame = 0;
 }
 
 bool	Mob::checkInvinsibleFrame(void)
@@ -249,6 +248,68 @@ static bool checkWallHitBox2(std::vector<std::string> const &plan,
 			!isBlocked(y2, x1) && !isBlocked(y2, x2));
 }
 
+void	Mob::move(std::vector<std::string> const &map, float px, float py, float scaleX, float scaleY)
+{
+	float dx = px - this->_x;
+	float dy = py - this->_y;
+	float len = sqrt(dx * dx + dy * dy);
+	if (len > 0.00001f)
+	{
+		dx /= len;
+		dy /= len;
+	}
+	float stepX = dx * scaleX;
+	float stepY = dy * scaleY;
+
+	if (checkWallHitBox2(map, this->_wallHitBox, stepX, stepY))
+	{
+		this->_x += stepX;
+		this->_y += stepY;
+	}
+	else
+	{
+		if (checkWallHitBox2(map, this->_wallHitBox, stepX, 0.0f))
+			this->_x += stepX;
+
+		if (checkWallHitBox2(map, this->_wallHitBox, 0.0f, stepY))
+			this->_y += stepY;
+	}
+}
+
+void Mob::moveDodge(std::vector<std::string> const &map, float px, float py, float scaleX, float scaleY)
+{
+	float rx = this->_x - px;
+	float ry = this->_y - py;
+
+	float len = sqrt(rx * rx + ry * ry);
+	if (len < 0.00001f)
+		return ;
+
+	rx /= len;
+	ry /= len;
+
+	// vecteur tangent (anti-horaire)
+	float tx = -ry;
+	float ty = rx;
+
+	float stepX = tx * scaleX;
+	float stepY = ty * scaleY;
+
+
+	if (checkWallHitBox2(map, this->_wallHitBox, stepX, stepY))
+	{
+		this->_x += stepX;
+		this->_y += stepY;
+	}
+	else
+	{
+		if (checkWallHitBox2(map, this->_wallHitBox, stepX, 0.0f))
+			this->_x += stepX;
+		if (checkWallHitBox2(map, this->_wallHitBox, 0.0f, stepY))
+			this->_y += stepY;
+	}
+}
+
 
 static void changeMobAction(Mob &mob)
 {
@@ -270,6 +331,18 @@ static void changeMobAction(Mob &mob)
 	}
 }
 
+bool equal2(float a, float b)
+{
+	return std::fabs(a - b) < 0.005f;
+}
+
+bool reached(float x, float y, float tx, float ty, float threshold = 0.1f)
+{
+    float dx = x - tx;
+    float dy = y - ty;
+    return (dx*dx + dy*dy) < (threshold * threshold);
+}
+
 void	Mob::wanderingRoutine(std::vector<std::string> const &map)
 {
 	float x = this->_x;
@@ -277,45 +350,18 @@ void	Mob::wanderingRoutine(std::vector<std::string> const &map)
 
 	if (this->_state == MOB_CHASE_LAST)
 	{
-		float dx = this->_lastPlayerX - x;
-		float dy = this->_lastPlayerY - y;
-		float len = sqrt(dx * dx + dy * dy);
-		if (len > 0.00001f)
-		{
-			dx /= len;
-			dy /= len;
-		}
-		float stepX = dx * 0.20f;
-		float stepY = dy * 0.20f;
+		this->_lastX = this->_x;
+		this->_lastY = this->_y;
+		this->move(map, this->_lastPlayerX, this->_lastPlayerY, 0.20f, 0.20f);
 
-		bool changed = false;
-		if (checkWallHitBox2(map, this->_wallHitBox, stepX, stepY))
+		if (reached(this->_x, this->_y, this->_lastPlayerX, this->_lastPlayerY)
+			|| reached(this->_x, this->_y, this->_lastX, this->_lastY))
 		{
-			this->_x += stepX;
-			this->_y += stepY;
-			changed = true;
-		}
-		else
-		{
-			if (checkWallHitBox2(map, this->_wallHitBox, stepX, 0.0f))
-			{
-				changed  = true;
-				this->_x += stepX;
-			}
-
-			if (checkWallHitBox2(map, this->_wallHitBox, 0.0f, stepY))
-			{
-				changed  = true;
-				this->_y += stepY;
-			}
-
-		}
-
-		if (!changed || (static_cast<int>(this->_x) == static_cast<int>(this->_lastPlayerX) && static_cast<int>(this->_y) == static_cast<int>(this->_lastPlayerY)))
-		{
-			this->_lastPlayerX = -1, this->_lastPlayerY = -1;
+			this->_lastPlayerX = -1;
+			this->_lastPlayerY = -1;
 			this->_state = MOB_IDLE;
 		}
+
 		return ;
 	}
 
@@ -363,45 +409,72 @@ void	Mob::wanderingRoutine(std::vector<std::string> const &map)
 	}
 }
 
-void	Mob::chasingRoutine(float px, float py, std::vector<std::string> const &map)
+void	Mob::attack(Player &player)
+{
+	HitBox	&box = player.getHitBox();
+
+	this->_box.updateAtkHitBox();
+	if (this->_state != MOB_ATTACKING)
+		this->setState(MOB_ATTACKING);
+	
+	if (this->getTimeLastAction() <= 0.1f && !this->_isInvinsible)
+		this->_isInvinsible = true;
+	else if (this->getTimeLastAction() > 0.1f && this->_isInvinsible)
+		this->_isInvinsible = false;
+	if (this->getTimeLastAction() <= 0.3f)
+		return ;
+	box.updateHurtBox();
+	if (!player.checkInvinsibleFrame() && box.isDmgHit(this->_box.getAtkHitBox()))
+	{
+		player.setHp(player.getHp() - 1);
+		player.startInvinsibleFrame();
+		std::cout << player.getHp() << std::endl;
+		if (player.getHp() <= 0)
+			return ;
+	}
+}
+
+void	Mob::chasingRoutine(Player &player, std::vector<std::string> const &map)
 {
 	if (this->_state == MOB_HURT)
 	{
-		if (this->getTimeLastAction() > 0.7333)
-			this->setState(MOB_WALKING);
+		float scale = -0.25f * (1.f - (this->getTimeLastAction() / 0.5));
+		this->move(map, player.getX(), player.getY(), scale, scale);
+		if (this->getTimeLastAction() > 0.5)
+			this->setState(MOB_IDLE);
 		return ;
 	}
-	if (this->isInSight(px, py, map))
+	if (this->_state == MOB_ATTACKING)
 	{
-		float dx = px - this->_x;
-		float dy = py - this->_y;
-		if (dx >= 0)
-			this->_last_dir = 0;
-		else
-			this->_last_dir = 1;
-		this->_lastPlayerX = px;
-		this->_lastPlayerY = py;
-		float len = sqrt(dx * dx + dy * dy);
-		if (len > 0.00001f)
+		this->attack(player);
+		if (this->getTimeLastAction() > 0.4)
+			this->_state = MOB_WALKING;
+		return ;
+	}
+	if (this->isInSight(player, map))
+	{
+		if (dist(player.getX(), player.getY(), *this) > 1.2)
 		{
-			dx /= len;
-			dy /= len;
+			if (this->_state != MOB_RUNNING)
+				this->_state = MOB_RUNNING;
+			float dx = player.getX() - this->_x;
+			if (dx >= 0)
+				this->_last_dir = 0;
+			else
+				this->_last_dir = 1;
+			this->_lastPlayerX = player.getX();
+			this->_lastPlayerY = player.getY();
+			this->_lastX = this->_x;
+			this->_lastY = this->_y;
+			this->move(map, player.getX(), player.getY(), 0.22f, 0.22f);
+			if (equal2(this->_x, this->_lastX) && equal2(this->_y, this->_lastY))
+			{
+				this->setState(MOB_IDLE);
+				this->_routine = MOB_WANDERING;
+			}
 		}
-		float stepX = dx * 0.2f;
-		float stepY = dy * 0.2f;
-		if (checkWallHitBox2(map, this->_wallHitBox, stepX, stepY))
-		{
-			this->_x += stepX;
-			this->_y += stepY;
-		}
-		else
-		{
-			if (checkWallHitBox2(map, this->_wallHitBox, stepX, 0.0f))
-				this->_x += stepX;
-			
-			if (checkWallHitBox2(map, this->_wallHitBox, 0.0f, stepY))
-				this->_y += stepY;
-		}
+		else if (this->getTimeLastAction() > 0.8 || this->_state == MOB_RUNNING)
+			this->attack(player);
 	}
 	else
 	{
@@ -410,11 +483,11 @@ void	Mob::chasingRoutine(float px, float py, std::vector<std::string> const &map
 	}
 }
 
-bool Mob::isInSight(float px, float py, std::vector<std::string> const &map)
+bool Mob::isInSight(Player &player, std::vector<std::string> const &map)
 {
 	float mx = this->_x, my = this->_y;
-	float dx = px - mx;
-	float dy = py - my;
+	float dx = player.getX() - mx;
+	float dy = player.getY() - my;
 
 	float steps = std::max(std::fabs(dx), std::fabs(dy));
 	if (steps < 0.0001f)
@@ -443,7 +516,6 @@ bool Mob::isInSight(float px, float py, std::vector<std::string> const &map)
 	return true;
 }
 
-
 float	dist(float px, float py, Mob const &mob)
 {
 	float x = px - mob.getX();
@@ -451,15 +523,36 @@ float	dist(float px, float py, Mob const &mob)
 	return (sqrt(x * x + y * y));
 }
 
-void	Mob::MobAction(float px, float py, std::vector<std::string> const &map)
+void	Mob::dodge(Player &player, std::vector<std::string> const &map)
+{
+	if (this->getTimeLastAction() > 0.35f)
+	{
+		this->setState(MOB_WALKING);
+		this->_routine = MOB_CHASING;
+		this->_lastPlayerX = player.getX();
+		this->_lastPlayerY = player.getY();
+		return ;
+	}
+	this->moveDodge(map, player.getX(), player.getY(), -0.3f, -0.3f);
+}
+
+void	Mob::MobAction(Player &player, std::vector<std::string> const &map)
 {
 	this->setWallHitBox();
 
-	if (this->_routine == MOB_WANDERING && px >= 0 && py >= 0 && dist(px, py, *this) < 4.f && isInSight(px, py, map))
+
+	if (this->_state == MOB_DODGE)
+	{
+		dodge(player, map);
+		return ;
+	}
+
+	if (this->_routine == MOB_WANDERING && player.getX() >= 0 && player.getY() >= 0
+			&& dist(player.getX(), player.getY(), *this) < 4.f && isInSight(player, map))
 		this->_routine = MOB_CHASING;
 
 	if (this->_routine == MOB_WANDERING)
 		wanderingRoutine(map);
 	if (this->_routine == MOB_CHASING)
-		chasingRoutine(px, py, map);
+		chasingRoutine(player, map);
 }

@@ -1,9 +1,9 @@
 import 'bulma/css/bulma.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './register.css'
-import '../index.css'
+import './login.css'
 
-import { Button } from '@allxsmith/bestax-bulma';
+import { Button, Box } from '@allxsmith/bestax-bulma';
 import type { GetBody, GetResponse } from '../types/GetType.ts';
 import api from '../serverApi.ts';
 import { useMutation } from '@tanstack/react-query';
@@ -16,6 +16,8 @@ import InputText from '../components/InputText.tsx';
 import InputPassword from '../components/InputPassword.tsx';
 import SelectRegion from '../components/SelectRegion.tsx';
 import toast from '../Notifications.tsx';
+import { handleGoogleLogin } from './callbackGoogle.tsx';
+import { handle42Login } from './callback42.tsx';
 
 type RegisterBodyType = GetBody<"/auth/register", "post">;
 type RegisterResponseType = GetResponse<"/auth/register", "post">;
@@ -82,10 +84,10 @@ function Register() {
 	const password = watch("password");
 	const confirmPassword = watch("confirmPassword");
 
-	const mutation: UseMutationResult<RegisterResponseType, any, RegisterBodyType> = useMutation({
+	const mutation = useMutation({
 		mutationFn: (data: RegisterBodyType) => api.post("/auth/register", data),
 		onSuccess: (data) => {
-			const response: RegisterResponseType = data;
+			const response: RegisterResponseType = data.data;
 			toast({ title: `Your account has been successfully created`, type: "is-success" })
 			login(response.user, response.token);
 		},
@@ -108,26 +110,30 @@ function Register() {
 	};
 
 	return (
-		<div className="card">
-			<div>
-				<Button color='primary' isOutlined className='login-button'>Login with Google</Button>
-				<Button color='primary' isOutlined className='login-button'>Login with 42</Button>
+		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='center' textSize='3' textWeight='bold'>
+			<div className="register-box">
+				<div className='social-buttons'>
+					<Button color='primary' isOutlined className='login-button' onClick={handleGoogleLogin}>Login with Google</Button>
+					<Button color='primary' isOutlined className='login-button' onClick={handle42Login}>Login with 42</Button>
+				</div>
+				<br />
+				<form onSubmit={handleSubmit(onSubmit)}>
+					<div className="form-fields">
+						<InputText placeholder="First name" register={register("firstname")} error={errors.firstname} />
+						<InputText placeholder="Last name" register={register("lastname")} error={errors.lastname} />
+						<InputText placeholder="Username" register={register("username")} error={errors.username} />
+						<InputText placeholder="Email" type="email" register={register("email")} error={errors.email} />
+
+						<InputPassword placeholder="Password" register={register("password")} error={errors.password} watchValue={password} />
+						<InputPassword placeholder="Confirm password" register={register("confirmPassword")} error={errors.confirmPassword} watchValue={confirmPassword} />
+					</div>
+					<div className='bottom'>
+						<SelectRegion placeholder="Select Region" options={regions} register={register("region")} error={errors.region} />
+						<Button type="submit" color="primary" isOutlined className="submit-wrapper">{mutation.isPending ? 'Registering...' : 'Sign up'}</Button>
+					</div>
+				</form>
 			</div>
-			<br />
-			<form onSubmit={handleSubmit(onSubmit)} className='register_form'>
-				<InputText placeholder="Firstname" register={register("firstname")} error={errors.firstname} />
-				<InputText placeholder="Lastname" register={register("lastname")} error={errors.lastname} />
-				<InputText placeholder="Username" register={register("username")} error={errors.username} />
-				<InputText placeholder="Email" type="email" register={register("email")} error={errors.email} />
-
-				<InputPassword placeholder="Password" register={register("password")} error={errors.password} watchValue={password} />
-				<InputPassword placeholder="Confirm Password" register={register("confirmPassword")} error={errors.confirmPassword} watchValue={confirmPassword} />
-
-				<SelectRegion placeholder="Select Region" options={regions} register={register("region")} error={errors.region} />
-
-				<button type="submit" disabled={mutation.status === 'pending'}>{mutation.status === 'pending' ? "Registering..." : "Sign up"}</button>
-			</form>
-		</div>
+		</Box>
 	)
 }
 

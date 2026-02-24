@@ -6,6 +6,7 @@ import { useParams } from 'react-router';
 import type { GetResponse } from '../types/GetType';
 import api from '../serverApi';
 import { NavLink } from 'react-router';
+import skull from '../assets/skull.svg';
 
 type ProfileResponseType = GetResponse<"/profile/{username}", "get">;
 
@@ -39,7 +40,7 @@ const ProfilePublic = () => {
 	const userData: ProfileResponseType = userQuery.data;
 	const friendshipData: any = friendshipQuery.data;
 
-	const avatar = userData.avatarUrl ? `http://localhost:3000/uploads/${userData.avatarUrl}` : '../assets/skull.svg';
+	const avatar = userData.avatarUrl ? `https://${window.location.host}/uploads/${userData.avatarUrl}` : skull;
 	const level = userData.gameProfile?.level || '0';
 	const xp = userData.gameProfile?.totalXp || '0';
 	const isConnected = userData.availability || false;
@@ -52,8 +53,6 @@ const ProfilePublic = () => {
 	const friendshipStatus = friendshipQuery.isSuccess ? friendshipData.status : 'unknown';
 	const blockStatus = false;
 
-	console.log("friendshipQuery:", friendshipQuery);
-	console.log("friendship data:", friendshipQuery.data);
 	return (
 		<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' alignItems='center'>
 			<h1>Welcome to {username} profile page</h1>
@@ -65,10 +64,13 @@ const ProfilePublic = () => {
 					</figure>
 				</Box>
 				<Box className='head-text'>
-					<p>{username}</p>
-					<p>Status: {isPlaying ? 'playing' : isConnected ? 'online' : 'offline'}</p>
-					<p>Lvl {level}</p>
-					<p>{xp} XP</p>
+					<p className="username">
+						<i className={`fa-solid fa-circle status-circle ${isPlaying ? 'playing' : isConnected ? 'online' : 'offline'}`}  aria-label="status" />
+						{username}
+					</p>
+
+					<p className="level">Lvl {level}</p>
+					<p className="xp">{xp} XP</p>
 				</Box>
 			</Box>
 			<Box className='info' bgColor="white" textSize='5'>
@@ -80,25 +82,27 @@ const ProfilePublic = () => {
 			</Box>
 			{friendshipStatus !== 'self' &&
 				<>
-					<div>
-						{(friendshipStatus === 'sent') && 
-							<div>
+					<div className="button-group">
+						{(friendshipStatus === 'sent') &&
+							<div className="button-row">
 								<Button color="dark" disabled size='large'>Request pending</Button>
 								<NavLink to={"/friends/requests/update/" + friendshipData.friendshipId} state={{requestedAction: "cancel"}} className="button is-medium">Cancel request</NavLink>
 							</div>}
 						{friendshipStatus === 'friends' &&
-						<div>
-							<NavLink to={"/friends/remove/" + userData.appUserId} className="button is-medium">Remove friend</NavLink>
-							<br />
-							<Button color='primary' isInverted aria-label='join button' size='medium'>Join / decline</Button>
-							<br />
-							<Button color='primary' isInverted aria-label='spectate button' size='medium'>Spectate</Button>
-						</div>}
-						{friendshipStatus === 'received' && 
-						<div>
-							<NavLink to={"/friends/requests/update/" + friendshipData.friendshipId} state={{requestedAction: "accept"}} className="button is-medium">Accept request</NavLink>
-							<NavLink to={"/friends/requests/update/" + friendshipData.friendshipId} state={{requestedAction: "reject"}} className="button is-medium">Reject request</NavLink>
-						</div>}
+							<div>
+								<div className="button-row">
+									<NavLink to={"/friends/remove/" + userData.appUserId} className="button is-medium">Remove friend</NavLink>
+								</div>
+								<div className="button-row">
+									<Button color='primary' isInverted aria-label='join button' size='medium'>Join</Button>
+									<Button color='primary' isInverted aria-label='spectate button' size='medium'>Spectate</Button>
+								</div>
+							</div>}
+						{friendshipStatus === 'received' &&
+							<div className="button-row">
+								<NavLink to={"/friends/requests/update/" + friendshipData.friendshipId} state={{requestedAction: "accept"}} className="button is-medium">Accept request</NavLink>
+								<NavLink to={"/friends/requests/update/" + friendshipData.friendshipId} state={{requestedAction: "reject"}} className="button is-medium">Reject request</NavLink>
+							</div>}
 						{friendshipStatus === 'none' &&
 							<NavLink to={"/friends/add/" + userData.appUserId} className="button is-medium">Send friendship request</NavLink>}
 						{!blockStatus && <NavLink to={"/profile/" + userData.appUserId + "/block"} state={{requestedAction: "block"}} className="button is-medium">Block user</NavLink>}
