@@ -1,7 +1,6 @@
 import { Box } from "@allxsmith/bestax-bulma";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "../../auth/AuthContext";
-//import { useChatReceipts } from "../hooks/useChatMessages";
 
 type Message = {
 	messageId: string;
@@ -22,6 +21,7 @@ type Message = {
 
 type MessageListProps = {
 	messages: Message[];
+	readState?: Record<string, string>;
 	role: string | null;
 	permissions: Record<string, boolean>;
 	onEdit: (data: { messageId: string; content: string }) => void;
@@ -30,9 +30,22 @@ type MessageListProps = {
 	onRestore: (messageId: string) => void;
 };
 
+function isMessageRead(
+	messageId: string,
+	readState?: Record<string, string>
+) {
+	if (!readState)
+		return false;
+
+	return Object.values(readState).some(
+		lastId => lastId === messageId
+	);
+}
+
 export function MessageList({
 	messages,
 	// role,
+	readState,
 	permissions,
 	onEdit,
 	onDelete,
@@ -46,31 +59,11 @@ export function MessageList({
 	if (!messages || messages.length === 0)
 		return null;
 
-	// const { data: receipts = [] } = useChatReceipts(messages[0]?.chatId ?? "");
-	
-	// // Group receipts by messageId
-	// const receiptsByMessage = receipts.reduce((acc: any, r: any) => {
-	// 	if (!acc[r.messageId])
-	// 		acc[r.messageId] = [];
-	// 	acc[r.messageId].push(r);
-	// 	return acc;
-	// }, {}); 
-
-	// const chatId = messages[0].chatId;
-	// const { data: receipts = [] } = useChatReceipts(chatId);
-	
-	// const receiptsByMessage = receipts.reduce((acc: any, r: any) => {
-	// 	if (!acc[r.messageId])
-	// 		acc[r.messageId] = [];
-	// 	acc[r.messageId].push(r);
-	// 	return acc;
-	// }, {});
-
 	return (
 	<>
 		{messages?.map(msg => {
 
-			//const readers = receiptsByMessage[msg.messageId] || [];
+			const read = isMessageRead(msg.messageId, readState);
 
 			// GAME INVITE MESSAGE
 			if (msg.content.includes("/join/")) {
@@ -196,18 +189,13 @@ export function MessageList({
 					</>
 				)}
 
+				
 				{/* READ RECEIPTS */}
-				{/* {readers.length > 0 && (
-					<div style={{ marginTop: "6px", fontSize: "0.8rem", color: "#666" }}>
-						Seen by {readers.map(r => r.user?.username ?? r.userId).join(", ")}
-					</div>
-				)} */}
-
-				{/* {msg.userId === user?.id && readers.length > 0 && (
-					<div style={{ marginTop: "6px", fontSize: "0.8rem", color: "#666" }}>
-						Seen by {readers.map(r => r.user?.username ?? r.userId).join(", ")}
-					</div>
-				)} */}
+				{read && (
+					<span style={{ marginLeft: 8, color: "#4fc3f7" }}>
+						✓✓
+					</span>
+				)}
 
 				</Box>
 			);

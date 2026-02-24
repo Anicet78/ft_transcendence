@@ -13,23 +13,17 @@ export function useChatSocket(chatId?: string) {
 		if (!socket || !chatId)
 			return;
 
-		// socket.on("chat_receipt_update", ({ userId, messageId }) => {
-		// 	queryClient.setQueryData(["chat-receipts", chatId], (prev = []) => {
-		// 		//remove old receipt for this user
-		// 		const filtered = prev.filter(r => r.userId !== userId);
+		socket.on("chat_read_updated", ({ userId, lastMessageId }) => {
 
-		// 		//add updated receipt
-		// 		return [...filtered, { userId, messageId }];
-		// 	});
-		// });
-		// useChatSocket.ts
-		// socket.on("chat_receipt_update", ({ userId, messageId, user }) => {
-		// 	queryClient.setQueryData(["chat-receipts", chatId], (prev: any[] = []) => {
-		// 		const filtered = prev.filter(r => r.userId !== userId);
-		// 		return [...filtered, { userId, messageId, user }];
-		// 	});
-		// });
+			queryClient.setQueryData(
+				["chat-read-state", chatId],
+				(prev: Record<string, string> = {}) => ({
+					...prev,
+					[userId]: lastMessageId
+				})
+			);
 
+		});
 
 		const invalidateChatInfo = () => {
 			queryClient.invalidateQueries({ queryKey: ["chat-info", chatId] });
@@ -101,6 +95,7 @@ export function useChatSocket(chatId?: string) {
 
 		return () => {
 			//socket.off("chat_receipt_update");
+			socket.off("chat_read_updated");
 
 			socket.off("chat_message_created", onMessageCreated);
 			socket.off("chat_message_edited", onMessageEdited);

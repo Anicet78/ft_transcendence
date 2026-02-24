@@ -35,13 +35,9 @@ export function useChatMessages(chatId?: string) {
 	};
 }
 
-// //GET CHAT RECEIPTS
-// export function useChatReceipts(chatId: string) {
-// 	return useQuery({
-// 		queryKey: ["chat-receipts", chatId],
-// 		queryFn: async () => {
-// 			const res = await api.get(`/chat/${chatId}/receipts`);
-// 			return res.data;
-// 		}
-// 	});
-// }
+export function useChatReadState(chatId: string) {
+	return useQuery<Record<string, string>>({
+		queryKey: ["chat-read-state", chatId],
+		initialData: {}
+	});
+}
