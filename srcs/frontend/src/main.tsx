@@ -23,8 +23,6 @@ import Home from './home/home.tsx';
 import JoinRoom from './home/join-room.tsx';
 import Game from './game/game.tsx';
 import FriendRequest from './friendship/FriendRequests.tsx';
-import RemoveFriend from './friendship/RemoveFriend.tsx';
-import AddFriend from './friendship/AddFriend.tsx';
 import { AuthProvider } from './auth/AuthContext.tsx';
 import { SocketProvider } from './socket/SocketContext.tsx';
 import { RoomProvider } from './home/RoomContext.tsx';
@@ -64,8 +62,6 @@ const AppEntryPoint = () => {
 
 				<Route path="/friends/list" element={<FriendList />} />
 				<Route path="/friends/requests/" element={<FriendRequest />} />
-				<Route path="/friends/remove/:id" element={<RemoveFriend />} />
-				<Route path="/friends/add/:id" element={<AddFriend />} />
 
 				<Route path="/group/:chatId/invite/:friendId" element={<InviteToGroupChat />} />
 				<Route path="/group/invitations" element={<GroupChatInvitations />} />
