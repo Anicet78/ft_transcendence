@@ -92,7 +92,7 @@ async function chatMessageRoutes(fastify: FastifyInstance) {
 		handler: deleteMessageController
 	});
 
-	//GET USER'S CHATS LIST
+	//GET RECEIPTS
 	fastify.get('/chat/:chatId/receipts', {
 		schema: {
 			params: SendMessageParamsSchema,

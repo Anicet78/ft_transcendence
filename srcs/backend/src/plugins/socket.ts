@@ -100,17 +100,24 @@ export default fp(async (fastify) => {
 			});
 
 			// // chat read receipts
-			// socket.on("chat_read", async ({ chatId, messageId }) => {
-			// 	await prisma.messageRead.upsert({
-			// 		where: { chatId: chatId, userId: userId },
+			// socket.on("chat_receipt", async ({ chatId, messageId }) => {
+			// 	await prisma.chatReceipt.upsert({
+			// 		where: { userId_chatId: { userId: userPayload.id, chatId } },
 			// 		update: { messageId },
 			// 		create: { userId: userPayload.id, chatId, messageId }
 			// 	});
 
-			// 	socket.to(chatId).emit("chat_read_update", {
-			// 		userId: userPayload.id,
-			// 		chatId,
-			// 		messageId
+			// 	socket.to(chatId).emit("chat_receipt_update", {
+			// 		// userId: userPayload.id,
+			// 		// chatId,
+			// 		// messageId
+			// 		 userId: userPayload.id,
+			// 		 chatId,
+			// 		 messageId,
+			// 		 user: {
+			// 			appUserId: userPayload.id,
+			// 			username: userPayload.email // or email if that’s what you have
+			// 		 }
 			// 	});
 			// });
 

@@ -103,9 +103,30 @@ export const DeleteMessageResponseSchema = Type.Object({
 
 
 //RECEIPTS
-export const ChatReceiptsSchema = Type.Object({
-  chatId: Type.String(),
-  messageId: Type.String()//,
-  //createdAt: Type.String(),
+
+// export const ChatReceiptsSchema = Type.Array(
+//     Type.Object({
+//     chatId: Type.String(),
+//     messageId: Type.String(),
+//     userId: Type.String(),
+//     createdAt: Type.Optional(Type.String()),
+//     updatedAt: Type.Optional(Type.String()),
+//     deletedAt: Type.Optional(Type.String()),
+//     user: Type.Any() // or define a proper user schema
+//   })
+// );
+
+// export type Receipts = Static<typeof ChatReceiptsSchema>;
+
+// ChatMessageSchema.ts
+
+export const ChatReceiptSchema = Type.Object({
+  chatId: Type.String({ format: "uuid" }),
+  messageId: Type.String({ format: "uuid" }),
+  userId: Type.String({ format: "uuid" }),
+  createdAt: Type.String(),
+  user: UserPreviewSchema
 });
+
+export const ChatReceiptsSchema = Type.Array(ChatReceiptSchema);
 export type Receipts = Static<typeof ChatReceiptsSchema>;
