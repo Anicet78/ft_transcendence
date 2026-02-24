@@ -363,6 +363,26 @@ CREATE TABLE chat_message (
 		REFERENCES app_user(app_user_id)
 );
 
+CREATE TABLE chat_receipt(
+	chat_receipt_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+	chat_id UUID NOT NULL,
+	message_id UUID NOT NULL,
+	user_id UUID NOT NULL,
+
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+	updated_at timestamptz,
+	deleted_at timestamptz,
+
+	FOREIGN KEY (chat_id)
+		REFERENCES chat(chat_id),
+
+	FOREIGN KEY (message_id)
+		REFERENCES chat_message(message_id),
+
+	FOREIGN KEY (user_id)
+		REFERENCES app_user(app_user_id)
+);
+
 CREATE TABLE chat_ban (
 	chat_ban_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	chat_id UUID,

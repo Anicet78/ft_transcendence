@@ -5,7 +5,8 @@ import {
 	getChatMessages,
 	editMessage,
 	moderateMessage,
-	restoreMessage
+	restoreMessage,
+	chatReceiptsService
 } from '../../services/db/chat/chatMessageService.js';
 
 import type {
@@ -156,4 +157,17 @@ export async function deleteMessageController(
 	SocketService.send(result.chatId, "chat_message_deleted", result);
 
 	return reply.status(204).send();
+}
+
+
+//RETURN CHAT RECEIPTS
+export async function getChatReceiptsController(
+	req: FastifyRequest<{ Params: SendMessageParams }>,
+	reply: FastifyReply
+) {
+	const {chatId} = req.params;
+
+	const receipts = await chatReceiptsService(chatId);
+
+	return reply.status(200).send(receipts);
 }

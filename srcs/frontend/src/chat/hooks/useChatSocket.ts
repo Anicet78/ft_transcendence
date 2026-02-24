@@ -13,6 +13,28 @@ export function useChatSocket(chatId?: string) {
 		if (!socket || !chatId)
 			return;
 
+		// socket.on("chat_receipt_update", ({ userId, messageId }) => {
+		// 	queryClient.setQueryData(["chat-receipts", chatId], (prev = []) => {
+		// 		//remove old receipt for this user
+		// 		const filtered = prev.filter(r => r.userId !== userId);
+
+		// 		//add updated receipt
+		// 		return [...filtered, { userId, messageId }];
+		// 	});
+		// });
+		// useChatSocket.ts
+		// socket.on("chat_receipt_update", ({ userId, messageId, user }) => {
+		// 	queryClient.setQueryData(["chat-receipts", chatId], (prev: any[] = []) => {
+		// 		const filtered = prev.filter(r => r.userId !== userId);
+		// 		return [...filtered, { userId, messageId, user }];
+		// 	});
+		// });
+
+
+		const invalidateChatInfo = () => {
+			queryClient.invalidateQueries({ queryKey: ["chat-info", chatId] });
+		};
+
 		//SEND
 		const onMessageCreated = () => {
 	
@@ -70,13 +92,27 @@ export function useChatSocket(chatId?: string) {
 		socket.on("chat_message_moderated", onMessageModerated);
 		socket.on("chat_message_restored", onMessageRestored);
 
+		socket.on("chat_member_joined", invalidateChatInfo);
+		socket.on("chat_member_left", invalidateChatInfo);
+		socket.on("chat_member_kicked", invalidateChatInfo);
+		socket.on("chat_member_role_changed", invalidateChatInfo);
+		socket.on("chat_disbanded", invalidateChatInfo);
+
 
 		return () => {
+			//socket.off("chat_receipt_update");
+
 			socket.off("chat_message_created", onMessageCreated);
 			socket.off("chat_message_edited", onMessageEdited);
 			socket.off("chat_message_deleted", onMessageDeleted);
 			socket.off("chat_message_moderated", onMessageModerated);
 			socket.off("chat_message_restored", onMessageRestored);
+
+			socket.off("chat_member_joined", invalidateChatInfo);
+			socket.off("chat_member_left", invalidateChatInfo);
+			socket.off("chat_member_kicked", invalidateChatInfo);
+			socket.off("chat_member_role_changed", invalidateChatInfo);
+			socket.off("chat_disbanded", invalidateChatInfo);
 		}
 
 	}, [socket, chatId, queryClient]);

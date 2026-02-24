@@ -10,20 +10,18 @@ import {
 export async function kickGroupMember(chatId: string, requesterId: string, targetId: string) {
 	// 1. Load chat
 	const chat = await prisma.chat.findUnique({
-	where: { chatId },
-	select: {
-		chatId: true,
-		chatType: true
-	}
+		where: { chatId },
+		select: {
+			chatId: true,
+			chatType: true
+		}
 	});
 
-	if (!chat) {
+	if (!chat)
 		throw new AppError('Chat not found', 404);
-	}
 
-	if (chat.chatType !== 'group') {
+	if (chat.chatType !== 'group')
 		throw new AppError('Only group chats support kicking members', 400);
-	}
 
 	// 2. Check requester is a member
 	const requesterMember = await prisma.chatMember.findFirst({
@@ -34,9 +32,8 @@ export async function kickGroupMember(chatId: string, requesterId: string, targe
 		}
 	});
 
-	if (!requesterMember) {
+	if (!requesterMember)
 		throw new AppError('You are not a member of this group', 403);
-	}
 
 	// 3. Check target is a member
 	const targetMember = await prisma.chatMember.findFirst({
@@ -47,18 +44,17 @@ export async function kickGroupMember(chatId: string, requesterId: string, targe
 		}
 	});
 
-	if (!targetMember) {
+	if (!targetMember)
 		throw new AppError('Target user is not a member of this group', 404);
-	}
 
 	// 4. Load roles
 	const requesterRole = await prisma.chatRole.findFirst({
-	where: {
-		chatId,
-		userId:
-		requesterId
-	},
-	select: { role: true }
+		where: {
+			chatId,
+			userId:
+			requesterId
+		},
+		select: { role: true }
 	});
 
 	const targetRole = await prisma.chatRole.findFirst({
@@ -70,30 +66,28 @@ export async function kickGroupMember(chatId: string, requesterId: string, targe
 	const targetRank = getRoleRank(targetRole?.role);
 
 	// 5. Permission check
-	if (requesterRank < ROLE_RANK.moderator) {
+	if (requesterRank < ROLE_RANK.moderator)
 		throw new AppError('You do not have permission to kick members', 403);
-	}
 
-	if (requesterRank <= targetRank) {
+	if (requesterRank <= targetRank)
 		throw new AppError('You cannot kick a member with equal or higher role', 403);
-	}
 
 	const now = new Date();
 
 	// 6. Soft-delete membership + role
 	await prisma.$transaction(async (tx) => {
-	await tx.chatMember.updateMany({
-		where: {
-			chatId,
-			userId: targetId
-		},
-		data: { deletedAt: now }
-	});
+		await tx.chatMember.updateMany({
+			where: {
+				chatId,
+				userId: targetId
+			},
+			data: { deletedAt: now }
+		});
 
-	await tx.chatRole.updateMany({
-		where: { chatId, userId: targetId },
-		data: { deletedAt: now }
-	});
+		await tx.chatRole.updateMany({
+			where: { chatId, userId: targetId },
+			data: { deletedAt: now }
+		});
 	});
 
 	return { success: true };
@@ -108,44 +102,40 @@ export async function updateGroupMemberRole(
 ) {
 	// 1. Load chat
 	const chat = await prisma.chat.findUnique({
-	where: { chatId },
-	select: {
-		chatId: true,
-		chatType: true,
-		createdBy: true
-	}
+		where: { chatId },
+		select: {
+			chatId: true,
+			chatType: true,
+			createdBy: true
+		}
 	});
 
-	if (!chat) {
+	if (!chat)
 		throw new AppError('Chat not found', 404);
-	}
 
-	if (chat.chatType !== 'group') {
+	if (chat.chatType !== 'group')
 		throw new AppError('Only group chats support role changes', 400);
-	}
 
 	// 2. Check requester membership
 	const requesterMember = await prisma.chatMember.findFirst({
-	where: { chatId, userId: requesterId, deletedAt: null }
+		where: { chatId, userId: requesterId, deletedAt: null }
 	});
 
-	if (!requesterMember) {
+	if (!requesterMember)
 		throw new AppError('You are not a member of this group', 403);
-	}
 
 	// 3. Check target membership
 	const targetMember = await prisma.chatMember.findFirst({
-	where: { chatId, userId: targetId, deletedAt: null }
+		where: { chatId, userId: targetId, deletedAt: null }
 	});
 
-	if (!targetMember) {
+	if (!targetMember)
 		throw new AppError('Target user is not a member of this group', 404);
-	}
 
 	// 4. Load roles
 	const requesterRole = await prisma.chatRole.findFirst({
-	where: { chatId, userId: requesterId, deletedAt: null },
-	select: { role: true }
+		where: { chatId, userId: requesterId, deletedAt: null },
+		select: { role: true }
 	});
 
 	const targetRole = await prisma.chatRole.findFirst({
@@ -162,21 +152,17 @@ export async function updateGroupMemberRole(
 	const newRank = ROLE_RANK[newRole];
 
 	// 5. Permission checks
-	if (requesterRank < ROLE_RANK.admin) {
+	if (requesterRank < ROLE_RANK.admin)
 		throw new AppError('Only admins or owners can change roles', 403);
-	}
 
-	if (targetId === chat.createdBy) {
+	if (targetId === chat.createdBy)
 		throw new AppError('You cannot change the owner’s role', 403);
-	}
 
-	if (requesterRank <= targetRank) {
+	if (requesterRank <= targetRank)
 		throw new AppError('You cannot modify a member with equal or higher role', 403);
-	}
 
-	if (newRank >= requesterRank) {
+	if (newRank >= requesterRank)
 		throw new AppError('You cannot assign a role equal or higher than your own', 403);
-	}
 
 	// 6. Apply role change
 	await prisma.chatRole.updateMany({
@@ -184,7 +170,7 @@ export async function updateGroupMemberRole(
 		data: {
 			role: newRole,
 			modifiedAt: new Date()
-	}
+		}
 	});
 
 	return { success: true };
@@ -208,13 +194,11 @@ export async function banChatMember(
 		}
 	});
 
-	if (!chat) {
+	if (!chat)
 		throw new AppError('Chat not found', 404);
-	}
 
-	if (chat.chatType !== 'group') {
+	if (chat.chatType !== 'group')
 		throw new AppError('Banning private group chat members is not possible', 400);
-	}
 
 	//2. Check that requester is a chat member (should I allow plateform admin to be abble to ban members ?)
 	const requesterMember = await prisma.chatMember.findFirst({
@@ -224,9 +208,8 @@ export async function banChatMember(
 			deletedAt: null
 		}
 	});
-	if (!requesterMember) {
+	if (!requesterMember)
 		throw new AppError('You are not a member of this group', 403);
-	}
 
 	//3. Check that targeted user is a chat member
 	const targetMember = await prisma.chatMember.findFirst({
@@ -236,9 +219,8 @@ export async function banChatMember(
 			deletedAt: null
 		}
 	});
-	if (!targetMember) {
+	if (!targetMember)
 		throw new AppError('Target');
-	}
 
 	//4. check that requester roles allows banning other members
 	const requesterRole = await prisma.chatRole.findFirst({
@@ -262,15 +244,12 @@ export async function banChatMember(
 	const requesterRank = getRoleRank(requesterRole?.role);
 	const targetRank = getRoleRank(targetRole?.role);
 
-	if (requesterRank < ROLE_RANK.moderator) {
+	if (requesterRank < ROLE_RANK.moderator)
 		throw new AppError('You do not have permission to ban members', 403);
-	}
-	if (targetId == chat.createdBy) {
+	if (targetId == chat.createdBy)
 		throw new AppError('You cannot ban the owner', 403);
-	}
-	if (requesterRank <= targetRank) {
+	if (requesterRank <= targetRank)
 		throw new AppError('You cannot ban a member with equal or higher role', 403);
-	}
 
 	//6. Apply ban + remove membership + remove role (temp or permanent)
 	const now = new Date();
@@ -320,13 +299,11 @@ export async function unbanChatMember(
 		}
 	});
 
-	if (!chat){
+	if (!chat)
 		throw new AppError('Chat not found', 404);
-	}
 
-	if (chat.chatType !== 'group') {
+	if (chat.chatType !== 'group')
 		throw new AppError('Banning private group chat members is not possible', 400);
-	}
 
 	//2. Check that requester is a chat member (should I allow plateform admin to be abble to ban members ?)
 	const requesterMember = await prisma.chatMember.findFirst({
@@ -336,9 +313,8 @@ export async function unbanChatMember(
 			deletedAt: null
 		}
 	});
-	if (!requesterMember) {
+	if (!requesterMember)
 		throw new AppError('You are not a member of this group', 403);
-	}
 
 	//3. Check that targeted user is a chat member
 	const targetMember = await prisma.chatMember.findFirst({
@@ -348,9 +324,8 @@ export async function unbanChatMember(
 			deletedAt: null
 		}
 	});
-	if (!targetMember) {
+	if (!targetMember)
 		throw new AppError('Target');
-	}
 
 	//4. Check if target is banned
 	const isBan = await prisma.chatBan.findFirst({
@@ -360,9 +335,8 @@ export async function unbanChatMember(
 			deletedAt: null
 		}
 	});
-	if (!isBan){
+	if (!isBan)
 		throw new AppError('This user is not banned', 404);
-	}
 
 	//5. check that requester roles allows banning other members
 	const requesterRole = await prisma.chatRole.findFirst({
@@ -376,9 +350,8 @@ export async function unbanChatMember(
 
 	const requesterRank = getRoleRank(requesterRole?.role);
 
-	if (requesterRank < ROLE_RANK.moderator) {
+	if (requesterRank < ROLE_RANK.moderator)
 		throw new AppError('You do not have permission to unban members', 403);
-	}
 
 	//6. soft-delete the ban
 	await prisma.chatBan.update({
@@ -401,13 +374,11 @@ export async function getChatBans(chatId: string, requesterId: string) {
 	}
 	});
 
-	if (!chat) {
+	if (!chat)
 		throw new AppError('Chat not found', 404);
-	}
 
-	if (chat.chatType !== 'group') {
+	if (chat.chatType !== 'group')
 		throw new AppError('Only group chats support bans', 400);
-	}
 
 	//2. Check that requester is a chat member
 	const requesterMember = await prisma.chatMember.findFirst({
@@ -417,9 +388,8 @@ export async function getChatBans(chatId: string, requesterId: string) {
 			deletedAt: null
 		}
 	});
-	if (!requesterMember) {
+	if (!requesterMember)
 		throw new AppError('You are not a member of this group', 403);
-	}
 
 	// 3. check requester role
 	const requesterRole = await prisma.chatRole.findFirst({
@@ -433,9 +403,8 @@ export async function getChatBans(chatId: string, requesterId: string) {
 
 	const requesterRank = getRoleRank(requesterRole?.role);
 
-	if (requesterRank < ROLE_RANK.moderator) {
+	if (requesterRank < ROLE_RANK.moderator)
 		throw new AppError('You do not have permission to view bans', 403);
-	}
 
 	// 4. retrieve active bans
 	const bans = await prisma.chatBan.findMany({
