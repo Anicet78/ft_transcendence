@@ -473,14 +473,6 @@ void	Mob::chasingRoutine(Player &player, std::vector<std::string> const &map)
 				else
 					this->_last_dir = 1;
 			}
-			// float dy = player.getY() - this->_y;
-			if (std::fabs(dy) > std::fabs(dx))
-			{
-				if (dy >= 0)
-					this->_last_dir = 3;
-				else
-					this->_last_dir = 2;
-			}
 			this->_lastPlayerX = player.getX();
 			this->_lastPlayerY = player.getY();
 			this->_lastX = this->_x;
