@@ -19,3 +19,6 @@ objs_wasm/
 
 # Logs
 npm-debug.log*
+
+# Uploads
+srcs/backend/uploads

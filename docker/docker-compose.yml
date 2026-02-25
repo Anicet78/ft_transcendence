@@ -16,9 +16,8 @@ services:
       - transcendence
 
   node:
-    build:
-      context: ../srcs/backend
-      dockerfile: Dockerfile
+    build: ../srcs/backend
+    image: node
     container_name: node-c
     restart: on-failure
     ports:
@@ -96,9 +95,8 @@ services:
     entrypoint: ["make", "wasm"]
 
   game-server:
-    build:
-      context: ../srcs/game/game-server
-      dockerfile: Dockerfile
+    build: ../srcs/game/game-server
+    image: game-server
     container_name: game-server-c
     restart: on-failure
     volumes:
@@ -107,9 +105,8 @@ services:
       - transcendence
 
   nginx:
-    build:
-      context: ../srcs/frontend
-      dockerfile: Dockerfile
+    build: ../srcs/frontend
+    image: nginx
     container_name: nginx-c
     restart: on-failure
     ports:
@@ -120,6 +117,7 @@ services:
       - ./nginx/conf/:/etc/nginx/conf.d/:ro
       - ./certs:/etc/nginx/certs
       - ../srcs/backend/uploads:/usr/share/nginx/uploads
+      - ../srcs/frontend/src/game/build:/usr/share/nginx/game
     networks:
       - transcendence
     depends_on:
