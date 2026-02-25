@@ -10,17 +10,22 @@ interface SelectInputProps {
 
 const SelectRegion: React.FC<SelectInputProps> = ({ options, placeholder, error, register }) => {
   return (
-    <div>
+	<div className="field">
 		<label htmlFor={placeholder}>{placeholder}</label>
 		<br />
-      <select {...register} defaultValue="" className={error ? "error" : ""} style={{color: '#888'}}>
-        <option value="" disabled>{placeholder}</option>
-        {options.map(opt => (
-          <option key={opt} value={opt}>{opt}</option>
-        ))}
-      </select>
-      {error && <p className="error-message">{error.message}</p>}
-    </div>
+		<p className="control has-icons-left">
+		<select {...register} defaultValue="" className={`input ${error ? "error" : ""}`} style={{color: '#888'}}>
+			<option value="" disabled>{placeholder}</option>
+			{options.map(opt => (
+			<option key={opt} value={opt}>{opt}</option>
+			))}
+		</select>
+		<span className="icon is-small is-left">
+				<i className="fas fa-globe"></i>
+			</span>
+		</p>
+		{error && <p className="error-message">{error.message}</p>}
+	</div>
   );
 };
 
