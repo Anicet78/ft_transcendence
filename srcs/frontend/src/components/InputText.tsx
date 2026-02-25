@@ -6,22 +6,25 @@ interface TextInputProps {
   type?: string;
   error?: FieldError;
   register: UseFormRegisterReturn;
+  icon: string;
 }
 
-const InputText: React.FC<TextInputProps> = ({ placeholder, type = "text", error, register }) => {
+const InputText: React.FC<TextInputProps> = ({ placeholder, type = "text", error, register, icon }) => {
   return (
-    <div>
+    <div className="field">
 		<label htmlFor={placeholder}>{placeholder}</label>
-		<br />
-      <input {...register} type={type} placeholder={placeholder} className={error ? "error" : ""} />
-	  <i className="fas fa-envelope" style={{
-		position: 'absolute',
-		left: '8px',
-		top: '38px',
-		color: '#00f0f0',
-		pointerEvents: 'none',
-	}} />
-      {error && <p className="error-message">{error.message}</p>}
+		<p className="control has-icons-left">
+			<input 
+				{...register} 
+				type={type} 
+				placeholder={placeholder} 
+				className={`input ${error ? "error" : ""}`}
+			/>
+			<span className="icon is-small is-left">
+				<i className={icon}></i>
+			</span>
+		</p>
+		{error && <p className="error-message">{error.message}</p>}
     </div>
   );
 };
