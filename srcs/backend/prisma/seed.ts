@@ -286,12 +286,13 @@ async function main() {
   const users = await createFixedUsers();
   console.log(" Users created!");
 
-  await prisma.privateChat.deleteMany();
-  await prisma.chatMember.deleteMany();
+  await prisma.chatReadState.deleteMany();
   await prisma.chatMessage.deleteMany();
+  await prisma.chatInvitation.deleteMany();
   await prisma.chatRole.deleteMany();
   await prisma.chatBan.deleteMany();
-  await prisma.chatInvitation.deleteMany();
+  await prisma.chatMember.deleteMany();
+  await prisma.privateChat.deleteMany();
   await prisma.chat.deleteMany();
 
 
