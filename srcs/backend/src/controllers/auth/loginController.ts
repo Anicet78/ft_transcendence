@@ -1,5 +1,4 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import type { User } from "../../schema/userSchema.js";
 import type { LoginResponseType, LoginType } from "../../routes/auth/loginRoute.js";
 import "@fastify/cookie";
 import { verifyPassword } from "../../services/auth/password.js";
@@ -20,10 +19,10 @@ export async function postLoginController(
 	if (dbUser.availability === false)
 		await UserService.setAvailabality(dbUser.appUserId, true);
 
-	if (!await verifyPassword(dbUser.passwordHash, password))
+	if (!dbUser.passwordHash || !await verifyPassword(dbUser.passwordHash, password))
 		return reply.code(400).send({ error: "Incorrect password" });
 
-	const user: User = {
+	const user = {
 		id: dbUser.appUserId,
 		firstname: dbUser.firstName,
 		lastname: dbUser.lastName,
@@ -37,7 +36,7 @@ export async function postLoginController(
 	const jwt = await reply.jwtSign({ id: user.id, username: user.username, email: user.email, role: user.role });
 	const refresh = await createRefreshToken(user.id);
 
-	const response: LoginResponseType = { token: jwt, user: user, roomId: "" };
+	const response: LoginResponseType = { token: jwt, user: user };
 
 	return reply.setCookie('refreshToken', refresh, {
 			path: '/',

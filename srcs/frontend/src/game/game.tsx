@@ -10,8 +10,6 @@ import type { GameModule } from './build/game';
 import createModule from './build/game';
 import toast from '../Notifications.tsx';
 import { SidebarChat } from '../chat/components/SidebarChat';
-import wasmUrl from './build/game.wasm?url';
-import dataUrl from './build/game.data?url';
 
 const Game = () => {
 	const navigate = useNavigate();
@@ -40,7 +38,7 @@ const Game = () => {
 			return ;
 		}
 
-		const socketUrl = `wss://${window.location.host}/ws/`;
+		const socketUrl = `wss://${window.location.port == "5173" ? 'localhost:8443' : window.location.host}/ws/`;
 		const socket = new WebSocket(socketUrl);
 		setGameSocket(socket);
 
@@ -62,7 +60,7 @@ const Game = () => {
 			}
 		};
 	}, []);
-	
+
 	useEffect(() => {
 		if (!canvasRef.current || mutation.isPending || !gameSocket || !user || !room) return;
 
@@ -72,12 +70,12 @@ const Game = () => {
 					canvas: canvasRef.current,
 					noInitialRun: true,
 					locateFile: (path: string) => {
-						if (path.endsWith('.wasm')) return wasmUrl;
-						if (path.endsWith('.data')) return dataUrl;
+						if (path.endsWith('.wasm')) return `https://${window.location.host}/game/game.wasm`;
+						if (path.endsWith('.data')) return `https://${window.location.host}/game/game.data`;
 						return path;
 					},
 					onCppMessage: (obj: Object) => gameSocket.send(JSON.stringify(obj)),
-					sendResults: (obj: Object) => 
+					sendResults: (obj: Object) =>
 					{
 						setJsonEnd(obj);
 						console.log(JSON.stringify(obj))
@@ -110,7 +108,7 @@ const Game = () => {
 	}, [mutation.isPending, gameSocket]);
 
 	useEffect(() => {
-		
+
 		if (!gameSocket || !Module || !user || !room) return;
 		gameSocket.onmessage = async (event) => {
 			let data = event.data;
@@ -131,7 +129,7 @@ const Game = () => {
 			console.error(err);
 		};
 
-		Module.callMain([user.id, 'username', room.roomId, room.players.length.toString(), "1"]);
+		Module.callMain([user.id, user.username, room.roomId, room.players.length.toString(), room.players.length.toString()]);
 	}, [gameSocket, Module]);
 
 	if (mutation.isPending) {

@@ -18,8 +18,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 			return;
 		}
 
-		const newSocket = io({
-			path: "/api/socket.io/",
+		const newSocket = io(`${window.location.port == "5173" ? 'https://localhost:8443' : ''}`, {
+			path: '/api/socket.io/',
 			auth: { token }
 		});
 

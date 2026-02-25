@@ -1,0 +1,34 @@
+/* Navbar full width and remove Bulma container */
+.navbar-full {
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+  background-color: #3D3C3C;
+  box-sizing: border-box;
+}
+
+/* Remove Bulma internal container constraint */
+.navbar-full .container {
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove default spacing from brand */
+.navbar-brand {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+/* Logo button should align flush left */
+.navbar-brand .button {
+  margin-left: 0;
+}
+
+/* Navbar.End spacing */
+.navbar-end {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* space between user button and menu */
+}
