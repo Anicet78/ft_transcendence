@@ -272,7 +272,8 @@ void Room::importRooms()
 
 void	Room::setEvent(void)
 {
-	if (!_event && (rand() % 100) < 60)
+	//NERFED, TOO HARD
+	if (!_event && (rand() % 100) < 45) // <- from 60 to 45
 	{
 		std::string	name(getName());
 		if (name != "start" && name != "stairs" && name != "waiting")
@@ -280,6 +281,7 @@ void	Room::setEvent(void)
 			_event = std::make_shared<MobRush>(this->_roomPlan);
 		}
 	}
+	//----------------
 	return ;
 }
 

@@ -11,16 +11,47 @@ MobRush::~MobRush() {
 	return ;
 }
 
+bool	farEnought(float objetX, float objetY, float farX, float farY)
+{
+	if (std::fabs(farY - objetY) + std::fabs(farX - objetX) > 2.0f)
+		return (true);
+	return (false);
+}
+
 void	MobRush::createEvent(void) {
 	int	id = 0;
 	int	maxY = _roomPlan.size();
+
+	//find every door coord
+	std::vector<std::pair<int, int>> doorPos;
 	for (int y = 0; y < maxY; y++)
 	{
 		int maxX = _roomPlan[y].size();
 		for (int x = 0; x < maxX; x++)
 		{
+			if (_roomPlan[y][x] == 'E')
+				doorPos.push_back(std::make_pair(x, y));
+		}
+	}
+
+	//fill the room with mobs
+	for (int y = 0; y < maxY; y++)
+	{
+		int maxX = _roomPlan[y].size();
+		for (int x = 0; x < maxX; x++)
+		{
+			//NERFED, TOO HARD
+			if (id >= 4)
+				break ;
+			//----------------
+
 			if (_roomPlan[y][x] == '0' && (rand() % 100) < 2)
 			{
+				for (auto &i : doorPos)
+				{
+					if (!farEnought(x + 0.5f, y + 0.5f, i.first, i.second))
+						continue;
+				}
 				_mobs.emplace(id, std::make_unique<Mob>(x + 0.5f, y + 0.5f, 3));
 				_mobsId.push_back(id);
 				id++;
