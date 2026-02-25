@@ -11,6 +11,7 @@ import {
 import type {
 	CreateGroupChatBody
 } from '../../schema/chat/groupChatSchema.js';
+import { SocketService } from '../../services/socket/SocketService.js';
 
 function normalizeChat(chat: any) {
 	return {
@@ -53,11 +54,16 @@ export async function disbandGroupChatController(
 	const userId = req.user.id;
 	const { chatId } = req.params;
 
+	const socket = req.getSocket();
+	await SocketService.addInRoom(chatId, socket);
+
 	if (!userId) {
 	throw new AppError('Unauthorized', 401);
 	}
 
 	const result = await disbandGroupChat(chatId, userId);
+
+	SocketService.send(chatId, "chat_disbanded", { chatId }); 
 
 	return reply.status(200).send(result);
 }
@@ -70,11 +76,16 @@ export async function quitGroupChatController(
 	const userId = req.user.id;
 	const { chatId } = req.params;
 
+	const socket = req.getSocket();
+	await SocketService.addInRoom(chatId, socket);
+
 	if (!userId) {
 	throw new AppError('Unauthorized', 401);
 	}
 
 	const result = await quitGroupChat(chatId, userId);
+
+	SocketService.send(chatId, "chat_member_left", { chatId, userId });
 
 	return reply.status(200).send(result);
 }

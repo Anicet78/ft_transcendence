@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../serverApi";
+import toast from "../../Notifications";
 
 export function useChatRoleMutation(chatId?: string) {
 
@@ -10,7 +11,11 @@ export function useChatRoleMutation(chatId?: string) {
 			await api.patch(`/group/${chatId}/role/${memberId}`, { role });
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries(["chat-info"], chatId);
+			toast({ title: "Role succesfully updated", type: "is-success" });
+			queryClient.invalidateQueries({ queryKey: ["chat-info", chatId] });
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
 		}
 	});
 }

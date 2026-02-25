@@ -19,7 +19,7 @@ const Banner = () => {
 	return (
 		<Navbar color='dark' role='navigation' aria-label='main navigation' className="navbar-full">
 				<Navbar.Brand>
-					<NavLink to={logo_path} aria-label='home button' className='button is-large is-primary is-outlined is-centered'>
+					<NavLink to={logo_path} aria-label='home button' className='button is-primary is-outlined is-centered'>
 						<Icon
 						name="dragon"
 						ariaLabel="dragon logo"
@@ -43,7 +43,7 @@ const Banner = () => {
 								<Icon name='user' ariaLabel='user icon' />
 								<span>{username}</span>
 							</NavLink>
-							<Navbar.Dropdown hoverable>
+							<Navbar.Dropdown hoverable right>
 								<Navbar.Item as="a" textColor='primary'>
 									<Icon name="bars" ariaLabel="Menu" />
 									<span>Menu</span>

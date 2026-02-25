@@ -23,31 +23,40 @@ export const InputPassword: React.FC<PasswordInputProps> = ({ placeholder, error
   ];
 
   return (
-    <div style={{ position: "relative"}}>
+	<div style={{ position: "relative"}} className="field">
 		<label htmlFor={placeholder}>{placeholder}</label>
 		<br />
-      <input
-        {...register}
-        type={show ? "text" : "password"}
-        placeholder={placeholder}
-        className={error ? "error" : ""}
-      />
-      <span className="toggle-password" onClick={() => setShow(prev => !prev)}>
-        {show ? "Hide" : "Show"}
-      </span>
+		<p className="control has-icons-left has-icons-right">
+			<input
+				{...register}
+				type={show ? "text" : "password"}
+				placeholder={placeholder}
+				className={`input ${error ? "error" : ""}`}
+			/>
+			<span className="icon is-small is-left">
+				<i className="fas fa-lock"></i>
+			</span>
+		
+			<span
+				className="icon is-small is-right"
+				style={{ cursor: "pointer", pointerEvents: "auto" }} // icon clickable
+				onClick={() => setShow(prev => !prev)}
+			>
+				<i className={`fas ${show ? "fa-eye-slash" : "fa-eye"}`}></i>
+			</span>
+		</p>
+		{error && <p className="error-message">{error.message}</p>}
 
-      {error && <p className="error-message">{error.message}</p>}
-
-      {password && (
-        <div className="password-feedback">
-          {rules.map((rule, i) => (
-            <p key={i} className={rule.test ? "valid" : "invalid"}>
-              {rule.test ? "✓" : "✗"} {rule.label}
-            </p>
-          ))}
-        </div>
-      )}
-    </div>
+		{password && (
+			<div className="password-feedback">
+				{rules.map((rule, i) => (
+					<p key={i} className={rule.test ? "valid" : "invalid"}>
+					{rule.test ? "✓" : "✗"} {rule.label}
+					</p>
+				))}
+			</div>
+		)}
+	</div>
   );
 };
 

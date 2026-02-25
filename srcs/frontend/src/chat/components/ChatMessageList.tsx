@@ -21,6 +21,7 @@ type Message = {
 
 type MessageListProps = {
 	messages: Message[];
+	readState?: Record<string, string>;
 	role: string | null;
 	permissions: Record<string, boolean>;
 	onEdit: (data: { messageId: string; content: string }) => void;
@@ -29,10 +30,22 @@ type MessageListProps = {
 	onRestore: (messageId: string) => void;
 };
 
+function isMessageRead(
+	messageId: string,
+	readState?: Record<string, string>
+) {
+	if (!readState)
+		return false;
+
+	return Object.values(readState).some(
+		lastId => lastId === messageId
+	);
+}
 
 export function MessageList({
 	messages,
 	// role,
+	readState,
 	permissions,
 	onEdit,
 	onDelete,
@@ -43,12 +56,14 @@ export function MessageList({
 	const { user } = useAuth();
 	const navigate = useNavigate();
 
-	if (!messages)
+	if (!messages || messages.length === 0)
 		return null;
 
 	return (
 	<>
 		{messages?.map(msg => {
+
+			const read = isMessageRead(msg.messageId, readState);
 
 			// GAME INVITE MESSAGE
 			if (msg.content.includes("/join/")) {
@@ -173,6 +188,15 @@ export function MessageList({
 					)}
 					</>
 				)}
+
+				
+				{/* READ RECEIPTS */}
+				{read && (
+					<span style={{ marginLeft: 8, color: "#4fc3f7" }}>
+						✓✓
+					</span>
+				)}
+
 				</Box>
 			);
 		})}

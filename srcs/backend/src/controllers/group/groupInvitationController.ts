@@ -13,6 +13,7 @@ import type {
 	UpdateInvitationParams,
 	UpdateInvitationBody
 } from '../../schema/chat/groupInvitationSchema.js';
+import { SocketService } from '../../services/socket/SocketService.js';
 
 //SEND GROUP CHAT INVITATION
 export async function inviteToGroupController(
@@ -24,7 +25,7 @@ export async function inviteToGroupController(
 
 	if (!senderId) {
 	throw new AppError('Unauthorized', 401);
-	}
+	} 
 
 	const invitation = await inviteToGroupChat(chatId, senderId, receiverId);
 
@@ -87,6 +88,8 @@ export async function updateGroupInvitationController(
 			userId: string;
 			joinedAt: Date;
 		};
+
+		SocketService.send(member.chatId, "chat_member_joined", { chatId: member.chatId, member });
 
 		return reply.status(201).send({
 			chatMemberId: member.chatMemberId,
