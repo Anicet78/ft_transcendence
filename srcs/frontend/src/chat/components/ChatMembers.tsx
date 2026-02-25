@@ -3,10 +3,12 @@ import { useAuth } from "../../auth/AuthContext";
 import { useChat } from "../ChatContext";
 import { useChatRoleMutation } from "../hooks/useChatRoleMutations";
 import { useGroupChatMutations } from "../hooks/useGroupChatMutations";
+import { useChatInfo } from "../hooks/useChatInfo";
 
-export function ChatMembers({ chatId }) {
+export function ChatMembers({chatId}) {
 
-	const { chat, permissions } = useChat();
+	const { data: chat } = useChatInfo(chatId);
+	const { /*chat,*/ permissions } = useChat();
 	const { user } = useAuth();
 
 	const roleMutation = useChatRoleMutation(chatId);
@@ -37,7 +39,7 @@ export function ChatMembers({ chatId }) {
 			</div>
 
 			{open && (<ul>
-				{chat.members.map(m => (
+				{chat.members.map((m: any) => (
 				<li key={m.chatMemberId} className="mb-1">
 					{m.user.username} - <em>{m.role}</em>
 

@@ -100,3 +100,4 @@ export const DeleteMessageResponseSchema = Type.Object({
 	status: Type.String(),
 	deletedAt: Type.String()
 });
+

@@ -34,3 +34,10 @@ export function useChatMessages(chatId?: string) {
 		// need to work on this for not showing deleted and moderated messages ONLY for members and writers
 	};
 }
+
+export function useChatReadState(chatId: string) {
+	return useQuery<Record<string, string>>({
+		queryKey: ["chat-read-state", chatId],
+		initialData: {}
+	});
+}

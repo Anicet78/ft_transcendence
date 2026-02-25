@@ -2,6 +2,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import api from "../../serverApi";
 import { Box } from "@allxsmith/bestax-bulma";
 import { useAuth } from "../../auth/AuthContext";
+import toast from "../../Notifications";
 
 // Fetch all chat invitations (pending and not pending at now)
 export default function GroupChatInvitations() {
@@ -23,7 +24,11 @@ export default function GroupChatInvitations() {
 			await api.post(`/group/answer/${invId}`, { action });//need to change route name, lame
 		},
 		onSuccess: () => {
+			toast({ title: "Chat invitation succesfully updated", type: "is-success" });
 			window.location.reload();
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
 		}
 	});
 
