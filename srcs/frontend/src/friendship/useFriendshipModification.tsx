@@ -44,6 +44,7 @@ export const useFriendshipModification = (username?: string) => {
 			friendshipQueries(username).forEach((key) => {
 				queryClient.invalidateQueries({ queryKey: key });
 			})
+			queryClient.invalidateQueries({queryKey: ['friends']})
 		},
 		onError: (error: Error) => {
 			toast({ title: `An error occurred`, message: error.message, type: "is-warning" })
