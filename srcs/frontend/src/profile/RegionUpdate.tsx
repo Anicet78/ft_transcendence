@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from "react-router";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { GetBody } from '../types/GetType.ts';
 import api from '../serverApi.ts';
+import toast from "../Notifications.tsx";
 
 type ProfileUpdateBodyType = GetBody<"/profile", "patch">;
 type RegisterBodyType = GetBody<"/auth/register", "post">
@@ -15,16 +16,19 @@ const regionUpdate = () => {
 	const mutation = useMutation({
 		mutationFn: (data: ProfileUpdateBodyType) => api.patch("/profile", data),
 		onSuccess: (data) => {
-		queryClient.setQueryData(["profile"], data);
-		navigate("/profile")
+			queryClient.setQueryData(["profile"], data);
+			navigate("/profile")
+			toast({title: 'Success', message: 'Region updated successfully!', type: 'is-success'})
 		},
-	});
+		onError: (error: Error) => {
+			toast({ title: `An error occurred`, message: error.message, type: "is-warning" })
+	}});
 
 	function Update(formData: FormData) {
-		const uname = formData.get("region");
-		if (!uname) return ;
+		const region = formData.get("region");
+		if (!region) return ;
 		mutation.mutate({
-		region: uname.toString() as RegisterBodyType['region']});
+		region: region.toString() as RegisterBodyType['region']});
 	}
 
 	return (

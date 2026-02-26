@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from "react-router";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { GetBody } from '../types/GetType.ts';
 import api from '../serverApi.ts';
+import toast from "../Notifications.tsx";
 
 type ProfileUpdateBodyType = GetBody<"/profile", "patch">;
 
@@ -16,6 +17,7 @@ const UsernameUpdate = () => {
 		onSuccess: (data) => {
 		queryClient.setQueryData(["profile"], data);
 		navigate("/profile")
+		toast({title: 'Success', message: 'Username updated successfully!', type: 'is-success'})
 		},
 	});
 

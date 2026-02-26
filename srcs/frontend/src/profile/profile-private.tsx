@@ -69,14 +69,21 @@ const ProfilePrivate = () => {
 			<Box className='info' bgColor="white" textSize='5'>
 				<p>First name: {firstname}</p>
 				<p>Last name: {lastname}</p>
-				<p>Email: {email}</p>
+				<p>
+					Email: {email}
+					<NavLink to='/profile/update/email' className='button is-small is-white'>
+						<span className="icon">
+							<i className="fas fa-pen"></i>
+						</span>
+					</NavLink>
+				</p>
 				<p>
 					Password: {password}
-					{/* <NavLink to='/profile/update/' className='button is-small is-white'>
-							<span className="icon">
-								<i className="fas fa-pen"></i>
-							</span>
-					</NavLink> */}
+					<NavLink to='/profile/update/password' className='button is-small is-white'>
+						<span className="icon">
+							<i className="fas fa-pen"></i>
+						</span>
+					</NavLink>
 				</p>
 				<p>
 					Region: {region}

@@ -5,6 +5,7 @@ import type { ExtFile } from "@files-ui/react";
 import { NavLink, useNavigate } from "react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../serverApi";
+import toast from "../Notifications";
 
 const AvatarUpdate = () => {
 	const queryClient = useQueryClient();
@@ -32,6 +33,7 @@ const AvatarUpdate = () => {
 		onSuccess: (data) => {
 			queryClient.setQueryData(['profile'], data); // update cache directly
 			navigate('/profile');
+			toast({title: 'Success', message: 'Avatar updated successfully!', type: 'is-success'})
 		},
 		onError: (err) => {
 			console.error(err);
