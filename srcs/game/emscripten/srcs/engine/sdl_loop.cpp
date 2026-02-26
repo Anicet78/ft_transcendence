@@ -74,22 +74,18 @@ void	updatePlayerPosition(Player &player, double deltaTime)
 		s_key = "true";
 	if (gSdl.key.d_key)
 		d_key = "true";
-
 	//player attack
 	if (gSdl.key.attacking() || player.checkAtkState())
 	{
 		anim = "attacking";
 		if (player.getPrevState() == PLAYER_ATTACKING)
 		{
-			std::cout << player.getFrame() << std::endl;
 			if (player.getFrame() >= 14 && player.getFrame() < 18)
 			{
-				std::cout << "hit !" << std::endl;
 				HitFrame = 1;
 			}
 			if (player.getFrame() == 24)
 			{
-				std::cout << "end !" << std::endl;
 				HitFrame = 2;
 			}
 		}

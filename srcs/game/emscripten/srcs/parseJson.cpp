@@ -150,6 +150,20 @@ void	parseJson(bool &init, Game &game)
 			game.getPlayer().setNode(map.getNodes()[y * w + x]);
 			float px = msg["room_x"].as<float>();
 			float py = msg["room_y"].as<float>();
+			game.getPlayer().setNbrDeath(msg["nbr_death"].as<int>());
+
+			int startPos = msg["start_pos"].as<int>();
+			for (quadList &node : map.getNodes())
+			{
+				if (node->getRoom() && node->getRoom()->getName() == "start" && !startPos--)
+				{
+					quadList start;
+					start = node;
+					game.getPlayer().setStartNode(start);
+					break ;
+				}
+			}
+			
 			game.getPlayer().setPos(px, py);
 			while (floor--)
 				game.getPlayer().incrementFloor();

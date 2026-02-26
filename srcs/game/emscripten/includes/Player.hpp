@@ -65,6 +65,9 @@ class Player
 	//player kills
 		int				_kills;
 
+	//player nbr death usefull for server / client sync
+		int				_nbrDeath;
+
 	public:
 		Player(std::string uid, std::string name, SDL_Color color);
 		~Player();
@@ -99,6 +102,7 @@ class Player
 		int			getLastDir(void) const;
 		int			getPrevState(void) const;
 		int			getKills(void) const;
+		int			getNbrDeath(void) const;
 
 		int			getFloor(void) const;
 
@@ -114,6 +118,7 @@ class Player
 		void	setAnim(int anim);
 		void	setDir(int dir);
 		void	setKills(int kills);
+		void	setNbrDeath(int value);
 
 		void	updateLastDir(void);
 		void	incrementFloor(void);

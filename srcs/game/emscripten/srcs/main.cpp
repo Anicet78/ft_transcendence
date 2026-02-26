@@ -49,11 +49,27 @@ void mainloopE(void *arg)
 		// 	emscripten_cancel_main_loop();
 		// 	return ;
 		// }
+		// if (gSdl.event.type == SDL_WINDOWEVENT)
+		// {
+		// 	if (gSdl.event.window.event == SDL_WINDOWEVENT_ENTER)
+		// 	{
+		// 		gSdl.setMouseInWindow(true);
+		// 		printf("Souris entrée dans le canvas\n");
+		// 	}
+
+		// 	if (gSdl.event.window.event == SDL_WINDOWEVENT_LEAVE)
+		// 	{
+		// 		gSdl.setMouseInWindow(false);
+		// 		printf("Souris sortie du canvas\n");
+		// 	}
+		// }
 		if (gSdl.event.type == SDL_KEYDOWN)
 			key_down();
 		else if (gSdl.event.type == SDL_KEYUP)
 			key_up();
 	}
+	// if (!gSdl.getMouseInWindow())
+	// 	reset_key();
 	game_loop(*game, gSdl.getActualTime() - frameTime);
 	frameTime = gSdl.getActualTime();
 	SDL_RenderPresent(gSdl.renderer);

@@ -31,7 +31,7 @@ class Player
 		bool										_reConnected;
 		bool										_finished;
 		bool										_hasWin;
-		bool										_died;
+		int											_nbrDeath;
 		int											_finalRanking;
 		char										_exit;
 		std::chrono::_V2::steady_clock::time_point	_timeDeconnection;
@@ -85,7 +85,6 @@ class Player
 		bool		getFinished(void) const;
 		int			getSessionSize(void) const;
 		bool		HasWin(void) const;
-		bool		getDied(void) const;
 		bool		isConnected(void) const;
 		bool		isReConnected(void) const;
 		int			getFinalRanking(void) const;
@@ -117,6 +116,7 @@ class Player
 		double		getTimeDeconnection(void) const;
 		double		getTimeInvincible(void) const;
 		double		getTimeAttack(void) const;
+		int			getNbrDeath(void) const;
 
 	//setter
 		void		setWs(uWS::WebSocket<false, true, PerSocketData> *ws);
@@ -125,7 +125,7 @@ class Player
 		void		setLaunched(bool flag);
 		void		setFinished(bool flag);
 		void		setHasWin(bool flag);
-		void		setDied(bool flag);
+		void		setNbrDeath(int value);
 		void		setFinalRanking(int place);
 		void		setExit(char c);
 		void		setNode(const quadList &node);

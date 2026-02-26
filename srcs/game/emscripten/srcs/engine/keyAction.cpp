@@ -46,3 +46,13 @@ void	key_up(void)
 			break;
 	}
 }
+
+void	reset_key(void)
+{
+	gSdl.key.w_key = 0;
+	gSdl.key.a_key = 0;
+	gSdl.key.s_key = 0;
+	gSdl.key.d_key = 0;
+	gSdl.key.space = 0;
+	return ;
+}

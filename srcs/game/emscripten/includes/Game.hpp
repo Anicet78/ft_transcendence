@@ -51,6 +51,7 @@ void	game_loop(Game &game, double fps);
 
 void	key_down(void);
 void	key_up(void);
+void	reset_key(void);
 void	updateRoom(Game &game, Player &player, std::string dir);
 
 void	print_map(Player &player);

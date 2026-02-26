@@ -147,10 +147,13 @@ void	Server::reconnectPlayer(std::string &uid, uWS::WebSocket<false, true, PerSo
 					+ ", \"map_x\" : " + std::to_string(player->getNode()->getX())
 					+ ", \"map_y\" : " + std::to_string(player->getNode()->getY())
 					+ ", \"room_x\" : " + std::to_string(player->getX()) 
-					+ ", \"room_y\" : " + std::to_string(player->getY()) + '}';
+					+ ", \"room_y\" : " + std::to_string(player->getY())
+					+ ", \"nbr_death\" : " + std::to_string(player->getNbrDeath())
+					+ ", \"start_pos\" : " + std::to_string(player->getStartPos()) + '}';
 			}
 			ws->send("You have been reconnected to a session !", uWS::OpCode::TEXT);
 			ws->send(msg, uWS::OpCode::TEXT);
+			ws->subscribe(player->getRoom().getRoomId());
 			return ;
 		}
 	}
@@ -225,6 +228,7 @@ std::weak_ptr<Player> findClosestPlayer(std::vector<std::weak_ptr<Player>> &allP
 
 void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, uWS::App *app, Session &session, int const &isRunning)
 {
+	(void)app;
 	std::string msg = "{\"action\": \"loop_action\"";
 
 	msg += ",\"session_timer\":" + std::to_string(session.getActualTime());
@@ -239,23 +243,21 @@ void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, u
 			if (p.expired())
 				continue ;
 			std::shared_ptr<Player> player = p.lock();
-			bool	died = player->getDied();
 			player_update += "{\"player_uid\":\"" + player->getUid() + '\"';
 			player_update += ",\"player_name\":\"" + player->getName() + '\"';
+			player_update += ",\"player_mapx\":" + std::to_string(player->getNode()->getX());
+			player_update += ",\"player_mapy\":" + std::to_string(player->getNode()->getY());
 			player_update += ",\"player_x\":" + std::to_string(player->getX());
 			player_update += ",\"player_y\":" + std::to_string(player->getY());
 			player_update += ",\"player_health\":" + std::to_string(player->getHp());
 			player_update += ",\"player_anim\":" + std::to_string(player->getAnim());
 			player_update += ",\"player_dir\":" + std::to_string(player->getLastDir());
 			player_update += ",\"player_kills\":" + std::to_string(player->getKills());
-			player_update += ",\"player_died\":" + std::to_string(died);
+			player_update += ",\"player_death_amount\":" + std::to_string(player->getNbrDeath());
 			player_update += ",\"player_start\":" + std::to_string(player->getStartPos());
 			player_update += ",\"player_exit\":\"";
 			player_update.push_back(player->getExit());
 			player_update += "\"},";
-
-			if (died == true)
-				player->setDied(false);
 		}
 		player_update.pop_back();
 		player_update.push_back(']');

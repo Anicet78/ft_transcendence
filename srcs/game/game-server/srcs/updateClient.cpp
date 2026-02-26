@@ -116,10 +116,6 @@ void updateRoom(Player &player, uWS::App &app)
 		sendLeaveUpdate(player, app, oldTopic);
 		player.getWs()->unsubscribe(oldTopic);
 		player.getWs()->subscribe(player.getRoom().getRoomId());
-		// if (player.getWs()->unsubscribe(oldTopic))
-		// 	std::cout << "Unsubscribe from " << oldTopic << std::endl;
-		// if (player.getWs()->subscribe(player.getRoom().getRoomId()))
-		// 	std::cout << "Subscribed to " << player.getRoom().getRoomId() << std::endl;
 	}
 	else if (plan[y][x] == 'F')
 		player.setFinished(true);
@@ -148,19 +144,19 @@ static void	mobInteraction(MobRush &rush, int id, Mob &mob, Player &player)
 			mob.setInvFrame(invFrame + 1);
 	}
 
-	//NERFED, TOO HARD
+	// NERFED, TOO HARD
 
-	// else if (!mob.isDead() && player.getIsAttacking() && player.getAtkFrame() != 1 && mob.getState() != MOB_DODGE)
-	// {
-	// 	if (abs_dist(player, mob) > 2)
-	// 		return ;
-	// 	int dodge = rand() % 10;
-	// 	if (!dodge)
-	// 	{
-	// 		mob.setState(MOB_DODGE);
-	// 		return ;
-	// 	}
-	// }
+	else if (!mob.isDead() && player.getIsAttacking() && player.getAtkFrame() != 1 && mob.getState() != MOB_DODGE)
+	{
+		if (abs_dist(player, mob) > 2)
+			return ;
+		int dodge = rand() % 50;
+		if (!dodge)
+		{
+			mob.setState(MOB_DODGE);
+			return ;
+		}
+	}
 
 	//----------------
 	else if (player.getIsAttacking() == true && player.getAtkFrame() == 1)

@@ -1,17 +1,21 @@
 #include "Game.hpp"
 
-void	respawnPlayer(Player &player, Game &game)
+void	respawnPlayer(Player &player, Game &game, int nbrDeath)
 {
 	game.clearOtherPlayers();
-	player.setNode(player.getStartNode());
-	std::vector<std::string> plan = player.getRoom().getRoomPlan();
-	for (size_t i = 0; i < plan.size(); i++)
+	if (player.getStartNode())
 	{
-		size_t j = plan[i].find('P');
-		if (j != plan[i].npos)
+		player.setNbrDeath(nbrDeath);
+		player.setNode(player.getStartNode());
+		std::vector<std::string> plan = player.getRoom().getRoomPlan();
+		for (size_t i = 0; i < plan.size(); i++)
 		{
-			player.setPos(j, i);
-			break;
+			size_t j = plan[i].find('P');
+			if (j != plan[i].npos)
+			{
+				player.setPos(j, i);
+				break;
+			}
 		}
 	}
 }
@@ -27,25 +31,28 @@ void	setPlayerState(Player &player, Game &game, val &pStatus, int flag)
 	player.setHp(hp);
 	player.setAnim(anim);
 	player.setKills(kills);
-	if (flag == 1)
+	if (flag == 1)	//if uid == other client uid
 	{
 		int dir = pStatus["player_dir"].as<int>();
 		player.setDir(dir);
 		player.setTargetPos(x, y);
 		player.setTimer(0);
 	}
-	else if (flag == 2)
+	else if (flag == 2)	//if uid == new client uid
 	{
 		int dir = pStatus["player_dir"].as<int>();
 		player.setDir(dir);
 		player.setPos(x, y);
 		player.setTargetPos(x, y);
 	}
-	else
+	else		//if uid == client uid
 	{
-		bool died = pStatus["player_died"].as<bool>();
-		if (died == true)
-			respawnPlayer(player, game);
+		int nbrDeath = pStatus["player_death_amount"].as<int>();
+		if (nbrDeath != player.getNbrDeath())
+		{
+			std::cout << "player " << player.getUid() << " died" << std::endl; 
+			respawnPlayer(player, game, nbrDeath);
+		}
 
 		float pX = player.getX();
 		float pY = player.getY();
