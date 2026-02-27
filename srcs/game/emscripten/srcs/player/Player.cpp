@@ -29,6 +29,12 @@ std::string	Player::getName(void) const
 	return (_name);
 }
 
+SDL_Texture	*Player::getNameTex(void) const
+{
+	return this->_nameTexture;
+}
+
+
 float	Player::getX(void) const
 {
 	return (_x);

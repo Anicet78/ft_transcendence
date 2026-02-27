@@ -74,6 +74,7 @@ class Player
 	//getter
 		std::string	getUid(void) const;
 		std::string	getName(void) const;
+		SDL_Texture	*getNameTex(void) const;
 		Room		&getRoom() const;
 		Room		&getRoomRef(void);
 		quadList	getNode() const;

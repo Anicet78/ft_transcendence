@@ -9,13 +9,22 @@ Hud::Hud(): _minimap()
 	this->_placeHolderTexture = loadTexture("assets/sprite/hud/hud.bmp", w, h);
 	this->_healthTexture = SDL_CreateTexture(gSdl.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 400, 30);
 	SDL_SetTextureBlendMode(this->_healthTexture, SDL_BLENDMODE_BLEND);
-
+	SDL_Color color = (SDL_Color){255, 0, 0, 255};
+	SDL_Surface* surf = TTF_RenderText_Blended(gSdl.font, "Hp :", color);
+	if (!surf)
+	{
+		SDL_Log("RenderText error: %s", TTF_GetError());
+		return ;
+	}
+	this->_hp = SDL_CreateTextureFromSurface(gSdl.renderer, surf);
+	SDL_FreeSurface(surf);
 }
 
 Hud::~Hud(void)
 {
 	SDL_DestroyTexture(this->_placeHolderTexture);
 	SDL_DestroyTexture(this->_healthTexture);
+	SDL_DestroyTexture(this->_hp);
 }
 
 //Member Functions--------------------------------------------------------
@@ -42,11 +51,21 @@ void	Hud::printTimer(float t)
 
 	int w, h;
 	SDL_QueryTexture(time, nullptr, nullptr, &w, &h);
-	SDL_Rect dst = {static_cast<int>(250 - (w / 6)), static_cast<int>(75 - (h / 6)), w / 3, h / 3};
+	SDL_Rect dst = {static_cast<int>(215 - (w / 6)), static_cast<int>(105 - (h / 6)), w / 3, h / 3};
 	SDL_RenderCopy(gSdl.renderer, time, nullptr, &dst);
 
 	SDL_FreeSurface(surf);
 	SDL_DestroyTexture(time);
+}
+
+void	Hud::printPlayerName(Player const &player)
+{
+	int w, h;
+	SDL_QueryTexture(player.getNameTex(), nullptr, nullptr, &w, &h);
+	SDL_Rect dst = {static_cast<int>(215 - (w / 6)), static_cast<int>(45 - (h / 6)), w / 3, h / 3};
+	SDL_SetTextureColorMod(player.getNameTex(), 255, 255, 0);
+	SDL_RenderCopy(gSdl.renderer, player.getNameTex(), nullptr, &dst);
+	SDL_SetTextureColorMod(player.getNameTex(), 0, 255, 0);
 }
 
 static void drawRed(int x)
@@ -194,7 +213,11 @@ void	Hud::printHealthBar(Player const &player)
 		SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 255);
 	}
 	
-	SDL_Rect rect = {370, 30, 400, 30};
+	int w, h;
+	SDL_QueryTexture(this->_hp, nullptr, nullptr, &w, &h);
+	SDL_Rect dst = {static_cast<int>(350 - (w / 4)), static_cast<int>(75 - (h / 4)), w / 2, h / 2};
+	SDL_RenderCopy(gSdl.renderer, this->_hp, nullptr, &dst);
+	SDL_Rect rect = {370, 60, 400, 30};
 	SDL_RenderCopy(gSdl.renderer, this->_healthTexture, NULL, &rect);
 }
 
@@ -206,5 +229,6 @@ void	Hud::print(std::vector<Map> const &maps, Player const &player, int launched
 	if (launched)
 		this->_minimap.printMinimap(maps, player);
 	this->printTimer(time);
+	this->printPlayerName(player);
 }
 

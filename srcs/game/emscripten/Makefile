@@ -3,9 +3,10 @@ CXXFLAGS	= -Wall -Werror -Wextra -std=c++20
 LDFLAGS		= $(shell sdl2-config --libs)
 
 EMSCRIPTEN		= emcc
-EM_LIBS			= -s USE_SDL=2 -s USE_SDL_TTF=2
+EM_LIBS			= -s USE_SDL=2 --use-port=sdl2_ttf
 EM_COMMON_FLAGS	= -Wall -Werror -Wextra -std=c++20 -I$(HEADERS) -O3 $(EM_LIBS)
-EM_LDFLAGS		= -lembind \
+EM_LDFLAGS		= $(EM_LIBS) \
+				-lembind \
 				-s WASM=1 \
 				-s MODULARIZE=1 \
 				-s ALLOW_MEMORY_GROWTH=1 \
