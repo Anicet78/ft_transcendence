@@ -8,7 +8,7 @@ import { useAuth } from '../auth/AuthContext.tsx';
 const Banner = () => {
 	const { user, logout } = useAuth()
 	const [active, setActive] = useState(false)
-	const username = user?.username || 'Username'
+	const username = user?.username
 	let logo_path = user ? '/home' : '/';
 	let button_path = user ? '/profile' : '/';
 
@@ -39,22 +39,24 @@ const Banner = () => {
 						{user && (<Navbar.Item><SearchBar /></Navbar.Item>)}
 					</Navbar.Start>
 					<Navbar.End>
+						{user &&
 							<NavLink to={button_path} aria-label='profile button' className='button is-primary is-medium is-centered'>
 								<Icon name='user' ariaLabel='user icon' />
 								<span>{username}</span>
 							</NavLink>
-							<Navbar.Dropdown hoverable right>
-								<Navbar.Item as="a" textColor='primary'>
-									<Icon name="bars" ariaLabel="Menu" />
-									<span>Menu</span>
-								</Navbar.Item>
-								<Navbar.DropdownMenu>
-									<Navbar.Item onClick={handleClick}>Logout</Navbar.Item>
-									<Navbar.Divider />
-									<Navbar.Item href="#">About the game</Navbar.Item>
-									<Navbar.Item href="#">Credentials</Navbar.Item>
-								</Navbar.DropdownMenu>
-							</Navbar.Dropdown>
+						}
+						<Navbar.Dropdown hoverable right  className="profile-dropdown">
+							<Navbar.Item as="a" textColor='primary'>
+								<Icon name="bars" ariaLabel="Menu" />
+								<span>Menu</span>
+							</Navbar.Item>
+							<Navbar.DropdownMenu>
+								<Navbar.Item onClick={handleClick}>Logout</Navbar.Item>
+								<Navbar.Divider />
+								<Navbar.Item href="#">About the game</Navbar.Item>
+								<Navbar.Item href="#">Credentials</Navbar.Item>
+							</Navbar.DropdownMenu>
+						</Navbar.Dropdown>
 					</Navbar.End>
 				</Navbar.Menu>
 		</Navbar>

@@ -7,16 +7,23 @@ import api, { getAccessToken } from '../serverApi.ts';
 import type { GetResponse } from '../types/GetType.ts'
 import { useAuth } from "../auth/AuthContext.tsx";
 import skull from '../assets/skull.svg';
+import { useFriendshipModification } from "./useFriendshipModification.tsx";
+import type { actionType } from "./friendshipQueries.ts";
 
 type FriendsListResponseType = GetResponse<"/friends/list", "get">;
 
 const FriendList = () => {
 	const { user } = useAuth()
+	const friendRequestMutation = useFriendshipModification()
 
 	const { data, isLoading, isError, error } = useQuery({
 		queryKey: ['friends', getAccessToken()],
 		queryFn: () => api.get("/friends/list"),
 	});
+
+	const handleRequest = (action: actionType, id: string) => {
+			friendRequestMutation.run( action, id);
+	};
 
 	if (isLoading) return <div>Loading...</div>;
 	if (isError || !data) return <div>Error: {error?.message || 'unknown'}</div>;
@@ -41,6 +48,12 @@ const FriendList = () => {
 								<div className="friend_actions">
 									<Button className="interaction_btn">Join</Button>
 									<Button className="interaction_btn">Spectate</Button>
+									<Button 
+										className="interaction_btn" 
+										onClick={() => {handleRequest("remove", friendUser.appUserId)}}
+									>
+										Remove friend
+									</Button>
 									<NavLink to={"/profile/" + friendUser.username} className="view_profile_btn">
 										View Profile
 									</NavLink>

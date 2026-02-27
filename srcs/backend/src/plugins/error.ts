@@ -32,7 +32,7 @@ export default fp(async (fastify) => {
 		const mapping = PRISMA_ERROR_MAP[error.code];
 
 		if (mapping) {
-			const message = request.url !== "/auth/register" ? mapping.getMessage(error.meta) : "Username already taken";
+			const message = (request.url !== "/auth/register" && request.url !== "/profile/update/username") ? mapping.getMessage(error.meta) : "Username already taken";
 
 			return reply.code(mapping.statusCode).send({
 				error: http.STATUS_CODES[mapping.statusCode],

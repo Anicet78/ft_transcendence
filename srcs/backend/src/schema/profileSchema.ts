@@ -16,12 +16,20 @@ export const UpdateProfileBodySchema = Type.Object({
   firstName: Type.Optional(Type.String()),
   lastName: Type.Optional(Type.String()),
   username: Type.Optional(Type.String()),
+  mail: Type.Optional(Type.String()),
+  password: Type.Optional(Type.String()),
   avatarUrl: Type.Optional(Type.String()),
   region: Type.Optional(Type.String()),
   availability: Type.Optional(Type.Boolean())
 });
 export type UpdateProfileBody = Static<typeof UpdateProfileBodySchema>;
 
+export const UpdatePasswordBodySchema = Type.Object({
+	oldPassword: Type.String({ minLength: 8 }),
+	newPassword: Type.String({ minLength: 8 }),
+});
+
+export type UpdatePasswordBody = Static<typeof UpdatePasswordBodySchema>;
 
 export const ProfileResponseSchema = Type.Object({
   appUserId: Type.String(),

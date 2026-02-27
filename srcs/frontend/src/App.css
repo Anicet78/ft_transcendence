@@ -1,7 +1,11 @@
-.text-focus-in {
+.slide-in-elliptic-bottom-bck .text-focus-in {
 	color: #00d1b2;
 	-webkit-animation:text-focus-in 2.5s cubic-bezier(.55,.085,.68,.53) both;
 	animation:text-focus-in 2.5s cubic-bezier(.55,.085,.68,.53) both;
+}
+
+.slide-in-elliptic-bottom-bck .text-focus-in p {
+	margin: 0.3em 0; /* reduce vertical spacing */
 }
 
 @-webkit-keyframes text-focus-in {
@@ -29,31 +33,52 @@
 }
 
 .slide-in-elliptic-bottom-bck {
-	width: 50%; /* Default width for large screens */
 	max-width: 90%; /* Never exceed 90% of viewport width */
-	border-radius: 30px; /* rounded borders */
-	background-color: #3D3C3C;
+	font-size: clamp(2rem, 6vw, 5rem); /* min 2rem for mobile and max 5 for desktop, scale with viewport width */
 	display: flex;
-    flex-direction: column; /* stack children vertically */
-    justify-content: center; /* vertical centering */
-    align-items: center; /* horizontal centering */
-	gap: 2rem; /* Space between title and buttons */
-	padding: 5rem; /* add some spacing between elements and borders */
+	flex: 1;
+	flex-direction: column; /* stack children vertically */
+	justify-content: center; /* vertical centering */
+	align-items: center; /* horizontal centering */
+	gap: clamp(1rem, 4vw, 2rem); /* Space between title and buttons */
+	padding: clamp(1.5rem, 5vw, 5rem); /* add some spacing between elements and borders */
 	margin: 0 auto; /* centers the div horizontally inside the Box */
-    box-sizing: border-box; /* Include padding in width */
+	box-sizing: border-box; /* Include padding in width */
+	text-align: center;
 	overflow: hidden; /* Prevent children from stick out of the container */
 	-webkit-animation: slide-in-elliptic-bottom-bck 1.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-	        animation: slide-in-elliptic-bottom-bck 1.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+		animation: slide-in-elliptic-bottom-bck 1.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
 }
 
 /* Buttons inside animation container */
 .slide-in-elliptic-bottom-bck .button-group {
-    display: flex;             /* Horizontal layout for buttons */
+	display: flex;             /* Horizontal layout for buttons */
 	flex-direction: row;          /* horizontal line */
-    gap: 3rem;                 /* Increased space between buttons */
-    justify-content: center;      /* center the buttons under the text */
-    align-items: center;          /* vertically center buttons */
-	flex-wrap: nowrap;            /* never wrap to next line */
+	gap: clamp(1rem, 4vw, 3rem);  /* Increased space between buttons */
+	justify-content: center;      /* center the buttons under the text */
+	align-items: center;          /* vertically center buttons */
+	flex-wrap: wrap;
+	width: 100%;
+}
+
+.button-group .button {
+	font-size: clamp(1rem, 2.5vw, 1.5rem);
+	padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 4vw, 2rem);
+}
+
+/* stacks buttons vertically on small devices */
+@media (max-width: 768px) {
+	.slide-in-elliptic-bottom-bck {
+		padding: 2rem;
+	}
+
+	.text-focus-in p {
+		margin: 0.5rem 0;
+	}
+
+	.button-group {
+		flex-direction: column;
+	}
 }
 
 /**
@@ -63,8 +88,8 @@
  */
 @-webkit-keyframes slide-in-elliptic-bottom-bck {
   0% {
-    -webkit-transform: translateY(600px) rotateX(-30deg) scale(6.5);
-            transform: translateY(600px) rotateX(-30deg) scale(6.5);
+    -webkit-transform: translateY(600px) rotateX(-30deg) scale(1.8);
+            transform: translateY(600px) rotateX(-30deg) scale(1.8);
     -webkit-transform-origin: 50% -100%;
             transform-origin: 50% -100%;
     opacity: 0;
@@ -79,8 +104,8 @@
 }
 @keyframes slide-in-elliptic-bottom-bck {
   0% {
-    -webkit-transform: translateY(600px) rotateX(-30deg) scale(6.5);
-            transform: translateY(600px) rotateX(-30deg) scale(6.5);
+    -webkit-transform: translateY(600px) rotateX(-30deg) scale(1.8);
+            transform: translateY(600px) rotateX(-30deg) scale(1.8);
     -webkit-transform-origin: 50% -100%;
             transform-origin: 50% -100%;
     opacity: 0;
