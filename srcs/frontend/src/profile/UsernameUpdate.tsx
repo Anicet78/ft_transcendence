@@ -15,9 +15,12 @@ const UsernameUpdate = () => {
 	const mutation = useMutation({
 		mutationFn: (data: ProfileUpdateBodyType) => api.patch("/profile", data),
 		onSuccess: (data) => {
-		queryClient.setQueryData(["profile"], data);
-		navigate("/profile")
-		toast({title: 'Success', message: 'Username updated successfully!', type: 'is-success'})
+			queryClient.setQueryData(["profile"], data);
+			navigate("/profile")
+			toast({title: 'Success', message: 'Username updated successfully!', type: 'is-success'})
+		},
+		onError: (error: Error) => {
+			toast({ title: `An error occurred`, message: error.message, type: "is-warning" })
 		},
 	});
 

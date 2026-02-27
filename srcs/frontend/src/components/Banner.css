@@ -1,15 +1,21 @@
-/* Navbar full width and remove Bulma container */
+/* ============================= */
+/* BASE NAVBAR                   */
+/* ============================= */
 .navbar-full {
-  margin: 0;
-  padding: 0;
+  display: grid;                   /* Use grid to create left/center/right layout */
+  grid-template-columns: auto 1fr auto; /* left | center | right */
+  align-items: center;             /* Vertically center content */
+  width: 100%;
   max-width: 100%;
   background-color: #3D3C3C;
-  box-sizing: border-box;
-  height: 60px;
-  min-height: 60px;
+  box-sizing: border-box;          /* Include padding/border in width */
+  padding: 0 1rem;                 /* Horizontal padding */
+  overflow: visible !important;    /* Allow dropdowns to overflow outside navbar */
+  position: relative;              /* Parent for absolute positioning dropdown */
+  z-index: 1000;                   /* Ensure navbar is above other content */
 }
 
-/* Remove Bulma internal container constraint */
+/* Remove Bulma container constraint */
 .navbar-full .container {
   max-width: 100%;
   width: 100%;
@@ -17,30 +23,141 @@
   padding: 0;
 }
 
-/* Remove default spacing from brand */
+/* ============================= */
+/* LEFT ZONE (LOGO/BRAND)       */
+/* ============================= */
 .navbar-brand {
-  margin-left: 0;
-  padding-left: 0;
+  justify-self: start; /* align to left */
+  flex: 0 0 auto;      /* Don’t shrink or grow */
 }
 
-.navbar-item.has-dropdown {
-  padding: 0.5em;
+/* ============================= */
+/* CENTER ZONE (SEARCH)         */
+/* ============================= */
+.navbar-start {
+  display: flex !important;        /* Use flex for proper centering */
+  justify-self: center;            /* Center in the grid column */
+  align-items: center;
+  flex: 1;                         /* Take available space */
+  min-width: 0;                    /* Allow shrinking to fit container */
+  justify-content: center !important; /* Center search bar inside flex */
 }
 
-/* Logo button should align flush left */
-.navbar-brand .button {
-  margin-left: 0;
+.navbar-start .navbar-item {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
 }
 
-/* Navbar.End spacing */
+.navbar-start .navbar-item > * {
+  width: min(80%, 700px);          /* Search bar max 700px or 80% of container */
+  margin: 0 auto;                  /* Center horizontally */
+}
+
+/* ============================= */
+/* RIGHT ZONE (PROFILE / MENU)  */
+/* ============================= */
+.navbar-menu {
+  overflow: visible !important;    /* Allow dropdown to overflow */
+}
+
+/* Navbar-end container (profile button & dropdown) */
 .navbar-end {
+  justify-self: end;               /* Align right in grid */
   display: flex;
   align-items: center;
-  gap: 16px; /* space between user button and menu */
+  gap: 16px;                       /* Space between buttons */
+  flex-shrink: 1;                  /* Allow shrinking if needed */
+  min-width: 0;
 }
 
-/* Force navbar dropdown to align to right edge */
+.navbar-end .button {
+  flex-shrink: 1;
+  max-width: 100%;
+  white-space: nowrap;             /* Prevent text from wrapping */
+  overflow: hidden;
+  text-overflow: ellipsis;         /* Add "..." if text is too long */
+}
+
+.profile-dropdown {
+  position: relative;  /* parent for absolute dropdown */
+}
+
 .navbar-end .navbar-dropdown {
-  right: 0 !important;
-  left: auto !important;
+  display: none;                   /* Hidden until hover / active */
+  position: absolute !important;   /* Position absolutely relative to navbar-full */
+  top: calc(100% + 0.3rem);        /* below navbar with small gap */
+  right: 0;                        /* Align to right edge */
+  left: auto;                      /* Don’t use left */
+  margin-top: 0;
+  z-index: 2000;                   /* Above all navbar content */
+  min-width: 200px;                /* Minimum dropdown width */
+  max-width: 300px;                /* Maximum dropdown width */
+  box-sizing: border-box;          /* Include padding/border in width */
+  word-break: break-word;          /* Wrap long words */
+}
+
+/* Show on hover of parent Navbar.Dropdown */
+@media (hover: hover) and (pointer: fine) { /* only on desktop */
+  .profile-dropdown:hover .navbar-dropdown,
+  .navbar-dropdown:hover {
+    display: block;
+  }
+}
+
+/* ============================= */
+/* MOBILE BEHAVIOR                */
+/* ============================= */
+@media screen and (max-width: 1024px) {
+  .navbar-full {
+    display: flex;                  /* Switch grid to column layout */
+    flex-direction: column;         /* Stack items vertically */
+    align-items: stretch;           /* Stretch full width */
+    padding: 0.5rem 1rem;           /* Adjust padding */
+  }
+
+  .navbar-brand {
+    justify-self: start;            /* Keep logo left-aligned */
+    margin-bottom: 0.5rem;          /* Space below */
+  }
+
+  .navbar-start {
+    justify-self: stretch;          /* Stretch search bar container */
+    margin-bottom: 0.5rem;
+  }
+
+  .navbar-start .navbar-item > * {
+    width: 95%;                     /* Almost full width */
+    max-width: 700px;               /* Limit width on mobile */
+    margin: 0 auto;                 /* Center horizontally */
+  }
+
+  .navbar-end {
+    justify-self: stretch;          /* Stretch right zone */
+    flex-direction: column;         /* Stack buttons vertically */
+    align-items: center;            /* Center items horizontally */
+    gap: 8px;                       /* Smaller gap */
+    margin-bottom: 0.5rem;
+  }
+
+  .navbar-end .button {
+    max-width: 90%;                 /* Limit button width */
+    text-align: center;             /* Center text */
+  }
+
+  .navbar-end .navbar-dropdown {
+    position: static !important;    /* Normal flow for stacked layout */
+    width: 100%;                    /* Full width */
+    max-width: 100%;                /* Prevent overflow */
+    margin-top: 0;                  /* Remove top margin */
+  }
+}
+
+/* ============================= */
+/* SAFETY                         */
+/* ============================= */
+html, body {
+  overflow-x: hidden;               /* Prevent horizontal scroll */
 }

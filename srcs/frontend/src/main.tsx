@@ -35,6 +35,7 @@ import CallbackGoogle from './auth/callbackGoogle.tsx';
 import Callback42 from './auth/callback42.tsx';
 import { InviteToGroupChat } from './chat/components/InviteToGroupChat.tsx';
 import SearchPage from './search/SearchPage.tsx';
+import "./main.css"
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -46,8 +47,9 @@ const queryClient = new QueryClient({
 
 const AppEntryPoint = () => {
 	return (
-		<>
-			<Banner />
+		<div className="page-container">
+		<Banner />
+		<main className="content">
 			<Routes>
 				<Route path="/" element={<App />} />
 				<Route path="/login" element={<Login />} />
@@ -78,8 +80,9 @@ const AppEntryPoint = () => {
 				<Route path="/privacy_policy" element={<Privacy />} />
 				<Route path="*" element={<Error />} />
 			</Routes>
-			<MyFooter />
-		</>
+		</main>
+		<MyFooter />
+		</div>
 	);
 };
 
