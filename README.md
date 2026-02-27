@@ -21,8 +21,6 @@ This web app is made to play games with your friends or with random people
 
 ### Prerequisites
 
-List everything required before running the project:
-
 * Git
 * Linux
 * Makefile
@@ -55,6 +53,22 @@ make
 
 <!-- Complete this -->
 
+* Youtube
+	* [Fireship Channel](https://www.youtube.com/@Fireship) ⮕ To understand core concepts quickly
+	* [Full backend breakdown video](https://www.youtube.com/watch?v=adOkTjIIDnk)
+
+* Tutorials
+	* [Beginning Game Programming](https://lazyfoo.net/tutorials/SDL/index.php)
+	* [Creating a simple roguelike](https://www.parallelrealities.co.uk/tutorials/rogue/rogue1.php)
+
+* Assets
+	* Itch.io
+	* [Pixilart](https://www.pixilart.com) ⮕ Create pixel art assets for the game
+
+* AI Usage
+	* Provide easy access documentation and explanation about concepts
+	* Help explain and solve bugs
+
 ---
 
 ## Team Information
@@ -62,27 +76,22 @@ make
 <!-- Complete this -->
 
 * **agruet**
-
 	* Roles: *Technical Lead, Developer*
-	* Responsibilities:
+	* Responsibilities: Manage the tech stack, manage integration and deployment, backend and frontend developer
 
 * **ndabbous**
-
 	* Roles: *Project Manager, Developer*
-	* Responsibilities:
+	* Responsibilities: Organize meetings, distribute tasks, set objectives and deadlines, track project progress, backend and frontend developer
 
 * **mprokosc**
-
 	* Roles: *Developer*
 	* Responsibilities:
 
 * **tpinton**
-
 	* Roles: *Developer*
 	* Responsibilities:
 
 * **jumichel**
-
 	* Roles: *Developer*
 	* Responsibilities:
 
@@ -178,7 +187,7 @@ make
 
 ## Database Schema
 
-![Database schema image here](./images/image.png)
+![Database schema image here](./images/database.png)
 
 ### Structure Overview
 
@@ -204,6 +213,8 @@ The database has been designed to maximise unique information sources, with few 
 
 ## Modules
 
+<!-- Explain custom module -->
+
 | Module                            | Type  | Justification                            | Implementation                               | Contributor(s)             |
 |:---------------------------------:|:-----:|:----------------------------------------:|:--------------------------------------------:|:--------------------------:|
 | **User interactions**             | Major | Essential for our project's scope        | Webapp pages and components                  | ndabbous                   |
@@ -223,9 +234,6 @@ The database has been designed to maximise unique information sources, with few 
 | **Search**                        | Minor | Essential for our project's scope        | Search Bar to search users                   | jumichel                   |
 | **Custom module**                 | Major | See below                                | See below                                    | tpinton, mprokosch         |
 | **Total**                         | 26    |                                          |                                              |                            |
-
-
-**Total Points:** XX pts
 
 ---
 
@@ -264,39 +272,6 @@ Provide example API calls, screenshots, or user flows.
 
 * Limitation 1
 * Limitation 2
-
----
-
-## Resources
-
-### Learning Resources
-
-* Official documentation
-* Tutorials
-* Articles
-
-### AI Usage Disclosure
-
-Clearly describe how AI tools were used in this project.
-
-**Example:**
-
-* Used AI for:
-
-  * Boilerplate generation
-  * Debugging assistance
-  * Documentation drafting
-* AI was **not** used for:
-
-  * Core algorithm design (if applicable)
-
-Be honest and specific.
-
----
-
-## License (Optional)
-
-Specify the project license if applicable.
 
 ---
 
