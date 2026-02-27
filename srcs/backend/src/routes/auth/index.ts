@@ -6,6 +6,8 @@ import { refreshRoutes } from './refreshRoute.js';
 import { googleRoutes } from './googleRoute.js';
 import { fortyTwoRoutes } from './fortyTwoRoute.js';
 import { logoutRoutes } from './logoutRoute.js';
+import { forgotRoutes } from './forgotRoute.js';
+import { resetRoutes } from './resetRoute.js';
 
 export async function authRouter(fastify: FastifyInstance) {
 	fastify.register(meRoutes);
@@ -15,4 +17,6 @@ export async function authRouter(fastify: FastifyInstance) {
 	fastify.register(refreshRoutes);
 	fastify.register(googleRoutes);
 	fastify.register(fortyTwoRoutes);
+	fastify.register(forgotRoutes);
+	fastify.register(resetRoutes);
 }

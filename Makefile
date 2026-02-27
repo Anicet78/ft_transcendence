@@ -7,7 +7,7 @@ CERT_PATH = ./docker/certs
 DOMAIN = localhost
 
 SECRET_PATH = docker/secrets
-SECRET_NAMES = db_password.txt google_secret.txt jwt_secret.txt cookie_secret.txt secret_42.txt pgadmin_password.txt
+SECRET_NAMES = db_password.txt google_secret.txt jwt_secret.txt cookie_secret.txt secret_42.txt pgadmin_password.txt smtp_password.txt
 SECRETS = $(patsubst %, $(SECRET_PATH)/%, $(SECRET_NAMES))
 
 INFO = @printf '\033[1;35m⮑ %s\033[0m\n'
