@@ -47,7 +47,6 @@ export async function profileRoutes(fastify: FastifyInstance) {
 		body: UpdatePasswordBodySchema
 		}
 	},
-	//TODO
 	profileController.updatePassword
 );
 
