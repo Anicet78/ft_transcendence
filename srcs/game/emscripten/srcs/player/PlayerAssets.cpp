@@ -55,6 +55,16 @@ PlayerAssets::~PlayerAssets(void)
 	SDL_DestroyTexture(_playerAttackText);
 	SDL_DestroyTexture(_playerWalkText);
 	SDL_DestroyTexture(_playerIdleText);
+	SDL_DestroyTexture(_playerWalkFrontText);
+	SDL_DestroyTexture(_playerAttackFrontText);
+	SDL_DestroyTexture(_playerIdleFrontText);
+	SDL_DestroyTexture(_playerWalkBackText);
+	SDL_DestroyTexture(_playerAttackBackText);
+	SDL_DestroyTexture(_playerIdleBackText);
+	SDL_DestroyTexture(_playerHurtText);
+	SDL_DestroyTexture(_playerDieText);
+	if (mapRenderTexture != nullptr)
+		SDL_DestroyTexture(mapRenderTexture);
 	return ;
 }
 
