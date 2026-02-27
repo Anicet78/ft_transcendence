@@ -3,16 +3,12 @@ import "../auth/register.css"
 
 import { NavLink, useNavigate } from "react-router";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { GetBody } from '../types/GetType.ts';
 import api from '../serverApi.ts';
 import toast from "../Notifications.tsx";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import InputPassword from "../components/InputPassword.tsx";
-
-//TODO
-type ProfileUpdateBodyType = GetBody<"/profile/password", "patch">;
 
 interface FormValues {
 	oldPassword: string;
