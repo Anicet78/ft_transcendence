@@ -1,0 +1,83 @@
+.update-container {
+	width: 90%; /* use most of the screen width */
+	max-width: 700px; /* controls overall box width */
+	border-radius: 30px; /* rounded borders */
+	background-color: var(--color-bg);
+	display: flex;
+	flex-direction: column; /* stack children vertically */
+	justify-content: center; /* vertical centering */
+	align-items: center; /* horizontal centering */
+	gap: clamp(1rem, 4vw, 2rem);
+	padding: clamp(1rem, 2vw, 2rem); /* add some spacing between elements and borders */
+	margin: 2rem auto; /* spacing on top/bottom for mobile */
+	box-sizing: border-box; /* Include padding in width */
+	overflow: hidden; /* Prevent children from stick out of the container */
+}
+
+.update-container label {
+	font-weight: 700;
+	font-family: var(--font-label);
+	font-size: clamp(1.2rem, 2vw, 2rem);
+	margin-bottom: 6px;
+	display: inline-block;
+	color: black;
+}
+
+.update-container form {
+	width: 100%;
+	max-width: 600px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem; /* consistent spacing between inputs */
+}
+
+.update-container .button {
+	font-family: var(--font-button-large) !important;
+	font-size: clamp(1rem, 1.5vw, 1.5rem);
+	color: var(--color-primary) !important;
+	border-color: var(--color-primary) !important;
+	border-radius: var(--radius-md);
+}
+
+.update-container .material-button-root {
+	color: var(--color-primary) !important;
+	border-color: var(--color-primary) !important;
+	font-family: var(--font-button-large);
+	font-size: clamp(1rem, 1.5vw, 1.5rem);
+}
+
+.update-container input:focus, select:focus {
+	outline: none;
+	border-color: #00f0f0;
+	background-color: #333;
+}
+
+.update-box {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	max-width: 700px;
+	background-color: var(--color-bg);
+	border-radius: 12px;
+	height: 300px;
+	justify-content: center;
+	gap: 30px;
+	padding: clamp(10px, 20vw, 130px);
+}
+
+.invalid-update {
+	color: var(--color-warning);
+	font-family: serif;
+	font-weight: bold;
+	font-size: clamp(1rem, 2vw, 2rem);
+}
+
+..navlink-button {
+	font-family: var(--font-button-large) !important;
+	font-size: clamp(1rem, 2.5vw, 2rem);
+	color: var(--color-primary) !important;
+	border-color: var(--color-primary) !important;
+	border-radius: var(--radius-md);
+}

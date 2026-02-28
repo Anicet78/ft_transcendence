@@ -1,4 +1,4 @@
-import { Box, Button } from "@allxsmith/bestax-bulma"
+import { Button } from "@allxsmith/bestax-bulma"
 import "../auth/register.css"
 
 import { NavLink, useNavigate } from "react-router";
@@ -65,33 +65,28 @@ const PasswordUpdate = () => {
 	};
 
 	return (
-		<Box bgColor="grey" textColor="black" className="wrapbox">
-			<h1>Change profile</h1>
-			<Box m="4" p="6"  className="friendbox" bgColor="grey-light" textColor="black" justifyContent='space-between'>
-				<div className="register-box">
-					<form onSubmit={handleSubmit(onSubmit)}>
-						<InputPassword
-							placeholder="Current password"
-							register={register("oldPassword")}
-						/>
-						<InputPassword
-							placeholder="New password"
-							register={register("password")}
-							error={errors.password}
-							watchValue={password}
-						/>
-						<InputPassword
-							placeholder="Confirm new password"
-							register={register("confirmPassword")}
-							error={errors.confirmPassword}
-							watchValue={confirmPassword}
-						/>
-						<Button type="submit">{mutation.isPending ? 'Updating...' : 'Update Password'}</Button>
-					</form>
-				</div>
-			</Box>
+		<div className="update-container">
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<InputPassword
+					placeholder="Current password"
+					register={register("oldPassword")}
+				/>
+				<InputPassword
+					placeholder="New password"
+					register={register("password")}
+					error={errors.password}
+					watchValue={password}
+				/>
+				<InputPassword
+					placeholder="Confirm new password"
+					register={register("confirmPassword")}
+					error={errors.confirmPassword}
+					watchValue={confirmPassword}
+				/>
+				<Button type="submit" size="medium">{mutation.isPending ? 'Updating...' : 'Update Password'}</Button>
+			</form>
 			<NavLink to="/profile" className="button is-medium">Back to profile</NavLink>
-		</Box>
+		</div>
 	)
 }
 

@@ -1,21 +1,27 @@
+.profile-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
 .box-head {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;          /* allow full width */
-  max-width: 400px;     /* optional: limit maximum width */
-  margin: auto;
-  padding: 16px;        /* add some padding */
-  gap: 16px;
-  box-sizing: border-box; /* ensure padding is included in width */
-  background-color: white; /* just to keep it inside white box */
+  width: 100%;
+  max-width: 500px;
+  margin: 32px auto;
+  padding: 24px;
+  gap: 32px;
+  box-sizing: border-box;
+  background-color: var(--color-bg);
+  border-radius: 12px;
 }
 
-.image-box figure img {
-  width: 20vw;       /* 20% of viewport width */
-  height: 20vw;
-  max-width: 128px;  /* cap the size */
-  max-height: 128px;
+.image-box img {
+  width: clamp(100px, 20vw, 160px);
+  height: clamp(100px, 20vw, 160px);
   border-radius: 50%;
   object-fit: cover;
 }
@@ -23,17 +29,20 @@
 .head-text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
   align-items: center;
-  flex-shrink: 1; /* allows text box to shrink when space is tight */
-  min-width: 0;   /* ensures text wraps properly */
 }
 
-
-.head-text .username {
+.profile_username {
   font-weight: bold;
-  font-size: 1.7rem;
-  margin: 0;
+  color: black;
+  font-family: var(--font-label);
+  font-size: clamp(1.6rem, 4vw, 4rem);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .status-circle {
@@ -55,18 +64,68 @@
   color: red;
 }
 
-.head-text .level,
-.head-text .xp {
+.head-text p {
   margin: 0;
-  font-size: 1.2rem;
+  color: black;
+  font-family: serif;
+  font-size: clamp(1rem, 2vw, 2rem);
+  line-height: 1;
 }
 
 .info {
-	columns: 2;
-	text-align: left;
-	color: black;
-	width: 90%;
-	margin: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;;
+  text-align: left;
+  color: black;
+  font-family: serif;
+  font-size: clamp(0.95rem, 1.2vw, 1.5rem);
+  width: 100%;
+  max-width: 900px;
+  margin: 24px auto;
+  padding: 24px;
+  gap: 16px;
+  background-color: var(--color-bg);
+  border-radius: 12px;
+  gap: 16px 32px; /* row-gap column-gap */
+  box-sizing: border-box;
+}
+
+.info-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.public-info {
+  text-align: left;
+  color: black;
+  font-family: serif;
+  font-size: clamp(0.95rem, 1.2vw, 1.5rem);
+  width: 100%;
+  max-width: 500px;
+  margin: 24px auto;
+  padding: 24px;
+  gap: 16px;
+  background-color: var(--color-bg);
+  border-radius: 12px;
+  gap: 16px 32px; /* row-gap column-gap */
+  box-sizing: border-box;
+}
+
+/* Category name (bold) */
+.category-name {
+  font-weight: bold;
+  display: inline-block; /* allows fixed width for alignment */
+  width: 150px;
+  color: black;
+}
+
+.navlink-button {
+  font-family: var(--font-button-large) !important;
+  font-size: clamp(1rem, 2.5vw, 2rem);
+  color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  border-radius: var(--radius-md);
 }
 
 .button-group {
@@ -85,7 +144,74 @@
   justify-content: center;   /* center buttons horizontally */
 }
 
-.button-group .button,
-.button-group button {
+.button-group .profile-button {
   min-width: 140px;     /* optional: make buttons consistent width */
+  font-family: var(--font-button-large);
+  font-size: clamp(1rem, 2.5vw, 2rem);
+  color: var(--color-primary);
+  border-color: var(--color-primary) !important;
+  border-radius: var(--radius-md);
+}
+
+/* ===================== */
+/* TABLET */
+/* ===================== */
+
+@media (max-width: 1024px) {
+  .box-head {
+    max-width: 700px;
+    gap: 24px;
+  }
+
+  .info {
+    max-width: 700px;
+    column-gap: 32px;
+  }
+}
+
+/* ===================== */
+/* MOBILE */
+/* ===================== */
+
+@media (max-width: 768px) {
+  .box-head {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .head-text {
+    align-items: center;
+  }
+
+  .profile_username {
+    font-size: 1.6rem;
+  }
+
+  .image-box figure img {
+    width: 120px;
+    height: 120px;
+  }
+  .info {
+    grid-template-columns: 1fr;
+  }
+  .category-name {
+    width: 120px; /* smaller width on mobile */
+  }
+}
+
+/* ===================== */
+/* SMALL PHONES */
+/* ===================== */
+
+@media (max-width: 480px) {
+
+  .image-box figure img {
+    width: 100px;
+    height: 100px;
+  }
+  .category-name {
+    width: 100px;
+  }
 }

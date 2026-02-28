@@ -38,17 +38,14 @@ const EmailUpdate = () => {
 	}
 
 	return (
-		<Box bgColor="grey" textColor="black" className="wrapbox">
-			<h1>Change profile</h1>
-			<Box m="4" p="6"  className="friendbox" bgColor="grey-light" textColor="black" justifyContent='space-between'>
-				<form onSubmit={handleSubmit}>
-					<label htmlFor="mail">Enter your new email</label>
-					<Input type="email" id="mail" name="mail" placeholder="Your new email" />
-					<Button type="submit">Submit</Button>
-				</form>
-			</Box>
+		<div className="update-container">
+			<form onSubmit={handleSubmit}>
+				<label htmlFor="mail">Enter your new email</label>
+				<Input type="email" id="mail" name="mail" placeholder="Your new email" />
+				<Button type="submit">Update email</Button>
+			</form>
 			<NavLink to="/profile" className="button is-medium">Back to profile</NavLink>
-		</Box>
+		</div>
 	)
 }
 

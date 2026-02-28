@@ -1,0 +1,39 @@
+.rules-box {
+	width: 90%; /* use most of the screen width */
+	max-width: 700px; /* controls overall box width */
+	border-radius: 30px; /* rounded borders */
+	background-color: var(--color-bg);
+	display: flex;
+	flex-direction: column; /* stack children vertically */
+	justify-content: center; /* vertical centering */
+	align-items: center; /* horizontal centering */
+	padding: clamp(1rem, 2vw, 2rem); /* add some spacing between elements and borders */
+	margin: 2rem auto; /* spacing on top/bottom for mobile */
+	box-sizing: border-box; /* Include padding in width */
+	overflow: hidden; /* Prevent children from stick out of the container */
+	color: black;
+}
+
+.rules-box h2, h3 {
+	font-family: var(--font-label);
+	color: black;
+}
+
+.rules-box h2 {
+	font-size:clamp(1.2rem, 4vw, 4rem) !important;
+}
+
+.rules-box h3 {
+	font-size:clamp(1.2rem, 2vw, 2rem) !important;
+	color: black;
+}
+
+.rules-box p {
+	font-family: var(--font-body);
+	font-size:clamp(0,9rem, 1.2vw, 1.2rem) !important;
+	gap: 2px;
+}
+
+.rules-box span {
+	font-weight: 900;
+}

@@ -7,7 +7,7 @@
   align-items: center;             /* Vertically center content */
   width: 100%;
   max-width: 100%;
-  background-color: #3D3C3C;
+  background-color: var(--banner-color-bg);
   box-sizing: border-box;          /* Include padding/border in width */
   padding: 0 1rem;                 /* Horizontal padding */
   overflow: visible !important;    /* Allow dropdowns to overflow outside navbar */
@@ -61,10 +61,12 @@
 /* ============================= */
 .navbar-menu {
   overflow: visible !important;    /* Allow dropdown to overflow */
+  position: static !important;
 }
 
 /* Navbar-end container (profile button & dropdown) */
 .navbar-end {
+  position: static !important;
   justify-self: end;               /* Align right in grid */
   display: flex;
   align-items: center;
@@ -82,13 +84,34 @@
 }
 
 .profile-dropdown {
-  position: relative;  /* parent for absolute dropdown */
+  position: relative;
+  display: inline-flex;
+  font-family: 'Inter', serif;
+}
+
+.navbar-end > .navbar-item.profile-dropdown {
+  flex: 0 0 auto !important;   /* don’t grow or shrink */
+  width: auto !important;       /* shrink-to-fit */
+  display: inline-flex !important; /* keep content sized */
+}
+
+.profile-dropdown::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 7%;
+  height: 16px; /* small invisible bridge */
+}
+
+.navbar-item.has-dropdown {
+  position: static !important;
 }
 
 .navbar-end .navbar-dropdown {
   display: none;                   /* Hidden until hover / active */
   position: absolute !important;   /* Position absolutely relative to navbar-full */
-  top: calc(100% + 0.3rem);        /* below navbar with small gap */
+  top: 100%;
   right: 0;                        /* Align to right edge */
   left: auto;                      /* Don’t use left */
   margin-top: 0;
@@ -99,12 +122,12 @@
   word-break: break-word;          /* Wrap long words */
 }
 
-/* Show on hover of parent Navbar.Dropdown */
-@media (hover: hover) and (pointer: fine) { /* only on desktop */
-  .profile-dropdown:hover .navbar-dropdown,
-  .navbar-dropdown:hover {
-    display: block;
-  }
+.profile-dropdown:hover .navbar-dropdown {
+  display: block;
+}
+
+.dropdown-content {
+  color: var(--color-primary) !important;
 }
 
 /* ============================= */

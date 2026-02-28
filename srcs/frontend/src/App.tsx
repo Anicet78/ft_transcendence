@@ -10,17 +10,17 @@ const App = () => {
 	useEffect(() => {
 		if (user)
 			navigate("/home");
-	}, [])
+	}, [user, navigate]);
 
 	return (
 		<div className='slide-in-elliptic-bottom-bck'>
 			<div className='text-focus-in'>
 				<p> Welcome to the game</p>
 				<p>TransDungeon</p>
-				</div>
+			</div>
 			<br/>
 			<div className='button-group'>
-				<NavLink to="/login" className="button is-primary is-medium is-outlined heartbeat">Sign in</NavLink>
+				<NavLink to="/login" className="button is-medium is-outlined heartbeat">Sign in</NavLink>
 				<NavLink to="/register" className="button is-primary is-medium is-outlined heartbeat">Sign up</NavLink>
 			</div>
 		</div>

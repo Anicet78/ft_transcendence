@@ -1,9 +1,8 @@
 import 'bulma/css/bulma.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './register.css'
-import './login.css'
 
-import { Button, Box } from '@allxsmith/bestax-bulma';
+import { Button } from '@allxsmith/bestax-bulma';
 import type { GetBody, GetResponse } from '../types/GetType.ts';
 import api from '../serverApi.ts';
 import { useMutation } from '@tanstack/react-query';
@@ -109,30 +108,28 @@ function Register() {
 	};
 
 	return (
-		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='center' textSize='3' textWeight='bold'>
-			<div className="register-box">
-				<div className='social-buttons'>
-					<Button color='primary' isOutlined className='login-button' onClick={handleGoogleLogin}>Login with Google</Button>
-					<Button color='primary' isOutlined className='login-button' onClick={handle42Login}>Login with 42</Button>
-				</div>
-				<br />
-				<form onSubmit={handleSubmit(onSubmit)}>
-					<div className="form-fields">
-						<InputText placeholder="First name" register={register("firstname")} error={errors.firstname} icon='fas fa-user' />
-						<InputText placeholder="Last name" register={register("lastname")} error={errors.lastname} icon='fas fa-user' />
-						<InputText placeholder="Username" register={register("username")} error={errors.username} icon='fas fa-user' />
-						<InputText placeholder="Email" type="email" register={register("email")} error={errors.email} icon='fas fa-envelope' />
-
-						<InputPassword placeholder="Password" register={register("password")} error={errors.password} watchValue={password} />
-						<InputPassword placeholder="Confirm password" register={register("confirmPassword")} error={errors.confirmPassword} watchValue={confirmPassword} />
-					</div>
-					<div className='bottom'>
-						<SelectRegion placeholder="Select Region" options={regions} register={register("region")} error={errors.region} />
-						<Button type="submit" color="primary" isOutlined className="submit-wrapper">{mutation.isPending ? 'Registering...' : 'Sign up'}</Button>
-					</div>
-				</form>
+		<div className="register-box">
+			<div className='social-buttons'>
+				<Button color='primary' isOutlined className='login-button' onClick={handleGoogleLogin} size='large'>Login with Google</Button>
+				<Button color='primary' isOutlined className='login-button' onClick={handle42Login} size='large'>Login with 42</Button>
 			</div>
-		</Box>
+			<br />
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<div className="form-fields">
+					<InputText placeholder="First name" register={register("firstname")} error={errors.firstname} icon='fas fa-user' />
+					<InputText placeholder="Last name" register={register("lastname")} error={errors.lastname} icon='fas fa-user' />
+					<InputText placeholder="Username" register={register("username")} error={errors.username} icon='fas fa-user' />
+					<InputText placeholder="Email" type="email" register={register("email")} error={errors.email} icon='fas fa-envelope' />
+
+					<InputPassword placeholder="Password" register={register("password")} error={errors.password} watchValue={password} />
+					<InputPassword placeholder="Confirm password" register={register("confirmPassword")} error={errors.confirmPassword} watchValue={confirmPassword} />
+				</div>
+				<div className='bottom'>
+					<SelectRegion placeholder="Select Region" options={regions} register={register("region")} error={errors.region} />
+					<Button type="submit" color="primary" isOutlined size='large'>{mutation.isPending ? 'Registering...' : 'Sign up'}</Button>
+				</div>
+			</form>
+		</div>
 	)
 }
 

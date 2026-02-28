@@ -51,10 +51,11 @@ const Banner = () => {
 								<span>Menu</span>
 							</Navbar.Item>
 							<Navbar.DropdownMenu>
-								<Navbar.Item onClick={handleClick}>Logout</Navbar.Item>
+								<Navbar.Item onClick={handleClick} className="dropdown-content">Logout</Navbar.Item>
 								<Navbar.Divider />
-								<Navbar.Item href="#">About the game</Navbar.Item>
-								<Navbar.Item href="#">Credentials</Navbar.Item>
+								<Navbar.Item>
+									<NavLink to="/about" className="dropdown-content">About the game</NavLink>
+								</Navbar.Item>
 							</Navbar.DropdownMenu>
 						</Navbar.Dropdown>
 					</Navbar.End>

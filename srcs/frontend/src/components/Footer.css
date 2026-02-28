@@ -1,0 +1,47 @@
+.my-footer {
+	background-color: var(--banner-color-bg);
+	color: var(--footer-color-text);
+	padding: 2rem 1.5rem 1.5rem;
+	font-size: 0.95rem;
+	font-family: 'Cinzel', 'Garamond', serif;
+	background-size: cover;
+}
+
+.my-footer .content {
+	margin-bottom: 1rem;
+}
+
+.my-footer p {
+	margin-bottom: 0.75rem;
+	line-height: 1.5;
+	text-shadow: 0 0 2px var(--footer-color-shadow);
+}
+
+.my-footer p:last-child {
+	margin-bottom: 0;
+}
+
+/* Link styling */
+.my-footer a {
+	color: var(---footer-color-link);
+	text-decoration: none;
+	transition: all 0.3s ease;
+}
+
+.my-footer a:hover, .my-footer .navlink:hover {
+	color: #ffdd99;
+	text-shadow: 0 0 5px #ffdd99;
+	transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.my-footer {
+		font-size: 0.85rem;
+		padding: 1.5rem 1rem;
+	}
+
+	.my-footer p {
+		line-height: 1.4;
+	}
+}

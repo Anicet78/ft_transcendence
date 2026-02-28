@@ -8,4 +8,10 @@
 	flex: 1; /* takes remaining space */
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.button {
+	font-family: 'Inter', serif;
 }

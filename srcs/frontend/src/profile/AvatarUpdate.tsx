@@ -42,10 +42,8 @@ const AvatarUpdate = () => {
 	});
 
 	return (
-		<Box bgColor="grey" textColor="black" className="wrapbox">
-			<h1>Change Profile Avatar</h1>
-
-			<Box m="4" p="6" className="friendbox" bgColor="grey-light" textColor="black">
+		<div className="update-container">
+			<div className="replace-button">
 				<FileInputButton
 				onChange={updateFilesReplace}
 				value={filesReplace}
@@ -53,6 +51,7 @@ const AvatarUpdate = () => {
 				label="Replace avatar"
 				behaviour="replace"
 				/>
+			</div>
 				{filesReplace.map(file => (
 				<FileCard
 					key={file.id}
@@ -68,13 +67,12 @@ const AvatarUpdate = () => {
 				onClick={() => mutation.mutate()}
 				disabled={filesReplace.length === 0 || mutation.isPending}
 				>
-				Upload
+				Upload avatar
 				</Button>
-			</Box>
 			<NavLink to="/profile" className="button is-medium">
 				Back to profile
 			</NavLink>
-		</Box>
+		</div>
 	);
 };
 

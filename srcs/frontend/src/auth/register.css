@@ -1,22 +1,36 @@
 .register-box {
-	width: 100%;
-	max-width: 600px; /* controls overall box width */
-	border-radius: 30px; /* rounded borders */
-	background-color: #3D3C3C;
-	display: flex;
-    flex-direction: column; /* stack children vertically */
-    justify-content: center; /* vertical centering */
-    align-items: center; /* horizontal centering */
-	gap: 1.5rem; /* Space between title and buttons */
-	padding: 4rem; /* add some spacing between elements and borders */
-	margin: 0 auto; /* centers the div horizontally inside the Box */
-    box-sizing: border-box; /* Include padding in width */
-	overflow: hidden; /* Prevent children from stick out of the container */
+  width: 90%; /* use most of the screen width */
+  max-width: 700px; /* controls overall box width */
+  border-radius: 30px; /* rounded borders */
+  border: 2px solid var(--color-primary);
+  display: flex;
+  flex-direction: column; /* stack children vertically */
+  justify-content: center; /* vertical centering */
+  align-items: center; /* horizontal centering */
+  gap: clamp(1rem, 4vw, 2rem);
+  padding: clamp(1rem, 2vw, 2rem); /* add some spacing between elements and borders */
+  margin: 2rem auto; /* spacing on top/bottom for mobile */
+  box-sizing: border-box; /* Include padding in width */
+  overflow: hidden; /* Prevent children from stick out of the container */
+}
+
+.register-box .button {
+  font-family: var(--font-button-large);
+}
+
+.register-box .social-buttons {
+  display: flex;
+  flex-direction: row;       /* side by side by default */
+  gap: 1rem;                 /* spacing between buttons */
+  justify-content: center;   /* center on large screens */
+  flex-wrap: wrap;           /* wrap to next line on small screens */
+  width: 100%;
+  max-width: 420px;          /* optional max width */
 }
 
 .register-box form {
 	width: 100%;
-	max-width: 700px;
+	max-width: 600px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -34,7 +48,8 @@
 /* Label style */
 .register-box label {
   font-weight: 700;
-  font-size: 1.1rem;
+  font-family: var(--font-label);
+  font-size: clamp(1.2rem, 2vw, 2rem);
   margin-bottom: 6px;
   display: inline-block;
   color: #00d1b2;
@@ -103,3 +118,34 @@
 .register-box .password-feedback .invalid {
   color: #f44336;
 }
+
+/* Mobile breakpoint */
+@media (max-width: 768px) {
+  .register-box form .form-fields {
+    grid-template-columns: 1fr; /* stack inputs */
+    gap: 1rem; /* smaller spacing for mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .register-box .social-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  .register-box .social-buttons .button {
+    width: 100%; /* full-width buttons on mobile */
+  }
+  .register-box label {
+    font-size: 1.4rem;
+  }
+  .register-box input, .register-box select {
+    font-size: 0.9rem;
+  }
+  .register-box .button {
+    font-size: 1rem;
+  }
+  .register-box .bottom {
+    width: 100%;
+    align-items: stretch; /* full width dropdown & button */
+    gap: 1rem;
+  }

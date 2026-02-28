@@ -1,11 +1,13 @@
 .slide-in-elliptic-bottom-bck .text-focus-in {
-	color: #00d1b2;
+	color: var(--color-primary);
 	-webkit-animation:text-focus-in 2.5s cubic-bezier(.55,.085,.68,.53) both;
 	animation:text-focus-in 2.5s cubic-bezier(.55,.085,.68,.53) both;
 }
 
 .slide-in-elliptic-bottom-bck .text-focus-in p {
+	color: var(--color-primary);
 	margin: 0.3em 0; /* reduce vertical spacing */
+    font-family: var(--font-title);
 }
 
 @-webkit-keyframes text-focus-in {
@@ -33,8 +35,8 @@
 }
 
 .slide-in-elliptic-bottom-bck {
-	max-width: 90%; /* Never exceed 90% of viewport width */
-	font-size: clamp(2rem, 6vw, 5rem); /* min 2rem for mobile and max 5 for desktop, scale with viewport width */
+	max-width: 100%;
+	font-size: clamp(2rem, 6vw, 6rem); /* min 2rem for mobile and max 5 for desktop, scale with viewport width */
 	display: flex;
 	flex: 1;
 	flex-direction: column; /* stack children vertically */
@@ -61,19 +63,29 @@
 	width: 100%;
 }
 
-.button-group .button {
-	font-size: clamp(1rem, 2.5vw, 1.5rem);
+.button-group .heartbeat {
+	font-family: var(--font-button-large);
+	font-size: clamp(1rem, 2.5vw, 2rem);
 	padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 4vw, 2rem);
+    color: var(--color-primary);
+    border-color: var(--color-primary-dark);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+}
+
+.button-group .button:hover {
+        background-color: var(--color-primary-light);
+        transform: scale(1.05);
 }
 
 /* stacks buttons vertically on small devices */
 @media (max-width: 768px) {
 	.slide-in-elliptic-bottom-bck {
-		padding: 2rem;
+		padding: var(--space-lg);
 	}
 
 	.text-focus-in p {
-		margin: 0.5rem 0;
+		margin: var(--space-sm) 0;
 	}
 
 	.button-group {
