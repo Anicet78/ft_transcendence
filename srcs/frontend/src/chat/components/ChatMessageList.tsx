@@ -42,6 +42,37 @@ function isMessageRead(
 	);
 }
 
+function buildReadersByMessage(
+	messages: Message[],
+	readState?: Record<string, string>
+) {
+	if (!readState)
+		return {};
+
+	const indexMap = new Map(
+		messages.map((m, i) => [m.messageId, i])
+	);
+
+	const result: Record<string, string[]> = {};
+
+	for (const [userId, lastId] of Object.entries(readState)) {
+		const lastIndex = indexMap.get(lastId);
+		if (lastIndex === undefined)
+			continue;
+
+		for (let i = 0; i <= lastIndex; i++) {
+			const msgId = messages[i].messageId;
+
+			if (!result[msgId])
+				result[msgId] = [];
+
+			result[msgId].push(userId);
+		}
+	}
+
+	return result;
+}
+
 export function MessageList({
 	messages,
 	// role,
@@ -59,11 +90,14 @@ export function MessageList({
 	if (!messages || messages.length === 0)
 		return null;
 
+	const readersByMessage = buildReadersByMessage(messages, readState);
+
 	return (
 	<>
 		{messages?.map(msg => {
 
 			const read = isMessageRead(msg.messageId, readState);
+			const readers = readersByMessage[msg.messageId] || [];
 
 			// GAME INVITE MESSAGE
 			if (msg.content.includes("/join/")) {
@@ -195,6 +229,11 @@ export function MessageList({
 					<span style={{ marginLeft: 8, color: "#4fc3f7" }}>
 						✓✓
 					</span>
+				)}
+				{msg.userId === user?.id && readers.length > 0 && (
+					<div style={{ fontSize: "0.75rem", opacity: 0.7 }}>
+						Seen by {readers.length}
+					</div>
 				)}
 
 				</Box>
