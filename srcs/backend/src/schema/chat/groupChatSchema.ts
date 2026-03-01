@@ -7,7 +7,7 @@ export const CreateGroupChatBodySchema = Type.Object({
   name: Type.Optional(Type.String({ minLength: 1, maxLength: 100 })),
   memberIds: Type.Array(
     Type.String({ format: 'uuid' }),
-    { minItems: 1, uniqueItems: true }
+    { minItems: 2, uniqueItems: true }
   )
 });
 export type CreateGroupChatBody = Static<typeof CreateGroupChatBodySchema>;

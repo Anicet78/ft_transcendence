@@ -14,6 +14,7 @@ import type {
 	DeleteMessageParams
 } from '../../schema/chat/chatMessageSchema.js';
 import { SocketService } from '../../services/socket/SocketService.js';
+import { extractRoomId } from '../../plugins/extractRoomId.js';
 
 //SEND MESSAGE
 export async function sendMessageController(
@@ -22,14 +23,23 @@ export async function sendMessageController(
 ) {
 	const userId = req.user.id;
 	const { chatId } = req.params;
-	const { content } = req.body;
+	const { content, type } = req.body;
 
 	const socket = req.getSocket();
 	await SocketService.addInRoom(chatId, socket);
 
-	const message = await sendMessage(chatId, userId, content);
+	const message = await sendMessage(chatId, userId, content, type);
 
 	SocketService.send(chatId, "chat_message_created", message);
+
+	if (message.type === "game_invite") {
+		SocketService.send(chatId, "notification", {
+			type: "game_invite",
+			chatId,
+			roomId: extractRoomId(message.content),
+			senderId: userId
+		});
+	}
 
 	return reply.status(201).send({
 		messageId: message.messageId,
@@ -37,6 +47,7 @@ export async function sendMessageController(
 		userId: message.userId,
 		content: message.content,
 		status: message.status,
+		type: message.type,
 		postedAt: message.postedAt?.toISOString() ?? null
 	});
 }
@@ -61,6 +72,7 @@ export async function getChatMessagesController(
 			userId: m.userId,
 			content: m.content,
 			status: m.status,
+			type: m.type,
 			postedAt: m.postedAt?.toISOString() ?? null,
 			editedAt: m.editedAt?.toISOString() ?? null,
 			deletedAt: m.deletedAt?.toISOString() ?? null,

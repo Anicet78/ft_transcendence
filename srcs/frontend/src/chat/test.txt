@@ -1,0 +1,1709 @@
+
+===== ./hooks/useChatInfo.ts =====
+import { useQuery } from "@tanstack/react-query";
+import api from "../../serverApi";
+
+export function useChatInfo(chatId?: string) {
+	return useQuery({
+		queryKey: ["chat-info", chatId],
+		enabled: !!chatId,
+		queryFn: async () => {
+			const result = await api.get(`/chat/${chatId}/info`);
+			return result.data;
+		}
+	});
+} 
+===== ./hooks/useTyping.ts =====
+import { useEffect, useRef } from "react";
+import { useSocket } from "../../socket/SocketContext";
+
+export function useTyping(chatId?: string) {
+
+	const socket = useSocket();
+	const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+	const emitTypingEffect = () => {
+		if (!socket || !chatId)
+			return;
+
+		socket.emit("chat_typing", { chatId });
+
+		//reset timer
+		if (timeout.current)
+			clearTimeout(timeout.current);
+
+		//after 2 seconds of no typing, stop sending effect
+		timeout.current = setTimeout(() => {}, 2000);
+		};
+
+		//cleanup on unmount
+		useEffect(() => {
+			return () => {
+				if (timeout.current)
+					clearTimeout(timeout.current);
+			};
+		}, []);
+
+		return { emitTypingEffect };
+}
+
+===== ./hooks/useChatSocket.ts =====
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSocket } from "../../socket/SocketContext";
+import toast from "../../Notifications";
+
+//When a socket event arrives, it directly updates the React Query cache
+export function useChatSocket(chatId?: string) {
+
+	const socket = useSocket();
+	const queryClient = useQueryClient();
+
+	useEffect(() => {
+		if (!socket || !chatId) return;
+
+		socket.emit("chat_join", { chatId });
+
+		return () => {
+			socket.emit("chat_leave", { chatId });
+		};
+	}, [socket, chatId]);
+
+	useEffect(() => {
+	
+		if (!socket || !chatId)
+			return;
+
+		socket.on("chat_read_updated", ({ userId, lastMessageId }) => {
+
+			queryClient.setQueryData(
+				["chat-read-state", chatId],
+				(prev: Record<string, string> = {}) => ({
+					...prev,
+					[userId]: lastMessageId
+				})
+			);
+
+		});
+
+		socket.on("notification", (payload) => {
+			if (payload.type === "game_invite") {
+				toast({
+					title: "Game Invite",
+					message: "Someone invited you to a game 🎮",
+					type: "is-info"
+				});
+			}
+
+			if (payload.type === "game_started") {
+				toast({
+					title: "Game Started",
+					message: "A game session has started 🚀",
+					type: "is-success"
+				});
+			}
+		});
+
+		const invalidateChatInfo = () => {
+			queryClient.invalidateQueries({ queryKey: ["chat-info", chatId] });
+		};
+
+		//SEND
+		const onMessageCreated = () => {
+	
+			//let the backend decide what you’re allowed to see
+			queryClient.invalidateQueries({ queryKey: ["chat-messages", chatId] });
+			// queryClient.setQueryData(["chat-messages", chatId], (cache: any[] | undefined) => {
+			// 	if (!cache)
+			// 		return [message];
+			// 	return [...cache, message];
+			// });
+		};
+
+		//EDIT
+		const onMessageEdited = (message: any) => {
+			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] = []) => {
+				return cache.map(msg => msg.messageId === message.messageId ? message : msg);
+			});
+		};
+
+		//DELETE
+		const onMessageDeleted = (message: any) => {
+			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] = []) => {
+				return cache.map(msg => msg.messageId === message.messageId 
+					? {...msg, status: "deleted", deletedAt: message.deletedAt }
+					: msg
+				);
+				// cache.filter(msg => msg.messageId !== message.messageId);
+			});
+		};
+
+
+		//MODERATED
+		const onMessageModerated = (message: any) => {
+			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] = []) => {
+				return cache.map(msg => msg.messageId === message.messageId 
+					? {...msg, status: "moderated", deletedAt: message.deletedAt }
+					: msg
+				);
+			});
+		};
+
+		//RESTORE
+		const onMessageRestored = (message: any) => {
+			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] = []) => {
+				return cache.map(msg => msg.messageId === message.messageId 
+					? {...msg, status: "posted"}
+					: msg
+				);
+			});
+		};
+
+		socket.on("chat_message_created", onMessageCreated);
+		socket.on("chat_message_edited", onMessageEdited);
+		socket.on("chat_message_deleted", onMessageDeleted);
+		socket.on("chat_message_moderated", onMessageModerated);
+		socket.on("chat_message_restored", onMessageRestored);
+
+		socket.on("chat_member_joined", invalidateChatInfo);
+		socket.on("chat_member_left", invalidateChatInfo);
+		socket.on("chat_member_kicked", invalidateChatInfo);
+		socket.on("chat_member_role_changed", invalidateChatInfo);
+		socket.on("chat_disbanded", invalidateChatInfo);
+
+
+		return () => {
+			//socket.off("chat_receipt_update");
+			socket.off("chat_read_updated");
+			socket.off("notification");
+
+			socket.off("chat_message_created", onMessageCreated);
+			socket.off("chat_message_edited", onMessageEdited);
+			socket.off("chat_message_deleted", onMessageDeleted);
+			socket.off("chat_message_moderated", onMessageModerated);
+			socket.off("chat_message_restored", onMessageRestored);
+
+			socket.off("chat_member_joined", invalidateChatInfo);
+			socket.off("chat_member_left", invalidateChatInfo);
+			socket.off("chat_member_kicked", invalidateChatInfo);
+			socket.off("chat_member_role_changed", invalidateChatInfo);
+			socket.off("chat_disbanded", invalidateChatInfo);
+		}
+
+	}, [socket, chatId, queryClient]);
+}
+
+===== ./hooks/useChatMessages.ts =====
+import { useQuery } from "@tanstack/react-query";
+import api from "../../serverApi";
+import type { GetResponse } from "../../types/GetType";
+import { useChat } from "../ChatContext";
+
+type ChatMessagesResponse = GetResponse<"/chat/{chatId}/messages", "get">;
+
+//GET CHAT MESSAGES
+export function useChatMessages(chatId?: string) {
+	
+	const { role } = useChat();
+
+	const query = useQuery({
+		queryKey: ["chat-messages", chatId],
+		queryFn: async () => {
+			const res = await api.get<ChatMessagesResponse>(`/chat/${chatId}/messages`);
+			return res.data;
+		},
+	enabled: !!chatId
+	});
+
+	const allMessages = query.data ?? [];
+
+	const messages = 
+	["owner", "admin", "moderator"].includes(role ?? "")
+		? allMessages // moderators and above see everything
+		: allMessages.filter(m => m.status === "posted" || m.status === "edited"); // members/writers see only posted
+
+	return {
+		...query,
+		messages
+		// messages: (query.data ?? []).filter(m => m.status !== "deleted")
+		//dont show deleted message
+		// need to work on this for not showing deleted and moderated messages ONLY for members and writers
+	};
+}
+
+export function useChatReadState(chatId: string) {
+	return useQuery<Record<string, string>>({
+		queryKey: ["chat-read-state", chatId],
+		initialData: {}
+	});
+}
+===== ./hooks/useGroupChatMutations.ts =====
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useChat } from "../ChatContext";
+import api from "../../serverApi";
+import { useMessagesMutations } from "./useMessagesMutations";
+import toast from '../../Notifications.tsx';
+
+export function useGroupChatMutations(chatId?: string) {
+
+	const { joinChat, leaveChat } = useChat();
+	const { sendMessageMutation } = useMessagesMutations(chatId);
+
+	const queryClient = useQueryClient();
+
+	const kickMutation = useMutation({
+		mutationFn: async (memberId: string) => {
+			await api.post(`/group/${chatId}/kick/${memberId}`);
+		},
+		onSuccess: () => {
+			// Refresh chat info so the kicked member disappears
+			joinChat(chatId!);
+			toast({ title: "Member kicked", type: "is-success" });
+				queryClient.invalidateQueries({
+				queryKey: ["chat-info", chatId]
+			});
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
+		}
+	});
+
+	const quitChatMutation = useMutation({
+		mutationFn: async () => {
+			await api.post(`/group/${chatId}/quit`);
+		},
+		onSuccess: () => {
+			// Refresh chat info so the kicked member disappears
+			toast({ title: "You succesfully quitted chat", type: "is-success" });
+			leaveChat();
+			window.location.href = "/chat/list";
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
+		}
+	});
+
+	const disbandMutation = useMutation({
+		mutationFn: async () => {
+			await api.post(`/group/${chatId}/disband`);
+		},
+		onSuccess: () => {
+			// Refresh chat info so the kicked member disappears
+			toast({ title: "Chat succesfully disbanded", type: "is-success" });
+			leaveChat();
+			window.location.href = "/chat/list";
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
+		}
+	});
+
+	const gameInviteMutation = useMutation({
+		mutationFn: async () => {
+			const result = await api.get("/room/me");
+			const  roomId = result.data.roomId;
+
+			await api.post(`/room/${roomId}/attach-chat`, { chatId });
+			const content = `Join my game 🎮 http://localhost:5173/join/${roomId}`;
+			return sendMessageMutation.mutateAsync(content);
+		},
+		onSuccess: () => {
+			toast({ title: `Game invite sent`, type: "is-info" });
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
+		}
+	});
+
+	return { kickMutation, quitChatMutation, disbandMutation, gameInviteMutation };
+}
+===== ./hooks/useChatRoleMutations.ts =====
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "../../serverApi";
+import toast from "../../Notifications";
+
+export function useChatRoleMutation(chatId?: string) {
+
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: async ({ memberId, role }: { memberId: string; role: string }) => {
+			await api.patch(`/group/${chatId}/role/${memberId}`, { role });
+		},
+		onSuccess: () => {
+			toast({ title: "Role succesfully updated", type: "is-success" });
+			queryClient.invalidateQueries({ queryKey: ["chat-info", chatId] });
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
+		}
+	});
+}
+===== ./hooks/useChatList.ts =====
+import { useQuery } from "@tanstack/react-query";
+import api from "../../serverApi";
+
+export function useChatList() {
+  return useQuery({
+    queryKey: ["chat-list"],
+    queryFn: async () => {
+      const res = await api.get("/chat/list");
+      return res.data;
+    }
+  });
+}
+
+===== ./hooks/useMessagesMutations.ts =====
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "../../serverApi";
+import toast from "../../Notifications";
+
+export function useMessagesMutations(chatId?: string) {
+
+	const queryClient = useQueryClient();
+
+	const invalidate = () =>
+	queryClient.invalidateQueries({ queryKey: ["chat-messages", chatId] });
+
+	return {
+		//SEND MESSAGE MUTATION
+		sendMessageMutation: useMutation({
+			mutationFn: (content: string) =>
+			api.post(`/chat/${chatId}`, { content, type: "game_invite" }),
+			onSuccess: invalidate, //mark cache as old (potentially updated) and update refetch it
+			onError: (error: Error) => {
+				toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
+			}
+		}),
+
+		//DELETE MESSAGE (only by message author, admin use MODERATE action)
+		deleteMessageMutation: useMutation({
+			mutationFn: (messageId: string) =>
+			api.delete(`/chat/${chatId}/message/${messageId}`),
+			onSuccess: invalidate
+		}),
+
+		//EDIT MESSAGE
+		editMessageMutation: useMutation({
+			mutationFn: ({ messageId, content }: any) =>
+			api.patch(`/chat/${chatId}/message/${messageId}/edit`, { content }),
+			onSuccess: invalidate,
+			onError: (error: Error) => {
+				toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
+			}
+		}),
+
+		//MODERATE MESSAGE
+		moderateMessageMutation: useMutation({
+			mutationFn: (messageId: string) =>
+			api.patch(`/chat/${chatId}/message/${messageId}/moderate`),
+			onSuccess: invalidate,
+			onError: (error: Error) => {
+				toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
+			}
+		}),
+
+		//RESTORE MESSAGE
+		restoreMessageMutation: useMutation({
+			mutationFn: (messageId: string) =>
+			api.patch(`/chat/${chatId}/message/${messageId}/restore`),
+			onSuccess: invalidate,
+			onError: (error: Error) => {
+				toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
+			}
+		})
+	};
+}
+
+===== ./ChatList.tsx =====
+import { useQuery } from '@tanstack/react-query';
+import '../App.css'
+import type { GetResponse } from '../types/GetType'
+import api from '../serverApi';
+import { Box } from '@allxsmith/bestax-bulma';
+import { Link, useNavigate } from 'react-router';
+// import { useAuth } from '../auth/AuthContext';
+
+type ChatListResponseType = GetResponse<"/chat/list", "get">;
+
+// const { user } = useAuth();
+
+const ChatList = ({ onSelectChat }: { onSelectChat?: (id: string) => void }) => {
+	
+	const navigate = useNavigate();
+
+	const { data, isLoading, isError, error } = useQuery({
+		queryKey: ['chat-list'],
+		queryFn: async () => {
+			const res = await api.get<ChatListResponseType>("/chat/list");
+			return res.data;
+		}
+	});
+
+	if (isLoading)
+		return <div>Loading chats...</div>;
+	if (isError || !data)
+		return <div>Error: {error?.message}</div>;
+
+	return (
+		<Box m="4" p="6" bgColor="white">
+			<h1 className="title">Your chats</h1>
+
+			{/* CREATE GROUP CHAT BUTTON */}
+			<Link
+				to="/chat/group/new"
+				className="button is-primary is-small mb-4"
+			>
+			Create Group Chat
+			</Link>
+
+			<Link
+				to="/group/invitations" className="button is-small is-warning"
+			>
+			Group Chat Invitations
+			</Link>
+
+
+			{/* LIST CHATS */}
+			{data.length === 0 && <p>You have no chats yet.</p>}
+
+			{data.map(chat => (
+			<Box key={chat.chatId} className="box" m="2" p="4">
+				<h2 className="subtitle">
+				{chat.chatName || (chat.chatType === "private" ? "Private chat" : "Group chat")}
+				</h2>
+
+				<p>Type: {chat.chatType}</p>
+				<p>Members: {chat.members.length}</p>
+
+				{/* <Link
+					to={`/chat/${chat.chatId}/info`}
+					className="button is-dark is-small mt-2"
+				>
+				Open chat
+				</Link> */}
+
+				<button
+				className="button is-dark is-small mt-2"
+				onClick={() => {
+					if (onSelectChat)
+						onSelectChat(chat.chatId);
+					else
+						navigate(`/chat/${chat.chatId}/info`);
+				}}
+				>
+				Open chat
+				</button>
+
+{/* 
+				{chat.chatType === "group" && user?.role !== "owner" && (
+					<button
+						className="button is-warning is-light is-small ml-2"
+						// onClick={() => quitMutation.mutate(chat.chatId)}
+					>
+						Quit
+					</button>
+				)} */}
+
+			</Box>
+			))}
+		</Box>
+		);
+};
+
+export default ChatList;
+
+===== ./components/ChatTypingIndicator.tsx =====
+// type TypingIndicatorProps = { typingUsers: Record<string, string>; };
+
+// export function TypingIndicator({ typingUsers }: TypingIndicatorProps) {
+
+// 	const names = Object.values(typingUsers);
+
+// 	if (names.length === 0)
+// 		return null;
+
+// 	return (
+// 	<p className="has-text-grey mt-2">
+// 		{names.join(", ")} typing…
+// 	</p>
+// 	);
+// }
+
+type TypingIndicatorProps = { isTyping: boolean };
+
+export function TypingIndicator({ isTyping }: TypingIndicatorProps) {
+	if (!isTyping)
+		return null;
+
+	return (
+		<p className="has-text-grey mt-2">
+			Someone is typing…
+		</p>
+	);
+}
+
+
+===== ./components/InviteToGroupChat.tsx =====
+import { useQuery, useMutation } from "@tanstack/react-query";
+import api from "../../serverApi";
+import { Box } from "@allxsmith/bestax-bulma";
+import { useAuth } from "../../auth/AuthContext";
+import { useParams } from "react-router";
+
+type Props = {
+	chatId?: string;
+	existingMembers?: any[];
+};
+
+export function InviteToGroupChat({
+	chatId: propChatId,
+	existingMembers = []
+}: Props) {
+
+	const params = useParams();
+	const chatId = propChatId ?? params.chatId;
+
+	const { user } = useAuth();
+
+	// Fetch friends
+	const { data: friends, isLoading } = useQuery({
+		queryKey: ["friends"],
+		queryFn: async () => {
+		const res = await api.get("/friends/list");
+		const friendships = res.data;
+
+		return friendships.map((f: any) =>
+			f.sender.appUserId === user?.id ? f.receiver : f.sender
+		);
+		}
+	});
+
+	//fetch all chat invitations
+	const { data: invitations } = useQuery({
+		queryKey: ["group-invitations"],
+		queryFn: async () => {
+		const res = await api.get("/group/invitations");
+		return res.data;
+		}
+	});
+
+	//invite friends to join chat mutation
+	const inviteMutation = useMutation({
+		mutationFn: async (friendId: string) => {
+			await api.post(`/group/${chatId}/invite/${friendId}`);
+		}
+	});
+
+	if (isLoading || !friends || !invitations)//check if correct to return if no friends
+		return null;
+
+	//check if friends are already chat members
+	const existingIds = existingMembers?.map((m: any) => m.user.appUserId);
+	const eligibleFriends = friends.filter(
+		(f: any) => !existingIds.includes(f.appUserId)
+	);
+
+	//check if friends already received invite to join chat
+	const pendingInvites = invitations.filter( (inv: any) => 
+		inv.chatId === chatId && inv.status === "waiting" );
+
+	if (eligibleFriends.length === 0)
+		return (
+		<Box className="box mt-4">
+			<strong>No friends available to invite.</strong>
+		</Box>
+		);
+
+	return (
+		<Box className="box mt-4">
+		<strong>Invite Friends to Join Group</strong>
+
+		{eligibleFriends.map((f: any) => {
+			const isPending = pendingInvites.some(
+			(inv: any) => inv.receiver.appUserId === f.appUserId
+			);
+		
+		return (
+			<div key={f.appUserId} className="mt-2">
+			{f.username}
+
+			{
+				isPending ? (
+				<button className="button is-small is-light ml-2" disabled>
+					Invite already pending
+				</button>
+
+				) : (
+
+				<button
+				className="button is-small is-primary ml-2"
+				onClick={() => inviteMutation.mutate(f.appUserId)}
+				>
+				Invite
+				</button>
+				)}
+			</div>
+			);
+		})}
+		</Box>
+	);
+}
+
+===== ./components/ChatInput.tsx =====
+import { useState } from "react";
+import { useTyping } from "../hooks/useTyping";
+
+//SEND MESSAGE
+type ChatInputProps = {
+	onSend: (content: string) => void;
+	chatId: string | undefined;
+}
+
+export function ChatInput({ onSend, chatId }: ChatInputProps) {
+
+	const [content, setContent] = useState("");
+	const { emitTypingEffect } = useTyping(chatId);
+
+	const send = () => {
+		if (content.trim() === "")
+			return;
+		onSend(content);
+		setContent("");
+	};
+
+	return (
+		<div className="field has-addons">
+			<div className="control is-expanded">
+			<input
+				className="input"
+				type="text"
+				placeholder="Write a message..."
+				value={content}
+				onChange={(e) => {
+					setContent(e.target.value);
+					emitTypingEffect();
+				}}
+			/>
+			</div>
+
+			<div className="control">
+			<button className="button is-dark" onClick={send}>
+				Send
+			</button>
+			</div>
+		</div>
+	);
+}
+
+===== ./components/GroupChatCreation.tsx =====
+import { useMutation, useQuery } from "@tanstack/react-query";
+import api from "../../serverApi";
+import { useNavigate } from "react-router";
+import { useState } from "react";
+import { Box } from "@allxsmith/bestax-bulma";
+import { useAuth } from "../../auth/AuthContext";
+import toast from "../../Notifications";
+
+export default function GroupChatCreation() {
+
+	const navigate = useNavigate();
+	const [name, setName] = useState("");
+	const [selected, setSelected] = useState<string[]>([]);
+	const { user } = useAuth();
+
+	//fetch friends
+	const { data: friends } = useQuery({
+		queryKey: ["friends"],
+		queryFn: async () => {
+			const res = await api.get("/friends/list");
+			const friendships = res.data;
+
+			return friendships.map((f: any) =>
+				f.sender.appUserId === user?.id ? f.receiver : f.sender);
+			}
+		});
+
+	const createGroupMutation = useMutation({
+		mutationFn: async () => {
+			const result = await api.post("/chat/group/new", {
+				name,
+				memberIds: selected
+			})
+			return result.data;
+		},
+		onSuccess: (chat) => {
+			toast({ title: "Group succesfully created", type: "is-success" });
+			navigate(`/chat/${chat.chatId}/info`);
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
+		}
+	});
+
+	 if (!friends)
+		return <div>Loading friends...</div>; 
+
+	return (
+		<Box m="4" p="6" bgColor="white">
+			<h1 className="title">Create Group Chat</h1>
+
+			<div className="field">
+			<label className="label">Group Name</label>
+			<input
+				className="input"
+				value={name}
+				onChange={(e) => setName(e.target.value)}
+				placeholder="please enter an awesome group name"
+			/>
+			</div>
+
+			<div className="field">
+			<label className="label">Select Members</label>
+			{friends?.map((f: any) => (
+				<label key={f.appUserId} className="checkbox is-block">
+				<input
+					type="checkbox"
+					checked={selected.includes(f.appUserId)}
+					onChange={() => {
+						setSelected((prev) =>
+							prev.includes(f.appUserId)
+							? prev.filter((id) => id !== f.appUserId)
+							: [...prev, f.appUserId]
+						);
+					}}
+				/>
+				<span className="ml-2">{f.username}</span>
+				</label>
+			))}
+			</div>
+
+			<button
+				className="button is-primary mt-4"
+				onClick={() => createGroupMutation.mutate()}
+			>
+			Create Group Chat
+			</button>
+		</Box>
+	);
+}
+===== ./components/SidebarChat.tsx =====
+import { useEffect, useState } from "react";
+import ChatList from "../ChatList";
+import ChatView from "../ChatView";
+
+export function SidebarChat() {
+  const [activeChatId, setActiveChatId] = useState<string | null>(null);
+  const [collapsed, setCollapsed] = useState(false);
+
+  // RESIZING
+  const [width, setWidth] = useState(350);
+  const [resizing, setResizing] = useState(false);
+
+  function startResize() {
+    setResizing(true);
+  }
+
+  function onResize(e: MouseEvent) {
+    if (!resizing) return;
+
+    // Sidebar is on the RIGHT → width = windowWidth - mouseX
+    const newWidth = window.innerWidth - e.clientX;
+
+    // Clamp between 200 and 600
+    setWidth(Math.min(600, Math.max(200, newWidth)));
+  }
+
+  function stopResize() {
+    setResizing(false);
+  }
+
+  useEffect(() => {
+    window.addEventListener("mousemove", onResize);
+    window.addEventListener("mouseup", stopResize);
+    return () => {
+      window.removeEventListener("mousemove", onResize);
+      window.removeEventListener("mouseup", stopResize);
+    };
+  }, [resizing]);
+
+  return (
+    <div
+      style={{
+        width: collapsed ? "45px" : `${width}px`,
+        transition: collapsed ? "width 0.25s ease" : "none",
+        height: "100vh",
+        borderLeft: "2px solid #ccc",
+        background: "white",
+        display: "flex",
+        flexDirection: "column",
+        overflowY: "auto",
+        overflowX: "hidden"
+
+      }}
+    >
+      {/* COLLAPSE BUTTON */}
+      <button
+        onClick={() => setCollapsed(!collapsed)}
+        style={{
+          position: "absolute",
+          left: "-40px",
+          top: "20px",
+          width: "40px",
+          height: "40px",
+          borderRadius: "8px 0 0 8px",
+          border: "1px solid #ccc",
+          background: "#68d3b1",
+          cursor: "pointer",
+          zIndex: 20
+        }}
+      >
+        {collapsed ? "⮜" : "⮞"}
+      </button>
+
+      {/* RESIZE HANDLE (only when expanded) */}
+      {!collapsed && (
+        <div
+          onMouseDown={startResize}
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            width: "6px",
+            height: "100%",
+            cursor: "ew-resize",
+            zIndex: 15
+          }}
+        />
+      )}
+
+      {/* CONTENT */}
+      {!collapsed && !activeChatId && (
+        <ChatList onSelectChat={(id) => setActiveChatId(id)} />
+      )}
+
+      {!collapsed && activeChatId && (
+        <ChatView
+          chatId={activeChatId}
+          onClose={() => setActiveChatId(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+===== ./components/ChatMessageList.tsx =====
+import { Box } from "@allxsmith/bestax-bulma";
+import { Link, useNavigate } from "react-router";
+import { useAuth } from "../../auth/AuthContext";
+
+type Message = {
+	messageId: string;
+	chatId: string;
+	userId: string;
+	content: string;
+	status: string;
+	type: string;
+	postedAt: string | null;
+	editedAt?: string | null;
+	deletedAt?: string | null;
+	author: {
+		appUserId: string;
+		username: string;
+		avatarUrl?: string | null;
+		availability?: string | null;
+	};
+};
+
+type MessageListProps = {
+	messages: Message[];
+	readState?: Record<string, string>;
+	role: string | null;
+	permissions: Record<string, boolean>;
+	onEdit: (data: { messageId: string; content: string }) => void;
+	onDelete: (messageId: string) => void;
+	onModerate: (messageId: string) => void;
+	onRestore: (messageId: string) => void;
+};
+
+function isMessageRead(
+	messageId: string,
+	readState?: Record<string, string>
+) {
+	if (!readState)
+		return false;
+
+	return Object.values(readState).some(
+		lastId => lastId === messageId
+	);
+}
+
+function buildReadersByMessage(
+	messages: Message[],
+	readState?: Record<string, string>
+) {
+	if (!readState)
+		return {};
+
+	const indexMap = new Map(
+		messages.map((m, i) => [m.messageId, i])
+	);
+
+	const result: Record<string, string[]> = {};
+
+	for (const [userId, lastId] of Object.entries(readState)) {
+		const lastIndex = indexMap.get(lastId);
+		if (lastIndex === undefined)
+			continue;
+
+		for (let i = 0; i <= lastIndex; i++) {
+			const msgId = messages[i].messageId;
+
+			if (!result[msgId])
+				result[msgId] = [];
+
+			result[msgId].push(userId);
+		}
+	}
+
+	return result;
+}
+
+export function MessageList({
+	messages,
+	// role,
+	readState,
+	permissions,
+	onEdit,
+	onDelete,
+	onModerate,
+	onRestore
+}: MessageListProps) {
+
+	const { user } = useAuth();
+	const navigate = useNavigate();
+
+	if (!messages || messages.length === 0)
+		return null;
+
+	const readersByMessage = buildReadersByMessage(messages, readState);
+
+	return (
+	<>
+		{messages?.map(msg => {
+
+			const read = isMessageRead(msg.messageId, readState);
+			const readers = readersByMessage[msg.messageId] || [];
+
+			// GAME INVITE MESSAGE
+			// if (msg.content.includes("/join/")) {
+			if (msg.type === "game_invite") {
+				const match = msg.content.match(/\/join\/([^\/\s]+)/);
+				const roomId = match ? match[1] : null;
+
+				return (
+					<Box className="box" m="2" p="3">
+					<p><strong>{msg.author.username}</strong> invites you to join a game 🎮</p>
+
+					{/* Join button */}
+					<button
+						className="button is-primary is-small mt-2"
+						onClick={() => navigate(`/join/${roomId}`)}
+					>
+						Join Room
+					</button>
+					<> 
+						{/* DISPLAY MESSAGES & DATE*/}
+						<small>
+							{msg.postedAt ? new Date(msg.postedAt).toLocaleString() : ""}
+						</small>
+
+						{/* AUTHOR ACTIONS */}
+						{msg.userId === user?.id && msg.status === "posted" && (
+							<button
+								className="button is-danger is-small mt-2"
+								onClick={() => onDelete(msg.messageId)}
+							>
+								Delete
+							</button>
+						)}
+
+						{/* MODERATOR ACTIONS */}
+						{permissions.canModerate && (
+							<>
+							{msg.status !== "moderated" && (
+								<button
+								className="button is-danger is-small mt-2 ml-2"
+								onClick={() => onModerate(msg.messageId)}
+								>
+								Moderate
+								</button>
+							)}
+
+							{msg.status === "moderated" && (
+								<button
+								className="button is-success is-small mt-2 ml-2"
+								onClick={() => onRestore(msg.messageId)}
+								>
+								Restore
+								</button>
+							)}
+							</>
+						)}
+					</>
+					</Box>
+				);
+			}
+
+			if (msg.type === "game_started") {
+				// const match = msg.content.match(/\/join\/([^\/\s]+)/);
+				// const roomId = match ? match[1] : null;
+
+				return (
+					<Box className="box" m="2" p="3">
+					<p><strong>{msg.author.username}</strong> 🎮 Game session is going! </p>
+
+					<> 
+						{/* DISPLAY MESSAGES & DATE*/}
+						<small>
+							{msg.postedAt ? new Date(msg.postedAt).toLocaleString() : ""}
+						</small>
+
+						{/* AUTHOR ACTIONS */}
+						{msg.userId === user?.id && msg.status === "posted" && (
+							<button
+								className="button is-danger is-small mt-2"
+								onClick={() => onDelete(msg.messageId)}
+							>
+								Delete
+							</button>
+						)}
+
+				 		{/* MODERATOR ACTIONS */}
+				 		{permissions.canModerate && (
+							<>
+							{msg.status !== "moderated" && (
+								<button
+								className="button is-danger is-small mt-2 ml-2"
+								onClick={() => onModerate(msg.messageId)}
+								>
+								Moderate
+								</button>
+							)}
+
+							{msg.status === "moderated" && (
+								<button
+								className="button is-success is-small mt-2 ml-2"
+								onClick={() => onRestore(msg.messageId)}
+								>
+								Restore
+								</button>
+							)}
+							</>
+						)}
+					</>
+					</Box>
+				);
+			}
+
+			return (
+				<Box key={msg.messageId} className="box" m="2" p="3">
+				
+				{/* ACCESS MEMBER PROFILE FROM CHAT */}
+				<strong>
+					<Link
+					to={`/profile/${encodeURIComponent(msg.author.username)}`}
+					className="has-text-dark"
+					>
+					{msg.author.username}
+					</Link>
+				</strong>
+
+				{/* DISPLAY MESSAGES & DATE*/}
+				<p>{/*msg.status === "moderated" ? "Message moderated" : */msg.content}</p>
+				<small>
+					{msg.postedAt ? new Date(msg.postedAt).toLocaleString() : ""}
+				</small>
+
+				{/* AUTHOR ACTIONS */}
+				{msg.userId === user?.id && msg.status === "posted" && (
+					<>
+					<button
+						className="button is-warning is-small mt-2"
+						onClick={() => {
+						const newContent = prompt("Edit message:", msg.content);
+						if (newContent)
+							onEdit({ messageId: msg.messageId, content: newContent });
+						}}
+					>
+						Edit
+					</button>
+
+					<button
+						className="button is-danger is-small mt-2"
+						onClick={() => onDelete(msg.messageId)}
+					>
+						Delete
+					</button>
+					</>
+				)}
+
+				{/* MODERATOR ACTIONS */}
+				{permissions.canModerate && (
+					<>
+					{msg.status !== "moderated" && (
+						<button
+						className="button is-danger is-small mt-2 ml-2"
+						onClick={() => onModerate(msg.messageId)}
+						>
+						Moderate
+						</button>
+					)}
+
+					{msg.status === "moderated" && (
+						<button
+						className="button is-success is-small mt-2 ml-2"
+						onClick={() => onRestore(msg.messageId)}
+						>
+						Restore
+						</button>
+					)}
+					</>
+				)}
+
+				
+				{/* READ RECEIPTS */}
+				{read && (
+					<span style={{ marginLeft: 8, color: "#4fc3f7" }}>
+						✓✓
+					</span>
+				)}
+				{msg.userId === user?.id && readers.length > 0 && (
+					<div style={{ fontSize: "0.75rem", opacity: 0.7 }}>
+						Seen by {readers.length}
+					</div>
+				)}
+
+				</Box>
+			);
+		})}
+	</>
+	);
+}
+
+===== ./components/GroupChatInvitations.tsx =====
+import { useQuery, useMutation } from "@tanstack/react-query";
+import api from "../../serverApi";
+import { Box } from "@allxsmith/bestax-bulma";
+import { useAuth } from "../../auth/AuthContext";
+import toast from "../../Notifications";
+
+// Fetch all chat invitations (pending and not pending at now)
+export default function GroupChatInvitations() {
+
+	const { user } = useAuth();
+
+	//get all invitations
+	const { data: invitations } = useQuery({
+		queryKey: ["group-invitations"],
+		queryFn: async () => {
+			const res = await api.get("/group/invitations");
+			return res.data;
+		}
+	});
+
+	//accept / reject / cancel received group chat invites
+	const updateMutation = useMutation({
+		mutationFn: async ( {invId, action} : { invId: string; action: string }) => {
+			await api.post(`/group/answer/${invId}`, { action });//need to change route name, lame
+		},
+		onSuccess: () => {
+			toast({ title: "Chat invitation succesfully updated", type: "is-success" });
+			window.location.reload();
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
+		}
+	});
+
+	if (!invitations)
+		return <div>Loading...</div>;
+
+	return (
+		<Box m="4" p="6" bgColor="white">
+			<h1 className="title">Group Invitations</h1>
+
+			{invitations.length === 0 && <p>No invitations.</p>}
+
+			{invitations.map((inv: any) => (
+			<Box key={inv.chatInvitationId} className="box" m="2" p="4">
+				<p><strong>Group:</strong> {inv.chat.chatName}</p>
+				<p><strong>From:</strong> {inv.sender.username}</p>
+				<p><strong>To:</strong> {inv.receiver.username}</p>
+				<p><strong>Status:</strong> {inv.status}</p>
+
+
+				{/* RECEIVED INVITATION */}
+				{inv.receiver.appUserId === user?.id && inv.status === "waiting" && (
+					<>
+					<button
+						className="button is-success is-small mt-2 mr-2"
+						onClick={() =>
+							updateMutation.mutate({
+								invId: inv.chatInvitationId,
+								action: "accept"
+							})
+						}
+					>
+						Accept
+					</button>
+
+					<button
+						className="button is-danger is-small mt-2"
+						onClick={() =>
+						updateMutation.mutate({
+							invId: inv.chatInvitationId,
+							action: "reject"
+						})
+						}
+					>
+						Reject
+					</button>
+					</>
+				)}
+
+				{/* SENT INVITATION */}
+				{inv.sender.appUserId === user?.id && inv.status === "waiting" && (
+					<>
+					<button className="button is-light is-small mt-2 mr-2" disabled>
+						Pending
+					</button>
+
+					<button
+						className="button is-warning is-small mt-2"
+						onClick={() =>
+						updateMutation.mutate({
+							invId: inv.chatInvitationId,
+							action: "cancel"
+						})
+						}
+					>
+						Cancel
+					</button>
+					</>
+				)}
+			</Box>
+			))}
+		</Box>
+	);
+}
+
+===== ./components/ChatMembers.tsx =====
+import { useState } from "react";
+import { useAuth } from "../../auth/AuthContext";
+import { useChat } from "../ChatContext";
+import { useChatRoleMutation } from "../hooks/useChatRoleMutations";
+import { useGroupChatMutations } from "../hooks/useGroupChatMutations";
+import { useChatInfo } from "../hooks/useChatInfo";
+
+export function ChatMembers({chatId}) {
+
+	const { data: chat } = useChatInfo(chatId);
+	const { /*chat,*/ permissions } = useChat();
+	const { user } = useAuth();
+
+	const roleMutation = useChatRoleMutation(chatId);
+	const {kickMutation} = useGroupChatMutations(chatId);
+
+	 const [open, setOpen] = useState(false); 
+
+	if (!chat)
+		return null; //<div>Loading chat...</div>;
+
+	return (
+		<div className="mb-4">
+		{/* HEADER */}
+			<div onClick={() => setOpen(!open)}
+				style={{
+					cursor: "pointer",
+					fontWeight: "bold",
+					display: "flex",
+					alignItems: "center",
+					userSelect: "none",
+					marginBottom: "6px"
+				}}
+			>
+				<span style={{ marginRight: "6px" }}>
+					{open ? "▼" : "▶"}
+				</span>
+					Members ({chat.members.length})
+			</div>
+
+			{open && (<ul>
+				{chat.members.map((m: any) => (
+				<li key={m.chatMemberId} className="mb-1">
+					{m.user.username} - <em>{m.role}</em>
+
+					{permissions.canChangeRoles && m.user.appUserId !== user?.id && (
+					<select
+						className="ml-2"
+						value={m.role}
+						onChange={(e) =>
+							roleMutation.mutate({
+								memberId: m.user.appUserId,
+								role: e.target.value
+							})
+						}
+					>
+						<option value="owner">Owner</option>
+						<option value="admin">Admin</option>
+						<option value="moderator">Moderator</option>
+						<option value="writer">Writer</option>
+						<option value="member">Member</option>
+					</select>
+					)}
+
+					{/* KICK MEMBER */}
+					{permissions.canKick && m.user.appUserId !== user?.id && (
+						<button
+							className="button is-danger is-light is-small ml-2"
+							onClick={() => kickMutation.mutate(m.user.appUserId)}
+						>
+							Kick
+						</button>
+					)}
+				</li>
+				))}
+			</ul>
+			)}
+		</div>
+	);
+}
+===== ./components/ChatRoom.tsx =====
+import { useEffect, useRef } from "react";
+import { useChat } from "../ChatContext";
+import { useChatMessages, useChatReadState } from "../hooks/useChatMessages";
+import { useMessagesMutations } from "../hooks/useMessagesMutations";
+import { ChatInput } from "./ChatInput";
+import { MessageList } from "./ChatMessageList";
+import { TypingIndicator } from "./ChatTypingIndicator";
+import { useSocket } from "../../socket/SocketContext";
+import { useChatSocket } from "../hooks/useChatSocket";
+
+export function ChatRoom({ chatId }: {chatId: string}) {
+
+	useChatSocket(chatId);
+	const {permissions, role, isTyping} = useChat();
+	const {messages} = useChatMessages(chatId);
+	const mutations = useMessagesMutations(chatId);
+	const bottomRef = useRef<HTMLDivElement>(null);
+
+	const { data: readState } = useChatReadState(chatId);
+
+	const socket = useSocket();
+
+	useEffect(() => {
+		const element = bottomRef.current;
+		if (!element)
+			return;
+
+		element.parentElement!.scrollTo({
+			top: element.parentElement!.scrollHeight,
+			behavior: "smooth"
+		});
+
+	}, [messages]);
+
+	// read receipt
+	useEffect(() => {
+		if (!messages.length || !socket)
+			return;
+
+		const last = messages[messages.length - 1];
+
+		socket?.emit("chat_read", {
+			chatId,
+			lastMessageId: last.messageId
+		});
+
+	}, [messages , socket, chatId ]);
+
+	// // Emit read receipt
+	// useEffect(() => {
+	// 	if (!messages.length)
+	// 		return;
+		
+	// 	const lastMessage = messages[messages.length - 1];
+		
+	// 	socket?.emit("chat_receipt", {
+	// 		chatId,
+	// 		messageId: lastMessage.messageId
+	// 	});
+	// }, [messages, chatId, socket]); 
+
+	return (
+		<>
+			<div style={{
+				height: "60vh",
+				overflowY: "auto",
+				paddingRight: "8px",
+				position: "relative"
+			}}
+			>
+				<MessageList
+					messages={messages}
+					readState={readState}
+					role={role}
+					permissions={permissions}
+					onEdit={mutations.editMessageMutation.mutate}
+					onModerate={mutations.moderateMessageMutation.mutate}
+					onDelete={mutations.deleteMessageMutation.mutate}
+					onRestore={mutations.restoreMessageMutation.mutate}
+				/>
+
+				<div ref={bottomRef} />
+			</div>
+
+			{/* <TypingIndicator typingUsers={typingUsers} /> */}
+			<TypingIndicator isTyping={isTyping} />
+
+			<ChatInput
+				chatId={chatId}
+				onSend={mutations.sendMessageMutation.mutate}
+			/>
+		</>
+	);
+}
+===== ./ChatView.tsx =====
+import { useParams } from "react-router"
+import { useEffect } from "react";
+import { useChat } from "./ChatContext";
+import { useChatMessages } from "./hooks/useChatMessages";
+import { Box } from "@allxsmith/bestax-bulma";
+
+import { useChatSocket } from "./hooks/useChatSocket";
+import { useGroupChatMutations } from "./hooks/useGroupChatMutations";
+import { ChatMembers } from "./components/ChatMembers";
+import { ChatRoom } from "./components/ChatRoom";
+import { InviteToGroupChat } from "./components/InviteToGroupChat";
+import { useChatInfo } from "./hooks/useChatInfo";
+
+// const ChatView = () => {
+const ChatView = ({ chatId: propChatId, onClose }: {
+	chatId?: string;
+	onClose?: () => void;
+}) => {
+	const params = useParams();
+	const chatId = propChatId ?? params.chatId;
+	const { data: chat } = useChatInfo(chatId);
+
+	const { /*chat,*/ role, joinChat } = useChat();
+
+	const { isLoading, isError } = useChatMessages(chatId);
+	const { quitChatMutation, disbandMutation, gameInviteMutation } = useGroupChatMutations(chatId);
+
+	useChatSocket(chatId);
+
+	//join new chat add each chatId change
+	useEffect(() => {
+		if (chatId)
+			joinChat(chatId);
+	}, [chatId]);
+
+
+	if (isLoading)
+		return <div>Loading chat...</div>;
+
+	if (!chat)
+		return <div>Chat Not Found</div>;
+
+	if (isError)
+		return <div>Error loading chat</div>;
+
+	//console.log("chatInfo:", chat);
+
+	return (
+		<Box m="4" p="6" bgColor="white">
+
+			{onClose && (
+				<button
+					className="button is-light is-small mb-3"
+					onClick={onClose}
+				>
+				Back to chats
+				</button>
+			)}
+
+			<h1 className="title">
+				{chat.chatName || (chat.chatType === "private" ? "Private chat" : "Group chat")}
+			</h1>
+
+			<ChatMembers chatId={chatId} />
+
+			{/* GAME INVITE */}
+			<button
+				className="button is-info is-small mb-3"
+				onClick={() => gameInviteMutation.mutate()}
+			>
+			Invite to play game 🎮
+			</button>
+
+			{/* QUIT CHAT */}
+			{chat.chatType === "group" && role !== "owner" && (
+				<button
+					className="button is-warning is-small mb-3"
+					onClick={() => quitChatMutation.mutate()}
+				>
+					Quit Group Chat
+				</button>
+			)}
+
+			{/* DISBAND CHAT */}
+			{chat.chatType === "group" && role === "owner" && (
+				<button
+					className="button is-danger is-small mb-3"
+					onClick={() => disbandMutation.mutate()}
+				>
+					Disband Group Chat
+				</button>
+			)}
+
+			{/* INVITE TO JOIN GROUP CHAT */}
+			{chat.chatType === "group" &&
+				<InviteToGroupChat
+					chatId={chat.chatId}
+					existingMembers={chat.members} 
+				/>
+			}
+
+			<ChatRoom chatId={chatId!} />
+
+			{onClose && (
+				<button
+					className="button is-light is-small mb-3"
+					onClick={onClose}
+				>
+				Back to chats
+				</button>
+			)}
+
+		</Box>
+	);
+};
+export default ChatView;
+
+===== ./ChatContext.tsx =====
+import { createContext, useContext, useEffect, useState } from "react";
+import type { GetResponse } from "../types/GetType";
+import { useSocket } from "../socket/SocketContext";
+import { useAuth } from "../auth/AuthContext";
+import api from "../serverApi";
+
+type ChatInfoResponse = GetResponse<"/chat/{chatId}/info", "get">;
+
+type ChatContextValue = {
+	chat: ChatInfoResponse | null;
+	role: string | null;
+	permissions: Record<string, boolean>;
+	isTyping: boolean;
+	// blockedUsersId: string;
+	// bannedUsersId: string; //need to handle banned users
+	// typingUsers: Record<string, string>;
+	joinChat: (chatId: string) => void;
+	leaveChat: () => void;
+};
+
+const ChatContext = createContext<ChatContextValue | null>(null);
+
+export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
+	
+	const socket = useSocket();
+	const { user } = useAuth();
+
+	const [chat, setChat] = useState<ChatInfoResponse | null>(null);
+	//const [typingUsers, setTypingUsers] = useState<Record<string, string>>({});
+	const [isTyping, setIsTyping] = useState(false);
+
+	const role = chat?.members.find(mbr => mbr.user.appUserId === user?.id)?.role ?? null;
+
+	const permissions = {
+		canModerate: ["owner", "admin", "moderator"].includes(role ?? ""),
+		canInvite: ["owner", "admin", "moderator", "writer", "member"].includes(role ?? ""),
+		canBan: ["owner", "admin"].includes(role ?? ""),
+		canKick: ["owner", "admin"].includes(role ?? ""),
+		canRename: ["owner", "admin"].includes(role ?? ""),
+		canChangeRoles: ["owner", "admin"].includes(role ?? "") 
+	}
+
+	const joinChat = async(chatId: string) => {
+
+		//GET CHAT INFO
+		const res = await api.get<ChatInfoResponse>(`/chat/${chatId}/info`);
+		setChat(res.data);
+
+		if (socket)
+			socket.emit("join_chat", { chatId });
+	};
+
+	const leaveChat = async() => {
+		if (socket && chat?.chatId)
+			socket.emit("leave_chat", {chatId: chat.chatId});
+
+		setChat(null);
+		//setTypingUsers({});
+		setIsTyping(false);
+	};
+
+	useEffect(() => {
+
+		if (!socket)
+			return;
+
+		socket.on("chat_typing", ({ userId }) => {
+			if (userId === user?.id)// ignore yourself
+				return;
+
+			setIsTyping(true);
+
+			setTimeout(() => {
+				setIsTyping(false);
+			}, 3000);
+		});
+
+		// socket.on("chat_typing", ({ userId, username }) => {
+		// 	if (userId === user?.id)//show typing except for the typing user
+		// 		return;
+
+		// 	setTypingUsers(prev => ({
+		// 		...prev, [userId]: username
+		// 	}));
+
+		// 	setTimeout(() => {
+		// 		setTypingUsers(prev => {
+		// 			const copy = { ...prev };
+		// 			delete copy[userId];
+		// 			return copy;
+		// 		});
+		// 	}, 2000);
+		// });
+
+		return () => {
+			socket.off("chat_typing");
+		};
+
+	}, [socket, user]);
+
+	return ( 
+		//<ChatContext.Provider value= {{chat, role, permissions, typingUsers, joinChat, leaveChat }}></ChatContext.Provider>
+		<ChatContext.Provider value= {{chat, role, permissions, isTyping, joinChat, leaveChat }}>
+			{children}
+		</ChatContext.Provider>);
+};
+
+export const useChat = (): ChatContextValue => {
+	const ctx = useContext(ChatContext);
+	if (!ctx)
+		throw new Error("useChat must be used inside ChatProvider");
+	return ctx;
+}
+

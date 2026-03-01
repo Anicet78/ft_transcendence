@@ -1,12 +1,23 @@
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSocket } from "../../socket/SocketContext";
+import toast from "../../Notifications";
 
 //When a socket event arrives, it directly updates the React Query cache
 export function useChatSocket(chatId?: string) {
 
 	const socket = useSocket();
 	const queryClient = useQueryClient();
+
+	useEffect(() => {
+		if (!socket || !chatId) return;
+
+		socket.emit("chat_join", { chatId });
+
+		return () => {
+			socket.emit("chat_leave", { chatId });
+		};
+	}, [socket, chatId]);
 
 	useEffect(() => {
 	
@@ -23,6 +34,24 @@ export function useChatSocket(chatId?: string) {
 				})
 			);
 
+		});
+
+		socket.on("notification", (payload) => {
+			if (payload.type === "game_invite") {
+				toast({
+					title: "Game Invite",
+					message: "Someone invited you to a game 🎮",
+					type: "is-info"
+				});
+			}
+
+			if (payload.type === "game_started") {
+				toast({
+					title: "Game Started",
+					message: "A game session has started 🚀",
+					type: "is-success"
+				});
+			}
 		});
 
 		const invalidateChatInfo = () => {
@@ -96,6 +125,7 @@ export function useChatSocket(chatId?: string) {
 		return () => {
 			//socket.off("chat_receipt_update");
 			socket.off("chat_read_updated");
+			socket.off("notification");
 
 			socket.off("chat_message_created", onMessageCreated);
 			socket.off("chat_message_edited", onMessageEdited);

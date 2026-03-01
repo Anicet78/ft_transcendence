@@ -13,6 +13,7 @@ export const messageSelect = {
 	userId: true,
 	content: true,
 	status: true,
+	type: true,
 	postedAt: true,
 	editedAt: true,
 	deletedAt: true,
@@ -28,7 +29,7 @@ export const messageSelect = {
 };
 
 //SEND MESSAGE
-export async function sendMessage(chatId: string, userId: string, content: string) {
+export async function sendMessage(chatId: string, userId: string, content: string, msg_type: "text" | "game_invite" | "game_started" = "text") {
 	// 1. check if chat exists
 	const chat = await prisma.chat.findUnique({
 		where: { chatId },
@@ -90,6 +91,7 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 			chatId,
 			userId,
 			status: 'posted',
+			type: msg_type,
 			content
 		},
 		select: messageSelect

@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import Type, { type Static } from "typebox";
 import { AppErrorSchema } from "../../schema/errorSchema.js";
-import { getMyRoomController, getRoomController, hostRoomController, joinRoomController, kickRoomController, launchController, newRoomController, quitRoomController, verifyRoomController } from "../../controllers/rooms/roomController.js";
+import { attachChatController, getMyRoomController, getRoomController, hostRoomController, joinRoomController, kickRoomController, launchController, newRoomController, quitRoomController, verifyRoomController } from "../../controllers/rooms/roomController.js";
 import { RoomSchema } from "../../schema/roomSchema.js";
 import { GlobalHeadersSchema } from "../../schema/globalHeadersSchema.js";
 
@@ -134,5 +134,17 @@ fastify.post("/launch", {
 		}
 	}
 }, launchController);
+
+fastify.post("/:id/attach-chat", {
+schema: {
+	params: RoomParamsSchema,
+	body: Type.Object({
+	chatId: Type.String()
+	}),
+	response: {
+	200: RoomSchema
+	}
+}
+}, attachChatController);
 
 };

@@ -8,6 +8,7 @@ type Message = {
 	userId: string;
 	content: string;
 	status: string;
+	type: string;
 	postedAt: string | null;
 	editedAt?: string | null;
 	deletedAt?: string | null;
@@ -101,6 +102,7 @@ export function MessageList({
 
 			// GAME INVITE MESSAGE
 			if (msg.content.includes("/join/")) {
+			//if (msg.type === "game_invite") {
 				const match = msg.content.match(/\/join\/([^\/\s]+)/);
 				const roomId = match ? match[1] : null;
 
@@ -133,6 +135,57 @@ export function MessageList({
 
 						{/* MODERATOR ACTIONS */}
 						{permissions.canModerate && (
+							<>
+							{msg.status !== "moderated" && (
+								<button
+								className="button is-danger is-small mt-2 ml-2"
+								onClick={() => onModerate(msg.messageId)}
+								>
+								Moderate
+								</button>
+							)}
+
+							{msg.status === "moderated" && (
+								<button
+								className="button is-success is-small mt-2 ml-2"
+								onClick={() => onRestore(msg.messageId)}
+								>
+								Restore
+								</button>
+							)}
+							</>
+						)}
+					</>
+					</Box>
+				);
+			}
+
+			if (msg.type === "game_started") {
+				// const match = msg.content.match(/\/join\/([^\/\s]+)/);
+				// const roomId = match ? match[1] : null;
+
+				return (
+					<Box className="box" m="2" p="3">
+					<p><strong>{msg.author.username}</strong> 🎮 Game session is going! </p>
+
+					<> 
+						{/* DISPLAY MESSAGES & DATE*/}
+						<small>
+							{msg.postedAt ? new Date(msg.postedAt).toLocaleString() : ""}
+						</small>
+
+						{/* AUTHOR ACTIONS */}
+						{msg.userId === user?.id && msg.status === "posted" && (
+							<button
+								className="button is-danger is-small mt-2"
+								onClick={() => onDelete(msg.messageId)}
+							>
+								Delete
+							</button>
+						)}
+
+				 		{/* MODERATOR ACTIONS */}
+				 		{permissions.canModerate && (
 							<>
 							{msg.status !== "moderated" && (
 								<button

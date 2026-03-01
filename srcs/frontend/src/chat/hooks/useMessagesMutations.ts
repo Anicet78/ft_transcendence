@@ -13,7 +13,7 @@ export function useMessagesMutations(chatId?: string) {
 		//SEND MESSAGE MUTATION
 		sendMessageMutation: useMutation({
 			mutationFn: (content: string) =>
-			api.post(`/chat/${chatId}`, { content }),
+			api.post(`/chat/${chatId}`, { content, type: "game_invite" }),
 			onSuccess: invalidate, //mark cache as old (potentially updated) and update refetch it
 			onError: (error: Error) => {
 				toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
