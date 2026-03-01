@@ -40,25 +40,31 @@ const Home = () => {
 
 			{/* LEFT SIDE — GAME / ROOM CONTENT */}
 			<div className='game-room'>
-				{room.players.map((player) => (
-					<PlayerDropdown
-						key={player.username}
-						player={player}
-						kickFn={kickMutation.mutate}
-						hostFn={hostMutation.mutate}
-						isHost={user?.id == room.hostId}
-						isSelf={user?.id == player.id}
-					/>
-				))}
-				{room.hostId === user?.id &&
-					<NavLink to="/game" className='button launch-game is-medium'>Launch Game</NavLink>
-				}
-				<Button color='link' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={QuitRoom}>Quit room</Button>
-				<Button color='link' className='button is-dark is-medium is-outlined' aria-label='spectate button' onClick={CopyRoomUrl}>Copy invite link</Button>
+				<div className='room-players'>
+					{room.players.map((player) => (
+						<PlayerDropdown
+							key={player.username}
+							player={player}
+							kickFn={kickMutation.mutate}
+							hostFn={hostMutation.mutate}
+							isHost={user?.id == room.hostId}
+							isSelf={user?.id == player.id}
+						/>
+					))}
+				</div>
+				<div className='button-row'>
+					{room.hostId === user?.id &&
+						<NavLink to="/game" className='button launch-game is-medium'>Launch Game</NavLink>
+					}
+					<Button className='quit-button' aria-label='quit button' onClick={QuitRoom}>Quit room</Button>
+					<Button className='invite-button' aria-label='copy link button' onClick={CopyRoomUrl}>Copy invite link</Button>
+				</div>
 			</div>
 
 			{/* RIGHT SIDE — CHAT SIDEBAR */}
+			<div>
 			<SidebarChat />
+			</div>
 		</div>
 	)
 
