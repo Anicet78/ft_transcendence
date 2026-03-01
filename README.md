@@ -178,14 +178,16 @@ make
 <br>
 
 **Technical Choices Justification**
->⮕ Backend: we opted for TypeScript as the language for it's popularity and employability as well as programming efficiency. We choose Fastify because of it's popularity as well and for it's speed.
->⮕ Frontend: we opted for TypeScript was chosen as the language as well because JavaScript is by far the most popular and nearly the only way of building modern web apps. React is the most popular out of the modern frontend frameworks.
->⮕ Game: we decided to make the game in C++ and compile it in WebAssembly to run natively in the browser. SDL2 was choosen for it's minimalistic approch. However, this approch made us recode the entire game engine which was very time consuming.
->⮕ Database: opting for a SQL database ensures robust data integrity and powerful querying capabilities through a standardized, industry-proven language. PostgreSQL stands out as the best choice because it combines advanced open-source features with incredible scalability and support for complex data types.
+>**⮕ Backend:** we opted for TypeScript as the language for it's popularity and employability as well as programming efficiency. We choose Fastify because of it's popularity as well and for it's speed.
+>**⮕ Frontend:** we opted for TypeScript was chosen as the language as well because JavaScript is by far the most popular and nearly the only way of building modern web apps. React is the most popular out of the modern frontend frameworks.
+>**⮕ Game:** we decided to make the game in C++ and compile it in WebAssembly to run natively in the browser. SDL2 was choosen for it's minimalistic approch. However, this approch made us recode the entire game engine which was very time consuming.
+>**⮕ Database:** opting for a SQL database ensures robust data integrity and powerful querying capabilities through a standardized, industry-proven language. PostgreSQL stands out as the best choice because it combines advanced open-source features with incredible scalability and support for complex data types.
 
 ---
 
 ## Database Schema
+
+<!-- Update database schema -->
 
 ![Database schema image here](./images/database.png)
 
@@ -213,8 +215,6 @@ The database has been designed to maximise unique information sources, with few 
 
 ## Modules
 
-<!-- Explain custom module -->
-
 | Module                            | Type  | Justification                            | Implementation                               | Contributor(s)             |
 |:---------------------------------:|:-----:|:----------------------------------------:|:--------------------------------------------:|:--------------------------:|
 | **User interactions**             | Major | Essential for our project's scope        | Webapp pages and components                  | ndabbous                   |
@@ -235,46 +235,74 @@ The database has been designed to maximise unique information sources, with few 
 | **Custom module**                 | Major | See below                                | See below                                    | tpinton, mprokosch         |
 | **Total**                         | 26    |                                          |                                              |                            |
 
+<br>
+
+#### Module of choice
+
+**C++ game compiled in WebAssembly and integrated in the website**
+
+>* **Why we chose this module:**
+>We wanted to bridge the gap between high-performance native programming and the web. By choosing C++, we leverage a language known for its manual memory management and execution speed, providing a "gaming" experience with SDL2 that feels fluid and responsive, far beyond what standard DOM manipulation could offer.
+
+>* **What technical challenges it addresses:**
+>Integrating C++ into a web environment involves several complex layers:
+>* Engine Architecture: We didn't just code a game; we re-implemented a lightweight game engine using SDL2, managing the game state and rendering logic manually.
+>* Compilation Pipeline: Setting up Emscripten to compile C++ code into .wasm and .js glue code.
+>* Memory Management: Handling the memory bridge between the JavaScript sandbox and the WebAssembly linear memory.
+>* Cross-Language Communication: Implementing efficient "bindings" to allow JavaScript to trigger game events and vice versa.
+>* Asset Management: Loading textures or game data within the constraints of a browser's asynchronous environment.
+
+>* **How it adds value to your project:**
+>It brings native-grade performance to the web. By bypassing the limitations of JavaScript's overhead, we provide a lag-free experience with consistent frame rates. This module proves that the project can handle computationally expensive tasks (like complex collision detection or entity management) by offloading them to a highly optimized WebAssembly binary. It demonstrates a deep understanding of how software interacts with hardware, even through a browser layer.
+
+>* **Why it deserves Major module status:**
+>This isn't just a simple script; it requires a completely different development environment and toolchain compared to the rest of the stack. It solves the architectural challenge of embedding a high-performance binary within a modern web frontend without sacrificing load times or UX.
+
 ---
 
 ## Individual Contributions
 
-### <login1>
+<!-- Everyone individually fill this -->
+
+#### agruet
 
 * Implemented:
 * Modules handled:
 * Challenges faced:
 * Solutions:
 
-### <login2>
+#### ndabbous
 
 * Implemented:
 * Modules handled:
 * Challenges faced:
 * Solutions:
 
-### <login3>
+#### mprokosc
 
 * Implemented:
 * Modules handled:
 * Challenges faced:
 * Solutions:
 
----
+#### tpinton
 
-## Usage Examples (Optional)
+* Implemented:
+* Modules handled:
+* Challenges faced:
+* Solutions:
 
-Provide example API calls, screenshots, or user flows.
+#### jumichel
 
----
-
-## Known Limitations
-
-* Limitation 1
-* Limitation 2
+* Implemented:
+* Modules handled:
+* Challenges faced:
+* Solutions:
 
 ---
 
 ## Credits
+
+<!-- Complete this -->
 
 Any acknowledgments or external assets used.
