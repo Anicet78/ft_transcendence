@@ -69,7 +69,7 @@
 
 .invalid-update {
 	color: var(--color-warning);
-	font-family: serif;
+	font-family: var(--font-body);
 	font-weight: bold;
 	font-size: clamp(1rem, 2vw, 2rem);
 }
