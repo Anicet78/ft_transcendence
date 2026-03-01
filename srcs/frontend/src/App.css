@@ -7,7 +7,7 @@
 .slide-in-elliptic-bottom-bck .text-focus-in p {
 	color: var(--color-primary);
 	margin: 0.3em 0; /* reduce vertical spacing */
-    font-family: var(--font-title);
+    font-family: var(--font-game-title);
 }
 
 @-webkit-keyframes text-focus-in {

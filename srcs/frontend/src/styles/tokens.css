@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap'); /* Pirata One font for buttons */
+@import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
 
 /* MoRk DuNgEoN font for title */
 @font-face {
@@ -34,12 +34,14 @@
 	--color-text-muted: #94a3b8;
 
 	/* Fonts */
-/*	--font-title: 'MoRk DuNgEoN', serif;*/
-	--font-title: 'Pirata One', serif;
+/*	--font-game-title: 'MoRk DuNgEoN', serif;*/
+	--font-game-title: 'Pirata One', serif;
+	--font-section-title: 'Pirata One', serif;
 	--font-label: 'Pirata One', serif;
 	--font-button-large: 'Pirata One', serif;
 	--font-button-small: 'Inter', serif;
 	--font-body: 'Inter', serif;
+	--font-footer: 'Cinzel', 'Garamond', serif;
 
 	/* Feedback */
 	--color-success: #22c55e;

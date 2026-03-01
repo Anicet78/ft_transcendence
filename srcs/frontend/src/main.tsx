@@ -51,7 +51,7 @@ const AppEntryPoint = () => {
 	return (
 		<div className="page-container">
 		<Banner />
-		<main className="content">
+		<div className="content">
 			<Routes>
 				<Route path="/" element={<App />} />
 				<Route path="/login" element={<Login />} />
@@ -83,7 +83,7 @@ const AppEntryPoint = () => {
 				<Route path="/about" element={<GameRules />} />
 				<Route path="*" element={<Error />} />
 			</Routes>
-		</main>
+		</div>
 		<MyFooter />
 		</div>
 	);

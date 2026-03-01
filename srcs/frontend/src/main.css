@@ -13,5 +13,5 @@
 }
 
 .button {
-	font-family: 'Inter', serif;
+	font-family: var(--font-button-small);
 }
