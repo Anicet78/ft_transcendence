@@ -1,3 +1,29 @@
+/* Container wrapping the entire search list */
+.search-box {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 900px;
+}
+
+/* Section title */
+.search-box h2 {
+  font-family: var(--font-section-title);
+  color: var(--color-primary);
+  font-size: clamp(1.2rem, 4vw, 4rem) !important;
+  padding-top: clamp(0.8rem, 1.5vw, 1.5rem) !important;
+}
+
+.list-box {
+  width: 100%;
+  margin: auto;
+  max-width: 1000px;
+  background-color: var(--color-bg);
+  border-radius: 12px;
+  padding: clamp(0.8rem, 1.3vw, 1.3rem) !important;
+  overflow-x: visible; /* no scroll needed on desktop */
+}
+
 .user_list {
   display: flex;
   flex-direction: column; /* stack items vertically */
@@ -5,9 +31,11 @@
   align-items: center; /* center items horizontally */
   color: black;
   margin: 2rem auto; /* center container with some spacing */
-  width: 90%; /* limit width so items don’t stretch too much */
-  max-width: 600px; /* optional: keep list readable on large screens */
+  width: 100%; /* limit width so items don’t stretch too much */
+  max-width: 900px; /* optional: keep list readable on large screens */
   gap: 1rem; /* space between cards */
+  list-style: none;
+  padding: 0;
 }
 
 .user_list p {
@@ -92,7 +120,7 @@
 }
 
 .pagination button:disabled {
-  background-color: #555;
+  background-color: #7f7f7f;
   cursor: not-allowed;
 }
 

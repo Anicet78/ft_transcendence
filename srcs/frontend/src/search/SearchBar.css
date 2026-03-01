@@ -1,7 +1,10 @@
 .search_form {
   display: flex;
   align-items: center;
-  gap: 0.5rem; /* space between input and button */
+  gap: 0.25rem;              /* smaller gap for tiny screens */
+  position: relative; /* make panel position relative to this form */
+  flex-wrap: nowrap;          /* keep buttons inline if possible */
+  min-width: 0;               /* important for flex children to shrink */
 }
 
 .filter_panel {
@@ -15,13 +18,14 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 300px;
+  width: 84%;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-sizing: border-box; /* ensure padding doesn't exceed width */
 }
 
-
 .search_input {
-  flex: 1; /* input takes remaining space */
+  flex: 1 1 auto;             /* allow input to shrink and grow */
+  min-width: 0;               /* critical: allows input to shrink below content */
   padding: 0.5rem;
   border: 1px solid #00d1b2;
   border-radius: 4px;
@@ -36,8 +40,34 @@
   border-radius: 4px;
   background-color: #f0f0f0;
   transition: background-color 0.2s ease;
+  box-sizing: border-box;          /* Include padding/border in width */
 }
 
 .search_button:hover {
   background-color: #e0e0e0;
+}
+
+/* ======================= */
+/* MOBILE / TINY SCREEN FIX */
+/* ======================= */
+
+/* Tiny screens: wrap buttons under input if needed */
+@media screen and (max-width: 400px) {
+  .search_form {
+    flex-wrap: wrap;
+  }
+
+  .search_input {
+    flex: 1 1 100%;
+  }
+
+  .search_form .is-primary {
+    flex: 1 1 48%;     /* 2 buttons per row max */
+    max-width: 48%;
+  }
+
+  .filter_panel {
+    width: 100%;       /* scale filter panel to input width */
+    max-width: 100%;
+  }
 }

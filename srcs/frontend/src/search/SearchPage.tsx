@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { NavLink, useNavigate, useSearchParams } from 'react-router';
 import api from '../serverApi';
-import { Box, Button } from '@allxsmith/bestax-bulma';
-import '../App.css'
+import { Button } from '@allxsmith/bestax-bulma';
 import './SearchPage.css'
 import skull from '../assets/skull.svg';
 import { useFriendshipModification } from '../friendship/useFriendshipModification';
@@ -70,113 +69,88 @@ const SearchPage = () => {
 
 	const handleRequest = async (action: actionType, id: string) => {
 	try {
-		if (action === 'add') {
-			setResults(prev =>
-				prev.map(user => user.appUserId === id
-					? { ...user, friendshipStatus: 'sent' } // temporary until server returns friendshipId
-					: user)
-			);
-			await friendRequestMutation.run(action, id);
+		// Fire-and-forget mutation with refresh callback
+		friendRequestMutation.run(action, id, () => {
 			fetchUsers();
-		} else {
-			const previousResults = [...results];
-			setResults(prev =>
-				prev.map(user => {
-					if (user.friendshipId === id || user.appUserId === id) {
-						switch(action) {
-						case 'accept': return { ...user, friendshipStatus: 'friends' };
-						case 'reject': return { ...user, friendshipStatus: 'none', friendshipId: undefined };
-						case 'cancel': return { ...user, friendshipStatus: 'none', friendshipId: undefined };
-						case 'remove': return { ...user, friendshipStatus: 'none', friendshipId: undefined };
-						default: return user;
-						}
-					}
-					return user;
-				})
-			);
-
-			await friendRequestMutation.run(action, id).catch(err => {
-				// Rollback from optimistic update above if mutation fails
-				setResults(previousResults);
-				console.error('Friend request failed:', err);
-			});
-		}
+		});
 	} catch (err) {
     console.error('Friend request failed:', err);
   }
 };
 
 	return (
-		<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' alignItems='center'>
-			<h1>Search Results</h1>
-			<Box className='user_list' bgColor="white" textSize='5'>
-				{loading && <p>Loading...</p>}
+		<div className='search-box'>
+			<h2>Search Results</h2>
+			<div className='list-box'>
+				<div className='user_list'>
+					{loading && <p>Loading...</p>}
 
-				{!loading && results?.length === 0 && (<p>No player found</p>)}
+					{!loading && results?.length === 0 && (<p>No player found</p>)}
 
-				{results?.length > 0 && results.map((user) => (
-					<div key={user.appUserId} className="user_item_card">
-						{user.avatarUrl && (
-							<img src={`https://${window.location.host}/uploads/` + user.avatarUrl} alt={user.username} className="user_avatar"/>)}
-						{!user.avatarUrl && (
-							<img src={skull} alt={user.username} className="user_avatar"/>)}
-							<p className="username">{user.username}</p>
-							{user.friendshipStatus === 'none' && 
-								<Button 
-									className="interaction_btn" 
-									onClick={() => {handleRequest("add", user.appUserId)}}
-								>
-									Send friendship request
-								</Button>
-							}
-							{user.friendshipStatus === 'sent' && 
-								<Button 
-									className="interaction_btn" 
-									disabled={!user.friendshipId}
-									onClick={() => {handleRequest("cancel", user.friendshipId!)}}
-								>
-									Cancel friendship request
-								</Button>
-							}
-							{user.friendshipStatus === 'received' && 
-								<div>
-								<Button 
-									className="interaction_btn" 
-									disabled={!user.friendshipId}
-									onClick={() => {handleRequest("accept", user.friendshipId!)}}
-								>
-									Accept friendship request
-								</Button>
-								<Button 
-									className="interaction_btn" 
-									disabled={!user.friendshipId}
-									onClick={() => {handleRequest("reject", user.friendshipId!)}}
-								>
-									Reject friendship request
-								</Button>
-								</div>
-							}
-							{user.friendshipStatus === 'friends' && 
-								<Button 
-									className="interaction_btn" 
-									onClick={() => {handleRequest("remove", user.appUserId)}}
-								>
-									Remove friend
-								</Button>
-							}
-							<NavLink to={"/profile/" + user.username} className="view_profile_btn">View Profile</NavLink>
-					</div>
-				))}
+					{results?.length > 0 && results.map((user) => (
+						<div key={user.appUserId} className="user_item_card">
+							{user.avatarUrl && (
+								<img src={`https://${window.location.host}/uploads/` + user.avatarUrl} alt={user.username} className="user_avatar"/>)}
+							{!user.avatarUrl && (
+								<img src={skull} alt={user.username} className="user_avatar"/>)}
+								<p className="username">{user.username}</p>
+								{user.friendshipStatus === 'none' &&
+									<Button
+										className="interaction_btn"
+										onClick={() => {handleRequest("add", user.appUserId)}}
+									>
+										Send friendship request
+									</Button>
+								}
+								{user.friendshipStatus === 'sent' &&
+									<Button
+										className="interaction_btn"
+										disabled={!user.friendshipId}
+										onClick={() => {handleRequest("cancel", user.friendshipId!)}}
+									>
+										Cancel friendship request
+									</Button>
+								}
+								{user.friendshipStatus === 'received' &&
+									<div>
+									<Button
+										className="interaction_btn"
+										disabled={!user.friendshipId}
+										onClick={() => {handleRequest("accept", user.friendshipId!)}}
+									>
+										Accept friendship request
+									</Button>
+									<Button
+										className="interaction_btn"
+										disabled={!user.friendshipId}
+										onClick={() => {handleRequest("reject", user.friendshipId!)}}
+									>
+										Reject friendship request
+									</Button>
+									</div>
+								}
+								{user.friendshipStatus === 'friends' &&
+									<Button
+										className="interaction_btn"
+										onClick={() => {handleRequest("remove", user.appUserId)}}
+									>
+										Remove friend
+									</Button>
+								}
+								<NavLink to={"/profile/" + user.username} className="view_profile_btn">View Profile</NavLink>
+						</div>
+					))}
 
-				{totalPages > 1 && (
-					<div className="pagination">
-						<button onClick={() => navigateWithParams(page - 1)} disabled={page === 1}>Previous</button>
-						<span>Page {page} of {totalPages}</span>
-						<button onClick={() => navigateWithParams(page + 1)} disabled={page === totalPages}>Next</button>
-					</div>
-				)}
-			</Box>
-		</Box>
+					{totalPages > 1 && (
+						<div className="pagination">
+							<button onClick={() => navigateWithParams(page - 1)} disabled={page === 1}>Previous</button>
+							<span>Page {page} of {totalPages}</span>
+							<button onClick={() => navigateWithParams(page + 1)} disabled={page === totalPages}>Next</button>
+						</div>
+					)}
+				</div>
+			</div>
+		</div>
 	);
 };
 
