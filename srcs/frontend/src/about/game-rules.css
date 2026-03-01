@@ -15,7 +15,7 @@
 }
 
 .rules-box h2, h3 {
-	font-family: var(--font-label);
+	font-family: var(--font-section-title);
 	color: black;
 }
 

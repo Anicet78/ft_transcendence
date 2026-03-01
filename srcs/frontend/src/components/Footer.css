@@ -3,7 +3,7 @@
 	color: var(--footer-color-text);
 	padding: 2rem 1.5rem 1.5rem;
 	font-size: 0.95rem;
-	font-family: 'Cinzel', 'Garamond', serif;
+	font-family: var(--font-footer);
 	background-size: cover;
 }
 
