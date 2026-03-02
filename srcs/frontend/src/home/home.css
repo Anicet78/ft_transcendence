@@ -8,7 +8,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 20px;
+	padding: clamp(0rem, 3vw, 2rem) !important;
 	box-sizing: border-box;
 	position: relative;
 	overflow: hidden;
@@ -115,7 +115,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 40px;
+  gap: clamp(0.5rem, 3vw, 2.5rem);
   width: 100%;
   max-width: 900px;
 
@@ -128,7 +128,7 @@
     0 20px 40px rgba(0, 20, 18, 0.8);
 
   border-radius: 18px;
-  padding: 40px;
+  padding: clamp(0rem, 4vw, 3rem) !important;
 
 	/* Subtle teal border */
 	border: 1px solid rgba(0, 199, 177, 0.4) !important;
@@ -142,7 +142,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
-	gap: 20px;
+	gap: clamp(0.5rem, 2vw, 1.5rem);
 	width: 100%;
 }
 
@@ -174,7 +174,7 @@
 	display: flex !important;
 	flex-direction: row !important;
 	align-items: center !important;
-	gap: 10px !important;
+	gap: clamp(0.5rem, 1vw, 0.75rem) !important;
 }
 
 .player-button, .kick-button, .host-button {
@@ -189,7 +189,7 @@
 .buttons-row {
 	display: flex;
 	justify-content: space-between;
-	gap: 20px;
+	gap: clamp(0.5rem, 2vw, 1.5rem);
 	width: 100%;
 	max-width: 600px;
 }
@@ -235,7 +235,7 @@
   color: white;
   border: 1px solid rgba(0, 199, 177, 0.9);
   font-weight: bold;
-  letter-spacing: 1px;
+  letter-spacing: 0.1px;
 
   position: relative;
   overflow: hidden;

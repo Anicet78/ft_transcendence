@@ -24,16 +24,25 @@
 }
 
 .rules-box h3 {
-	font-size:clamp(1.2rem, 2vw, 2rem) !important;
+	font-size:clamp(1rem, 2vw, 2rem) !important;
 	color: black;
 }
 
 .rules-box p {
 	font-family: var(--font-body);
-	font-size:clamp(0,9rem, 1.2vw, 1.2rem) !important;
+	font-size:clamp(0.7rem, 1vw, 1.2rem) !important;
 	gap: 2px;
 }
 
 .rules-box span {
 	font-weight: 900;
+}
+
+.home-button {
+	font-family: var(--font-button-large);
+	font-size: clamp(1rem, 2vw, 2rem);
+	background-color: black;
+	color: var(--color-primary);
+	border-color: var(--color-primary) !important;
+	margin-top: 2rem;
 }
