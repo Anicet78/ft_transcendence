@@ -1,7 +1,7 @@
 #include"Player.hpp"
 
 Player::Player(std::string uid, std::string name, SDL_Color color) : _uid(uid), _name(name), _x(0), _y(0),
-					_screenX(0), _screenY(0), _anim(0), _hp(3), _atk(1), _def(0), _atkState(false),
+					_screenX(0), _screenY(0), _anim(0), _hp(3), _atk(1), _def(0), _hurt(false), _atkState(false),
 					_camera(_x, _y, 12, 12, SCREEN_WIDTH, GAME_HEIGHT), _floor(0), _last_dir(0), _frame(0), _prev_state(PLAYER_IDLE), _kills(0), _nbrDeath(0)
 {
 	SDL_Surface* surf = TTF_RenderText_Blended(gSdl.font, name.c_str(), color);
@@ -28,6 +28,12 @@ std::string	Player::getName(void) const
 {
 	return (_name);
 }
+
+SDL_Texture	*Player::getNameTex(void) const
+{
+	return this->_nameTexture;
+}
+
 
 float	Player::getX(void) const
 {
@@ -80,6 +86,11 @@ int		Player::getPrevState(void) const
 int		Player::getDef(void) const
 {
 	return (_def);
+}
+
+bool	Player::getHurt(void) const
+{
+	return this->_hurt;
 }
 
 Room	&Player::getRoom(void) const
@@ -201,7 +212,12 @@ void	Player::setDef(int def)
 	return ;
 }
 
-void Player::setDir(int dir)
+void	Player::setHurt(bool state)
+{
+	this->_hurt = state;
+}
+
+void	Player::setDir(int dir)
 {
 	this->_last_dir = dir;
 }
@@ -220,7 +236,10 @@ void	Player::setNbrDeath(int value)
 
 void	Player::setAnim(int anim)
 {
-	this->_anim = anim;
+	if (this->_hurt)
+		this->_anim = PLAYER_HURT;
+	else
+		this->_anim = anim;
 }
 
 void	Player::incrementFloor(void)
@@ -279,11 +298,11 @@ void	Player::printPlayer(float px, float py, int flag)
 		}
 		int frame = (flag) ? ((!this->_frame) ? 23 : this->_frame - 1) : this->_frame;
 		if (this->_last_dir < 2)
-			PlayerAssets::rendPlayerAttack(0, x, y, frame / 4, 2, this->_last_dir, flag);
+			PlayerAssets::rendPlayerAttack(x, y, frame / 4, 2, this->_last_dir, flag);
 		else if (this->_last_dir == 3)
-			PlayerAssets::rendPlayerAttackFront(0, x, y, frame / 4, 2, flag);
+			PlayerAssets::rendPlayerAttackFront(x, y, frame / 4, 2, flag);
 		else if (this->_last_dir == 2)
-			PlayerAssets::rendPlayerAttackBack(0, x, y, frame / 4, 2, flag);
+			PlayerAssets::rendPlayerAttackBack(x, y, frame / 4, 2, flag);
 	}
 	else if (this->_anim == PLAYER_WALKING)
 	{
@@ -297,11 +316,11 @@ void	Player::printPlayer(float px, float py, int flag)
 			this->_frame = 0;
 		int frame = (flag) ? ((!this->_frame) ? 31 : this->_frame - 1) : this->_frame;
 		if (this->_last_dir < 2)
-			PlayerAssets::rendPlayerWalk(0, x, y, frame / 4, 2, this->_last_dir, flag);
+			PlayerAssets::rendPlayerWalk(x, y, frame / 4, 2, this->_last_dir, flag);
 		else if (this->_last_dir == 3)
-			PlayerAssets::rendPlayerWalkFront(0, x, y, frame / 4, 2, flag);
+			PlayerAssets::rendPlayerWalkFront(x, y, frame / 4, 2, flag);
 		else if (this->_last_dir == 2)
-			PlayerAssets::rendPlayerWalkBack(0, x, y, frame / 4, 2, flag);
+			PlayerAssets::rendPlayerWalkBack(x, y, frame / 4, 2, flag);
 	}
 	else if (this->_anim == PLAYER_IDLE)
 	{
@@ -315,13 +334,26 @@ void	Player::printPlayer(float px, float py, int flag)
 			this->_frame = 0;
 		int frame = (flag) ? ((!this->_frame) ? 23 : this->_frame - 1) : this->_frame;
 		if (this->_last_dir < 2)
-			PlayerAssets::rendPlayerIdle(0, x, y, frame / 4, 2, this->_last_dir, flag);
+			PlayerAssets::rendPlayerIdle(x, y, frame / 4, 2, this->_last_dir, flag);
 		else if (this->_last_dir == 3)
-			PlayerAssets::rendPlayerIdleFront(0, x, y, frame / 4, 2, flag);
+			PlayerAssets::rendPlayerIdleFront(x, y, frame / 4, 2, flag);
 		else if (this->_last_dir == 2)
-			PlayerAssets::rendPlayerIdleBack(0, x, y, frame / 4, 2, flag);
+			PlayerAssets::rendPlayerIdleBack(x, y, frame / 4, 2, flag);
 	}
-
+	else if (this->_anim == PLAYER_HURT)
+	{
+		if (!flag && this->_prev_state != PLAYER_HURT)
+		{
+			this->_frame = 0;
+			this->endAtk();
+			this->_prev_state = PLAYER_HURT;
+		}
+		if (!flag && this->_frame >= 32)
+			this->_frame = 0;
+		int frame = (flag) ? ((!this->_frame) ? 31 : this->_frame - 1) : this->_frame;
+		// if (this->_last_dir < 2)
+			PlayerAssets::rendPlayerHurt(x, y, frame / 8, 2, this->_last_dir, flag);
+	}
 	if (!flag)
 		this->_frame++;
 	int w, h;

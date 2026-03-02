@@ -9,8 +9,11 @@ enum state
 	PLAYER_WALKING,
 	PLAYER_ATTACKING,
 	PLAYER_HURT,
+	PLAYER_DEATH,
 	PLAYER_DYING
 };
+
+#define MAX_PLAYER_HP 3
 
 class Player
 {
@@ -46,6 +49,7 @@ class Player
 		int			_hp;
 		int			_atk;
 		int			_def;
+		bool		_hurt;
 	
 	//	player action
 
@@ -75,6 +79,7 @@ class Player
 	//getter
 		std::string	getUid(void) const;
 		std::string	getName(void) const;
+		SDL_Texture	*getNameTex(void) const;
 		Room		&getRoom() const;
 		Room		&getRoomRef(void);
 		quadList	getNode() const;
@@ -94,6 +99,7 @@ class Player
 		int			getHp(void) const;
 		int			getAtk(void) const;
 		int			getDef(void) const;
+		bool		getHurt(void) const;
 
 		Camera		&getCamera(void);
 	
@@ -115,6 +121,7 @@ class Player
 		void	setHp(int hp);
 		void	setAtk(int atk);
 		void	setDef(int def);
+		void	setHurt(bool state);
 		void	setAnim(int anim);
 		void	setDir(int dir);
 		void	setKills(int kills);

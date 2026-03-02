@@ -27,12 +27,15 @@ void	setPlayerState(Player &player, Game &game, val &pStatus, int flag)
 	int hp = pStatus["player_health"].as<int>();
 	int	anim = pStatus["player_anim"].as<int>();
 	int kills = pStatus["player_kills"].as<int>();
-
+	std::string hurtS = pStatus["player_hurt"].as<std::string>();
+	bool hurt = (hurtS == "true") ? true : false;
 	player.setHp(hp);
-	player.setAnim(anim);
 	player.setKills(kills);
-	if (flag == 1)	//if uid == other client uid
+	
+	if (flag == 1) //if uid == other client uid
 	{
+    player.setHurt(hurt);
+	  player.setAnim(anim);
 		int dir = pStatus["player_dir"].as<int>();
 		player.setDir(dir);
 		player.setTargetPos(x, y);

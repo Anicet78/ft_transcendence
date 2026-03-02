@@ -243,6 +243,7 @@ void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, u
 			if (p.expired())
 				continue ;
 			std::shared_ptr<Player> player = p.lock();
+			std::string hurt = (player->updateHurt() == true) ? "true" : "false";
 			player_update += "{\"player_uid\":\"" + player->getUid() + '\"';
 			player_update += ",\"player_name\":\"" + player->getName() + '\"';
 			player_update += ",\"player_mapx\":" + std::to_string(player->getNode()->getX());
@@ -254,6 +255,7 @@ void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, u
 			player_update += ",\"player_dir\":" + std::to_string(player->getLastDir());
 			player_update += ",\"player_kills\":" + std::to_string(player->getKills());
 			player_update += ",\"player_death_amount\":" + std::to_string(player->getNbrDeath());
+			player_update += ",\"player_hurt\":\"" + hurt + '\"';
 			player_update += ",\"player_start\":" + std::to_string(player->getStartPos());
 			player_update += ",\"player_exit\":\"";
 			player_update.push_back(player->getExit());
@@ -313,8 +315,6 @@ void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, u
 						std::weak_ptr<Player> player = findClosestPlayer(allPlayer, *mob);
 						if (player_size && !player.expired())
 							mob->MobAction(*player.lock(), map);
-						// else
-						// 	mob->MobAction(-1, -1, map);
 					}
 					int mobAnim = 0;
 					if (mob->getRoutine() == MOB_CHASING)
