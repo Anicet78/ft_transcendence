@@ -1,0 +1,297 @@
+/* ============================= */
+/* Center whole page + Atmosphere */
+/* #242424 → Deep Dungeon Blue   */
+/* ============================= */
+
+.body-box {
+	min-height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 20px;
+	box-sizing: border-box;
+	position: relative;
+	overflow: hidden;
+	width: 100%;
+
+	/* Darker underground gradient */
+	background: radial-gradient(
+		circle at 50% 20%,
+		#2e2e2e 0%,      /* slightly lighter center */
+		#242424 30%,     /* requested base */
+		#1b212c 60%,     /* blend into dark blue */
+		#11161d 85%,     /* deep shadow */
+		#090c12 100%     /* strong vignette */
+	);
+}
+
+
+/* ============================= */
+/* 🌫 Animated Fog (Darker)      */
+/* ============================= */
+
+.body-box::before,
+.body-box::after {
+	content: "";
+	position: absolute;
+	width: 200%;
+	height: 200%;
+	top: -50%;
+	left: -50%;
+	pointer-events: none;
+	filter: blur(80px);
+	mix-blend-mode: screen;
+}
+
+/* First fog layer – darker & slower */
+.body-box::before {
+	background:
+	radial-gradient(circle at 30% 40%, rgba(90,110,160,0.12), transparent 60%),
+	radial-gradient(circle at 70% 60%, rgba(60,80,120,0.10), transparent 70%);
+
+	animation: fogDrift 45s linear infinite,
+	arcanePulseBg 8s ease-in-out infinite;
+}
+
+/* Second fog layer – subtle opposing motion */
+.body-box::after {
+	background:
+	radial-gradient(circle at 50% 50%, rgba(100,130,190,0.10), transparent 65%),
+	radial-gradient(circle at 80% 30%, rgba(50,70,110,0.12), transparent 70%);
+
+	animation: fogDriftReverse 70s linear infinite;
+}
+
+
+/* Smooth drifting motion (still visible but calmer) */
+@keyframes fogDrift {
+	0%   { transform: translate(0, 0) scale(1); }
+	50%  { transform: translate(-6%, -4%) scale(1.05); }
+	100% { transform: translate(-12%, -8%) scale(1); }
+}
+
+@keyframes fogDriftReverse {
+	0%   { transform: translate(0, 0) scale(1); }
+	50%  { transform: translate(5%, 7%) scale(1.08); }
+	100% { transform: translate(10%, 12%) scale(1); }
+}
+
+
+/* Subtle breathing arcane glow */
+@keyframes arcanePulseBg {
+	0%   { opacity: 0.6; }
+	50%  { opacity: 0.9; }
+	100% { opacity: 0.6; }
+}
+
+
+/* ============================= */
+/* ✨ Subtle Arcane Light Pulses  */
+/* ============================= */
+
+.body-box::before,
+.body-box::after {
+	filter: blur(60px);
+}
+
+/* Add animated arcane glow pulse layer */
+.body-box::marker {}
+
+/* Separate pulse overlay */
+.body-box::after {
+	box-shadow: inset 0 0 200px rgba(120,170,255,0.05);
+}
+
+.body-box::before {
+	animation: fogDrift 35s linear infinite, arcanePulseBg 6s ease-in-out infinite;
+}
+
+@keyframes arcanePulseBg {
+	0%   { opacity: 0.7; }
+	50%  { opacity: 1; }
+	100% { opacity: 0.7; }
+}
+
+/* ============================= */
+/* Main container (stone panel)  */
+/* ============================= */
+
+.game-room {
+	position: relative;
+	z-index: 2;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 40px;
+	width: 100%;
+	max-width: 900px;
+
+	background: rgba(25, 32, 44, 0.85);
+
+	box-shadow:
+	inset 0 0 40px rgba(0, 0, 0, 0.7),
+	0 20px 40px rgba(0, 0, 0, 0.8);
+
+	border-radius: 18px;
+	padding: 40px;
+
+	/* Subtle arcane blue border */
+	border: 1px solid rgba(90, 120, 200, 0.4);
+}
+
+
+/* ============================= */
+/* Players layout                */
+/* ============================= */
+
+.room-players {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 20px;
+	width: 100%;
+}
+
+/* Arcane player cards */
+.room-players > * {
+	background: linear-gradient(145deg, #263246, #1a2230);
+	padding: 15px 25px;
+	border-radius: 10px;
+
+	border: 1px solid rgba(120, 160, 255, 0.4);
+
+	color: #dbe6ff;
+
+	transition: all 0.2s ease-in-out;
+}
+
+/* Magical hover glow */
+.room-players > *:hover {
+	transform: translateY(-5px);
+
+	box-shadow:
+	0 0 15px rgba(120, 170, 255, 0.5),
+	0 8px 20px rgba(0, 0, 0, 0.7);
+
+	background: linear-gradient(145deg, #2f3f5a, #202b3d);
+}
+
+.player-buttons {
+	display: flex !important;
+	flex-direction: row !important;
+	align-items: center !important;
+	gap: 10px !important;
+}
+
+.player-button, .kick-button, .host-button {
+	color: white !important;
+	border: 1px solid rgba(120, 160, 255, 0.4) !important;
+}
+
+/* ============================= */
+/* Buttons container             */
+/* ============================= */
+
+.buttons-row {
+	display: flex;
+	justify-content: space-between;
+	gap: 20px;
+	width: 100%;
+	max-width: 600px;
+}
+
+.buttons-row > * {
+	flex: 1;
+}
+
+
+/* ============================= */
+/* 🎮 Colored Non-Launch Buttons */
+/* ============================= */
+
+.invite-button {
+	background: linear-gradient(145deg, #2c3e66, #1f2b44);
+	border: 1px solid rgba(120, 160, 255, 0.6);
+	color: #dbe6ff;
+
+	transition: all 0.2s ease-in-out;
+}
+
+/* Hover glow */
+.invite-button:hover {
+	transform: scale(1.05);
+	box-shadow: 0 0 12px rgba(120, 170, 255, 0.6);
+}
+
+/* Optional: Differentiate Quit button (slightly crimson tone) */
+.quit-button {
+	background: linear-gradient(145deg, #4a2a35, #311b24);
+	border: 1px solid rgba(200, 90, 120, 0.5);
+}
+
+.quit-button:hover {
+	box-shadow: 0 0 12px rgba(200, 90, 120, 0.6);
+}
+
+
+/* ============================= */
+/* 🔥 Arcane Launch Button       */
+/* ============================= */
+
+.launch-game {
+	background: linear-gradient(145deg, #3c5ea8, #6f9bff);
+	color: white;
+	border: 1px solid rgba(180, 210, 255, 0.9);
+	font-weight: bold;
+	letter-spacing: 1px;
+
+	position: relative;
+	overflow: hidden;
+
+	transition: transform 0.2s ease-in-out;
+
+	animation: arcanePulse 2.5s infinite ease-in-out;
+}
+
+.launch-game:hover {
+	transform: scale(1.08);
+}
+
+/* Stronger arcane magical pulse */
+@keyframes arcanePulse {
+	0% {
+		box-shadow:
+		0 0 10px rgba(120,170,255,0.6),
+		0 0 20px rgba(120,170,255,0.3);
+	}
+	50% {
+		box-shadow:
+		0 0 25px rgba(160,200,255,1),
+		0 0 50px rgba(120,170,255,0.8);
+	}
+	100% {
+		box-shadow:
+		0 0 10px rgba(120,170,255,0.6),
+		0 0 20px rgba(120,170,255,0.3);
+	}
+}
+
+
+/* ============================= */
+/* Responsive adjustments        */
+/* ============================= */
+
+@media (max-width: 768px) {
+
+	.buttons-row {
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.buttons-row .button,
+	.buttons-row .launch-game {
+		width: 100%;
+		max-width: 300px;
+	}
+}

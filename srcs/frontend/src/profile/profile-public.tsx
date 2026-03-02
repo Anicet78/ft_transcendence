@@ -5,13 +5,15 @@ import { Box, Button } from '@allxsmith/bestax-bulma';
 import { useParams } from 'react-router';
 import type { GetResponse } from '../types/GetType';
 import api from '../serverApi';
-import { NavLink } from 'react-router';
 import skull from '../assets/skull.svg';
+import { useFriendshipModification } from '../friendship/useFriendshipModification.tsx';
+import type { actionType } from '../friendship/friendshipQueries.ts';
 
 type ProfileResponseType = GetResponse<"/profile/{username}", "get">;
 
 const ProfilePublic = () => {
 	const username = useParams().username;
+	const friendshipModification = useFriendshipModification(username);
 
 	const userQuery = useQuery({
 		queryKey: ['profile', username],
@@ -32,9 +34,13 @@ const ProfilePublic = () => {
 		enabled: !!userId,
 	});
 
-	if (userQuery.isLoading) return <p>Chargement...</p>;
+	const handleModification = (action: actionType, id: string) => {
+		friendshipModification.run( action, id);
+	};
+
+	if (userQuery.isLoading) return <p>Loading...</p>;
 	if (userQuery.isError || !userQuery.data) return <div>Erreur: {userQuery.error?.message || 'unknown'}</div>;
-	if (friendshipQuery.isLoading) return <p>Chargement...</p>;
+	if (friendshipQuery.isLoading) return <p>Loading...</p>;
 	if (friendshipQuery.isError || !friendshipQuery.data) return <div>Erreur: {friendshipQuery.error?.message || 'unknown'}</div>;
 
 	const userData: ProfileResponseType = userQuery.data;
@@ -51,66 +57,102 @@ const ProfilePublic = () => {
 	const totalWins = userData.gameProfile?.totalWins || '0';
 	const totalLoses = userData.gameProfile?.totalLoses || '0';
 	const friendshipStatus = friendshipQuery.isSuccess ? friendshipData.status : 'unknown';
-	const blockStatus = false;
+	const blockStatus = userData.blocked;
 
 	return (
-		<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' alignItems='center'>
-			<h1>Welcome to {username} profile page</h1>
-			<br/>
-			<Box className='box-head' bgColor="white" justifyContent='center' textSize='4'>
-				<Box bgColor='white' className='image-box'>
-					<figure className='image is-128x128'>
+		<div className='profile-box'>
+			<div className='box-head'>
+				<div className='image-box'>
 						<img aria-label='avatar of the user' src={avatar} />
-					</figure>
-				</Box>
-				<Box className='head-text'>
-					<p className="username">
+				</div>
+				<div className='head-text'>
+					<div className='profile_username'>
 						<i className={`fa-solid fa-circle status-circle ${isPlaying ? 'playing' : isConnected ? 'online' : 'offline'}`}  aria-label="status" />
 						{username}
-					</p>
-
-					<p className="level">Lvl {level}</p>
-					<p className="xp">{xp} XP</p>
-				</Box>
-			</Box>
-			<Box className='info' bgColor="white" textSize='5'>
-				<p>Best time: {bestTime}</p>
-				<p>Total ennemies killed: {totalKills}</p>
-				<p>Total games: {totalGames}</p>
-				<p>Total wins: {totalWins}</p>
-				<p>Total loses: {totalLoses}</p>
-			</Box>
+					</div>
+					<p>Lvl {level}</p>
+					<p>{xp} XP</p>
+				</div>
+			</div>
+			<div className='public-info'>
+				<p><span className='category-name'>Best time:</span>{bestTime}</p>
+				<p><span className='category-name'>Total kills:</span>{totalKills}</p>
+				<p><span className='category-name'>Total games:</span>{totalGames}</p>
+				<p><span className='category-name'>Total wins:</span>{totalWins}</p>
+				<p><span className='category-name'>Total loses:</span>{totalLoses}</p>
+			</div>
 			{friendshipStatus !== 'self' &&
 				<>
 					<div className="button-group">
 						{(friendshipStatus === 'sent') &&
 							<div className="button-row">
-								<Button color="dark" disabled size='large'>Request pending</Button>
-								<NavLink to={"/friends/requests/update/" + friendshipData.friendshipId} state={{requestedAction: "cancel"}} className="button is-medium">Cancel request</NavLink>
+								<Button color="dark" disabled size='large' className='profile-button'>Request pending</Button>
+								<Button
+									size='large'
+									onClick={() => {handleModification('cancel', friendshipData.friendshipId)}}
+									className='profile-button'
+								>
+									Cancel request
+								</Button>
 							</div>}
 						{friendshipStatus === 'friends' &&
 							<div>
 								<div className="button-row">
-									<NavLink to={"/friends/remove/" + userData.appUserId} className="button is-medium">Remove friend</NavLink>
+									<Button
+										size='large'
+										onClick={() => {handleModification('remove', userId)}}
+										className='profile-button'
+									>
+										Remove friend
+									</Button>
 								</div>
 								<div className="button-row">
-									<Button color='primary' isInverted aria-label='join button' size='medium'>Join</Button>
-									<Button color='primary' isInverted aria-label='spectate button' size='medium'>Spectate</Button>
+									<Button aria-label='join button' size='large' className='profile-button'>Join</Button>
+									<Button aria-label='spectate button' size='large' className='profile-button'>Spectate</Button>
 								</div>
 							</div>}
 						{friendshipStatus === 'received' &&
 							<div className="button-row">
-								<NavLink to={"/friends/requests/update/" + friendshipData.friendshipId} state={{requestedAction: "accept"}} className="button is-medium">Accept request</NavLink>
-								<NavLink to={"/friends/requests/update/" + friendshipData.friendshipId} state={{requestedAction: "reject"}} className="button is-medium">Reject request</NavLink>
+								<Button
+									size='large'
+									onClick={() => {handleModification('accept', friendshipData.friendshipId)}}
+									className='profile-button'
+								>
+									Accept request
+								</Button>
+								<Button
+									size='large'
+									onClick={() => {handleModification('reject', friendshipData.friendshipId)}}
+									className='profile-button'
+								>
+									Reject request
+								</Button>
 							</div>}
-						{friendshipStatus === 'none' &&
-							<NavLink to={"/friends/add/" + userData.appUserId} className="button is-medium">Send friendship request</NavLink>}
-						{!blockStatus && <NavLink to={"/profile/" + userData.appUserId + "/block"} state={{requestedAction: "block"}} className="button is-medium">Block user</NavLink>}
-						{blockStatus && <NavLink to={"/profile/" + userData.appUserId + "/unblock"} state={{requestedAction: "unblock"}} className="button is-medium">Unblock user</NavLink>}
+						{friendshipStatus === 'none' && <Button
+								size='large'
+								onClick={() => {handleModification('add', userId)}}
+								className='profile-button'
+							>
+								Send friendship request
+							</Button>}
+						{!blockStatus && <Button
+							size='large'
+							onClick={() => {handleModification('block', userId)}}
+							className='profile-button'
+						>
+							Block user
+						</Button>}
+						{blockStatus && <Button
+							size='large'
+							onClick={() => {handleModification('unblock', userId)}}
+							className='profile-button'
+						>
+							Unblock user
+						</Button>}
 					</div>
 				</>
 			}
-		</Box>
+		</div>
 	)
 }
 

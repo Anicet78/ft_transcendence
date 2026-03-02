@@ -44,7 +44,7 @@ export function InviteToGroupChat({
 	//invite friends to join chat mutation
 	const inviteMutation = useMutation({
 		mutationFn: async (friendId: string) => {
-		await api.post(`/group/${chatId}/invite/${friendId}`);
+			await api.post(`/group/${chatId}/invite/${friendId}`);
 		}
 	});
 

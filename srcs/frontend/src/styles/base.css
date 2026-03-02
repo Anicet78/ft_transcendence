@@ -1,0 +1,21 @@
+body {
+	margin: 0;
+	font-family: 'Inter', sans-serif;
+	background: var(--color-bg);
+	color: var(--color-text);
+	-webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+	margin: 0;
+	font-weight: 600;
+}
+
+h1 { font-size: var(--fs-2xl); }
+h2 { font-size: var(--fs-xl); }
+h3 { font-size: var(--fs-lg); }
+
+p {
+	font-size: var(--fs-md);
+	color: var(--color-text-muted);
+}

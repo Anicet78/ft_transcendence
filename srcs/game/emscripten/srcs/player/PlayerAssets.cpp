@@ -12,6 +12,9 @@ std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerWalkBack;
 std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerAttackBack;
 std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerIdleBack;
 
+std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerHurt;
+std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerDie;
+
 SDL_Texture				*PlayerAssets::_playerWalkText;
 SDL_Texture				*PlayerAssets::_playerAttackText;
 SDL_Texture				*PlayerAssets::_playerIdleText;
@@ -24,6 +27,9 @@ SDL_Texture				*PlayerAssets::_playerWalkBackText;
 SDL_Texture				*PlayerAssets::_playerAttackBackText;
 SDL_Texture				*PlayerAssets::_playerIdleBackText;
 
+SDL_Texture				*PlayerAssets::_playerHurtText;
+SDL_Texture				*PlayerAssets::_playerDieText;
+
 SDL_Texture				*PlayerAssets::mapRenderTexture = nullptr;
 
 int						PlayerAssets::_walkImgW;
@@ -34,6 +40,12 @@ int						PlayerAssets::_atkImgH;
 
 int						PlayerAssets::_idleImgW;
 int						PlayerAssets::_idleImgH;
+
+int						PlayerAssets::_hurtW;
+int						PlayerAssets::_hurtH;
+
+int						PlayerAssets::_dieW;
+int						PlayerAssets::_dieH;
 
 PlayerAssets::PlayerAssets(void)
 {}
@@ -244,6 +256,50 @@ void	PlayerAssets::importPlayersIdleBackAssets(int tile_size)
 	}
 }
 
+void	PlayerAssets::importPlayersHurtAssets(int tile_size)
+{
+
+	_playerHurtText = loadTexture("assets/sprite/Soldier-Hurt.bmp", _hurtW, _hurtH);
+
+	//define every tile asset position and stock it in _mapAssets
+	int y = 0;
+	int i = 0;
+	while (y * tile_size < _hurtH)
+	{
+		int x = 0;
+		while (x * tile_size < _hurtW)
+		{
+			SDL_Rect rect = {x * tile_size, y * tile_size, tile_size, tile_size};
+			_playerHurt.emplace(i, rect);
+			i++;
+			x++;
+		}
+		y++;
+	}
+}
+
+void	PlayerAssets::importPlayersDieAssets(int tile_size)
+{
+
+	_playerDieText = loadTexture("assets/sprite/Soldier-Hurt.bmp", _dieW, _dieH);
+
+	//define every tile asset position and stock it in _mapAssets
+	int y = 0;
+	int i = 0;
+	while (y * tile_size < _dieH)
+	{
+		int x = 0;
+		while (x * tile_size < _dieW)
+		{
+			SDL_Rect rect = {x * tile_size, y * tile_size, tile_size, tile_size};
+			_playerDie.emplace(i, rect);
+			i++;
+			x++;
+		}
+		y++;
+	}
+}
+
 void	PlayerAssets::importPlayersAssets(int tile_size)
 {
 	importPlayersWalkAssets(tile_size);
@@ -257,6 +313,9 @@ void	PlayerAssets::importPlayersAssets(int tile_size)
 	importPlayersIdleBackAssets(tile_size);
 	importPlayersAttackBackAssets(tile_size);
 	importPlayersWalkBackAssets(tile_size);
+
+	importPlayersHurtAssets(tile_size);
+	importPlayersDieAssets(tile_size);
 
 	gSdl.setPlayerSize(tile_size);
 }
@@ -514,7 +573,7 @@ void	PlayerAssets::rendPlayerIdleFront(int playerNum, int x, int y, int assetInd
 		std::cerr << "Invalid index" << std::endl;
 		return ;
 	}
-	if (scale <= 0) 
+	if (scale <= 0)
 	{
 		std::cerr << "Invalid scale" << std::endl;
 		return ;
@@ -547,7 +606,7 @@ void	PlayerAssets::rendPlayerIdleBack(int playerNum, int x, int y, int assetInde
 		std::cerr << "Invalid index" << std::endl;
 		return ;
 	}
-	if (scale <= 0) 
+	if (scale <= 0)
 	{
 		std::cerr << "Invalid scale" << std::endl;
 		return ;
@@ -565,4 +624,76 @@ void	PlayerAssets::rendPlayerIdleBack(int playerNum, int x, int y, int assetInde
 	SDL_RenderCopy(gSdl.renderer, _playerIdleBackText, rect, &renderRect);
 	if (flag)
 		SDL_SetTextureAlphaMod(_playerIdleBackText, 255);
+}
+
+void	PlayerAssets::rendPlayerHurt(int playerNum, int x, int y, int assetIndex, float scale, int player_dir, int flag)
+{
+	(void)playerNum;
+	if (flag)
+	{
+		SDL_SetTextureBlendMode(_playerHurtText, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(_playerHurtText, 128);
+	}
+	if (assetIndex < 0)
+	{
+		std::cerr << "Invalid index" << std::endl;
+		return ;
+	}
+	if (scale <= 0) 
+	{
+		std::cerr << "Invalid scale" << std::endl;
+		return ;
+	}
+
+	SDL_Rect	renderRect = {x - 84, y - 84, _hurtW, _hurtH};
+	SDL_Rect	*rect = &_playerHurt[assetIndex];
+
+	if (rect != NULL)
+	{
+		renderRect.w = rect->w * scale;
+		renderRect.h = rect->h * scale;
+	}
+
+	if (!player_dir)
+		SDL_RenderCopy(gSdl.renderer, _playerHurtText, rect, &renderRect);
+	else
+		SDL_RenderCopyEx(gSdl.renderer, _playerHurtText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
+	if (flag)
+		SDL_SetTextureAlphaMod(_playerHurtText, 255);
+}
+
+void	PlayerAssets::rendPlayerDie(int playerNum, int x, int y, int assetIndex, float scale, int player_dir, int flag)
+{
+	(void)playerNum;
+	if (flag)
+	{
+		SDL_SetTextureBlendMode(_playerDieText, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(_playerDieText, 128);
+	}
+	if (assetIndex < 0)
+	{
+		std::cerr << "Invalid index" << std::endl;
+		return ;
+	}
+	if (scale <= 0) 
+	{
+		std::cerr << "Invalid scale" << std::endl;
+		return ;
+	}
+
+	SDL_Rect	renderRect = {x - 84, y - 84, _dieW, _dieH};
+	SDL_Rect	*rect = &_playerDie[assetIndex];
+
+	if (rect != NULL)
+	{
+		renderRect.w = rect->w * scale;
+		renderRect.h = rect->h * scale;
+	}
+
+	if (!player_dir)
+		SDL_RenderCopy(gSdl.renderer, _playerDieText, rect, &renderRect);
+	else
+		SDL_RenderCopyEx(gSdl.renderer, _playerDieText, rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
+	if (flag)
+		SDL_SetTextureAlphaMod(_playerDieText, 255);
 }

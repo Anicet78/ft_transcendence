@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import { Box } from "@allxsmith/bestax-bulma";
 import { useAuth } from "../../auth/AuthContext";
+import toast from "../../Notifications";
 
 export default function GroupChatCreation() {
 
@@ -33,7 +34,11 @@ export default function GroupChatCreation() {
 			return result.data;
 		},
 		onSuccess: (chat) => {
+			toast({ title: "Group succesfully created", type: "is-success" });
 			navigate(`/chat/${chat.chatId}/info`);
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
 		}
 	});
 

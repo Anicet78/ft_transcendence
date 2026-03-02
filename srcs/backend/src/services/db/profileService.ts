@@ -2,6 +2,7 @@ import { prisma } from './prisma.js';
 import { Prisma } from '@prisma/client';
 import path from 'path';
 import fs from 'fs';
+import { hashPassword } from '../auth/password.js';
 
 export const profileSelect = Prisma.validator<Prisma.AppUserSelect>()({
   appUserId: true,
@@ -85,7 +86,13 @@ export async function getPublicProfile(userName: string, fetcherId: string) {
 
 // Update user's own profile
 export async function updateProfile(userId: string, data: Record<string, unknown>) {
-	//Check if we are updating avatarUrl
+	//Check if we are updating password, if yes → hash it
+	if (data.password && typeof data.password === 'string') {
+		const hashed = await hashPassword(data.password);
+			delete data.password;            // remove invalid field
+			data.passwordHash = hashed;
+	}
+	// Check if we are updating avatarUrl
 	if (data.avatarUrl) {
 		const user = await prisma.appUser.findUnique({
 		where: { appUserId: userId },
@@ -112,7 +119,7 @@ export async function updateProfile(userId: string, data: Record<string, unknown
 		},
 		select: profileSelect
 	});
-	}
+}
 
 // Soft-delete the user: anonymize but keep rows for FK integrity
 export async function softDeleteProfile(userId: string) {

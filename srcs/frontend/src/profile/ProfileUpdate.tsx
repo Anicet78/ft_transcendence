@@ -5,6 +5,7 @@ import UsernameUpdate from "./UsernameUpdate.tsx";
 import regionUpdate from "./RegionUpdate.tsx";
 import EmailUpdate from "./EmailUpdate.tsx";
 import PasswordUpdate from "./PasswordUpdate.tsx";
+import "./update.css"
 
 type UpdateField = "avatar" | "username" | "region" | "email" | "password";
 
@@ -28,9 +29,9 @@ const ProfileUpdate = () => {
 
 	if (!field || !isUpdateField(field)) {
 		return (
-		<div>
-			<p>Error: invalid update field</p>
-			<NavLink to="/profile" className="button is-medium">Back to profile</NavLink>
+		<div className="update-box">
+			<div className="invalid-update">Error: invalid update field</div>
+			<NavLink to="/profile" className="button is-medium navlink-button">Back to profile</NavLink>
 		</div>);
 	}
 

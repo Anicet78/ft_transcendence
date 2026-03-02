@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useChat } from "../ChatContext";
 import api from "../../serverApi";
 import { useMessagesMutations } from "./useMessagesMutations";
@@ -9,6 +9,8 @@ export function useGroupChatMutations(chatId?: string) {
 	const { joinChat, leaveChat } = useChat();
 	const { sendMessageMutation } = useMessagesMutations(chatId);
 
+	const queryClient = useQueryClient();
+
 	const kickMutation = useMutation({
 		mutationFn: async (memberId: string) => {
 			await api.post(`/group/${chatId}/kick/${memberId}`);
@@ -16,6 +18,13 @@ export function useGroupChatMutations(chatId?: string) {
 		onSuccess: () => {
 			// Refresh chat info so the kicked member disappears
 			joinChat(chatId!);
+			toast({ title: "Member kicked", type: "is-success" });
+				queryClient.invalidateQueries({
+				queryKey: ["chat-info", chatId]
+			});
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
 		}
 	});
 
@@ -25,8 +34,12 @@ export function useGroupChatMutations(chatId?: string) {
 		},
 		onSuccess: () => {
 			// Refresh chat info so the kicked member disappears
+			toast({ title: "You succesfully quitted chat", type: "is-success" });
 			leaveChat();
 			window.location.href = "/chat/list";
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
 		}
 	});
 
@@ -36,8 +49,12 @@ export function useGroupChatMutations(chatId?: string) {
 		},
 		onSuccess: () => {
 			// Refresh chat info so the kicked member disappears
+			toast({ title: "Chat succesfully disbanded", type: "is-success" });
 			leaveChat();
 			window.location.href = "/chat/list";
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
 		}
 	});
 
@@ -51,6 +68,9 @@ export function useGroupChatMutations(chatId?: string) {
 		},
 		onSuccess: () => {
 			toast({ title: `Game invite sent`, type: "is-info" });
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
 		}
 	});
 

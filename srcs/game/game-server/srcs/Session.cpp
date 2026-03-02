@@ -74,6 +74,8 @@ void	Session::launch()
 		std::string roomId = player->getRoom().getRoomId();
 		player->setNode(node);
 
+		player->setStartNode(node);
+
 		player->setStartPos(pos);
 
 		player->getWs()->unsubscribe(roomId);
@@ -338,7 +340,18 @@ void	Session::checkFinishedPlayers(uWS::App &app)
 			continue ;
 		std::shared_ptr<Player> player = p.lock();
 		if (player->getFinished())
+		{
 			this->sendEndResults(app, player, 0);
+
+			// std::string msg = "{\"sessionGameId\":\"" + this->_sessionId + "\""
+			// 				+ ",\"playerId\":\"" + player->getUid() + "\""
+			// 				+ ",\"completionTime\":" + std::to_string(this->getActualTime())
+			// 				+ ",\"ennemiesKilled\":" + std::to_string(player->getKills())
+			// 				+ ",\"isWinner\":" + std::to_string(player->HasWin())
+			// 				+ ",\"gainedXp\":" + std::to_string(10)
+			// 				+ "}";
+			// sendToBack("http://localhost:3000/game/result/" + player->getUid(), msg, "PATCH");
+		}
 		if (player->checkInvinsibleFrame() && player->getTimeInvincible() > 1.0f)
 			player->endInvinsibleFrame();
 	}

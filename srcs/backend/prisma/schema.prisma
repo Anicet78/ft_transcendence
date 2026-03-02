@@ -44,6 +44,8 @@ model AppUser {
   refreshTokens                                         RefreshToken[]   @relation("UserToken")
   rolesGiven                                            UserRole[]       @relation("UserRoleAttributedBy")
   rolesReceived                                         UserRole[]       @relation("UserRoleAttributedTo")
+  //chatReceipt                                           ChatReceipt[]
+  ChatState                                             ChatReadState[]
 
   @@map("app_user")
 }
@@ -153,6 +155,9 @@ model Chat {
   messages    ChatMessage[]
   roles       ChatRole[]
   privateChat PrivateChat[]
+  //reads       ChatReceipt[]
+  ChatState   ChatReadState[]
+
 
   @@map("chat")
 }
@@ -219,9 +224,27 @@ model ChatMessage {
   chat        Chat           @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction)
   moderator   AppUser?       @relation("chat_message_moderated_byToapp_user", fields: [moderatedBy], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
   author      AppUser        @relation("chat_message_user_idToapp_user", fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
+  //reads       ChatReceipt[]
+  ChatState   ChatReadState[]
+
 
   @@map("chat_message")
 }
+
+model ChatReadState {
+  chatId                 String       @map("chat_id") @db.Uuid
+  userId                 String       @map("user_id") @db.Uuid
+  lastReadMessageId      String       @map("last_read_message_id") @db.Uuid
+  updatedAt              DateTime?    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  chat                   Chat         @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction)
+  message                ChatMessage  @relation(fields: [lastReadMessageId], references: [messageId], onDelete: NoAction, onUpdate: NoAction)
+  user                   AppUser      @relation(fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([chatId, userId])
+
+  @@map("chat_read_state")
+}
+
 
 model ChatRole {
   chatRoleId       String         @id @default(dbgenerated("uuid_generate_v4()")) @map("chat_role_id") @db.Uuid

@@ -99,6 +99,42 @@ export default fp(async (fastify) => {
 				});
 			});
 
+			socket.on("chat_read", async ({ chatId, lastMessageId }) => {
+
+				const isMember = await prisma.chatMember.findFirst({
+					where: {
+					chatId,
+					userId: userPayload.id
+					}
+				});
+
+				if (!isMember) return;
+
+				await prisma.chatReadState.upsert({
+					where: {
+						chatId_userId: {
+							chatId,
+							userId: userPayload.id
+						}
+					},
+					update: {
+						lastReadMessageId: lastMessageId
+					},
+					create: {
+						chatId,
+						userId: userPayload.id,
+						lastReadMessageId: lastMessageId
+					}
+				});
+
+				socket.to(chatId).emit("chat_read_updated", {
+					chatId,
+					userId: userPayload.id,
+					lastMessageId
+				});
+			});
+
+
 		} catch (err) {
 			console.log("An error occured:", err);
 			socket.disconnect(true);

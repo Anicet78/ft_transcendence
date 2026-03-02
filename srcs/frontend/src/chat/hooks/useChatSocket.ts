@@ -13,6 +13,22 @@ export function useChatSocket(chatId?: string) {
 		if (!socket || !chatId)
 			return;
 
+		socket.on("chat_read_updated", ({ userId, lastMessageId }) => {
+
+			queryClient.setQueryData(
+				["chat-read-state", chatId],
+				(prev: Record<string, string> = {}) => ({
+					...prev,
+					[userId]: lastMessageId
+				})
+			);
+
+		});
+
+		const invalidateChatInfo = () => {
+			queryClient.invalidateQueries({ queryKey: ["chat-info", chatId] });
+		};
+
 		//SEND
 		const onMessageCreated = () => {
 	
@@ -70,13 +86,28 @@ export function useChatSocket(chatId?: string) {
 		socket.on("chat_message_moderated", onMessageModerated);
 		socket.on("chat_message_restored", onMessageRestored);
 
+		socket.on("chat_member_joined", invalidateChatInfo);
+		socket.on("chat_member_left", invalidateChatInfo);
+		socket.on("chat_member_kicked", invalidateChatInfo);
+		socket.on("chat_member_role_changed", invalidateChatInfo);
+		socket.on("chat_disbanded", invalidateChatInfo);
+
 
 		return () => {
+			//socket.off("chat_receipt_update");
+			socket.off("chat_read_updated");
+
 			socket.off("chat_message_created", onMessageCreated);
 			socket.off("chat_message_edited", onMessageEdited);
 			socket.off("chat_message_deleted", onMessageDeleted);
 			socket.off("chat_message_moderated", onMessageModerated);
 			socket.off("chat_message_restored", onMessageRestored);
+
+			socket.off("chat_member_joined", invalidateChatInfo);
+			socket.off("chat_member_left", invalidateChatInfo);
+			socket.off("chat_member_kicked", invalidateChatInfo);
+			socket.off("chat_member_role_changed", invalidateChatInfo);
+			socket.off("chat_disbanded", invalidateChatInfo);
 		}
 
 	}, [socket, chatId, queryClient]);

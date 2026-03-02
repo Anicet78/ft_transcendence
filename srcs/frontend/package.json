@@ -14,7 +14,7 @@
     "@files-ui/react": "^1.2.5",
     "@hookform/resolvers": "^5.2.2",
     "@mdi/font": "^7.4.47",
-    "@tanstack/react-query": "^5.90.20",
+    "@tanstack/react-query": "^5.90.21",
     "@tanstack/react-query-devtools": "^5.91.3",
     "@types/emscripten": "^1.41.5",
     "axios": "^1.13.4",

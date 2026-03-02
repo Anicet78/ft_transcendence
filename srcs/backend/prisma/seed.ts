@@ -211,49 +211,49 @@ async function seedGroupChat(users) {
   });
 }
 
-// GAME PROFILES
-async function seedGameProfiles(users) {
-  for (const u of users) {
-    await prisma.gameProfile.create({
-      data: {
-        userId: u.appUserId,
-        totalGames: 10,
-        totalWins: 5,
-        totalLoses: 5,
-        totalEnemiesKilled: 100,
-        totalXp: 500,
-        level: 3,
-        bestTime: 120,
-      },
-    });
-  }
-}
+// // GAME PROFILES
+// async function seedGameProfiles(users) {
+//   for (const u of users) {
+//     await prisma.gameProfile.create({
+//       data: {
+//         userId: u.appUserId,
+//         totalGames: 10,
+//         totalWins: 5,
+//         totalLoses: 5,
+//         totalEnemiesKilled: 100,
+//         totalXp: 500,
+//         level: 3,
+//         bestTime: 120,
+//       },
+//     });
+//   }
+// }
 
-// GAME SESSIONS + RESULTS
-async function seedGameSessions(users) {
-  const maps = ["Forest", "Desert", "Ruins"];
+// // GAME SESSIONS + RESULTS
+// async function seedGameSessions(users) {
+//   const maps = ["Forest", "Desert", "Ruins"];
 
-  for (const map of maps) {
-    const session = await prisma.gameSession.create({
-      data: {
-        mapName: map,
-        status: "finished",
-      },
-    });
+//   for (const map of maps) {
+//     const session = await prisma.gameSession.create({
+//       data: {
+//         mapName: map,
+//         status: "finished",
+//       },
+//     });
 
-    for (const u of users) {
-      await prisma.gameResult.create({
-        data: {
-          gameId: session.sessionId,
-          playerId: u.appUserId,
-          enemiesKilled: 10,
-          gainedXp: 50,
-          isWinner: u === users[0], // Nina wins all sessions
-        },
-      });
-    }
-  }
-}
+//     for (const u of users) {
+//       await prisma.gameResult.create({
+//         data: {
+//           gameId: session.sessionId,
+//           playerId: u.appUserId,
+//           enemiesKilled: 10,
+//           gainedXp: 50,
+//           isWinner: u === users[0], // Nina wins all sessions
+//         },
+//       });
+//     }
+//   }
+// }
 
 // MAIN
 async function main() {
@@ -286,13 +286,14 @@ async function main() {
   const users = await createFixedUsers();
   console.log(" Users created!");
 
-  await prisma.chat.deleteMany();
-  await prisma.privateChat.deleteMany();
-  await prisma.chatMember.deleteMany();
+  await prisma.chatReadState.deleteMany();
   await prisma.chatMessage.deleteMany();
+  await prisma.chatInvitation.deleteMany();
   await prisma.chatRole.deleteMany();
   await prisma.chatBan.deleteMany();
-  await prisma.chatInvitation.deleteMany();
+  await prisma.chatMember.deleteMany();
+  await prisma.privateChat.deleteMany();
+  await prisma.chat.deleteMany();
 
 
   await seedBlocks(users);
@@ -303,10 +304,10 @@ async function main() {
   console.log(" PrivateChats created!");
   await seedGroupChat(users);
   console.log(" GroupChat created!");
-  await seedGameProfiles(users);
-  console.log(" GameProfiles created!");
-  await seedGameSessions(users);
-  console.log(" GameSessions created!");
+  // await seedGameProfiles(users);
+  // console.log(" GameProfiles created!");
+  // await seedGameSessions(users);
+  // console.log(" GameSessions created!");
 
   console.log("🌱 Seeding complete!");
 }

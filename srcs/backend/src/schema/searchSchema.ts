@@ -85,6 +85,13 @@ export const SearchUsersResponseSchema = Type.Object({
 		availability: Type.Boolean(),
 		playing: Type.Boolean(),
 		avatarUrl: Type.Optional(Type.String()),
+		friendshipStatus: Type.Union([
+			Type.Literal('none'),
+			Type.Literal('sent'),
+			Type.Literal('received'),
+			Type.Literal('friends'),
+		]),
+		friendshipId: Type.String(),
 		gameProfile: Type.Optional(
 		Type.Object({
 			gameProfileId: Type.String(),
