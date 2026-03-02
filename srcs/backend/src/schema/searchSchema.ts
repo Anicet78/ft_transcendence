@@ -92,6 +92,7 @@ export const SearchUsersResponseSchema = Type.Object({
 			Type.Literal('friends'),
 		]),
 		friendshipId: Type.String(),
+		createdAt: Type.String(),
 		gameProfile: Type.Optional(
 		Type.Object({
 			gameProfileId: Type.String(),

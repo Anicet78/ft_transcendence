@@ -114,7 +114,7 @@ const SearchPage = () => {
 						const sortValue = getSortValue(user);
 						console.log("sortBy:", sortBy);
 						console.log("gameProfile:", user.gameProfile);
-						console.log("value:", user.gameProfile?.[sortBy as keyof typeof user.gameProfile]);
+						console.log("value:", sortValue);
 						console.log("user:", user.username, user.gameProfile);
 						return (
 							<div key={user.appUserId} className="user_item_card">
