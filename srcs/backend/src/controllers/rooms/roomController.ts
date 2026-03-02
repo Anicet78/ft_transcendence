@@ -149,9 +149,15 @@ export async function launchController(
 			}
 		});
 
+		const chat = await prisma.chat.findUnique({
+			where: { chatId: room.chatId },
+			select: { chatName: true }
+		});
+
 		SocketService.send(room.chatId!, "notification", {
 			type: "game_started",
 			chatId: room.chatId,
+			chatName: chat?.chatName ?? "Chat",
 			roomId: room.roomId
 		});
 	}
