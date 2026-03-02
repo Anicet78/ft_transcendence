@@ -6,6 +6,7 @@ import { Socket } from "socket.io";
 import { SocketService } from "../../services/socket/SocketService.js";
 import type { GlobalHeaders } from "../../schema/globalHeadersSchema.js";
 import { fastify } from "../../server.js";
+import { prisma } from "../../services/db/prisma.js";
 
 export async function getRoomController(
 	request: FastifyRequest<{ Params: RoomParamsType }>,
@@ -138,6 +139,29 @@ export async function launchController(
 
 	const room: Room = RoomService.get(request.body.roomId, request.user.id);
 
+	if (room.chatId) {
+		await prisma.chatMessage.create({
+			data: {
+				chatId: room.chatId,
+				userId: request.user.id, // or SYSTEM user later
+				content: "Game started 🎮",
+				type: "game_started"
+			}
+		});
+
+		const chat = await prisma.chat.findUnique({
+			where: { chatId: room.chatId },
+			select: { chatName: true }
+		});
+
+		SocketService.send(room.chatId!, "notification", {
+			type: "game_started",
+			chatId: room.chatId,
+			chatName: chat?.chatName ?? "Chat",
+			roomId: room.roomId
+		});
+	}
+
 	const equals = request.body.hostId === room.hostId && request.body.players.length === room.players.length &&
 		[...request.body.players.map(players => players.id)].sort().join(',') === [...room.players.map(players => players.id)].sort().join(',');
 
@@ -147,4 +171,18 @@ export async function launchController(
 	SocketService.send(room.roomId, "launch");
 
 	return reply.status(204).send();
+}
+
+export async function attachChatController(
+	request: FastifyRequest<{
+		Params: RoomParamsType,
+		Body: { chatId: string }
+	}>,
+	reply: FastifyReply
+) {
+	const room = RoomService.get(request.params.id, request.user.id);
+
+	room.chatId = request.body.chatId;
+
+	return reply.status(200).send(room);
 }

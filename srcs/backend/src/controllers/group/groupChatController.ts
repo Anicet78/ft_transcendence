@@ -54,8 +54,8 @@ export async function disbandGroupChatController(
 	const userId = req.user.id;
 	const { chatId } = req.params;
 
-	const socket = req.getSocket();
-	await SocketService.addInRoom(chatId, socket);
+	// const socket = req.getSocket();
+	// await SocketService.addInRoom(chatId, socket);
 
 	if (!userId) {
 	throw new AppError('Unauthorized', 401);
@@ -76,8 +76,8 @@ export async function quitGroupChatController(
 	const userId = req.user.id;
 	const { chatId } = req.params;
 
-	const socket = req.getSocket();
-	await SocketService.addInRoom(chatId, socket);
+	// const socket = req.getSocket();
+	// await SocketService.addInRoom(chatId, socket);
 
 	if (!userId) {
 	throw new AppError('Unauthorized', 401);

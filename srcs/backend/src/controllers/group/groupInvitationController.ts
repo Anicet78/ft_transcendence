@@ -89,6 +89,14 @@ export async function updateGroupInvitationController(
 			joinedAt: Date;
 		};
 
+		const socket = await req.server.getSocketByUserId(member.userId);
+		if (socket) {
+			socket.join(member.chatId);
+		}
+
+		// SocketService.sendToUser(user1Id, "chat_created", { chatId });
+		// SocketService.sendToUser(user2Id, "chat_created", { chatId });
+
 		SocketService.send(member.chatId, "chat_member_joined", { chatId: member.chatId, member });
 
 		return reply.status(201).send({

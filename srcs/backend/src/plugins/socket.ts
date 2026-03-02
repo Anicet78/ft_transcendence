@@ -47,7 +47,7 @@ export default fp(async (fastify) => {
 
 	const disconnectionTimers = new Map<string, NodeJS.Timeout>();
 
-	fastify.io.on("connection", async (socket) => {
+	fastify.io.on("connection", async (socket: Socket) => {
 		const clientId = socket.id;
 		try {
 			const userPayload: RequestUser | null = fastify.jwt.decode(socket.handshake.auth.token);
@@ -59,6 +59,45 @@ export default fp(async (fastify) => {
 			await socket.join(`user:${userPayload.id}`);
 
 			console.log(`Client \`${clientId}\` is connected`);
+
+			//Fetch all chats user is a member of
+			const chats = await prisma.chatMember.findMany({
+				where: {
+					userId: userPayload.id,
+					deletedAt: null
+				},
+				select: {
+					chatId: true
+				}
+			});
+
+			//add user to each chat socket
+			for (const c of chats) {
+				if (!c.chatId)
+					continue;
+				await socket.join(c.chatId);
+			}
+			console.log(`\`${clientId}\` auto-joined chats:`, chats.length);
+
+			// socket.on("chat_join", async ({ chatId }) => {
+			// 	const isMember = await prisma.chatMember.findFirst({
+			// 		where: {
+			// 			chatId,
+			// 			userId: userPayload.id
+			// 		}
+			// 	});
+
+			// 	console.log("JOIN CHAT ROOM", chatId, "user:", userPayload.id);
+
+			// 	if (!isMember)
+			// 		return;
+
+			// 	await SocketService.addInRoom(chatId, socket);
+			// });
+
+			// socket.on("chat_leave", async ({ chatId }) => {
+			// 	socket.leave(chatId);
+			// });
 
 			if (disconnectionTimers.has(userPayload.id)) {
 				clearTimeout(disconnectionTimers.get(userPayload.id));
@@ -83,7 +122,7 @@ export default fp(async (fastify) => {
 			// broadcast typing into chat effect in the chat room
 			socket.on("chat_typing", async ({ chatId }) => {
 
-				const isMember = await prisma.chatMember.findFirst({
+				const isMember = await prisma.chatMember.findFirst({//obsolete now that I add user to all chat automaticaly ?
 					where: {
 						chatId,
 						userId: userPayload.id

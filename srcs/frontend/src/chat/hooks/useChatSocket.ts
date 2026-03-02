@@ -1,12 +1,23 @@
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSocket } from "../../socket/SocketContext";
+//import toast from "../../Notifications";
 
 //When a socket event arrives, it directly updates the React Query cache
 export function useChatSocket(chatId?: string) {
 
 	const socket = useSocket();
 	const queryClient = useQueryClient();
+
+	// useEffect(() => {
+	// 	if (!socket || !chatId) return;
+
+	// 	socket.emit("chat_join", { chatId });
+
+	// 	return () => {
+	// 		socket.emit("chat_leave", { chatId });
+	// 	};
+	// }, [socket, chatId]);
 
 	useEffect(() => {
 	
@@ -31,14 +42,7 @@ export function useChatSocket(chatId?: string) {
 
 		//SEND
 		const onMessageCreated = () => {
-	
-			//let the backend decide what you’re allowed to see
 			queryClient.invalidateQueries({ queryKey: ["chat-messages", chatId] });
-			// queryClient.setQueryData(["chat-messages", chatId], (cache: any[] | undefined) => {
-			// 	if (!cache)
-			// 		return [message];
-			// 	return [...cache, message];
-			// });
 		};
 
 		//EDIT
@@ -58,7 +62,6 @@ export function useChatSocket(chatId?: string) {
 				// cache.filter(msg => msg.messageId !== message.messageId);
 			});
 		};
-
 
 		//MODERATED
 		const onMessageModerated = (message: any) => {
@@ -94,7 +97,6 @@ export function useChatSocket(chatId?: string) {
 
 
 		return () => {
-			//socket.off("chat_receipt_update");
 			socket.off("chat_read_updated");
 
 			socket.off("chat_message_created", onMessageCreated);

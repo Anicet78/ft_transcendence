@@ -14,6 +14,8 @@ import type {
 	DeleteMessageParams
 } from '../../schema/chat/chatMessageSchema.js';
 import { SocketService } from '../../services/socket/SocketService.js';
+import { extractRoomId } from '../../plugins/extractRoomId.js';
+import { prisma } from '../../services/db/prisma.js';
 
 //SEND MESSAGE
 export async function sendMessageController(
@@ -22,14 +24,35 @@ export async function sendMessageController(
 ) {
 	const userId = req.user.id;
 	const { chatId } = req.params;
-	const { content } = req.body;
+	const { content, type } = req.body;
 
-	const socket = req.getSocket();
-	await SocketService.addInRoom(chatId, socket);
+	// const socket = req.getSocket();
+	// await SocketService.addInRoom(chatId, socket);
 
-	const message = await sendMessage(chatId, userId, content);
+	const message = await sendMessage(chatId, userId, content, type);
 
 	SocketService.send(chatId, "chat_message_created", message);
+
+	if (message.type === "game_invite") {
+	
+		const chat = await prisma.chat.findUnique({
+			where: { chatId },
+			select: { chatName: true }
+		});
+		const sender = await prisma.appUser.findUnique({
+			where: { appUserId: userId },
+			select: { username: true }
+		});
+
+		SocketService.send(chatId, "notification", {
+			type: "game_invite",
+			chatId,
+			chatName: chat?.chatName ?? "Chat",
+			roomId: extractRoomId(message.content),
+			senderId: userId,
+			senderUsername: sender?.username ?? "Companion"
+		});
+	}
 
 	return reply.status(201).send({
 		messageId: message.messageId,
@@ -37,6 +60,7 @@ export async function sendMessageController(
 		userId: message.userId,
 		content: message.content,
 		status: message.status,
+		type: message.type,
 		postedAt: message.postedAt?.toISOString() ?? null
 	});
 }
@@ -49,8 +73,8 @@ export async function getChatMessagesController(
 	const userId = req.user.id;
 	const { chatId } = req.params;
 
-	const socket = req.getSocket();
-	await SocketService.addInRoom(chatId, socket);
+	// const socket = req.getSocket();
+	// await SocketService.addInRoom(chatId, socket);
 
 	const messages = await getChatMessages(chatId, userId);
 
@@ -61,6 +85,7 @@ export async function getChatMessagesController(
 			userId: m.userId,
 			content: m.content,
 			status: m.status,
+			type: m.type,
 			postedAt: m.postedAt?.toISOString() ?? null,
 			editedAt: m.editedAt?.toISOString() ?? null,
 			deletedAt: m.deletedAt?.toISOString() ?? null,
@@ -79,8 +104,8 @@ export async function editMessageController(
 	const { chatId, messageId } = req.params;
 	const { content } = req.body;
 
-	const socket = req.getSocket();
-	await SocketService.addInRoom(chatId, socket);
+	// const socket = req.getSocket();
+	// await SocketService.addInRoom(chatId, socket);
 
 	const result = await editMessage(chatId, messageId, userId, content);
 	SocketService.send(chatId, "chat_message_edited", result);
@@ -99,8 +124,8 @@ export async function moderateMessageController(
 	const moderatorId = req.user.id;
 	const { chatId, messageId } = req.params;
 
-	const socket = req.getSocket();
-	await SocketService.addInRoom(chatId, socket);
+	// const socket = req.getSocket();
+	// await SocketService.addInRoom(chatId, socket);
 
 	const result = await moderateMessage(chatId, messageId, moderatorId);
 	SocketService.send(chatId, "chat_message_moderated", {
@@ -122,8 +147,8 @@ export async function restoreMessageController(
 	const moderatorId = req.user.id;
 	const { chatId, messageId } = req.params;
 
-	const socket = req.getSocket();
-	await SocketService.addInRoom(chatId, socket);
+	// const socket = req.getSocket();
+	// await SocketService.addInRoom(chatId, socket);
 
 	const result = await restoreMessage(chatId, messageId, moderatorId);
 	SocketService.send(chatId, "chat_message_restored", {
@@ -148,8 +173,8 @@ export async function deleteMessageController(
 	const { chatId, messageId } = req.params;
 	console.log("DELETE controller hit", chatId, messageId);
 
-	const socket = req.getSocket();
-	await SocketService.addInRoom(chatId, socket);
+	// const socket = req.getSocket();
+	// await SocketService.addInRoom(chatId, socket);
 
 	const result = await deleteMessage(chatId, messageId, userId);
 

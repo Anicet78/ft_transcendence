@@ -3,6 +3,7 @@ import type { GetResponse } from "../types/GetType";
 import { useSocket } from "../socket/SocketContext";
 import { useAuth } from "../auth/AuthContext";
 import api from "../serverApi";
+import toast from "../Notifications";
 
 type ChatInfoResponse = GetResponse<"/chat/{chatId}/info", "get">;
 
@@ -64,6 +65,27 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 		if (!socket)
 			return;
 
+		socket.on("notification", (payload) => {
+
+			if (payload.senderId === user?.id)// ignore yourself
+				return;
+			if (payload.type === "game_invite") {
+				toast({
+					title: `${payload.chatName}`,
+					message: `${payload.senderUsername} send you a game invitation 🎮`,
+					type: "is-info"
+				});
+			}
+
+			if (payload.type === "game_started") {
+				toast({
+					title: `${payload.chatName}`,
+					message: "Your fellow companions started a game session 🚀",
+					type: "is-success"
+				});
+			}
+		});
+
 		socket.on("chat_typing", ({ userId }) => {
 			if (userId === user?.id)// ignore yourself
 				return;
@@ -94,6 +116,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
 		return () => {
 			socket.off("chat_typing");
+			socket.off("game_invite");
+			socket.off("game_started");
 		};
 
 	}, [socket, user]);

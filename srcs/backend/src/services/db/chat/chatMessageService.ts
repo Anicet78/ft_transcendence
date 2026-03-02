@@ -13,6 +13,7 @@ export const messageSelect = {
 	userId: true,
 	content: true,
 	status: true,
+	type: true,
 	postedAt: true,
 	editedAt: true,
 	deletedAt: true,
@@ -28,7 +29,7 @@ export const messageSelect = {
 };
 
 //SEND MESSAGE
-export async function sendMessage(chatId: string, userId: string, content: string) {
+export async function sendMessage(chatId: string, userId: string, content: string, msg_type: "text" | "game_invite" | "game_started" = "text") {
 	// 1. check if chat exists
 	const chat = await prisma.chat.findUnique({
 		where: { chatId },
@@ -90,6 +91,7 @@ export async function sendMessage(chatId: string, userId: string, content: strin
 			chatId,
 			userId,
 			status: 'posted',
+			type: msg_type,
 			content
 		},
 		select: messageSelect
@@ -127,20 +129,7 @@ export async function deleteMessage(chatId: string, messageId: string, userId: s
 			status: 'deleted',
 			deletedAt: new Date()
 		},
-		select: messageSelect//{
-		// 	messageId: true,
-		// 	chatId: true,
-		// 	status: true,
-		// 	deletedAt: true//,
-		// 	// author: {
-		// 	// 	select: {
-		// 	// 	appUserId: true,
-		// 	// 	username: true,
-		// 	// 	avatarUrl: true,
-		// 	// 	availability: true
-		// 	// 	}
-		// 	// }
-		// }
+		select: messageSelect
 	});
 
 	return updated;
@@ -159,6 +148,7 @@ export async function getChatMessages(chatId: string, userId: string) {
 	// Find all users who block or are blocked by current user
 	const blockedRelations = await prisma.blockedList.findMany({
 	where: {
+		deletedAt:null,
 		OR: [
 			{ blocker: userId },
 			{ blocked: userId }
@@ -218,22 +208,7 @@ export async function editMessage(
 			editedAt: new Date(),
 			deletedAt: null
 		},
-		select: messageSelect//{
-		// 	messageId: true,
-		// 	chatId: true,
-		// 	userId: true,
-		// 	content: true,
-		// 	status: true,
-		// 	editedAt: true,
-		// 	author: {
-		// 		select: {
-		// 			appUserId: true,
-		// 			username: true,
-		// 			avatarUrl: true,
-		// 			availability: true
-		// 		}
-		// 	}
-		// }
+		select: messageSelect
 	});
 
 	return updated;
@@ -277,20 +252,7 @@ export async function moderateMessage(
 			deletedAt: new Date(),
 			moderatedBy: moderatorId
 		},
-		select: messageSelect//{
-		// 	messageId: true,
-		// 	chatId: true,
-		// 	status: true,
-		// 	deletedAt: true,
-		// 	author: {
-		// 		select: {
-		// 		appUserId: true,
-		// 		username: true,
-		// 		avatarUrl: true,
-		// 		availability: true
-		// 		}
-		// 	}
-		// }
+		select: messageSelect
 	});
 
 	return updated;
@@ -342,19 +304,7 @@ export async function restoreMessage(
 			deletedAt: null,
 			moderatedBy: null
 		},
-		select: messageSelect//{
-		// 	messageId: true,
-		// 	chatId: true,
-		// 	status: true,
-		// 	author: {
-		// 		select: {
-		// 		appUserId: true,
-		// 		username: true,
-		// 		avatarUrl: true,
-		// 		availability: true
-		// 		}
-		// 	}
-		// }
+		select: messageSelect
 	});
 	return updated;
 }

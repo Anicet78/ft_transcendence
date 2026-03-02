@@ -10,7 +10,12 @@ export type SendMessageParams = Static<typeof SendMessageParamsSchema>;
 
 
 export const SendMessageBodySchema = Type.Object({
-  content: Type.String({ minLength: 1, maxLength: 2000 })//should decide on that later
+  content: Type.String({ minLength: 1, maxLength: 2000 }),//should decide on that later
+  type: Type.Optional(Type.Union([
+    Type.Literal("text"),
+    Type.Literal("game_invite"),
+    Type.Literal("game_started")
+  ]))
 });
 export type SendMessageBody = Static<typeof SendMessageBodySchema>;
 
@@ -20,6 +25,7 @@ export const ChatMessageResponseSchema = Type.Object({
 	userId: Type.String(),
 	content: Type.String(),
 	status: Type.String(),
+  type: Type.String(),
 	postedAt: Type.String()
 });
 
@@ -35,6 +41,7 @@ export const ChatMessageSchema = Type.Object({
   userId: Type.String(),
   content: Type.String(),
   status: Type.String(),
+  type: Type.String(),
   postedAt: Type.String(),
   editedAt: Type.Union([Type.String(), Type.Null()]),
   deletedAt: Type.Union([Type.String(), Type.Null()]),
@@ -59,6 +66,7 @@ export const EditMessageResponseSchema = Type.Object({
   userId: Type.String(),
   content: Type.String(),
   status: Type.String(),
+  type: Type.String(),
   editedAt: Type.String()
 });
 
