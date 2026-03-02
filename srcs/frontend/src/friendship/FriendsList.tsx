@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import api, { getAccessToken } from '../serverApi.ts';
 import type { GetResponse } from '../types/GetType.ts'
 import { useAuth } from "../auth/AuthContext.tsx";
+import skull from '../assets/skull.svg';
 
 type FriendsListResponseType = GetResponse<"/friends/list", "get">;
 
@@ -29,9 +30,9 @@ const FriendList = () => {
 			<ul className="user_list">
 					{userData.map(friend => {
 						const friendUser = friend.sender.appUserId !== user?.id ? friend.sender : friend.receiver;
-						const avatarUrl = friendUser.avatarUrl 
-							? `http://localhost:3000/uploads/${friendUser.avatarUrl}`
-							: '../assets/skull.svg';
+						const avatarUrl = friendUser.avatarUrl
+							? `https://${window.location.host}/uploads/${friendUser.avatarUrl}`
+							: skull;
 
 						return (
 							<li key={friend.friendshipId} className="user_item_card">

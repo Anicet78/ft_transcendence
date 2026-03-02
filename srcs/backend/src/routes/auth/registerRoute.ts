@@ -21,8 +21,7 @@ export const RegisterResponseSchema = Type.Object({
 		username: Type.String(),
 		email: Type.String(),
 		role: Type.String()
-	}),
-	roomId: Type.String()
+	})
 });
 export type RegisterResponseType = Static<typeof RegisterResponseSchema>
 

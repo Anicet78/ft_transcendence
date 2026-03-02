@@ -16,8 +16,7 @@ export const LoginResponseSchema = Type.Object({
 		username: Type.String(),
 		email: Type.String(),
 		role: Type.String()
-	}),
-	roomId: Type.String()
+	})
 });
 export type LoginResponseType = Static<typeof LoginResponseSchema>
 

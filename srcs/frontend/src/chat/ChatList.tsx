@@ -68,8 +68,10 @@ const ChatList = ({ onSelectChat }: { onSelectChat?: (id: string) => void }) => 
 				<button
 				className="button is-dark is-small mt-2"
 				onClick={() => {
-					if (onSelectChat) onSelectChat(chat.chatId);
-					else navigate(`/chat/${chat.chatId}/info`);
+					if (onSelectChat)
+						onSelectChat(chat.chatId);
+					else
+						navigate(`/chat/${chat.chatId}/info`);
 				}}
 				>
 				Open chat

@@ -3,8 +3,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import './login.css'
 import '../index.css'
 
-import { Button } from '@allxsmith/bestax-bulma';
-import ButtonSubmit from '../components/ButtonSubmit.tsx';
+import { Button, Box } from '@allxsmith/bestax-bulma';
 import InputEmail from '../components/InputEmail.tsx';
 import { useMutation } from '@tanstack/react-query';
 import api from '../serverApi.ts';
@@ -13,9 +12,12 @@ import type { GetBody, GetResponse } from '../types/GetType.ts';
 import { useAuth } from './AuthContext.tsx';
 import { useState } from 'react';
 import toast from '../Notifications.tsx';
+import { handleGoogleLogin } from './callbackGoogle.tsx';
+import { handle42Login } from './callback42.tsx';
 
 type LoginBodyType = GetBody<"/auth/login", "post">;
 type LoginResponseType = GetResponse<"/auth/login", "post">;
+
 
 function Login() {
 	const { login } = useAuth();
@@ -24,7 +26,6 @@ function Login() {
 		mutationFn: (data: LoginBodyType) => api.post("/auth/login", data),
 		onSuccess: (data) => {
 			const response: LoginResponseType = data.data;
-			toast({ title: `Welcome ${response.user.username}` })
 			login(response.user, response.token);
 		},
 		onError: (error: Error) => {
@@ -51,11 +52,11 @@ function Login() {
 	};
 
 	return (
-		<>
-			<div className="card">
-				<div>
-					<Button color='primary' isOutlined className='login-button'>Login with Google</Button>
-					<Button color='primary' isOutlined className='login-button'>Login with 42</Button>
+		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='center' textSize='3' textWeight='bold'>
+			<div className='login-box'>
+				<div className='social-buttons'>
+					<Button color='primary' isOutlined className='login-button' onClick={handleGoogleLogin}>Login with Google</Button>
+					<Button color='primary' isOutlined className='login-button' onClick={handle42Login}>Login with 42</Button>
 				</div>
 				<br />
 				<form onSubmit={loginSubmit}>
@@ -82,15 +83,14 @@ function Login() {
 					</div>
 					{mutation.isError && (
 						<div style={{ color: 'red' }}>
-							Erreur : {mutation.error instanceof Error ? mutation.error.message : 'Unknown'}
+							{/* this part only show 'Error:' when nginx isn't running */}
+							Error : {mutation.error instanceof Error ? mutation.error.message : 'Unknown'}
 						</div>
 					)}
-					<ButtonSubmit
-						name={mutation.isPending ? 'Loading...' : 'Sign in'}
-					/>
+					<Button type="submit" color="primary" isOutlined className="submit-wrapper">{mutation.isPending ? 'Loading...' : 'Sign in'}</Button>
 				</form>
 			</div>
-		</>
+		</Box>
 	)
 }
 

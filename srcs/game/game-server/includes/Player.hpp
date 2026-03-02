@@ -40,6 +40,7 @@ class Player
 		bool										_reConnected;
 		bool										_finished;
 		bool										_hasWin;
+		bool										_died;
 		int											_finalRanking;
 		char										_exit;
 		std::chrono::_V2::steady_clock::time_point	_timeDeconnection;
@@ -53,6 +54,7 @@ class Player
 	//pos in map
 		quadList	_node;
 		quadList	_prev_node;
+		quadList	_startNode;
 
 		int			_startPos;
 
@@ -90,9 +92,11 @@ class Player
 		Room		getRoom(void) const;
 		quadList	getNode(void) const;
 		quadList	getPrevNode(void) const;
+		quadList	getStartNode(void) const;
 		bool		getFinished(void) const;
 		int			getSessionSize(void) const;
 		bool		HasWin(void) const;
+		bool		getDied(void) const;
 		bool		isConnected(void) const;
 		bool		isReConnected(void) const;
 		int			getFinalRanking(void) const;
@@ -132,10 +136,12 @@ class Player
 		void		setLaunched(bool flag);
 		void		setFinished(bool flag);
 		void		setHasWin(bool flag);
+		void		setDied(bool flag);
 		void		setFinalRanking(int place);
 		void		setExit(char c);
 		void		setNode(const quadList &node);
 		void		setPrevNode(const quadList &node);
+		void		setStartNode(const quadList &node);
 		void		setPos(float x, float y);
 		void		incrementFloor(void);
 
@@ -168,6 +174,8 @@ class Player
 		void		move(std::map<std::string, std::string> &req);
 		void		takeDamage(int amount);
 		void		heal(int amount);
+
+		void		dieAction(void);
 };
 
 #endif

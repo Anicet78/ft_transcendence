@@ -22,12 +22,16 @@ class Mob
 		static std::unordered_map<int, SDL_Rect>	_mobIdle;
 		static std::unordered_map<int, SDL_Rect>	_mobHurt;
 		static std::unordered_map<int, SDL_Rect>	_mobDeath;
+		static std::unordered_map<int, SDL_Rect>	_mobAttackFront;
+		static std::unordered_map<int, SDL_Rect>	_mobAttackBack;
 
 		static SDL_Texture	*_mobWalkText;
 		static SDL_Texture	*_mobAttackText;
 		static SDL_Texture	*_mobIdleText;
 		static SDL_Texture	*_mobHurtText;
 		static SDL_Texture	*_mobDeathText;
+		static SDL_Texture	*_mobAttackFrontText;
+		static SDL_Texture	*_mobAttackBackText;
 
 		static int						_walkImgW;
 		static int						_walkImgH;
@@ -44,11 +48,19 @@ class Mob
 		static int						_deathImgW;
 		static int						_deathImgH;
 
+		static int						_atkFrontImgW;
+		static int						_atkFrontImgH;
+
+		static int						_atkBackImgW;
+		static int						_atkBackImgH;
+
 		static void	importMobsWalkAssets(int tile_size);
 		static void	importMobsAttackAssets(int tile_size);
 		static void	importMobsIdleAssets(int tile_size);
 		static void	importMobsHurtAssets(int tile_size);
 		static void	importMobsDeathAssets(int tile_size);
+		static void	importMobsFrontAttackAssets(int tile_size);
+		static void	importMobsBackAttackAssets(int tile_size);
 
 	//----------------------------------------------------
 		const int	_id;
@@ -106,6 +118,8 @@ class Mob
 		void	rendMobIdle(int x, int y, int index, float scale, int flag);
 		void	rendMobHurt(int x, int y, int index, float scale, int flag);
 		void	rendMobDeath(int x, int y, int index, float scale, int flag);
+		void	rendMobAttackFront(int x, int y, int index, float scale, int flag);
+		void	rendMobAttackBack(int x, int y, int index, float scale, int flag);
 
 		void	printMob(float camX, float camY, int tile_size, int flag);
 };

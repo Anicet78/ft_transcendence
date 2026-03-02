@@ -1,14 +1,37 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.login-box {
+	width: 100%;
+	max-width: 600px; /* controls overall box width */
+	border-radius: 30px; /* rounded borders */
+	background-color: #3D3C3C;
+	display: flex;
+    flex-direction: column; /* stack children vertically */
+    justify-content: center; /* vertical centering */
+    align-items: center; /* horizontal centering */
+	gap: 2rem; /* Space between title and buttons */
+	padding: 4rem; /* add some spacing between elements and borders */
+	margin: 0 auto; /* centers the div horizontally inside the Box */
+    box-sizing: border-box; /* Include padding in width */
+	overflow: hidden; /* Prevent children from stick out of the container */
 }
 
-.card {
-  padding: 2em;
+.login-box form {
+	width: 100%;
+	max-width: 700px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1.5rem; /* consistent spacing between inputs */
 }
 
-.login-button {
-	margin: 10px;
+.social-buttons {
+	max-width: 380px;
+	display: flex;
+	flex-direction: row;
+	gap: 2rem;
+}
+
+.submit-wrapper {
+	max-width: 380px;   /* button width */
+	min-width: 150px; /* prevents it from being too small */
+	margin-top: 1rem;
 }

@@ -31,7 +31,7 @@ CREATE TABLE app_user (
 	last_name TEXT NOT NULL,
 	username TEXT UNIQUE NOT NULL,
 	mail_address CITEXT UNIQUE NOT NULL,
-	password_hash TEXT NOT NULL,
+	password_hash TEXT,
 	-- avatar --img
 	avatar_url TEXT,
 
@@ -48,6 +48,20 @@ CREATE TABLE app_user (
 	CHECK (trim(last_name) <> ''),
 	CHECK (trim(username) <> ''),
 	CHECK (trim(mail_address) <> '')
+);
+
+CREATE TYPE auth_provider AS ENUM ('google', 'fortyTwo');
+
+CREATE TABLE identify (
+	"provider" auth_provider NOT NULL,
+	provider_id TEXT NOT NULL,
+	user_id UUID NOT NULL,
+
+	PRIMARY KEY ("provider", provider_id),
+
+	CONSTRAINT fk_user_identify
+		FOREIGN KEY (user_id)
+		REFERENCES app_user(app_user_id)
 );
 
 CREATE TABLE refresh_token (

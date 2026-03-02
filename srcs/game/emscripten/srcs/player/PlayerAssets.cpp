@@ -14,6 +14,9 @@ std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerWalkBack;
 std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerAttackBack;
 std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerIdleBack;
 
+std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerHurt;
+std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerDie;
+
 SDL_Texture				*PlayerAssets::_playerWalkText;
 SDL_Texture				*PlayerAssets::_playerAttackText;
 SDL_Texture				*PlayerAssets::_playerIdleText;
@@ -86,6 +89,50 @@ void	PlayerAssets::importAssets(std::string path, int tile_size, SDL_Texture *&t
 	}
 }
 
+void	PlayerAssets::importPlayersHurtAssets(int tile_size)
+{
+
+	_playerHurtText = loadTexture("assets/sprite/Soldier-Hurt.bmp", _hurtW, _hurtH);
+
+	//define every tile asset position and stock it in _mapAssets
+	int y = 0;
+	int i = 0;
+	while (y * tile_size < _hurtH)
+	{
+		int x = 0;
+		while (x * tile_size < _hurtW)
+		{
+			SDL_Rect rect = {x * tile_size, y * tile_size, tile_size, tile_size};
+			_playerHurt.emplace(i, rect);
+			i++;
+			x++;
+		}
+		y++;
+	}
+}
+
+void	PlayerAssets::importPlayersDieAssets(int tile_size)
+{
+
+	_playerDieText = loadTexture("assets/sprite/Soldier-Hurt.bmp", _dieW, _dieH);
+
+	//define every tile asset position and stock it in _mapAssets
+	int y = 0;
+	int i = 0;
+	while (y * tile_size < _dieH)
+	{
+		int x = 0;
+		while (x * tile_size < _dieW)
+		{
+			SDL_Rect rect = {x * tile_size, y * tile_size, tile_size, tile_size};
+			_playerDie.emplace(i, rect);
+			i++;
+			x++;
+		}
+		y++;
+	}
+}
+
 void	PlayerAssets::importPlayersAssets(int tile_size)
 {
 	importAssets("assets/sprite/Soldier-Walk.bmp", tile_size, _playerWalkText, _playerWalk, _walkImgW, _walkImgH);
@@ -103,6 +150,9 @@ void	PlayerAssets::importPlayersAssets(int tile_size)
 	importAssets("assets/sprite/Soldier-Hurt.bmp", tile_size, _playerHurtText, _playerHurt, _hurtImgW, _hurtImgH);
 
 	importAssets("assets/sprite/Soldier-Death.bmp", tile_size, _playerDeathText, _playerDeath, _deathImgW, _deathImgH);
+
+	importPlayersHurtAssets(tile_size);
+	importPlayersDieAssets(tile_size);
 
 	gSdl.setPlayerSize(tile_size);
 }
@@ -352,7 +402,7 @@ void	PlayerAssets::rendPlayerIdleFront(int x, int y, int assetIndex, float scale
 		std::cerr << "Invalid index" << std::endl;
 		return ;
 	}
-	if (scale <= 0) 
+	if (scale <= 0)
 	{
 		std::cerr << "Invalid scale" << std::endl;
 		return ;
@@ -384,7 +434,7 @@ void	PlayerAssets::rendPlayerIdleBack(int x, int y, int assetIndex, float scale,
 		std::cerr << "Invalid index" << std::endl;
 		return ;
 	}
-	if (scale <= 0) 
+	if (scale <= 0)
 	{
 		std::cerr << "Invalid scale" << std::endl;
 		return ;

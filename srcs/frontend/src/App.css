@@ -1,10 +1,175 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.text-focus-in {
+	color: #00d1b2;
+	-webkit-animation:text-focus-in 2.5s cubic-bezier(.55,.085,.68,.53) both;
+	animation:text-focus-in 2.5s cubic-bezier(.55,.085,.68,.53) both;
 }
 
-.card {
-  padding: 2em;
+@-webkit-keyframes text-focus-in {
+	0% {
+		-webkit-filter:blur(12px);
+		filter:blur(12px);opacity:0;
+	}
+	100% {
+		-webkit-filter:blur(0);
+		filter:blur(0);
+		opacity:1;
+	}
 }
+@keyframes text-focus-in {
+	0% {
+		-webkit-filter:blur(12px);
+		filter:blur(12px);
+		opacity:0;
+	}
+	100% {
+		-webkit-filter:blur(0);
+		filter:blur(0);
+		opacity:1;
+	}
+}
+
+.slide-in-elliptic-bottom-bck {
+	width: 50%; /* Default width for large screens */
+	max-width: 90%; /* Never exceed 90% of viewport width */
+	border-radius: 30px; /* rounded borders */
+	background-color: #3D3C3C;
+	display: flex;
+    flex-direction: column; /* stack children vertically */
+    justify-content: center; /* vertical centering */
+    align-items: center; /* horizontal centering */
+	gap: 2rem; /* Space between title and buttons */
+	padding: 5rem; /* add some spacing between elements and borders */
+	margin: 0 auto; /* centers the div horizontally inside the Box */
+    box-sizing: border-box; /* Include padding in width */
+	overflow: hidden; /* Prevent children from stick out of the container */
+	-webkit-animation: slide-in-elliptic-bottom-bck 1.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+	        animation: slide-in-elliptic-bottom-bck 1.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+/* Buttons inside animation container */
+.slide-in-elliptic-bottom-bck .button-group {
+    display: flex;             /* Horizontal layout for buttons */
+	flex-direction: row;          /* horizontal line */
+    gap: 3rem;                 /* Increased space between buttons */
+    justify-content: center;      /* center the buttons under the text */
+    align-items: center;          /* vertically center buttons */
+	flex-wrap: nowrap;            /* never wrap to next line */
+}
+
+/**
+ * ----------------------------------------
+ * animation slide-in-elliptic-bottom-bck
+ * ----------------------------------------
+ */
+@-webkit-keyframes slide-in-elliptic-bottom-bck {
+  0% {
+    -webkit-transform: translateY(600px) rotateX(-30deg) scale(6.5);
+            transform: translateY(600px) rotateX(-30deg) scale(6.5);
+    -webkit-transform-origin: 50% -100%;
+            transform-origin: 50% -100%;
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateY(0) rotateX(0) scale(1);
+            transform: translateY(0) rotateX(0) scale(1);
+    -webkit-transform-origin: 50% 500px;
+            transform-origin: 50% 500px;
+    opacity: 1;
+  }
+}
+@keyframes slide-in-elliptic-bottom-bck {
+  0% {
+    -webkit-transform: translateY(600px) rotateX(-30deg) scale(6.5);
+            transform: translateY(600px) rotateX(-30deg) scale(6.5);
+    -webkit-transform-origin: 50% -100%;
+            transform-origin: 50% -100%;
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateY(0) rotateX(0) scale(1);
+            transform: translateY(0) rotateX(0) scale(1);
+    -webkit-transform-origin: 50% 500px;
+            transform-origin: 50% 500px;
+    opacity: 1;
+  }
+}
+
+.heartbeat {
+	-webkit-animation: heartbeat 1.5s ease-in-out infinite both;
+	        animation: heartbeat 1.5s ease-in-out infinite both;
+}
+
+/**
+ * ----------------------------------------
+ * animation heartbeat
+ * ----------------------------------------
+ */
+@-webkit-keyframes heartbeat {
+  from {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-transform-origin: center center;
+            transform-origin: center center;
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+  10% {
+    -webkit-transform: scale(0.91);
+            transform: scale(0.91);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+  }
+  17% {
+    -webkit-transform: scale(0.98);
+            transform: scale(0.98);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+  33% {
+    -webkit-transform: scale(0.87);
+            transform: scale(0.87);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+  }
+  45% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+}
+@keyframes heartbeat {
+  from {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-transform-origin: center center;
+            transform-origin: center center;
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+  10% {
+    -webkit-transform: scale(0.91);
+            transform: scale(0.91);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+  }
+  17% {
+    -webkit-transform: scale(0.98);
+            transform: scale(0.98);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+  33% {
+    -webkit-transform: scale(0.87);
+            transform: scale(0.87);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+  }
+  45% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+}
+

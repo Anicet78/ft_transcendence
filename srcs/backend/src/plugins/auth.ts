@@ -9,7 +9,7 @@ import type { RequestUser } from "../schema/userSchema.js";
 export default fp(async (fastify) => {
 	// CORS
 	await fastify.register(fastifyCors, {
-		origin: "https://localhost:8443",
+		origin: ["https://localhost:8443", "http://localhost:5173"],
 		methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 		credentials: true
 	});
@@ -43,7 +43,7 @@ export default fp(async (fastify) => {
 		}
 		const currentRoute = request.routeOptions.url;
 
-		const publicRoutes = ['/auth/register', '/auth/login', '/auth/refresh', '/documentation/json', '/'];
+		const publicRoutes = ['/auth/register', '/auth/login', '/auth/refresh', '/auth/42', '/auth/google', '/documentation/json', '/'];
 
 		if (currentRoute && publicRoutes.includes(currentRoute)) return;
 

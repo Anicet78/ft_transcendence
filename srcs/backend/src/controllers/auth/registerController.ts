@@ -38,7 +38,7 @@ export async function postRegisterController(
 	const jwt = await reply.jwtSign({ id: user.id, username: user.username, email: user.email, role: user.role });
 	const refresh = await createRefreshToken(user.id);
 
-	const response: RegisterResponseType = {token: jwt, user: user, roomId: "" };
+	const response: RegisterResponseType = {token: jwt, user: user };
 
 	return reply.setCookie('refreshToken', refresh, {
 			path: '/',

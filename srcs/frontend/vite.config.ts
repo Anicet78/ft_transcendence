@@ -12,8 +12,16 @@ export default defineConfig({
       ignored: ['**/node_modules/**', '**/.git/**'],
     },
   },
+  resolve: {
+    alias: {
+      './build/game': '/game/game.js'
+    }
+  },
   build: {
     outDir: '../build',
-    emptyOutDir: true
+    emptyOutDir: true,
+    rollupOptions: {
+      external: ['/game/game.js']
+    }
   },
 })

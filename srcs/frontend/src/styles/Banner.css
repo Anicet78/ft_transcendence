@@ -1,8 +1,0 @@
-.banner {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 32px;
-	border-bottom: 3px solid #31b572;
-	background-color: #3D3C3C;
-}

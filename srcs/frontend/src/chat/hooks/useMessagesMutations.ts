@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../serverApi";
 
-export function useChatMutations(chatId?: string) {
+export function useMessagesMutations(chatId?: string) {
 
 	const queryClient = useQueryClient();
 

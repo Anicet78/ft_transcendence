@@ -140,7 +140,7 @@ export async function updateAvatar(req: FastifyRequest, reply: FastifyReply) {
 		}
 
 		// Save file
-		const uploadDir = path.join('/usr/src/app', 'uploads', 'avatars');
+		const uploadDir = path.join('/app', 'uploads', 'avatars');
 		if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 		const fileName = `${Date.now()}-${filePart.filename}`;
@@ -164,7 +164,7 @@ export async function updateAvatar(req: FastifyRequest, reply: FastifyReply) {
 // Optional: serve avatars directly (already covered by fastify-static)
 export async function getAvatar(req: FastifyRequest<{ Params: { filename: string } }>, reply: FastifyReply) {
   const { filename } = req.params;
-  const filePath = path.join(process.cwd(), 'uploads', 'avatars', filename);
+  const filePath = path.join('/app', 'uploads', 'avatars', filename);
 
   if (!fs.existsSync(filePath)) return reply.status(404).send({ error: 'Avatar not found' });
 

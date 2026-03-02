@@ -28,18 +28,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		setUser(userData);
 		setToken(userToken);
 		setAccessToken(userToken);
+		toast({ title: `Welcome ${userData.username}` });
 		navigate("/home");
 	}, [navigate]);
 
 	const logout = useCallback(async () => {
-		try {
-			await api.post('/auth/logout');
-		} finally {
-			setUser(null);
-			setToken(null);
-			setAccessToken(null);
-			navigate("/");
-		}
+		await api.post('/auth/logout');
+		setUser(null);
+		setToken(null);
+		setAccessToken(null);
+		navigate("/");
 	}, [navigate]);
 
 	const { data, isLoading, isError } = useQuery({
@@ -59,21 +57,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		};
 	}, [logout]);
 
+	const publicRoutes = ['/login', '/register', '/callback42', '/callbackGoogle'];
+
 	useEffect(() => {
 		if (data?.data?.user && data.data.token) {
 			setUser(data.data.user);
 			setToken(data.data.token);
 			setAccessToken(data.data.token);
-			toast({ title: `Welcome ${data.data.user.username}` });
 		}
 		if (!isLoading) {
+			if (data && !publicRoutes.includes(window.location.pathname))
+				toast({ title: `Welcome ${data.data.user.username}` });
 			setIsInitializing(false);
 		}
 		if (isError) {
 			setUser(null);
 			setToken(null);
 			setAccessToken(null);
-			navigate('/');
+			if (!publicRoutes.includes(window.location.pathname))
+				navigate('/');
 		}
 
 		return () => {

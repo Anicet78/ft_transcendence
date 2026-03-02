@@ -93,6 +93,7 @@ void	launchGame(Game &game, val msg)
 	}
 
 	game.getPlayer().setNode(start);
+	game.getPlayer().setStartNode(start);
 	game.setLaunched(1);
 
 	gSdl.enableIsRunning();
@@ -127,10 +128,8 @@ void	parseJson(bool &init, Game &game)
 		return ;
 	val msg = msgJson.front();
 	msgJson.pop();
-	if (msg.isUndefined() || msg.isNull())
+	if (msg.isUndefined() || msg.isNull() || !msg.hasOwnProperty("action"))
 		return ;
-	if (!msg.hasOwnProperty("action"))
-		return;
 	std::string action = msg["action"].as<std::string>();
 	if (action == "waiting" || action == "reconnect")
 	{

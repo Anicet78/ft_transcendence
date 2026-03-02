@@ -23,7 +23,7 @@ const start = async () => {
 		await fastify.register(socketPlugin);
 		// Serve uploads folder
 		await fastify.register(fastifyStatic, {
-			root: '/usr/src/app/uploads',
+			root: '/app/uploads',
 			prefix: "/uploads/",
 		});
 		// Register multipart support

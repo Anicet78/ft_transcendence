@@ -94,7 +94,7 @@ export async function updateProfile(userId: string, data: Record<string, unknown
 
     // Delete old file if exists
     if (user?.avatarUrl) {
-      const oldFilePath = path.join(process.cwd(), "uploads", user.avatarUrl);
+      const oldFilePath = path.join('/app', "uploads", user.avatarUrl);
       if (fs.existsSync(oldFilePath)) {
         try {
           fs.unlinkSync(oldFilePath);

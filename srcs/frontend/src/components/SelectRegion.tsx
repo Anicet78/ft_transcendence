@@ -10,8 +10,10 @@ interface SelectInputProps {
 
 const SelectRegion: React.FC<SelectInputProps> = ({ options, placeholder, error, register }) => {
   return (
-    <div style={{ marginBottom: "12px" }}>
-      <select {...register} defaultValue="" className={error ? "error" : ""}>
+    <div>
+		<label htmlFor={placeholder}>{placeholder}</label>
+		<br />
+      <select {...register} defaultValue="" className={error ? "error" : ""} style={{color: '#888'}}>
         <option value="" disabled>{placeholder}</option>
         {options.map(opt => (
           <option key={opt} value={opt}>{opt}</option>
