@@ -14,9 +14,6 @@ std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerWalkBack;
 std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerAttackBack;
 std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerIdleBack;
 
-std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerHurt;
-std::unordered_map<int, SDL_Rect>	PlayerAssets::_playerDie;
-
 SDL_Texture				*PlayerAssets::_playerWalkText;
 SDL_Texture				*PlayerAssets::_playerAttackText;
 SDL_Texture				*PlayerAssets::_playerIdleText;
@@ -31,11 +28,11 @@ SDL_Texture				*PlayerAssets::_playerWalkBackText;
 SDL_Texture				*PlayerAssets::_playerAttackBackText;
 SDL_Texture				*PlayerAssets::_playerIdleBackText;
 
-int						PlayerAssets::_walkImgW;
-int						PlayerAssets::_walkImgH;
-
 int						PlayerAssets::_atkImgW;
 int						PlayerAssets::_atkImgH;
+
+int						PlayerAssets::_walkImgW;
+int						PlayerAssets::_walkImgH;
 
 int						PlayerAssets::_idleImgW;
 int						PlayerAssets::_idleImgH;

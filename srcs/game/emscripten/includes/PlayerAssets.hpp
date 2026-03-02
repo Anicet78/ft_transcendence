@@ -23,9 +23,6 @@ class PlayerAssets
 		static std::unordered_map<int, SDL_Rect>	_playerAttackBack;
 		static std::unordered_map<int, SDL_Rect>	_playerIdleBack;
 
-		static std::unordered_map<int, SDL_Rect>	_playerHurt;
-		static std::unordered_map<int, SDL_Rect>	_playerDie;
-
 		static SDL_Texture	*_playerWalkText;
 		static SDL_Texture	*_playerAttackText;
 		static SDL_Texture	*_playerIdleText;
@@ -39,9 +36,6 @@ class PlayerAssets
 		static SDL_Texture	*_playerWalkBackText;
 		static SDL_Texture	*_playerAttackBackText;
 		static SDL_Texture	*_playerIdleBackText;
-
-		static SDL_Texture	*_playerHurtText;
-		static SDL_Texture	*_playerDieText;
 		
 		static int						_walkImgW;
 		static int						_walkImgH;
@@ -62,9 +56,6 @@ class PlayerAssets
 		~PlayerAssets();
 
 		static void importAssets(std::string path, int tile_size, SDL_Texture *&texture,  std::unordered_map<int, SDL_Rect> &map, int &imgW, int &imgH);
-
-		static void importPlayersHurtAssets(int tile_size);
-		static void	importPlayersDieAssets(int tile_size);	
 
 	public:
 
