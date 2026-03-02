@@ -7,7 +7,7 @@ const MyFooter = () => {
 		<Footer className="my-footer">
 			<Content textAlign="centered">
 				<p>
-				<strong>TransDungeon</strong> a transcendence project by{' '}
+				<strong>DungeonNoDragon</strong> a transcendence project by{' '}
 				<strong><a href="">agruet</a></strong>{', '}
 				<strong><a href="">jumichel</a></strong>{', '}
 				<strong><a href="">mprokosc</a></strong>{', '}

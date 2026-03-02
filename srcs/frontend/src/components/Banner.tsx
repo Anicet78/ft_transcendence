@@ -24,7 +24,7 @@ const Banner = () => {
 						name="dragon"
 						ariaLabel="dragon logo"
 						/>
-						<span>TransDungeon</span>
+						<span>DungeonNoDragon</span>
 					</NavLink>
 					<Navbar.Burger
 						active={active}
@@ -45,6 +45,11 @@ const Banner = () => {
 								<span>{username}</span>
 							</NavLink>
 						}
+						{user && 
+							<NavLink to="/chat/list" aria-label='chat button' className="button is-primary is-medium is-centered">
+								<Icon name='message' ariaLabel='user icon' />
+								<span>Chats</span>
+							</NavLink>}
 						<Navbar.Dropdown hoverable right  className="profile-dropdown">
 							<Navbar.Item as="a" textColor='primary'>
 								<Icon name="bars" ariaLabel="Menu" />

@@ -16,7 +16,7 @@ const App = () => {
 		<div className='slide-in-elliptic-bottom-bck'>
 			<div className='text-focus-in'>
 				<p> Welcome to the game</p>
-				<p>TransDungeon</p>
+				<p>DungeonNoDragon</p>
 			</div>
 			<br/>
 			<div className='button-group'>
