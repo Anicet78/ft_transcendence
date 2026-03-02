@@ -37,9 +37,8 @@ export default fp(async (fastify) => {
 	});
 
 	fastify.addHook("onRequest", async (request: FastifyRequest, reply: FastifyReply) => {
-		// Skip auth for static files
 		if (request.url.startsWith('/uploads')) {
-			return; // do nothing, allow access
+			return;
 		}
 		const currentRoute = request.routeOptions.url;
 
@@ -67,6 +66,13 @@ export default fp(async (fastify) => {
 		if (!user || user.role !== 'admin')
 			return reply.code(403).send({ error: "Forbidden", message: "Not Admin" });
 	});
+
+	fastify.decorate("verifyServer", async (request: FastifyRequest, reply: FastifyReply) => {
+		const user = request.user;
+
+		if (!user || user.role !== 'game-server')
+			return reply.code(403).send({ error: "Forbidden", message: "Not Game Server" });
+	});
 });
 
 declare module "@fastify/jwt" {
@@ -79,5 +85,6 @@ declare module "fastify" {
 	interface FastifyInstance {
 		authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
 		verifyAdmin: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+		verifyServer: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
 	}
 }
