@@ -148,6 +148,7 @@ export async function getChatMessages(chatId: string, userId: string) {
 	// Find all users who block or are blocked by current user
 	const blockedRelations = await prisma.blockedList.findMany({
 	where: {
+		deletedAt:null,
 		OR: [
 			{ blocker: userId },
 			{ blocked: userId }
