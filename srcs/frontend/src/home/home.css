@@ -1,10 +1,10 @@
 /* ============================= */
 /* Center whole page + Atmosphere */
-/* #242424 → Deep Dungeon Blue   */
+/* Blues replaced by teal colors  */
 /* ============================= */
 
 .body-box {
-	min-height: 100vh;
+	min-height: 80vh;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -14,20 +14,19 @@
 	overflow: hidden;
 	width: 100%;
 
-	/* Darker underground gradient */
+	/* Darker underground gradient with teal */
 	background: radial-gradient(
 		circle at 50% 20%,
-		#2e2e2e 0%,      /* slightly lighter center */
+		#2e2e2e 0% ,      /* slightly lighter center */
 		#242424 30%,     /* requested base */
-		#1b212c 60%,     /* blend into dark blue */
-		#11161d 85%,     /* deep shadow */
-		#090c12 100%     /* strong vignette */
-	);
+		#004c49 60%,     /* teal instead of dark blue */
+		#003532 85%,     /* deep teal shadow */
+		#00221f 100%     /* strong teal vignette */
+	) !important;
 }
 
-
 /* ============================= */
-/* 🌫 Animated Fog (Darker)      */
+/* 🌫 Animated Fog (Teal)         */
 /* ============================= */
 
 .body-box::before,
@@ -46,8 +45,8 @@
 /* First fog layer – darker & slower */
 .body-box::before {
 	background:
-	radial-gradient(circle at 30% 40%, rgba(90,110,160,0.12), transparent 60%),
-	radial-gradient(circle at 70% 60%, rgba(60,80,120,0.10), transparent 70%);
+	radial-gradient(circle at 30% 40%, rgba(0, 199, 177, 0.12), transparent 60%),
+    radial-gradient(circle at 70% 60%, rgba(0, 155, 140, 0.10), transparent 70%) !important;
 
 	animation: fogDrift 45s linear infinite,
 	arcanePulseBg 8s ease-in-out infinite;
@@ -56,14 +55,13 @@
 /* Second fog layer – subtle opposing motion */
 .body-box::after {
 	background:
-	radial-gradient(circle at 50% 50%, rgba(100,130,190,0.10), transparent 65%),
-	radial-gradient(circle at 80% 30%, rgba(50,70,110,0.12), transparent 70%);
+	radial-gradient(circle at 50% 50%, rgba(0, 199, 177, 0.10), transparent 65%),
+	radial-gradient(circle at 80% 30%, rgba(0, 130, 120, 0.12), transparent 70%) !important;
 
 	animation: fogDriftReverse 70s linear infinite;
 }
 
-
-/* Smooth drifting motion (still visible but calmer) */
+/* Smooth drifting motion */
 @keyframes fogDrift {
 	0%   { transform: translate(0, 0) scale(1); }
 	50%  { transform: translate(-6%, -4%) scale(1.05); }
@@ -76,14 +74,12 @@
 	100% { transform: translate(10%, 12%) scale(1); }
 }
 
-
 /* Subtle breathing arcane glow */
 @keyframes arcanePulseBg {
 	0%   { opacity: 0.6; }
 	50%  { opacity: 0.9; }
 	100% { opacity: 0.6; }
 }
-
 
 /* ============================= */
 /* ✨ Subtle Arcane Light Pulses  */
@@ -94,12 +90,9 @@
 	filter: blur(60px);
 }
 
-/* Add animated arcane glow pulse layer */
-.body-box::marker {}
-
 /* Separate pulse overlay */
 .body-box::after {
-	box-shadow: inset 0 0 200px rgba(120,170,255,0.05);
+	box-shadow: inset 0 0 200px rgba(0, 199, 177, 0.05) !important;
 }
 
 .body-box::before {
@@ -117,29 +110,29 @@
 /* ============================= */
 
 .game-room {
-	position: relative;
-	z-index: 2;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+  max-width: 900px;
 
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 40px;
-	width: 100%;
-	max-width: 900px;
+  /* Darker teal background */
+  background: rgba(0, 51, 45, 0.85);  /* deep dark teal with opacity */
 
-	background: rgba(25, 32, 44, 0.85);
+  /* Stronger shadow with teal tint */
+  box-shadow:
+    inset 0 0 40px rgba(0, 30, 27, 0.7),
+    0 20px 40px rgba(0, 20, 18, 0.8);
 
-	box-shadow:
-	inset 0 0 40px rgba(0, 0, 0, 0.7),
-	0 20px 40px rgba(0, 0, 0, 0.8);
+  border-radius: 18px;
+  padding: 40px;
 
-	border-radius: 18px;
-	padding: 40px;
-
-	/* Subtle arcane blue border */
-	border: 1px solid rgba(90, 120, 200, 0.4);
+	/* Subtle teal border */
+	border: 1px solid rgba(0, 199, 177, 0.4) !important;
 }
-
 
 /* ============================= */
 /* Players layout                */
@@ -155,11 +148,11 @@
 
 /* Arcane player cards */
 .room-players > * {
-	background: linear-gradient(145deg, #263246, #1a2230);
+	background: linear-gradient(145deg, #004c49, #003532) !important;
 	padding: 15px 25px;
 	border-radius: 10px;
 
-	border: 1px solid rgba(120, 160, 255, 0.4);
+	border: 1px solid rgba(0, 199, 177, 0.4) !important;
 
 	color: #dbe6ff;
 
@@ -171,10 +164,10 @@
 	transform: translateY(-5px);
 
 	box-shadow:
-	0 0 15px rgba(120, 170, 255, 0.5),
-	0 8px 20px rgba(0, 0, 0, 0.7);
+	0 0 15px rgba(0, 199, 177, 0.5),
+	0 8px 20px rgba(0, 0, 0, 0.7) !important;
 
-	background: linear-gradient(145deg, #2f3f5a, #202b3d);
+	background: linear-gradient(145deg, #004c49, #003532) !important;
 }
 
 .player-buttons {
@@ -186,7 +179,7 @@
 
 .player-button, .kick-button, .host-button {
 	color: white !important;
-	border: 1px solid rgba(120, 160, 255, 0.4) !important;
+	border: 1px solid rgba(0, 199, 177, 0.4) !important;
 }
 
 /* ============================= */
@@ -205,14 +198,13 @@
 	flex: 1;
 }
 
-
 /* ============================= */
 /* 🎮 Colored Non-Launch Buttons */
 /* ============================= */
 
 .invite-button {
-	background: linear-gradient(145deg, #2c3e66, #1f2b44);
-	border: 1px solid rgba(120, 160, 255, 0.6);
+	background: linear-gradient(145deg, #1c5e54, #10503f) !important;
+	border: 1px solid rgba(0, 199, 177, 0.6) !important;
 	color: #dbe6ff;
 
 	transition: all 0.2s ease-in-out;
@@ -221,62 +213,66 @@
 /* Hover glow */
 .invite-button:hover {
 	transform: scale(1.05);
-	box-shadow: 0 0 12px rgba(120, 170, 255, 0.6);
+	box-shadow: 0 0 12px rgba(0, 199, 177, 0.6) !important;
 }
 
-/* Optional: Differentiate Quit button (slightly crimson tone) */
+/* Optional: Differentiate Quit button (kept original crimson tone) */
 .quit-button {
-	background: linear-gradient(145deg, #4a2a35, #311b24);
-	border: 1px solid rgba(200, 90, 120, 0.5);
+	background: linear-gradient(145deg, #4a2a35, #311b24) !important;
+	border: 1px solid rgba(200, 90, 120, 0.5) !important;
 }
 
 .quit-button:hover {
-	box-shadow: 0 0 12px rgba(200, 90, 120, 0.6);
+	box-shadow: 0 0 12px rgba(200, 90, 120, 0.6) !important;
 }
-
 
 /* ============================= */
 /* 🔥 Arcane Launch Button       */
 /* ============================= */
 
 .launch-game {
-	background: linear-gradient(145deg, #3c5ea8, #6f9bff);
-	color: white;
-	border: 1px solid rgba(180, 210, 255, 0.9);
-	font-weight: bold;
-	letter-spacing: 1px;
+  background: linear-gradient(145deg, #00c7b1, #00594c);
+  color: white;
+  border: 1px solid rgba(0, 199, 177, 0.9);
+  font-weight: bold;
+  letter-spacing: 1px;
 
-	position: relative;
-	overflow: hidden;
+  position: relative;
+  overflow: hidden;
 
-	transition: transform 0.2s ease-in-out;
+  transition: transform 0.2s ease-in-out;
 
-	animation: arcanePulse 2.5s infinite ease-in-out;
+  animation: arcanePulse 2.5s infinite ease-in-out;
+  box-shadow:
+    0 0 10px rgba(0, 199, 177, 0.6),
+    0 0 20px rgba(0, 199, 177, 0.3);
 }
 
 .launch-game:hover {
-	transform: scale(1.08);
+  transform: scale(1.08);
+  box-shadow:
+    0 0 25px rgba(0, 199, 177, 1),
+    0 0 50px rgba(0, 199, 177, 0.8);
 }
 
-/* Stronger arcane magical pulse */
+/* Arcane pulse animation */
 @keyframes arcanePulse {
-	0% {
-		box-shadow:
-		0 0 10px rgba(120,170,255,0.6),
-		0 0 20px rgba(120,170,255,0.3);
-	}
-	50% {
-		box-shadow:
-		0 0 25px rgba(160,200,255,1),
-		0 0 50px rgba(120,170,255,0.8);
-	}
-	100% {
-		box-shadow:
-		0 0 10px rgba(120,170,255,0.6),
-		0 0 20px rgba(120,170,255,0.3);
-	}
+  0% {
+    box-shadow:
+      0 0 10px rgba(0, 199, 177, 0.6),
+      0 0 20px rgba(0, 199, 177, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 25px rgba(0, 199, 177, 1),
+      0 0 50px rgba(0, 199, 177, 0.8);
+  }
+  100% {
+    box-shadow:
+      0 0 10px rgba(0, 199, 177, 0.6),
+      0 0 20px rgba(0, 199, 177, 0.3);
+  }
 }
-
 
 /* ============================= */
 /* Responsive adjustments        */
