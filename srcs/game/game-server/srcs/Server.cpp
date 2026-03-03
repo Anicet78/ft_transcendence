@@ -232,6 +232,8 @@ void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, u
 	std::string msg = "{\"action\": \"loop_action\"";
 
 	msg += ",\"session_timer\":" + std::to_string(session.getActualTime());
+	if (session.getCountDown() != 6 && session.getCountDown() >= -10)
+		msg += ",\"countdown\":" + std::to_string(session.getCountDown());
 	msg += ",\"running\":" + std::to_string(isRunning) + ",\"loop\": {";
 
 	const int player_size = allPlayer.size();
@@ -254,6 +256,7 @@ void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, u
 			player_update += ",\"player_anim\":" + std::to_string(player->getAnim());
 			player_update += ",\"player_dir\":" + std::to_string(player->getLastDir());
 			player_update += ",\"player_kills\":" + std::to_string(player->getKills());
+			player_update += ",\"player_is_dead\":" + std::to_string(player->isDead());
 			player_update += ",\"player_death_amount\":" + std::to_string(player->getNbrDeath());
 			player_update += ",\"player_hurt\":\"" + hurt + '\"';
 			player_update += ",\"player_start\":" + std::to_string(player->getStartPos());
@@ -438,6 +441,8 @@ void	Server::run(void)
 
 		for(auto &session : data->server->_sessions)
 		{
+			if (!session.getPlaceLeft() && session.doesAllPlayersConnected() && !session.isReadyToRun())
+                session.startLaunching();
 			if (!session.isRunning() && session.isReadyToRun())
 			{
 				if (session.isEnoughtReadyTime())
@@ -471,6 +476,7 @@ void	Server::run(void)
 					continue ;
 				if (p.lock()->getFinished())
 					continue ;
+				p.lock()->dieAction();
 				Room &room = p.lock()->getRoomRef();
 				auto i = PlayerPerRoom.find(&room);
 				if (i == PlayerPerRoom.end())

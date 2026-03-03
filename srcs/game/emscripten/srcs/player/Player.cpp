@@ -1,7 +1,7 @@
 #include"Player.hpp"
 
 Player::Player(std::string uid, std::string name, SDL_Color color) : _uid(uid), _name(name), _x(0), _y(0),
-					_screenX(0), _screenY(0), _anim(0), _hp(3), _atk(1), _def(0), _hurt(false), _atkState(false),
+					_screenX(0), _screenY(0), _anim(0), _hp(3), _atk(1), _def(0), _hurt(false), _dead(false), _atkState(false),
 					_camera(_x, _y, 12, 12, SCREEN_WIDTH, GAME_HEIGHT), _floor(0), _last_dir(0), _frame(0), _prev_state(PLAYER_IDLE), _kills(0), _nbrDeath(0)
 {
 	SDL_Surface* surf = TTF_RenderText_Blended(gSdl.font, name.c_str(), color);
@@ -91,6 +91,11 @@ int		Player::getDef(void) const
 bool	Player::getHurt(void) const
 {
 	return this->_hurt;
+}
+
+bool	Player::getDead(void) const
+{
+	return this->_dead;
 }
 
 Room	&Player::getRoom(void) const
@@ -217,6 +222,11 @@ void	Player::setHurt(bool state)
 	this->_hurt = state;
 }
 
+void	Player::setDead(bool state)
+{
+	this->_dead = state;
+}
+
 void	Player::setDir(int dir)
 {
 	this->_last_dir = dir;
@@ -237,7 +247,14 @@ void	Player::setNbrDeath(int value)
 void	Player::setAnim(int anim)
 {
 	if (this->_hurt)
-		this->_anim = PLAYER_HURT;
+	{
+		if (this->_dead)
+			this->_anim = PLAYER_DEATH;
+		else
+			this->_anim = PLAYER_HURT;
+	}
+	else if (this->_dead)
+		this->_anim = PLAYER_DEATH;
 	else
 		this->_anim = anim;
 }
@@ -282,7 +299,6 @@ void	Player::printPlayer(float px, float py, int flag)
 		SDL_SetTextureBlendMode(this->_nameTexture, SDL_BLENDMODE_BLEND);
 		SDL_SetTextureAlphaMod(this->_nameTexture, 128);
 	}
-	
 	if (this->_anim == PLAYER_ATTACKING)
 	{
 		if (!flag && this->_prev_state != PLAYER_ATTACKING)
@@ -353,6 +369,20 @@ void	Player::printPlayer(float px, float py, int flag)
 		int frame = (flag) ? ((!this->_frame) ? 31 : this->_frame - 1) : this->_frame;
 		// if (this->_last_dir < 2)
 			PlayerAssets::rendPlayerHurt(x, y, frame / 8, 2, this->_last_dir, flag);
+	}
+	else if (this->_anim == PLAYER_DEATH)
+	{
+		if (!flag && this->_prev_state != PLAYER_DEATH)
+		{
+			this->_frame = 0;
+			this->endAtk();
+			this->_prev_state = PLAYER_DEATH;
+		}
+		if (!flag && this->_frame >= 32)
+			this->_frame = 31;
+		int frame = (flag) ? ((!this->_frame) ? 31 : this->_frame - 1) : this->_frame;
+		// if (this->_last_dir < 2)
+			PlayerAssets::rendPlayerDeath(x, y, frame / 8, 2, this->_last_dir, flag);
 	}
 	if (!flag)
 		this->_frame++;

@@ -3,7 +3,7 @@
 //Constructors/Destructors------------------------------------------------
 
 
-Hud::Hud(): _minimap()
+Hud::Hud(): _minimap(), _timeCountDown(6)
 {
 	int w = 800, h = 150;
 	this->_placeHolderTexture = loadTexture("assets/sprite/hud/hud.bmp", w, h);
@@ -24,10 +24,16 @@ Hud::~Hud(void)
 {
 	SDL_DestroyTexture(this->_placeHolderTexture);
 	SDL_DestroyTexture(this->_healthTexture);
+	SDL_DestroyTexture(this->_countDown);
 	SDL_DestroyTexture(this->_hp);
 }
 
 //Member Functions--------------------------------------------------------
+
+void	Hud::setCountDown(int time)
+{
+	this->_timeCountDown = time;
+}
 
 void	Hud::printTimer(float t)
 {
@@ -56,6 +62,38 @@ void	Hud::printTimer(float t)
 
 	SDL_FreeSurface(surf);
 	SDL_DestroyTexture(time);
+}
+
+void	Hud::printCountDown()
+{
+	static int t = 0;
+	static int w, h;
+	if (this->_timeCountDown == 6 || this->_timeCountDown < 0)
+		return ;
+	if (t != this->_timeCountDown)
+	{
+		t = this->_timeCountDown;
+		SDL_Surface* surf = TTF_RenderText_Blended(gSdl.font, std::to_string(t).c_str(), (SDL_Color){0, 0, 0, 255});
+		if (!surf)
+		{
+			SDL_Log("RenderText error: %s", TTF_GetError());
+			return ;
+		}
+		SDL_DestroyTexture(this->_countDown);
+		this->_countDown = SDL_CreateTextureFromSurface(gSdl.renderer, surf);
+		SDL_QueryTexture(this->_countDown, nullptr, nullptr, &w, &h);
+		w /= 2;
+		h /= 2;
+	}
+	else
+	{
+		w *= 1.1;
+		h *= 1.1;
+	}
+	SDL_SetRenderTarget(gSdl.renderer, gSdl.game);
+	SDL_Rect dst = {static_cast<int>(400 - (w / 2)), static_cast<int>(400 - (h / 2)), w, h};
+	SDL_RenderCopy(gSdl.renderer, this->_countDown, nullptr, &dst);
+	SDL_SetRenderTarget(gSdl.renderer, gSdl.hud);
 }
 
 void	Hud::printPlayerName(Player const &player)
@@ -182,13 +220,20 @@ void	Hud::printHealthBar(Player const &player)
 			drawRed(level);
 		SDL_SetRenderTarget(gSdl.renderer, gSdl.hud);
 		SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 255);
-		delay += 15;
-		if (delay > level)
-			delay = level;
+		if (delay == level)
+			delay++;
+		else
+		{
+			delay += 15;
+			if (delay > level)
+				delay = level;
+		}
 	}
 	if (player.getHp() != hp && player.getHp() >= 0)
 	{
 		hp = player.getHp();
+		if (hp > 0 && delay > level)
+		    delay = level + 1000;
 		SDL_SetRenderTarget(gSdl.renderer, this->_healthTexture);
 		SDL_SetRenderDrawColor(gSdl.renderer, 0, 0, 0, 0);
 		SDL_RenderClear(gSdl.renderer);
@@ -230,5 +275,6 @@ void	Hud::print(std::vector<Map> const &maps, Player const &player, int launched
 		this->_minimap.printMinimap(maps, player);
 	this->printTimer(time);
 	this->printPlayerName(player);
+	this->printCountDown();
 }
 

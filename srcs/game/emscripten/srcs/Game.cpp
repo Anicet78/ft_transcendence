@@ -46,6 +46,11 @@ Player &Game::getOtherPlayer(std::string &uid)
 	return _otherPlayers[0];
 }
 
+Hud		&Game::getHud(void)
+{
+	return this->_hud;
+}
+
 float	Game::getTime() const
 {
 	return this->_time_in_s;

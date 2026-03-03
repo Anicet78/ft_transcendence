@@ -56,7 +56,7 @@ void	setPlayerState(Player &player, Game &game, val &pStatus, int flag)
 			std::cout << "player " << player.getUid() << " died" << std::endl; 
 			respawnPlayer(player, game, nbrDeath);
 		}
-
+		player.setDead(pStatus["player_is_dead"].as<bool>());
 		float pX = player.getX();
 		float pY = player.getY();
 		float dist = SDL_sqrtf(SDL_powf(x - pX, 2) + SDL_powf(y - pY, 2));

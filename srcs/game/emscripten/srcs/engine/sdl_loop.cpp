@@ -64,6 +64,8 @@ void	updatePlayerPosition(Player &player, double deltaTime)
 
 	//player movement
 
+	if (player.getPrevState() == PLAYER_DEATH)
+		return ;
 	player.movePrediction(deltaTime);
 
 	if (gSdl.key.w_key)
@@ -214,8 +216,8 @@ void	game_loop(Game &game, double deltaTime)
 	print_others(player, game.getOtherPlayers(), 1);
 	if (isUnderTree(player.getRoomRef().getRoomPlan(), player.getX(), player.getY()))
 		player.printPlayer(player.getScreenX(), player.getScreenY(), 1);
+	drawHud(game);
 	SDL_SetRenderTarget(gSdl.renderer, NULL);
 	SDL_Rect dstGame = {0, 0, SCREEN_WIDTH, GAME_HEIGHT};
 	SDL_RenderCopy(gSdl.renderer, gSdl.game, &dstGame, &dstGame);
-	drawHud(game);
 }

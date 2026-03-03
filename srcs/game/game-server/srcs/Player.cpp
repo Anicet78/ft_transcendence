@@ -2,7 +2,8 @@
 
 Player::Player(std::string uid, int partySize, std::string partyId, std::string name, int sessionSize, uWS::WebSocket<false, true, PerSocketData> *ws)
 				: _uid(uid), _sessionSize(sessionSize), _partySize(partySize),  _partyId(partyId), _name(name), _inQueue(true), _inSession(false),
-					_launched(0), _connected(0), _reConnected(1), _finished(0), _hasWin(0), _nbrDeath(0), _finalRanking(0), _exit(' '), _timeDeconnection(std::chrono::steady_clock::time_point{}), _ws(ws), _x(0), _y(0),
+					_launched(0), _connected(0), _reConnected(1), _finished(0), _hasWin(0), _nbrDeath(0), _isDead(false),
+					_timeDeath(std::chrono::steady_clock::time_point{}), _finalRanking(0), _exit(' '), _timeDeconnection(std::chrono::steady_clock::time_point{}), _ws(ws), _x(0), _y(0),
 					_floor(0), _startPos(-1), _anim(0), _last_dir(0), _hp(3), _atk(1), _isInvinsible(false), _timeInvincible(std::chrono::steady_clock::time_point{}), _def(0), _box(_x, _y, _last_dir),
 					_isAttacking(false), _atkFrame(0), _timeAttack(std::chrono::steady_clock::now()), _kills(0)
 {
@@ -155,6 +156,18 @@ int		Player::getKills(void) const
 	return (this->_kills);
 }
 
+bool	Player::isDead(void) const
+{
+	return this->_isDead;
+}
+
+double	Player::getTimeDeath(void) const
+{
+	if (this->_timeDeath == std::chrono::steady_clock::time_point{})
+		return 0;
+	return std::chrono::duration<double>(std::chrono::steady_clock::now() - this->_timeDeath).count();
+}
+
 bool Player::isInQueue(void) const
 {
 	return this->_inQueue;
@@ -280,6 +293,15 @@ void	Player::setNode(const quadList &node)
 			i++;
 		}
 	}
+}
+
+void	Player::setIsDead(bool value)
+{
+	if (value && !this->_isDead)
+		this->_timeDeath = std::chrono::steady_clock::now();
+	else if (!value && this->_isDead)
+		this->_timeDeath = std::chrono::steady_clock::time_point{};
+	this->_isDead = value;
 }
 
 void	Player::setAnim(int anim)
@@ -540,8 +562,13 @@ void	Player::attack(void)
 
 void	Player::dieAction(void)
 {
+	if (!this->_isDead)
+		return ;
 	if (this->isReConnected())
 	{
+		if (this->getTimeDeath() < 0.9)
+			return ;
+		this->setIsDead(false);
 		std::string	oldTopic = this->getRoom().getRoomId();
 		this->_node = this->_startNode;
 		std::vector<std::string> plan = this->getRoom().getRoomPlan();

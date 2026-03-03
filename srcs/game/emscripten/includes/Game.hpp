@@ -22,19 +22,20 @@ class Game
 		~Game(void);
 	
 	public:
-		std::vector<Map>	&getMaps();
-		Player				&getPlayer();
-		std::vector<Player> &getOtherPlayers();
+		std::vector<Map>	&getMaps(void);
+		Player				&getPlayer(void);
+		std::vector<Player> &getOtherPlayers(void);
 		Player				&getOtherPlayer(std::string &uid);
+		Hud					&getHud(void);
 		float				getTime(void) const;
 		int					getLaunched(void) const;
 		std::string	const	&getSessionId(void) const;
 		void				setSessionId(std::string sessionId);
 		void				setLaunched(int nb);
 		void				setTime(float time);
-		void				drawHud();
+		void				drawHud(void);
 		void				addMap(Map &map);
-		void				clearOtherPlayers();
+		void				clearOtherPlayers(void);
 		bool				isInOtherPlayers(std::string &uid) const;
 		void				addOtherPlayer(std::string &uid, std::string &name);
 		void				suppOtherPlayer(std::string &uid);

@@ -186,6 +186,8 @@ void	parseJson(bool &init, Game &game)
 		}
 		if (msg.hasOwnProperty("session_timer"))
 			game.setTime(msg["session_timer"].as<float>());
+		if (msg.hasOwnProperty("countdown"))
+			game.getHud().setCountDown(msg["countdown"].as<int>());
 		if (loop.hasOwnProperty("player_update"))
 			loopPlayerState(game, loop["player_update"]);
 		if (loop.hasOwnProperty("room_update"))

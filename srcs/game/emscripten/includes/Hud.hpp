@@ -31,14 +31,17 @@ class Hud
 {
 	private:
 		Minimap		_minimap;
-		SDL_Texture			*_hp;
+		SDL_Texture	*_hp;
 		SDL_Texture	*_placeHolderTexture;
 		SDL_Texture	*_healthTexture;
+		SDL_Texture	*_countDown;
+		int			_timeCountDown;
 
 	private:
 		void	printTimer(float time);
 		void	printHealthBar(Player const &player);
 		void	printPlayerName(Player const &player);
+		void	printCountDown();
 
 	public:
 		Hud(void);
@@ -46,6 +49,7 @@ class Hud
 	
 	public:
 		void	print(std::vector<Map> const &maps, Player const  &player, int launched, float time);
+		void	setCountDown(int time);
 		
 
 };

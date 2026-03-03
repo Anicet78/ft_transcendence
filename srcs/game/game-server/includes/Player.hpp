@@ -41,6 +41,8 @@ class Player
 		bool										_finished;
 		bool										_hasWin;
 		int											_nbrDeath;
+		bool										_isDead;
+		std::chrono::_V2::steady_clock::time_point	_timeDeath;
 		int											_finalRanking;
 		char										_exit;
 		std::chrono::_V2::steady_clock::time_point	_timeDeconnection;
@@ -117,6 +119,8 @@ class Player
 		int			getHp(void) const;
 		int			getAtk(void) const;
 		bool		checkInvinsibleFrame(void) const;
+		bool		isDead(void) const;
+		double		getTimeDeath(void) const;
 		int			getAtkFrame(void) const;
 		int			getDef(void) const;
 		int			getLastDir(void) const;
@@ -151,6 +155,7 @@ class Player
 		void		setAtk(int atk);
 		void		setAtkFrame(int frame);
 		void		setDef(int def);
+		void		setIsDead(bool value);
 		void		setWallHitBox(void);
 		void		setInQueue(bool flag);
 		void		setInSession(bool flag);

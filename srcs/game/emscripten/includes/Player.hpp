@@ -50,6 +50,7 @@ class Player
 		int			_atk;
 		int			_def;
 		bool		_hurt;
+		bool		_dead;
 	
 	//	player action
 
@@ -100,6 +101,7 @@ class Player
 		int			getAtk(void) const;
 		int			getDef(void) const;
 		bool		getHurt(void) const;
+		bool		getDead(void) const;
 
 		Camera		&getCamera(void);
 	
@@ -122,6 +124,7 @@ class Player
 		void	setAtk(int atk);
 		void	setDef(int def);
 		void	setHurt(bool state);
+		void	setDead(bool state);
 		void	setAnim(int anim);
 		void	setDir(int dir);
 		void	setKills(int kills);
