@@ -7,7 +7,6 @@ import { useAuth } from '../auth/AuthContext.tsx';
 import { PlayerDropdown } from '../components/PlayerDropdown.tsx';
 import { useMutation } from '@tanstack/react-query';
 import toast from '../Notifications.tsx';
-import { SidebarChat } from '../chat/components/SidebarChat.tsx';
 import api from '../serverApi.ts';
 
 const Home = () => {

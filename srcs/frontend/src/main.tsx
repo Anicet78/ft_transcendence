@@ -11,13 +11,12 @@ import "./components/Sidebar.css"
 import "./about/game-rules.css"
 import "./auth/login.css"
 import "./auth/register.css"
+import "./home/home.css"
+
 import "./friendship/friendList.css"
 import "./game/game.css"
-import "./home/home.css"
 import "./profile/profile.css"
 import "./profile/update.css"
-import "./search/SearchBar.css"
-import "./search/SearchPage.css"
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
