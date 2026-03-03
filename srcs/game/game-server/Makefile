@@ -2,7 +2,7 @@ CXX      = clang++
 CC       = clang
 CXXFLAGS = -Wall -Werror -Wextra -std=c++20 -g
 CFLAGS   = -DLIBUS_USE_EPOLL -DLIBUS_NO_SSL -I./uWebSockets/uSockets/src
-LDFLAGS  = -lpthread -lz # -lcurl
+LDFLAGS  = -lpthread -lz -no-pie # -lcurl
 
 HEADERS  = ./includes/
 SRC_DIR  = ./srcs/

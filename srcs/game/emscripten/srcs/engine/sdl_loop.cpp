@@ -64,6 +64,8 @@ void	updatePlayerPosition(Player &player, double deltaTime)
 
 	//player movement
 
+	if (player.getPrevState() == PLAYER_DEATH)
+		return ;
 	player.movePrediction(deltaTime);
 
 	if (gSdl.key.w_key)
@@ -74,24 +76,16 @@ void	updatePlayerPosition(Player &player, double deltaTime)
 		s_key = "true";
 	if (gSdl.key.d_key)
 		d_key = "true";
-
 	//player attack
-	if (gSdl.key.attacking() || player.checkAtkState())
+	if ((gSdl.key.attacking() || player.checkAtkState()))
 	{
 		anim = "attacking";
 		if (player.getPrevState() == PLAYER_ATTACKING)
 		{
-			std::cout << player.getFrame() << std::endl;
 			if (player.getFrame() >= 14 && player.getFrame() < 18)
-			{
-				std::cout << "hit !" << std::endl;
 				HitFrame = 1;
-			}
 			if (player.getFrame() == 24)
-			{
-				std::cout << "end !" << std::endl;
 				HitFrame = 2;
-			}
 		}
 	}
 	else if (gSdl.key.w_key || gSdl.key.a_key || gSdl.key.s_key || gSdl.key.d_key)
@@ -222,8 +216,8 @@ void	game_loop(Game &game, double deltaTime)
 	print_others(player, game.getOtherPlayers(), 1);
 	if (isUnderTree(player.getRoomRef().getRoomPlan(), player.getX(), player.getY()))
 		player.printPlayer(player.getScreenX(), player.getScreenY(), 1);
+	drawHud(game);
 	SDL_SetRenderTarget(gSdl.renderer, NULL);
 	SDL_Rect dstGame = {0, 0, SCREEN_WIDTH, GAME_HEIGHT};
 	SDL_RenderCopy(gSdl.renderer, gSdl.game, &dstGame, &dstGame);
-	drawHud(game);
 }

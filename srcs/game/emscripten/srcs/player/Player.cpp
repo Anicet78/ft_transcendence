@@ -1,8 +1,8 @@
 #include"Player.hpp"
 
 Player::Player(std::string uid, std::string name, SDL_Color color) : _uid(uid), _name(name), _x(0), _y(0),
-					_screenX(0), _screenY(0), _anim(0), _hp(3), _atk(1), _def(0), _atkState(false),
-					_camera(_x, _y, 12, 12, SCREEN_WIDTH, GAME_HEIGHT), _floor(0), _last_dir(0), _frame(0), _prev_state(PLAYER_IDLE), _kills(0)
+					_screenX(0), _screenY(0), _anim(0), _hp(3), _atk(1), _def(0), _hurt(false), _dead(false), _atkState(false),
+					_camera(_x, _y, 12, 12, SCREEN_WIDTH, GAME_HEIGHT), _floor(0), _last_dir(0), _frame(0), _prev_state(PLAYER_IDLE), _kills(0), _nbrDeath(0)
 {
 	SDL_Surface* surf = TTF_RenderText_Blended(gSdl.font, name.c_str(), color);
 	if (!surf)
@@ -28,6 +28,12 @@ std::string	Player::getName(void) const
 {
 	return (_name);
 }
+
+SDL_Texture	*Player::getNameTex(void) const
+{
+	return this->_nameTexture;
+}
+
 
 float	Player::getX(void) const
 {
@@ -82,6 +88,16 @@ int		Player::getDef(void) const
 	return (_def);
 }
 
+bool	Player::getHurt(void) const
+{
+	return this->_hurt;
+}
+
+bool	Player::getDead(void) const
+{
+	return this->_dead;
+}
+
 Room	&Player::getRoom(void) const
 {
 	return *this->_node->getRoom().get();
@@ -120,6 +136,11 @@ int	Player::getLastDir(void) const
 int	Player::getKills(void) const
 {
 	return (this->_kills);
+}
+
+int	Player::getNbrDeath(void) const
+{
+	return (this->_nbrDeath);
 }
 
 int Player::getFloor(void) const
@@ -196,7 +217,17 @@ void	Player::setDef(int def)
 	return ;
 }
 
-void Player::setDir(int dir)
+void	Player::setHurt(bool state)
+{
+	this->_hurt = state;
+}
+
+void	Player::setDead(bool state)
+{
+	this->_dead = state;
+}
+
+void	Player::setDir(int dir)
 {
 	this->_last_dir = dir;
 }
@@ -207,10 +238,25 @@ void	Player::setKills(int kills)
 	return ;
 }
 
+void	Player::setNbrDeath(int value)
+{
+	this->_nbrDeath = value;
+}
+
 
 void	Player::setAnim(int anim)
 {
-	this->_anim = anim;
+	if (this->_hurt)
+	{
+		if (this->_dead)
+			this->_anim = PLAYER_DEATH;
+		else
+			this->_anim = PLAYER_HURT;
+	}
+	else if (this->_dead)
+		this->_anim = PLAYER_DEATH;
+	else
+		this->_anim = anim;
 }
 
 void	Player::incrementFloor(void)
@@ -253,7 +299,6 @@ void	Player::printPlayer(float px, float py, int flag)
 		SDL_SetTextureBlendMode(this->_nameTexture, SDL_BLENDMODE_BLEND);
 		SDL_SetTextureAlphaMod(this->_nameTexture, 128);
 	}
-	
 	if (this->_anim == PLAYER_ATTACKING)
 	{
 		if (!flag && this->_prev_state != PLAYER_ATTACKING)
@@ -269,11 +314,11 @@ void	Player::printPlayer(float px, float py, int flag)
 		}
 		int frame = (flag) ? ((!this->_frame) ? 23 : this->_frame - 1) : this->_frame;
 		if (this->_last_dir < 2)
-			PlayerAssets::rendPlayerAttack(0, x, y, frame / 4, 2, this->_last_dir, flag);
+			PlayerAssets::rendPlayerAttack(x, y, frame / 4, 2, this->_last_dir, flag);
 		else if (this->_last_dir == 3)
-			PlayerAssets::rendPlayerAttackFront(0, x, y, frame / 4, 2, flag);
+			PlayerAssets::rendPlayerAttackFront(x, y, frame / 4, 2, flag);
 		else if (this->_last_dir == 2)
-			PlayerAssets::rendPlayerAttackBack(0, x, y, frame / 4, 2, flag);
+			PlayerAssets::rendPlayerAttackBack(x, y, frame / 4, 2, flag);
 	}
 	else if (this->_anim == PLAYER_WALKING)
 	{
@@ -287,11 +332,11 @@ void	Player::printPlayer(float px, float py, int flag)
 			this->_frame = 0;
 		int frame = (flag) ? ((!this->_frame) ? 31 : this->_frame - 1) : this->_frame;
 		if (this->_last_dir < 2)
-			PlayerAssets::rendPlayerWalk(0, x, y, frame / 4, 2, this->_last_dir, flag);
+			PlayerAssets::rendPlayerWalk(x, y, frame / 4, 2, this->_last_dir, flag);
 		else if (this->_last_dir == 3)
-			PlayerAssets::rendPlayerWalkFront(0, x, y, frame / 4, 2, flag);
+			PlayerAssets::rendPlayerWalkFront(x, y, frame / 4, 2, flag);
 		else if (this->_last_dir == 2)
-			PlayerAssets::rendPlayerWalkBack(0, x, y, frame / 4, 2, flag);
+			PlayerAssets::rendPlayerWalkBack(x, y, frame / 4, 2, flag);
 	}
 	else if (this->_anim == PLAYER_IDLE)
 	{
@@ -305,13 +350,40 @@ void	Player::printPlayer(float px, float py, int flag)
 			this->_frame = 0;
 		int frame = (flag) ? ((!this->_frame) ? 23 : this->_frame - 1) : this->_frame;
 		if (this->_last_dir < 2)
-			PlayerAssets::rendPlayerIdle(0, x, y, frame / 4, 2, this->_last_dir, flag);
+			PlayerAssets::rendPlayerIdle(x, y, frame / 4, 2, this->_last_dir, flag);
 		else if (this->_last_dir == 3)
-			PlayerAssets::rendPlayerIdleFront(0, x, y, frame / 4, 2, flag);
+			PlayerAssets::rendPlayerIdleFront(x, y, frame / 4, 2, flag);
 		else if (this->_last_dir == 2)
-			PlayerAssets::rendPlayerIdleBack(0, x, y, frame / 4, 2, flag);
+			PlayerAssets::rendPlayerIdleBack(x, y, frame / 4, 2, flag);
 	}
-
+	else if (this->_anim == PLAYER_HURT)
+	{
+		if (!flag && this->_prev_state != PLAYER_HURT)
+		{
+			this->_frame = 0;
+			this->endAtk();
+			this->_prev_state = PLAYER_HURT;
+		}
+		if (!flag && this->_frame >= 32)
+			this->_frame = 0;
+		int frame = (flag) ? ((!this->_frame) ? 31 : this->_frame - 1) : this->_frame;
+		// if (this->_last_dir < 2)
+			PlayerAssets::rendPlayerHurt(x, y, frame / 8, 2, this->_last_dir, flag);
+	}
+	else if (this->_anim == PLAYER_DEATH)
+	{
+		if (!flag && this->_prev_state != PLAYER_DEATH)
+		{
+			this->_frame = 0;
+			this->endAtk();
+			this->_prev_state = PLAYER_DEATH;
+		}
+		if (!flag && this->_frame >= 32)
+			this->_frame = 31;
+		int frame = (flag) ? ((!this->_frame) ? 31 : this->_frame - 1) : this->_frame;
+		// if (this->_last_dir < 2)
+			PlayerAssets::rendPlayerDeath(x, y, frame / 8, 2, this->_last_dir, flag);
+	}
 	if (!flag)
 		this->_frame++;
 	int w, h;

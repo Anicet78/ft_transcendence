@@ -356,8 +356,6 @@ void	manageSoil(int x, int y, Player &player)
 	int color, color2;
 	int offset;
 
-	//std::cout << "x = " << x << ", y = " << y << ", depthTree = " << depthTree << ", depthPah = " << depthPath << std::endl;
-
 	if (maskTree && maskPath && depthTree == depthPath)
 	{
 		maskTree |= maskPath;

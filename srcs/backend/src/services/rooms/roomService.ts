@@ -17,6 +17,7 @@ export const RoomService = {
 		const newRoom: Room = {
 			roomId: roomId,
 			hostId: user.id,
+			//chatId: undefined,
 			players: [{ id: user.id, username: user.username }]
 		};
 

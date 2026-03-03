@@ -2,7 +2,8 @@
 
 Player::Player(std::string uid, int partySize, std::string partyId, std::string name, int sessionSize, uWS::WebSocket<false, true, PerSocketData> *ws)
 				: _uid(uid), _sessionSize(sessionSize), _partySize(partySize),  _partyId(partyId), _name(name), _inQueue(true), _inSession(false),
-					_launched(0), _connected(0), _reConnected(1), _finished(0), _hasWin(0), _died(false), _finalRanking(0), _exit(' '), _timeDeconnection(std::chrono::steady_clock::time_point{}), _ws(ws), _x(0), _y(0),
+					_launched(0), _connected(0), _reConnected(1), _finished(0), _hasWin(0), _nbrDeath(0), _isDead(false),
+					_timeDeath(std::chrono::steady_clock::time_point{}), _finalRanking(0), _exit(' '), _timeDeconnection(std::chrono::steady_clock::time_point{}), _ws(ws), _x(0), _y(0),
 					_floor(0), _startPos(-1), _anim(0), _last_dir(0), _hp(3), _atk(1), _isInvinsible(false), _timeInvincible(std::chrono::steady_clock::time_point{}), _def(0), _box(_x, _y, _last_dir),
 					_isAttacking(false), _atkFrame(0), _timeAttack(std::chrono::steady_clock::now()), _kills(0)
 {
@@ -24,11 +25,6 @@ bool Player::isLaunched(void) const
 bool Player::HasWin(void) const
 {
 	return this->_hasWin;
-}
-
-bool Player::getDied(void) const
-{
-	return this->_died;
 }
 
 bool Player::getFinished(void) const
@@ -160,6 +156,18 @@ int		Player::getKills(void) const
 	return (this->_kills);
 }
 
+bool	Player::isDead(void) const
+{
+	return this->_isDead;
+}
+
+double	Player::getTimeDeath(void) const
+{
+	if (this->_timeDeath == std::chrono::steady_clock::time_point{})
+		return 0;
+	return std::chrono::duration<double>(std::chrono::steady_clock::now() - this->_timeDeath).count();
+}
+
 bool Player::isInQueue(void) const
 {
 	return this->_inQueue;
@@ -246,11 +254,6 @@ void	Player::setHasWin(bool flag)
 	this->_hasWin = flag;
 }
 
-void	Player::setDied(bool flag)
-{
-	this->_died = flag;
-}
-
 void	Player::setFinalRanking(int place)
 {
 	this->_finalRanking = place;
@@ -290,6 +293,15 @@ void	Player::setNode(const quadList &node)
 			i++;
 		}
 	}
+}
+
+void	Player::setIsDead(bool value)
+{
+	if (value && !this->_isDead)
+		this->_timeDeath = std::chrono::steady_clock::now();
+	else if (!value && this->_isDead)
+		this->_timeDeath = std::chrono::steady_clock::time_point{};
+	this->_isDead = value;
 }
 
 void	Player::setAnim(int anim)
@@ -453,20 +465,28 @@ void	Player::updateAnim(std::string const &req)
     if (!req.empty())
 	{
         if (req == "idling")
-            this->setAnim(0);
+            this->setAnim(PLAYER_IDLE);
         else if (req == "walking")
-            this->setAnim(1);
+            this->setAnim(PLAYER_WALKING);
         else if (req == "attacking")
 		{
 			if (this->_atkFrame != 2 && this->getTimeAttack() > 0.2f)
-				this->setAnim(2);
+				this->setAnim(PLAYER_ATTACKING);
 			else if (this->_atkFrame == 2 && this->getTimeAttack() > 0.2f)
 			{
 				this->resetTimeAttack();
-            	this->setAnim(0);
+            	this->setAnim(PLAYER_IDLE);
 			}
 		}
     }
+}
+
+bool	Player::updateHurt(void)
+{
+	if (this->_isInvinsible && this->getTimeInvincible() > 0.f && this->getTimeInvincible() <= 0.5f)
+		return true;
+
+	return false;
 }
 
 void	Player::move(std::map<std::string, std::string> &req)
@@ -476,7 +496,7 @@ void	Player::move(std::map<std::string, std::string> &req)
 	auto plan = room.getRoomPlan();
     this->setWallHitBox();
 	float deltaTime = std::atof(req["deltaTime"].c_str());
-	(void)deltaTime;
+
 
 	if (req["w_key"] == "true")
 	{
@@ -503,9 +523,8 @@ void	Player::move(std::map<std::string, std::string> &req)
 			x -= 6.0f * deltaTime;
 	}
 	this->setPos(x, y);
-    if (!req["last_dir"].empty())
+	if (!req["last_dir"].empty())
 		this->setLastDir(std::atoi(req["last_dir"].c_str()));
-	
 }
 
 void	Player::resetTimeAttack(void)
@@ -543,20 +562,40 @@ void	Player::attack(void)
 
 void	Player::dieAction(void)
 {
-	std::string	oldTopic = this->getRoom().getRoomId();
-	this->_node = this->_startNode;
-	std::vector<std::string> plan = this->getRoom().getRoomPlan();
-	for (size_t i = 0; i < plan.size(); i++)
+	if (!this->_isDead)
+		return ;
+	if (this->isReConnected())
 	{
-		size_t j = plan[i].find('P');
-		if (j != plan[i].npos)
+		if (this->getTimeDeath() < 0.9)
+			return ;
+		this->setIsDead(false);
+		std::string	oldTopic = this->getRoom().getRoomId();
+		this->_node = this->_startNode;
+		std::vector<std::string> plan = this->getRoom().getRoomPlan();
+		for (size_t i = 0; i < plan.size(); i++)
 		{
-			this->setPos(j, i);
-			break;
+			size_t j = plan[i].find('P');
+			if (j != plan[i].npos)
+			{
+				this->setPos(j, i);
+				break;
+			}
 		}
+		this->_ws->unsubscribe(oldTopic);
+		this->_ws->subscribe(this->getRoom().getRoomId());
+		this->_hp = 3;
+		this->_nbrDeath++;
 	}
-	this->_ws->unsubscribe(oldTopic);
-	this->_ws->subscribe(this->getRoom().getRoomId());
-	this->_hp = 3;
-	this->_died = true;
+	else
+		this->_hp = 1;
+}
+
+int	Player::getNbrDeath(void) const
+{
+	return (this->_nbrDeath);
+}
+
+void	Player::setNbrDeath(int value)
+{
+	this->_nbrDeath = value;
 }

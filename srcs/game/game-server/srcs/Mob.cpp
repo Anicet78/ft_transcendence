@@ -416,22 +416,23 @@ void	Mob::attack(Player &player)
 	this->_box.updateAtkHitBox();
 	if (this->_state != MOB_ATTACKING)
 		this->setState(MOB_ATTACKING);
-	
-	if (this->getTimeLastAction() <= 0.1f && !this->_isInvinsible)
+
+	//NERFED, TOO HARD
+	if (this->getTimeLastAction() <= 0.05f && !this->_isInvinsible) //<- from 0.1f to 0.05f
 		this->_isInvinsible = true;
-	else if (this->getTimeLastAction() > 0.1f && this->_isInvinsible)
+	else if (this->getTimeLastAction() > 0.05f && this->_isInvinsible) //<- from 0.1f to 0.05f
 		this->_isInvinsible = false;
 	if (this->getTimeLastAction() <= 0.3f)
+	//----------------
 		return ;
 	box.updateHurtBox();
 	if (!player.checkInvinsibleFrame() && box.isDmgHit(this->_box.getAtkHitBox()))
 	{
 		player.setHp(player.getHp() - 1);
 		player.startInvinsibleFrame();
-		std::cout << player.getHp() << std::endl;
 		if (player.getHp() <= 0)
 		{
-			player.dieAction();
+			player.setIsDead(true);
 			return ;
 		}
 	}
@@ -456,7 +457,7 @@ void	Mob::chasingRoutine(Player &player, std::vector<std::string> const &map)
 	}
 	if (this->isInSight(player, map))
 	{
-		if (dist(player.getX(), player.getY(), *this) > 1.2)
+		if (dist(player.getX(), player.getY(), *this) > 1.1f)
 		{
 			if (this->_state != MOB_RUNNING)
 				this->_state = MOB_RUNNING;

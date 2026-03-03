@@ -36,31 +36,54 @@ void mainloopE(void *arg)
 	static bool init = false;
 	static double frameTime = gSdl.getActualTime();
 	Game *game = static_cast<Game *>(arg);
-	parseJson(init, *game);
-	if (!init)
-		return ;
-
-	int	ticksPerFrame = 1000 / MAX_FPS;
-	gSdl.cap.startTimer();
-	while (SDL_PollEvent(&gSdl.event))
+	try
 	{
-		// if (gSdl.event.type == SDL_KEYDOWN && gSdl.event.key.keysym.sym == SDLK_ESCAPE)
-		// {
-		// 	emscripten_cancel_main_loop();
-		// 	return ;
-		// }
-		if (gSdl.event.type == SDL_KEYDOWN)
-			key_down();
-		else if (gSdl.event.type == SDL_KEYUP)
-			key_up();
+		parseJson(init, *game);
+		if (!init)
+			return ;
+
+		int	ticksPerFrame = 1000 / MAX_FPS;
+		gSdl.cap.startTimer();
+		while (SDL_PollEvent(&gSdl.event))
+		{
+			// if (gSdl.event.type == SDL_KEYDOWN && gSdl.event.key.keysym.sym == SDLK_ESCAPE)
+			// {
+			// 	emscripten_cancel_main_loop();
+			// 	return ;
+			// }
+			// if (gSdl.event.type == SDL_WINDOWEVENT)
+			// {
+			// 	if (gSdl.event.window.event == SDL_WINDOWEVENT_ENTER)
+			// 	{
+			// 		gSdl.setMouseInWindow(true);
+			// 		printf("Souris entrée dans le canvas\n");
+			// 	}
+
+			// 	if (gSdl.event.window.event == SDL_WINDOWEVENT_LEAVE)
+			// 	{
+			// 		gSdl.setMouseInWindow(false);
+			// 		printf("Souris sortie du canvas\n");
+			// 	}
+			// }
+			if (gSdl.event.type == SDL_KEYDOWN)
+				key_down();
+			else if (gSdl.event.type == SDL_KEYUP)
+				key_up();
+		}
+		// if (!gSdl.getMouseInWindow())
+		// 	reset_key();
+		game_loop(*game, gSdl.getActualTime() - frameTime);
+		frameTime = gSdl.getActualTime();
+		SDL_RenderPresent(gSdl.renderer);
+		SDL_RenderClear(gSdl.renderer);
+		int frameTicks = gSdl.cap.getTicks();
+		if (frameTicks < ticksPerFrame)
+			SDL_Delay(ticksPerFrame - frameTicks);
 	}
-	game_loop(*game, gSdl.getActualTime() - frameTime);
-	frameTime = gSdl.getActualTime();
-	SDL_RenderPresent(gSdl.renderer);
-	SDL_RenderClear(gSdl.renderer);
-	int frameTicks = gSdl.cap.getTicks();
-	if (frameTicks < ticksPerFrame)
-		SDL_Delay(ticksPerFrame - frameTicks);
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
 }
 
 static void	importAssetsAndRoom(void)

@@ -63,6 +63,7 @@ export function useGroupChatMutations(chatId?: string) {
 			const result = await api.get("/room/me");
 			const  roomId = result.data.roomId;
 
+			await api.post(`/room/${roomId}/attach-chat`, { chatId });
 			const content = `Join my game 🎮 http://localhost:5173/join/${roomId}`;
 			return sendMessageMutation.mutateAsync(content);
 		},

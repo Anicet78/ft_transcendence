@@ -2,11 +2,13 @@
 
 //Constructors/Destructors------------------------------------------------
 
-Minimap::Minimap(): _x(0), _y(0), _minimapCamera(_x, _y, 2, 2, 150, SCREEN_HEIGHT - GAME_HEIGHT)
+Minimap::Minimap(): _minimapText(NULL), _x(0), _y(0), _minimapCamera(_x, _y, 2, 2, 150, SCREEN_HEIGHT - GAME_HEIGHT)
 {}
 
 Minimap::~Minimap(void)
-{}
+{
+	SDL_DestroyTexture(_minimapText);
+}
 
 //Member Functions--------------------------------------------------------
 

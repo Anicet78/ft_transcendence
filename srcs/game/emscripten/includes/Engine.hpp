@@ -12,6 +12,7 @@ class Engine
 		std::string	_playerName;
 		const std::chrono::steady_clock::time_point	_startTime;
 		bool		_isRunning;
+		bool		_mouseInWindow;
 
 	public:
 		SDL_Window		*window;
@@ -33,6 +34,7 @@ class Engine
 
 		void	setPlayerId(std::string id);
 		void	setPlayerName(std::string name);
+		void	setMouseInWindow(bool value);
 
 		std::string	getPlayerId(void) const;
 		std::string	getPlayerName(void) const;
@@ -45,6 +47,7 @@ class Engine
 		double	getActualTime(void) const;
 
 		bool	getIsRunning(void) const;
+		bool	getMouseInWindow(void) const;
 		void	enableIsRunning(void);
 		void	disableIsRunning(void);
 

@@ -217,6 +217,7 @@ model ChatMessage {
   userId      String         @map("user_id") @db.Uuid
   content     String
   status      message_status @default(posted)
+  type        message_type   @default(text)
   postedAt    DateTime?      @default(now()) @map("posted_at") @db.Timestamptz(6)
   editedAt    DateTime?      @map("edited_at") @db.Timestamptz(6)
   deletedAt   DateTime?      @map("deleted_at") @db.Timestamptz(6)
@@ -312,6 +313,12 @@ enum message_status {
   edited
   deleted
   moderated
+}
+
+enum message_type {
+  text
+  game_invite
+  game_started
 }
 
 enum invite_status {

@@ -1,6 +1,6 @@
 # include "Session.hpp"
 
-Session::Session(void): _maxNumPlayer(2), _running(0), _ended(0), _startTime(std::chrono::steady_clock::time_point{}),
+Session::Session(void): _maxNumPlayer(2), _running(0), _ended(0), _startTime(std::chrono::steady_clock::time_point{}), _countDown(std::chrono::steady_clock::time_point{}),
 						_numPlayersFinished(0), _readyToRun(0), _timerBeforeRun(std::chrono::_V2::steady_clock::now()), _readyToRunStartTimer(0.0f)
 {
 	static std::string set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -23,7 +23,7 @@ Session::Session(void): _maxNumPlayer(2), _running(0), _ended(0), _startTime(std
 	this->linkMaps(_maps[1], _maps[2]);
 }
 
-Session::Session(int numPLayer):	_maxNumPlayer(numPLayer), _running(0), _ended(0), _startTime(std::chrono::steady_clock::time_point{}),
+Session::Session(int numPLayer):	_maxNumPlayer(numPLayer), _running(0), _ended(0), _startTime(std::chrono::steady_clock::time_point{}), _countDown(std::chrono::steady_clock::time_point{}),
 									_numPlayersFinished(0), _readyToRun(0), _timerBeforeRun(std::chrono::_V2::steady_clock::now()), _readyToRunStartTimer(0.0f)
 {
 	static std::string set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -236,6 +236,18 @@ std::weak_ptr<Player> &Session::getPlayer(std::string &uid)
 	return _players[0];
 }
 
+void	Session::startCountDown(void)
+{
+	this->_countDown = std::chrono::steady_clock::now();
+}
+
+int	Session::getCountDown(void) const
+{
+	if (_countDown == std::chrono::steady_clock::time_point{})
+		return 6;
+	return std::ceil(5 - std::chrono::duration<double>(std::chrono::steady_clock::now() - this->_countDown).count());
+}
+
 double	Session::getActualTime(void) const
 {
 	if (_startTime == std::chrono::steady_clock::time_point{})
@@ -376,6 +388,12 @@ void	Session::startLaunching(void)
 {
 	if (this->_running || this->_readyToRun)
 		return ;
+	if (this->getCountDown() >= 0)
+	{
+		if (this->getCountDown() == 6)
+			this->startCountDown();
+		return ;
+	}
 	this->_readyToRun = true;
 	this->_readyToRunStartTimer = getActualTimeBeforeRun();
 	return ;

@@ -16,6 +16,7 @@ class Session
 		bool										_ended;
 		std::string									_mapInfos;
 		std::chrono::_V2::steady_clock::time_point	_startTime;
+		std::chrono::_V2::steady_clock::time_point	_countDown;
 		int											_numPlayersFinished;
 
 		bool										_readyToRun;
@@ -42,11 +43,13 @@ class Session
 		bool									removePlayer(std::string uid);
 		bool									isPlayerInSession(std::string uid) const;
 		void									sendToAll(Player &sender);
+		void									startCountDown(void);
 		std::weak_ptr<Player>					&getPlayer(std::string &uid);
 		std::vector<std::weak_ptr<Player>>		getPlayers(void) const;
 		int										getMaxNumPlayer(void) const;
 		int										getPlaceLeft(void) const;
 		double									getActualTime(void) const;
+		int										getCountDown(void) const;
 		int										getNumPlayers(void) const;
 		std::string	const						&getSessionId(void) const;
 		bool									isRunning(void) const;

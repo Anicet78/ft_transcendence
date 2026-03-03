@@ -6,9 +6,11 @@ import { ChatInput } from "./ChatInput";
 import { MessageList } from "./ChatMessageList";
 import { TypingIndicator } from "./ChatTypingIndicator";
 import { useSocket } from "../../socket/SocketContext";
+import { useChatSocket } from "../hooks/useChatSocket";
 
 export function ChatRoom({ chatId }: {chatId: string}) {
 
+	useChatSocket(chatId);
 	const {permissions, role, isTyping} = useChat();
 	const {messages} = useChatMessages(chatId);
 	const mutations = useMessagesMutations(chatId);
@@ -30,6 +32,7 @@ export function ChatRoom({ chatId }: {chatId: string}) {
 
 	}, [messages]);
 
+	// read receipt
 	useEffect(() => {
 		if (!messages.length || !socket)
 			return;
