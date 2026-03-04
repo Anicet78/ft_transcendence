@@ -1,7 +1,3 @@
-import 'bulma/css/bulma.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import './register.css'
-
 import { Button } from '@allxsmith/bestax-bulma';
 import type { GetBody, GetResponse } from '../types/GetType.ts';
 import api from '../serverApi.ts';

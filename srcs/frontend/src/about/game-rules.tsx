@@ -1,5 +1,4 @@
 import { NavLink } from "react-router"
-import "./game-rules.css"
 
 const GameRules = () => {
 	return (

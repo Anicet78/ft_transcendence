@@ -1,8 +1,3 @@
-import 'bulma/css/bulma.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import '../App.css'
-import '../index.css'
-
 import { Box } from '@allxsmith/bestax-bulma';
 
 const Error = () => {

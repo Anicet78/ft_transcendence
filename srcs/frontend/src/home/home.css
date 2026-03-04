@@ -115,7 +115,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(0.5rem, 3vw, 2.5rem);
+  gap: clamp(0.5rem, 3vw, 2.5rem) !important;
   width: 100%;
   max-width: 900px;
 
@@ -132,6 +132,18 @@
 
 	/* Subtle teal border */
 	border: 1px solid rgba(0, 199, 177, 0.4) !important;
+}
+
+.game-room h2 {
+	font-family: var(--font-section-title);
+	font-size:clamp(1.2rem, 4vw, 4rem);
+	color: white;
+}
+
+.game-room .game-rules-link {
+	font-family: var(--font-section-title);
+	font-size:clamp(1rem, 2vw, 2rem);
+	color: white;
 }
 
 /* ============================= */
@@ -206,7 +218,7 @@
 	background: linear-gradient(145deg, #1c5e54, #10503f) !important;
 	border: 1px solid rgba(0, 199, 177, 0.6) !important;
 	color: #dbe6ff;
-
+	font-family: serif !important;
 	transition: all 0.2s ease-in-out;
 }
 
@@ -220,6 +232,7 @@
 .quit-button {
 	background: linear-gradient(145deg, #4a2a35, #311b24) !important;
 	border: 1px solid rgba(200, 90, 120, 0.5) !important;
+	font-family: serif !important;
 }
 
 .quit-button:hover {
@@ -233,6 +246,7 @@
 .launch-game {
   background: linear-gradient(145deg, #00c7b1, #00594c);
   color: white;
+  font-family: serif !important;
   border: 1px solid rgba(0, 199, 177, 0.9);
   font-weight: bold;
   letter-spacing: 0.1px;

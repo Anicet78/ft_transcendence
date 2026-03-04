@@ -1,6 +1,3 @@
-import './home.css'
-import '../App.css'
-
 import type { GetResponse } from '../types/GetType.ts';
 import { useNavigate, useParams } from 'react-router';
 import { useMutation } from '@tanstack/react-query';
