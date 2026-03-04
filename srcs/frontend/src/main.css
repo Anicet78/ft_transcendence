@@ -4,14 +4,18 @@
 	flex-direction: column;
 }
 
+.main-layout {
+	display: flex;
+	position: relative;
+	flex: 1;
+	align-items: stretch;
+}
+
 .content {
 	flex: 1; /* takes remaining space */
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-}
-
-.button {
-	font-family: var(--font-button-small);
+	margin-bottom: 0 !important;
+	position: relative;
+	z-index: 1;
 }

@@ -1,5 +1,4 @@
 import './home.css'
-import '../App.css'
 import { Button } from '@allxsmith/bestax-bulma';
 import { NavLink } from 'react-router';
 
@@ -59,11 +58,6 @@ const Home = () => {
 					<Button className='quit-button' aria-label='quit button' onClick={QuitRoom}>Quit room</Button>
 					<Button className='invite-button' aria-label='copy link button' onClick={CopyRoomUrl}>Copy invite link</Button>
 				</div>
-			</div>
-
-			{/* RIGHT SIDE — CHAT SIDEBAR */}
-			<div>
-			<SidebarChat />
 			</div>
 		</div>
 	)

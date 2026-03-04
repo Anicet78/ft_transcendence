@@ -1,6 +1,6 @@
 #include"Engine.hpp"
 
-Engine::Engine(void) :  _tile_size(0), _startTime(std::chrono::steady_clock::now()), _isRunning(0), window(NULL), renderer(NULL), texture(NULL),
+Engine::Engine(void) :  _tile_size(0), _startTime(std::chrono::steady_clock::now()), _isRunning(0), _mouseInWindow(0), window(NULL), renderer(NULL), texture(NULL),
 						maxTexWidth(0), maxTexHeight(0)
 {
 	return ;
@@ -85,4 +85,14 @@ void	Engine::enableIsRunning(void)
 void	Engine::disableIsRunning(void)
 {
 	this->_isRunning = false;
+}
+
+void	Engine::setMouseInWindow(bool value)
+{
+	this->_mouseInWindow = value;
+}
+
+bool	Engine::getMouseInWindow(void) const
+{
+	return (this->_mouseInWindow);
 }

@@ -199,8 +199,6 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
                     updateRoom(*player, app);
 					updateWorld(*player);
                 }
-                if (!session.getPlaceLeft() && session.doesAllPlayersConnected() && !session.isReadyToRun())
-                    session.startLaunching();
                 break;
             }
         }

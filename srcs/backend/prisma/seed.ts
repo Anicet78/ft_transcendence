@@ -212,18 +212,30 @@ async function seedGroupChat(users) {
 }
 
 // GAME PROFILES
+function randomInt(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 async function seedGameProfiles(users) {
   for (const u of users) {
+    const totalGames = randomInt(5, 20);
+    const totalWins = randomInt(0, totalGames);
+    const totalLoses = totalGames - totalWins;
+    const totalEnemiesKilled = randomInt(50, 500);
+    const totalXp = randomInt(100, 1000);
+    const level = Math.floor(totalXp / 200) + 1;
+    const bestTime = randomInt(80, 200);
+
     await prisma.gameProfile.create({
       data: {
         userId: u.appUserId,
-        totalGames: 10,
-        totalWins: 5,
-        totalLoses: 5,
-        totalEnemiesKilled: 100,
-        totalXp: 500,
-        level: 3,
-        bestTime: 120,
+        totalGames,
+        totalWins,
+        totalLoses,
+        totalEnemiesKilled,
+        totalXp,
+        level,
+        bestTime,
       },
     });
   }
@@ -304,10 +316,10 @@ async function main() {
   console.log(" PrivateChats created!");
   await seedGroupChat(users);
   console.log(" GroupChat created!");
-  // await seedGameProfiles(users);
-  // console.log(" GameProfiles created!");
-  // await seedGameSessions(users);
-  // console.log(" GameSessions created!");
+  await seedGameProfiles(users);
+  console.log(" GameProfiles created!");
+  await seedGameSessions(users);
+  console.log(" GameSessions created!");
 
   console.log("🌱 Seeding complete!");
 }

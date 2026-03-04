@@ -31,7 +31,6 @@ void print_mobs(MobRush &mobRush, Player &player, int flag)
 		}
 		else if (mob.second->getInDeathAnim() == true)
 		{
-			std::cout << "je passe la" << std::endl;
 			mob.second->setAnim(MOB_DEATH);
 			if (!flag || (flag && isUnderTree(player.getRoomRef().getRoomPlan(), mob.second->getX(), mob.second->getY())))
 				mob.second->printMob(cam.getCamX(), cam.getCamY(), tile_s, flag);

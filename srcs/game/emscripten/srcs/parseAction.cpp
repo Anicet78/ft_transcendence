@@ -1,17 +1,21 @@
 #include "Game.hpp"
 
-void	respawnPlayer(Player &player, Game &game)
+void	respawnPlayer(Player &player, Game &game, int nbrDeath)
 {
 	game.clearOtherPlayers();
-	player.setNode(player.getStartNode());
-	std::vector<std::string> plan = player.getRoom().getRoomPlan();
-	for (size_t i = 0; i < plan.size(); i++)
+	if (player.getStartNode())
 	{
-		size_t j = plan[i].find('P');
-		if (j != plan[i].npos)
+		player.setNbrDeath(nbrDeath);
+		player.setNode(player.getStartNode());
+		std::vector<std::string> plan = player.getRoom().getRoomPlan();
+		for (size_t i = 0; i < plan.size(); i++)
 		{
-			player.setPos(j, i);
-			break;
+			size_t j = plan[i].find('P');
+			if (j != plan[i].npos)
+			{
+				player.setPos(j, i);
+				break;
+			}
 		}
 	}
 }
@@ -23,30 +27,36 @@ void	setPlayerState(Player &player, Game &game, val &pStatus, int flag)
 	int hp = pStatus["player_health"].as<int>();
 	int	anim = pStatus["player_anim"].as<int>();
 	int kills = pStatus["player_kills"].as<int>();
-
+	std::string hurtS = pStatus["player_hurt"].as<std::string>();
+	bool hurt = (hurtS == "true") ? true : false;
 	player.setHp(hp);
-	player.setAnim(anim);
 	player.setKills(kills);
-	if (flag == 1)
+	player.setHurt(hurt);
+	player.setAnim(anim);
+	
+	if (flag == 1) //if uid == other client uid
 	{
 		int dir = pStatus["player_dir"].as<int>();
 		player.setDir(dir);
 		player.setTargetPos(x, y);
 		player.setTimer(0);
 	}
-	else if (flag == 2)
+	else if (flag == 2)	//if uid == new client uid
 	{
 		int dir = pStatus["player_dir"].as<int>();
 		player.setDir(dir);
 		player.setPos(x, y);
 		player.setTargetPos(x, y);
 	}
-	else
+	else		//if uid == client uid
 	{
-		bool died = pStatus["player_died"].as<bool>();
-		if (died == true)
-			respawnPlayer(player, game);
-
+		int nbrDeath = pStatus["player_death_amount"].as<int>();
+		if (nbrDeath != player.getNbrDeath())
+		{
+			std::cout << "player " << player.getUid() << " died" << std::endl; 
+			respawnPlayer(player, game, nbrDeath);
+		}
+		player.setDead(pStatus["player_is_dead"].as<bool>());
 		float pX = player.getX();
 		float pY = player.getY();
 		float dist = SDL_sqrtf(SDL_powf(x - pX, 2) + SDL_powf(y - pY, 2));

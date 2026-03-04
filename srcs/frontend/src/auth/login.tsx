@@ -14,6 +14,7 @@ import { useState } from 'react';
 import toast from '../Notifications.tsx';
 import { handleGoogleLogin } from './callbackGoogle.tsx';
 import { handle42Login } from './callback42.tsx';
+import { NavLink } from 'react-router';
 
 type LoginBodyType = GetBody<"/auth/login", "post">;
 type ForgotBodyType = GetBody<"/auth/forgot-password", "post">;
@@ -108,6 +109,7 @@ function Login() {
 				)}
 				<Button type="submit" color="primary" isOutlined size='large'>{loginMutation.isPending ? 'Loading...' : 'Sign in'}</Button>
 			</form>
+			<NavLink to="/" className="button is-primary is-medium is-outlined">Back to home</NavLink>
 		</div>
 	)
 }
