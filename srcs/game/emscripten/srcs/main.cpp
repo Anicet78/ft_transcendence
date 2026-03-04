@@ -21,6 +21,18 @@ Engine gSdl;
 			msgJson.pop();
 	}
 
+
+	void enableInput(bool enable)
+	{
+		if (!enable)
+			reset_key();
+		Uint8 state = enable ? SDL_ENABLE : SDL_DISABLE;
+		SDL_EventState(SDL_KEYDOWN, state);
+		SDL_EventState(SDL_KEYUP, state);
+		SDL_EventState(SDL_TEXTINPUT, state);
+		SDL_EventState(SDL_TEXTEDITING, state);
+	}
+
 #endif
 
 #ifdef __EMSCRIPTEN__
@@ -28,6 +40,7 @@ Engine gSdl;
 	{
 		emscripten::function("getMessage", &getMessage);
 		emscripten::function("finishGame", &finishGame);
+		emscripten::function("enableInput", &enableInput);
 	}
 #endif
 
