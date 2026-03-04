@@ -1,7 +1,5 @@
-// sert a faire le rendu de la page (details dans App.tsx)
-import 'bulma/css/bulma.min.css'; // bulma style css
-import '@fortawesome/fontawesome-free/css/all.min.css';
 import "./main.css"
+
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

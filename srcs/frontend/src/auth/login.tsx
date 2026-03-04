@@ -1,7 +1,3 @@
-import 'bulma/css/bulma.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import './login.css'
-
 import { Button } from '@allxsmith/bestax-bulma';
 import InputEmail from '../components/InputEmail.tsx';
 import { useMutation } from '@tanstack/react-query';

@@ -5,7 +5,6 @@ import UsernameUpdate from "./UsernameUpdate.tsx";
 import regionUpdate from "./RegionUpdate.tsx";
 import EmailUpdate from "./EmailUpdate.tsx";
 import PasswordUpdate from "./PasswordUpdate.tsx";
-import "./update.css"
 
 type UpdateField = "avatar" | "username" | "region" | "email" | "password";
 

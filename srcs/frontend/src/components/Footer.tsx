@@ -1,6 +1,5 @@
 import { Footer, Content } from '@allxsmith/bestax-bulma';
 import { NavLink } from 'react-router';
-import "./Footer.css"
 
 const MyFooter = () => {
 	return (
