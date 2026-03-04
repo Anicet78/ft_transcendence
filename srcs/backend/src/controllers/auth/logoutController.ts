@@ -23,7 +23,9 @@ export async function postLogoutController(
 		});
 	}
 
-	await UserService.setAvailabality(request.user.id, false);
+	if (request.user) {
+		await UserService.setAvailabality(request.user.id, false);
+	}
 
 	try {
 		const userSocket = request.getSocket();

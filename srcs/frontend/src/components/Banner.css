@@ -7,7 +7,7 @@
   align-items: center;             /* Vertically center content */
   width: 100%;
   max-width: 100%;
-  background-color: var(--banner-color-bg);
+  background-color: transparent !important;
   box-sizing: border-box;          /* Include padding/border in width */
   padding: 0 1rem;                 /* Horizontal padding */
   overflow: visible !important;    /* Allow dropdowns to overflow outside navbar */
@@ -78,6 +78,7 @@
 .navbar-end .button {
   flex-shrink: 1;
   max-width: 100%;
+  display: inline-flex !important;
   white-space: nowrap;             /* Prevent text from wrapping */
   overflow: hidden;
   text-overflow: ellipsis;         /* Add "..." if text is too long */
@@ -92,7 +93,6 @@
 .navbar-end > .navbar-item.profile-dropdown {
   flex: 0 0 auto !important;   /* don’t grow or shrink */
   width: auto !important;       /* shrink-to-fit */
-  display: inline-flex !important; /* keep content sized */
 }
 
 .profile-dropdown::after {

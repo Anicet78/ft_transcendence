@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { SidebarChat } from "../chat/components/SidebarChat";
+import { useLocation } from "react-router";
 
 const Sidebar = () => {
 	const { user } = useAuth();
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const [collapsed, setCollapsed] = useState(false); // new state
+	const location = useLocation();
 
 	// Lock body scroll on mobile overlay
 	useEffect(() => {
@@ -27,11 +29,6 @@ const Sidebar = () => {
 			document.body.style.cursor = "auto";
 		};
 	}, []);
-
-	// Important to put after the cleaning hooks
-	if (!user) {
-		return null;
-	}
 
 	// RESIZING
 	const [width, setWidth] = useState(350);
@@ -65,6 +62,12 @@ const Sidebar = () => {
 			window.removeEventListener("mouseup", handleMouseUp);
 		};
 	}, [resizing]);
+
+	// Important to put after all hooks to keep rendering
+	if (!user || location.pathname === '/chat/list' || location.pathname === '/chat/group/new' 
+		|| location.pathname === '/group/invitations') {
+		return null;
+	}
 
 	return (
 		<>
