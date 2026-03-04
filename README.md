@@ -290,9 +290,31 @@ The database has been designed to maximize unique information sources, with mini
 #### mprokosc
 
 * Implemented:
+	* Core architecture of the C++ game server (communication layer, synchronization logic).
+	* Base systems for multiplayer interactions, including player and monster state management and message routing.
+	* Global bases of communication between the client game and the server (json messages via websockets).
+	* Procedural generation of the maps where we play the game, fully scalable depending of the number of players.
+	* Auto-tiling and texture placement in the game.
+
 * Modules handled:
+	* Web-based game.
+	* Remote players
+	* Multiplayer game.
+	* Custom module.
+
 * Challenges faced:
+	* Building from scratch a real-time server capable of handling multiple players with minimal latency.
+	* Ensuring synchronisation between all clients.
+	* Make a 2d top-down game engine from scratch.
+	* Managing WebAssembly limitations and bridging C++ logic with JavaScript/HTML.
+	* Creating a communication protocol that is simple and extensible.
+
 * Solutions:
+	* Implemented a custom event‑driven and tick-base(50ms) architecture in C++ to keep the server responsive and predictable.
+	* Added server‑side authority and reconciliation mechanisms to maintain consistent game state across clients.
+	* Used SDL_2 for it's easy comprehension and implementation for graphic programming.
+	* Used WebAssembly bindings with emscripten to expose C++ game logic to the browser while keeping good performances.
+	* Designed a Json communication protocol in order to be simple to understand and to implement.
 
 #### tpinton
 
