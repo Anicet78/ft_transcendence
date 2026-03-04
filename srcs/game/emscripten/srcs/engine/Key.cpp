@@ -6,17 +6,20 @@ Key::Key(void) : w_key(0), a_key(0), s_key(0),
 	return ;
 }
 
-Key::~Key(void) {
+Key::~Key(void)
+{
 	return ;
 }
 
-bool	Key::walking(void) {
+bool	Key::walking(void)
+{
 	if (w_key || s_key || a_key || d_key)
 		return true;
 	return false;
 }
 
-bool	Key::attacking(void) {
+bool	Key::attacking(void)
+{
 	if (space)
 		return true;
 	return false;

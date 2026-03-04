@@ -46,10 +46,18 @@ const Game = () => {
 			if (start) return;
 
 			cancelStart();
-			socket.close();
+			if (socket)
+			{
+				socket.onmessage = null;
+				socket.onerror = null;
+				socket.onclose = null;
+				socket.close();
+			}
 			if (!Module) return;
 
 			Module.finishGame();
+			delete (window as any).onCppMessage;
+			delete (window as any).sendResults;
 
 			if ((Module as any).ctx)
 			{
@@ -72,23 +80,32 @@ const Game = () => {
 						if (path.endsWith('.data')) return `https://${window.location.host}/game/game.data`;
 						return path;
 					},
-					onCppMessage: (obj: Object) => gameSocket.send(JSON.stringify(obj)),
+					onCppMessage: (obj: Object) => 
+						{
+							if (gameSocket.readyState === WebSocket.OPEN)
+								gameSocket.send(JSON.stringify(obj))
+						},
 					sendResults: (obj: Object) =>
 					{
 						setJsonEnd(obj);
 						console.log(JSON.stringify(obj))
 						setShowButton(true);
 						setBoxSize({ width: "900px", height: "300px" });
+						gameSocket.onmessage = null;
+						gameSocket.onerror = null;
+						gameSocket.onclose = null;
 						gameSocket.close();
 						if (!mod)
 							return;
+						console.log(mod);
 						mod.finishGame();
-
 						if ((mod as any).ctx)
 						{
 							const ext = (mod as any).ctx.getExtension('WEBGL_lose_context');
 							if (ext) ext.loseContext();
 						}
+						delete (window as any).onCppMessage;
+						delete (window as any).sendResults;
 					}
 				});
 
@@ -104,6 +121,63 @@ const Game = () => {
 
 		initWasm();
 	}, [mutation.isPending, gameSocket]);
+
+
+	useEffect(() =>
+	{
+		const canvas = canvasRef.current;
+		if (!canvas || !Module) return;
+
+		const handleCanvasClick = () =>
+		{
+			canvas.focus();
+			canvas.tabIndex = 1;
+			Module.enableInput(true);
+		};
+
+
+		const handleDocumentMouseDown = (e: MouseEvent) =>
+		{
+			if (e.target !== canvas)
+			{
+				canvas.blur();
+				canvas.tabIndex = -1;
+				Module.enableInput(false);
+			}
+		};
+
+
+		canvas.addEventListener("mousedown", handleCanvasClick);
+		document.addEventListener("mousedown", handleDocumentMouseDown);
+
+		return () =>
+		{
+			canvas.removeEventListener("mousedown", handleCanvasClick);
+			document.removeEventListener("mousedown", handleDocumentMouseDown);
+		};
+	}, [Module]);
+
+
+	useEffect(() =>
+	{
+		const emergencyCleanup = () =>
+		{
+			try
+			{
+				Module?.finishGame();
+				if ((Module as any).ctx)
+				{
+					const ext = (Module as any).ctx.getExtension('WEBGL_lose_context');
+					if (ext) ext.loseContext();
+				}
+			}
+			catch {}
+		};
+
+		window.addEventListener("beforeunload", emergencyCleanup);
+		return () => window.removeEventListener("beforeunload", emergencyCleanup);
+	}, [Module]);
+
 
 	useEffect(() => {
 
@@ -156,7 +230,7 @@ const Game = () => {
 			</div>)}
 			<br></br>
 			{showButton == true && ( <button id="home-button" onClick={handleHomeClick}> Return home </button> )}
-			<canvas ref={canvasRef} id="game-canvas" width="800" height="950" tabIndex={1}></canvas>
+			{showButton == false && (<canvas ref={canvasRef} id="canvas" width="800" height="950" tabIndex={1}></canvas>)}
 		</Box>
 	)
 
