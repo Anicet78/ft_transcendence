@@ -1,4 +1,4 @@
-import "./game-rules.css"
+import { NavLink } from "react-router"
 
 const GameRules = () => {
 	return (
@@ -37,6 +37,7 @@ const GameRules = () => {
 
 			<p><span>SPACE</span> - attack</p>
 
+			<NavLink to="/" className="button is-medium home-button">Back to home</NavLink>
 		</div>
 	)
 }

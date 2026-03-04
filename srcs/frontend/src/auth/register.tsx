@@ -1,7 +1,3 @@
-import 'bulma/css/bulma.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import './register.css'
-
 import { Button } from '@allxsmith/bestax-bulma';
 import type { GetBody, GetResponse } from '../types/GetType.ts';
 import api from '../serverApi.ts';
@@ -16,6 +12,7 @@ import SelectRegion from '../components/SelectRegion.tsx';
 import toast from '../Notifications.tsx';
 import { handleGoogleLogin } from './callbackGoogle.tsx';
 import { handle42Login } from './callback42.tsx';
+import { NavLink } from 'react-router';
 
 type RegisterBodyType = GetBody<"/auth/register", "post">;
 type RegisterResponseType = GetResponse<"/auth/register", "post">;
@@ -129,6 +126,7 @@ function Register() {
 					<Button type="submit" color="primary" isOutlined size='large'>{mutation.isPending ? 'Registering...' : 'Sign up'}</Button>
 				</div>
 			</form>
+			<NavLink to="/" className="button is-primary is-medium is-outlined">Back to home</NavLink>
 		</div>
 	)
 }

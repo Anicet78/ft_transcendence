@@ -14,6 +14,7 @@ const InputEmail = ({ label, name, value, onChange, placeholder }) => {
 					onChange={onChange}
 					placeholder={placeholder}
 					value={value}
+					color="grey"
 				/>
 				<span className="icon is-small is-left">
 					<i className="fas fa-envelope"></i>

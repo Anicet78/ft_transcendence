@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { NavLink, useNavigate, useSearchParams } from 'react-router';
 import api from '../serverApi';
 import { Button } from '@allxsmith/bestax-bulma';
-import './SearchPage.css'
 import skull from '../assets/skull.svg';
 import { useFriendshipModification } from '../friendship/useFriendshipModification';
 import type { actionType } from '../friendship/friendshipQueries';
@@ -114,7 +113,7 @@ const SearchPage = () => {
 						const sortValue = getSortValue(user);
 						console.log("sortBy:", sortBy);
 						console.log("gameProfile:", user.gameProfile);
-						console.log("value:", user.gameProfile?.[sortBy as keyof typeof user.gameProfile]);
+						console.log("value:", sortValue);
 						console.log("user:", user.username, user.gameProfile);
 						return (
 							<div key={user.appUserId} className="user_item_card">

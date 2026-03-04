@@ -46,10 +46,18 @@
 	max-width: 420px;          /* optional max width */
 }
 
+.login-box input {
+	background-color: #3f3f3f;
+	border-color: var(--color-primary);
+}
+.login-box input::placeholder {
+	color: var(--color-primary);
+}
+
 .login-box input:focus, select:focus {
   outline: none;
   border-color: #00f0f0;
-  background-color: #333;
+  background-color: #8c8a8a;
 }
 
 @media (max-width: 480px) {

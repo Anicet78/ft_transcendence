@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
-import './SearchBar.css';
 import { Button } from '@allxsmith/bestax-bulma';
 import { SelectFilter } from './SelectFilter';
 import { BooleanFilter } from './BooleanFilter';

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Button } from "@allxsmith/bestax-bulma";
+import { Button } from "@allxsmith/bestax-bulma";
 import { FileInputButton, FileCard } from "@files-ui/react";
 import type { ExtFile } from "@files-ui/react";
 import { NavLink, useNavigate } from "react-router";

@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router';
 import { useRoom } from '../home/RoomContext';
-import './game.css'
 import { Box } from '@allxsmith/bestax-bulma';
 import { useAuth } from '../auth/AuthContext';
 import api from '../serverApi';
@@ -9,7 +8,6 @@ import { useEffect, useRef, useState } from 'react';
 import type { GameModule } from './build/game';
 import createModule from './build/game';
 import toast from '../Notifications.tsx';
-import { SidebarChat } from '../chat/components/SidebarChat';
 
 const Game = () => {
 	const navigate = useNavigate();

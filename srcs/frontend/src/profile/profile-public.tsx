@@ -1,7 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import '../App.css'
-import './profile.css'
-import { Box, Button } from '@allxsmith/bestax-bulma';
+import { Button } from '@allxsmith/bestax-bulma';
 import { useParams } from 'react-router';
 import type { GetResponse } from '../types/GetType';
 import api from '../serverApi';

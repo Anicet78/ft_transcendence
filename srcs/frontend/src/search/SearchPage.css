@@ -4,6 +4,7 @@
   place-items: center;
   width: 100%;
   max-width: 900px;
+  margin: 0 auto;
 }
 
 /* Section title */
@@ -20,7 +21,7 @@
   max-width: 1000px;
   background-color: var(--color-bg);
   border-radius: 12px;
-  padding: clamp(0.8rem, 1.3vw, 1.3rem) !important;
+  padding: clamp(0.1rem, 1.3vw, 1.3rem) !important;
   overflow-x: visible; /* no scroll needed on desktop */
 }
 

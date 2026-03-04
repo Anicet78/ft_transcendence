@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router';
 import { Navbar, Icon } from '@allxsmith/bestax-bulma';
-import './Banner.css'
 import SearchBar from '../search/SearchBar.tsx';
 import { useAuth } from '../auth/AuthContext.tsx';
 
@@ -19,10 +18,10 @@ const Banner = () => {
 	return (
 		<Navbar color='dark' role='navigation' aria-label='main navigation' className="navbar-full">
 				<Navbar.Brand>
-					<NavLink to={logo_path} aria-label='home button' className='button is-primary is-outlined is-centered'>
+					<NavLink to={logo_path} aria-label='home button' className='button is-primary is-outlined is-centered' style={{fontFamily: 'Serif'}}>
 						<Icon
-						name="dragon"
-						ariaLabel="dragon logo"
+							name="dragon"
+							ariaLabel="dragon logo"
 						/>
 						<span>DungeonNoDragon</span>
 					</NavLink>
@@ -32,6 +31,7 @@ const Banner = () => {
 						aria-label="menu"
 						aria-expanded={active}
 						data-target="navbarMenu"
+						color='primary'
 					/>
 				</Navbar.Brand>
 				<Navbar.Menu id="navbarMenu" active={active}>
@@ -56,8 +56,8 @@ const Banner = () => {
 								<span>Menu</span>
 							</Navbar.Item>
 							<Navbar.DropdownMenu>
-								<Navbar.Item onClick={handleClick} className="dropdown-content">Logout</Navbar.Item>
-								<Navbar.Divider />
+								{user && <Navbar.Item onClick={handleClick} className="dropdown-content">Logout</Navbar.Item>}
+								{user && <Navbar.Divider />}
 								<NavLink to="/about" className="navbar-item dropdown-content">About the game</NavLink>
 							</Navbar.DropdownMenu>
 						</Navbar.Dropdown>

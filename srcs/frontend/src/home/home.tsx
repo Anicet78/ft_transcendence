@@ -1,5 +1,3 @@
-import './home.css'
-import '../App.css'
 import { Button } from '@allxsmith/bestax-bulma';
 import { NavLink } from 'react-router';
 
@@ -8,7 +6,6 @@ import { useAuth } from '../auth/AuthContext.tsx';
 import { PlayerDropdown } from '../components/PlayerDropdown.tsx';
 import { useMutation } from '@tanstack/react-query';
 import toast from '../Notifications.tsx';
-import { SidebarChat } from '../chat/components/SidebarChat.tsx';
 import api from '../serverApi.ts';
 
 const Home = () => {
@@ -40,6 +37,7 @@ const Home = () => {
 
 			{/* LEFT SIDE — GAME / ROOM CONTENT */}
 			<div className='game-room'>
+				<h2>Invite friends to play!</h2>
 				<div className='room-players'>
 					{room.players.map((player) => (
 						<PlayerDropdown
@@ -59,11 +57,11 @@ const Home = () => {
 					<Button className='quit-button' aria-label='quit button' onClick={QuitRoom}>Quit room</Button>
 					<Button className='invite-button' aria-label='copy link button' onClick={CopyRoomUrl}>Copy invite link</Button>
 				</div>
-			</div>
-
-			{/* RIGHT SIDE — CHAT SIDEBAR */}
-			<div>
-			<SidebarChat />
+				<NavLink to="/about" className='game-rules-link'>
+				<i className="fa-solid fa-hand-point-right"></i>
+				<span> Find the game rules here! </span>
+				<i className="fa-solid fa-hand-point-left"></i>
+				</NavLink>
 			</div>
 		</div>
 	)
