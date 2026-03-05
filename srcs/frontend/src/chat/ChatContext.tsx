@@ -114,6 +114,13 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 					type: "is-success"
 				});
 			}
+
+			if (payload.type === "chat_member_kicked") {
+				toast({
+					title: `You've been kicked from group chat`,
+					type: "is-warning"
+				});
+			}
 		});
 
 		socket.on("chat_typing", ({ userId }) => {

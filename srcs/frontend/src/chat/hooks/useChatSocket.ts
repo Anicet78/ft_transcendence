@@ -12,16 +12,6 @@ export function useChatSocket(
 	const socket = useSocket();
 	const queryClient = useQueryClient();
 
-	// useEffect(() => {
-	// 	if (!socket || !chatId) return;
-
-	// 	socket.emit("chat_join", { chatId });
-
-	// 	return () => {
-	// 		socket.emit("chat_leave", { chatId });
-	// 	};
-	// }, [socket, chatId]);
-
 	useEffect(() => {
 	
 		if (!socket || !chatId)
@@ -86,18 +76,13 @@ export function useChatSocket(
 			});
 		};
 
-		//MEMBER LEAVES CHAT
-		// const memberLeavesChat = () => {
-		// 	queryClient.invalidateQueries({ queryKey: ["chat-info", chatId] });
-		// 	queryClient.removeQueries({ queryKey: ["chat-messages", chatId] });
-		// 	queryClient.invalidateQueries({ queryKey: ["chat-list"] });
-		// };
 		const handleChatClosed = ({ chatId: closedChatId }: { chatId: string }) => {
 			if (closedChatId !== chatId)
 				return;
 
-			queryClient.invalidateQueries({ queryKey: ["chat-info", chatId] });
+			queryClient.removeQueries({ queryKey: ["chat-info", chatId] });
 			queryClient.removeQueries({ queryKey: ["chat-messages", chatId] });
+			queryClient.removeQueries({ queryKey: ["chat-read-state", chatId] });
 			queryClient.invalidateQueries({ queryKey: ["chat-list"] });
 
 			onChatClosed?.();

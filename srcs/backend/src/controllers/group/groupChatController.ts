@@ -91,7 +91,7 @@ export async function disbandGroupChatController(
 
 	const result = await disbandGroupChat(chatId, userId);
 
-	SocketService.send(chatId, "chat_disbanded", { chatId });//generate leave for each member
+	SocketService.send(chatId, "chat_disbanded", { chatId });
 	// for (const m of members) {
 	// 	if (!m.userId)
 	// 		continue;

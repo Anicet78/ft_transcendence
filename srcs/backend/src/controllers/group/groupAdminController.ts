@@ -19,9 +19,6 @@ export async function kickGroupMemberController(
 	const requesterId = req.user.id;
 	const { chatId, memberId } = req.params;
 
-	// const socket = req.getSocket();
-	// await SocketService.addInRoom(chatId, socket);
-
 	if (!requesterId)
 		throw new AppError('Unauthorized', 401);
 
@@ -34,6 +31,11 @@ export async function kickGroupMemberController(
 	{
 		kickedSocket.emit("chat_member_quit", { chatId });
 		kickedSocket.leave(chatId);
+
+		SocketService.send(`user:${memberId}`, "notification", {
+			type: "kicked_from_chat",
+			chatId: chatId,
+		});
 	}
 
 	SocketService.send(chatId, "chat_member_kicked", { chatId });

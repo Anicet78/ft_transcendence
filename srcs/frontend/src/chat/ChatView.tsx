@@ -28,29 +28,13 @@ const ChatView = ({ chatId: propChatId, onClose }: {
 
 	// const userSocket = useSocket();
 
-	useChatSocket(chatId);
+	useChatSocket(chatId, onClose);
 
 	//join new chat add each chatId change
 	useEffect(() => {
 		if (chatId)
 			joinChat(chatId);
 	}, [chatId]);
-
-	// useEffect(() => {
-
-	// 	if (!userSocket)
-	// 		return;
-
-	// 	const handleQuit = ({ chatId: quitChatId }: {chatId: string}) => {
-	// 		if (quitChatId === chatId) {
-	// 			onClose?.();
-	// 		}
-	// 	}
-
-	// 	userSocket.on("chat_member_quit", handleQuit);
-
-	// 	return () => userSocket.off("chat_member_quit", handleQuit);
-	// }), [userSocket, chatId, onClose];
 
 	if (isLoading)
 		return <div>Loading chat...</div>;
