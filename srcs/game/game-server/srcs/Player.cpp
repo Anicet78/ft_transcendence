@@ -399,7 +399,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &r
 	if (flag == 0)
 	{
 		float y = rect.y - (6.0f * deltaTime);
-		if (plan[y][rect.x] == '1' || plan[y][rect.x + rect.h] == '1')
+		if (plan[y][rect.x] == '1' || plan[y][rect.x + rect.h] == '1' || plan[y][rect.x] == '3' || plan[y][rect.x + rect.h] == '3')
 			return (true);
 
 		//if the event in the room is not cleared, player cant go on 'E' tiles
@@ -414,7 +414,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &r
 	if (flag == 1)
 	{
 		float x = rect.x - (6.0f * deltaTime);
-		if (plan[rect.y][x] == '1' || plan[rect.y + rect.h][x] == '1')
+		if (plan[rect.y][x] == '1' || plan[rect.y + rect.h][x] == '1' || plan[rect.y][x] == '3' || plan[rect.y + rect.h][x] == '3')
 			return (true);
 
 		//if the event in the room is not cleared, player cant go on 'E' tiles
@@ -429,7 +429,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &r
 	if (flag == 2)
 	{
 		float y = rect.y + (6.0f * deltaTime);
-		if (plan[y + rect.h][rect.x] == '1' || plan[y + rect.h][rect.x + rect.w] == '1')
+		if (plan[y + rect.h][rect.x] == '1' || plan[y + rect.h][rect.x + rect.w] == '1' || plan[y + rect.h][rect.x] == '3' || plan[y + rect.h][rect.x + rect.w] == '3')
 			return (true);
 		
 		//if the event in the room is not cleared, player cant go on 'E' tiles
@@ -444,7 +444,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &r
 	if (flag == 3)
 	{
 		float x = rect.x + (6.0f * deltaTime);
-		if (plan[rect.y][x + rect.h] == '1' || plan[rect.y + rect.h][x + rect.w] == '1')
+		if (plan[rect.y][x + rect.h] == '1' || plan[rect.y + rect.h][x + rect.w] == '1' || plan[rect.y][x + rect.h] == '3' || plan[rect.y + rect.h][x + rect.w] == '3')
 			return (true);
 		
 		//if the event in the room is not cleared, player cant go on 'E' tiles

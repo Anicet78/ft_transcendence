@@ -56,6 +56,11 @@ void	reset_key(void);
 void	updateRoom(Game &game, Player &player, std::string dir);
 
 void	print_map(Player &player);
+void	manage_floor(int x, int y, Player &player);
+void	manage_wall(int x, int y, Player &player);
+void	manage_water(int x, int y, Player &player);
+void	manage_stairs(int x, int y, Player &player);
+
 void	manageSoil(int x, int y, Player &player);
 void	manage_wall_forest(int x, int y, Player &player, int iteration);
 

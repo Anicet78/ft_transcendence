@@ -388,7 +388,7 @@ void	Mob::printMob(float camX, float camY, int tile_size, int flag)
 		if (!flag && this->_frame >= 32)
 		{
 			this->_inDeathAnimation = false;
-			this->_frame = 0;
+			this->_frame = 31;
 		}
 		int frame = (flag) ? ((!this->_frame) ? 31 : this->_frame - 1) : this->_frame;
 		this->rendMobDeath(x, y, frame / 8, 2, flag);

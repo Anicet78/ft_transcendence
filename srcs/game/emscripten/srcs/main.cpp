@@ -103,6 +103,7 @@ static void	importAssetsAndRoom(void)
 {
 	Assets::importAssets("../assets/sprite/assets.bmp", 16);
 	Assets::importAssets("../assets/sprite/forest/tiles-all.bmp", 32);
+	Assets::importAssets("../assets/sprite/water.bmp", 16);
 	PlayerAssets::importPlayersAssets(100);
 	Mob::importMobsAssets(100);
 
@@ -113,7 +114,7 @@ int main(int ac, char **av)
 {
 	srand(time(0));
 	std::string name, id;
-	(void)ac, (void)av;
+	(void)ac;
 	if (!init_sdl(gSdl))
 	{
 		std::cerr << "Error in sdl init" << std::endl;

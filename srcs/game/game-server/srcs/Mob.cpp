@@ -217,7 +217,7 @@ static bool checkWallHitBox(std::vector<std::string> const &plan, FRect const &r
 	if (x1 < 0 || x2 >= static_cast<int>(plan[0].size()))
 		return false;
 
-	return (plan[y1][x1] != '1' && plan[y2][x2] != '1' && plan[y1][x1] != 'E' && plan[y2][x2] != 'E');
+	return (plan[y1][x1] != '1' && plan[y2][x2] != '1' && plan[y1][x1] != 'E' && plan[y2][x2] != 'E' && plan[y1][x1] != '3' && plan[y2][x2] != '3');
 }
 
 static bool checkWallHitBox2(std::vector<std::string> const &plan,
@@ -241,7 +241,7 @@ static bool checkWallHitBox2(std::vector<std::string> const &plan,
 	auto isBlocked = [&](int y, int x)
 	{
 		char c = plan[y][x];
-		return (c == '1' || c == 'E');
+		return (c == '1' || c == 'E' || c == '3');
 	};
 
 	return (!isBlocked(y1, x1) && !isBlocked(y1, x2) &&
@@ -520,7 +520,7 @@ bool Mob::isInSight(Player &player, std::vector<std::string> const &map)
 			return false;
 
 		char c = map[iy][ix];
-		if (c == '1' || c == 'E')
+		if (c == '1' || c == 'E' || c == '3')
 			return false;
 
 		mx += incX;
