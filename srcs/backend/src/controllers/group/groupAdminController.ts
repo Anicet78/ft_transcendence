@@ -33,7 +33,7 @@ export async function kickGroupMemberController(
 		kickedSocket.leave(chatId);
 
 		SocketService.send(`user:${memberId}`, "notification", {
-			type: "kicked_from_chat",
+			type: "chat_member_kicked",
 			chatId: chatId,
 		});
 	}

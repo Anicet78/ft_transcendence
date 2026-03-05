@@ -42,6 +42,7 @@ export async function createGroupChatController(
 	req: FastifyRequest<{ Body: CreateGroupChatBody }>, reply: FastifyReply ) {
 	const creatorId = req.user.id;
 	const { name, memberIds } = req.body;
+	const creatorSocket = req.getSocket()
 
 	if (!creatorId) {
 		throw new AppError('Unauthorized', 401);
@@ -53,6 +54,8 @@ export async function createGroupChatController(
 		where: { appUserId: creatorId },
 		select: { username: true }
 	});
+
+	creatorSocket.join(chat.chatId);
 
 	for (const m of memberIds) {
 		const userSocket = await req.server.getSocketByUserId(m);
@@ -67,6 +70,8 @@ export async function createGroupChatController(
 			chatName: chat?.chatName ?? "Chat"
 		});
 	}
+
+	SocketService.send(chat.chatId, "chat_created", {});
 
 	return reply.status(201).send(normalizeChat(chat));
 }

@@ -4,6 +4,7 @@ import type { GetResponse } from '../types/GetType'
 import api from '../serverApi';
 import { Box } from '@allxsmith/bestax-bulma';
 import { useNavigate } from 'react-router';
+import { useListSocket } from './hooks/useListSocket';
 // import { useAuth } from '../auth/AuthContext';
 
 type ChatListResponseType = GetResponse<"/chat/list", "get">;
@@ -21,6 +22,7 @@ const ChatList = ({
 }) => {
 	
 	const navigate = useNavigate();
+	useListSocket();
 
 	const { data, isLoading, isError, error } = useQuery({
 		queryKey: ['chat-list'],
