@@ -115,7 +115,7 @@
   right: 0;                        /* Align to right edge */
   left: auto;                      /* Don’t use left */
   margin-top: 0;
-  z-index: 2000;                   /* Above all navbar content */
+  z-index: 2000 !important;        /* Above all navbar content */
   min-width: 200px;                /* Minimum dropdown width */
   max-width: 300px;                /* Maximum dropdown width */
   box-sizing: border-box;          /* Include padding/border in width */
@@ -129,8 +129,17 @@
 
 }
 
+.dropdown-full {
+ background-color: black !important;
+}
+
 .dropdown-content {
   color: var(--color-primary) !important;
+   background-color: black !important;
+}
+
+.dropdown-divider {
+	background-color: var(--color-primary) !important;
 }
 
 /* ============================= */
@@ -174,10 +183,11 @@
   }
 
   .navbar-end .navbar-dropdown {
-    position: static !important;    /* Normal flow for stacked layout */
+    position: absolute !important; /* Make sure it's not stacked incorrectly */
     width: 100%;                    /* Full width */
     max-width: 100%;                /* Prevent overflow */
     margin-top: 0;                  /* Remove top margin */
+	z-index: 2000 !important;       /* Above all navbar content */
   }
 }
 

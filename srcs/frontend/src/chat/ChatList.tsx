@@ -28,7 +28,7 @@ const ChatList = ({ onSelectChat }: { onSelectChat?: (id: string) => void }) => 
 		return <div>Error: {error?.message}</div>;
 
 	return (
-		<Box m="4" p="6" bgColor="white">
+		<div className='sidebar-content'>
 			<h1 className="title">Your chats</h1>
 
 			{/* CREATE GROUP CHAT BUTTON */}
@@ -89,7 +89,7 @@ const ChatList = ({ onSelectChat }: { onSelectChat?: (id: string) => void }) => 
 
 			</Box>
 			))}
-		</Box>
+		</div>
 		);
 };
 

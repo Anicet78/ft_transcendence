@@ -105,16 +105,13 @@ const Sidebar = () => {
 					}}
 					/>
 				)}
-				{!collapsed && (
-					<div className="sidebar-content">
-						<SidebarChat />
-					</div>)}
+				{!collapsed && (<SidebarChat />)}
 			</aside>
 
 			{/* ===== MOBILE ===== */}
 			<div className="is-hidden-desktop">
 				<button
-					className="button is-primary floating-chat-btn"
+					className="button floating-chat-btn"
 					onClick={() => setMobileOpen(true)}
 				>
 					<span className="icon">
@@ -128,7 +125,7 @@ const Sidebar = () => {
 							<p className="has-text-weight-semibold">Messages</p>
 
 							<button
-							className="button is-white"
+							className="button close-button"
 							onClick={() => setMobileOpen(false)}
 						>
 							<span className="icon">
