@@ -139,7 +139,7 @@ export async function launchController(
 
 	const room: Room = RoomService.get(request.body.roomId, request.user.id);
 
-	if (room.chatId) {
+	if (room.chatId && room.players.length > 1) {
 		await prisma.chatMessage.create({
 			data: {
 				chatId: room.chatId,

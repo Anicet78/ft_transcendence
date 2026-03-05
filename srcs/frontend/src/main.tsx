@@ -121,11 +121,11 @@ createRoot(document.getElementById('root') as HTMLElement).render(
 				<Toaster />
 				<AuthProvider>
 					<SocketProvider>
-						<ChatProvider>
-							<RoomProvider>
+						<RoomProvider>
+							<ChatProvider>
 								<AppEntryPoint />
-							</RoomProvider>
-						</ChatProvider>
+							</ChatProvider>
+						</RoomProvider>
 					</SocketProvider>
 				</AuthProvider>
 			</Router>

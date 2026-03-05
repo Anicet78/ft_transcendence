@@ -20,7 +20,7 @@ export type RoomContextValue = {
 
 const RoomContext = createContext<RoomContextValue | null>(null);
 
-const onPlayerJoined = (data: { playerId: string, playerUsername: string }, setRoom: React.Dispatch<React.SetStateAction<Room | null>>) => {
+const onPlayerJoined = (data: { playerId: string, playerUsername: string }, setRoom: React.Dispatch<React.SetStateAction<Room | null>>, myId: string) => {
 	setRoom((prev) => {
 		if (!prev) return prev;
 		if (prev.players.map(players => players.id).includes(data.playerId)) return prev;
@@ -33,7 +33,9 @@ const onPlayerJoined = (data: { playerId: string, playerUsername: string }, setR
 			players: [...prev.players, { id: data.playerId, username: data.playerUsername }],
 		};
 	});
-	toast({ title: `Player joined`, message: `${data.playerUsername} has joined the room`, type: "is-info" });
+
+	if (data.playerId !== myId)
+		toast({ title: `Player joined`, message: `${data.playerUsername} has joined the room`, type: "is-info" });
 };
 
 const onPlayerQuit = (data: { playerId: string, reason: string, newHost: string}, setRoom: React.Dispatch<React.SetStateAction<Room | null>>) => {
@@ -125,7 +127,7 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 
 		joinRoom();
 
-		socket.on('player_joined', (data) => onPlayerJoined(data, setRoom));
+		socket.on('player_joined', (data) => onPlayerJoined(data, setRoom, user?.id!));
 		socket.on('player_left', (data) => onPlayerQuit(data, setRoom));
 		socket.on('host_changed', (data) => onHostChanged(data, setRoom));
 		socket.on('kicked', (data) => onKicked(data, newRoom));

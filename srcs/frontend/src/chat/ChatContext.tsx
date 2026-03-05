@@ -4,6 +4,7 @@ import { useSocket } from "../socket/SocketContext";
 import { useAuth } from "../auth/AuthContext";
 import api from "../serverApi";
 import toast from "../Notifications";
+import { useRoom } from "../home/RoomContext";
 
 type ChatInfoResponse = GetResponse<"/chat/{chatId}/info", "get">;
 
@@ -22,9 +23,10 @@ type ChatContextValue = {
 const ChatContext = createContext<ChatContextValue | null>(null);
 
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
-	
+
 	const socket = useSocket();
 	const { user } = useAuth();
+	const { room } = useRoom()!;
 
 	const [chat, setChat] = useState<ChatInfoResponse | null>(null);
 	//const [typingUsers, setTypingUsers] = useState<Record<string, string>>({});
@@ -38,7 +40,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 		canBan: ["owner", "admin"].includes(role ?? ""),
 		canKick: ["owner", "admin"].includes(role ?? ""),
 		canRename: ["owner", "admin"].includes(role ?? ""),
-		canChangeRoles: ["owner", "admin"].includes(role ?? "") 
+		canChangeRoles: ["owner", "admin"].includes(role ?? "")
 	}
 
 	const joinChat = async(chatId: string) => {
@@ -79,7 +81,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 			}
 
 			//user has received an invite to join group
-			if (payload.type === "invite_received") {
+			else if (payload.type === "invite_received") {
 				toast({
 					title: "Chat invite received!",
 					message: `${payload.senderName} invites you to join "${payload.chatName}" group chat`,
@@ -88,7 +90,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 			}
 
 			//user's sent chat invite has been accepted
-			if (payload.type === "invite_accepted") {
+			else if (payload.type === "invite_accepted") {
 				toast({
 					title: `${payload.chatName}`,
 					message: `${payload.receiverName} accepted your invitation to join this chat`,
@@ -98,7 +100,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
 			// ***** send to all chat members *****//
 			//user has received an invite to join game session from group chat
-			if (payload.type === "game_invite") {
+			else if (payload.type === "game_invite") {
 				toast({
 					title: `${payload.chatName}`,
 					message: `${payload.senderUsername} send you a game invitation 🎮`,
@@ -107,7 +109,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 			}
 
 			//a group chat user is a member of has launched a game
-			if (payload.type === "game_started") {
+			else if (payload.type === "game_started" && payload.roomId !== room?.roomId) {
 				toast({
 					title: `${payload.chatName}`,
 					message: "Your fellow companions started a game session 🚀",
@@ -115,7 +117,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 				});
 			}
 
-			if (payload.type === "chat_member_kicked") {
+			else if (payload.type === "chat_member_kicked") {
 				toast({
 					title: `You've been kicked from group chat`,
 					type: "is-warning"
@@ -142,7 +144,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
 	}, [socket, user]);
 
-	return ( 
+	return (
 		//<ChatContext.Provider value= {{chat, role, permissions, typingUsers, joinChat, leaveChat }}></ChatContext.Provider>
 		<ChatContext.Provider value= {{chat, role, permissions, isTyping, joinChat, leaveChat }}>
 			{children}
@@ -155,4 +157,3 @@ export const useChat = (): ChatContextValue => {
 		throw new Error("useChat must be used inside ChatProvider");
 	return ctx;
 }
-
