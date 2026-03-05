@@ -38,7 +38,7 @@ Create and fill the required secret files:
 ./docker/secrets/secret_42.txt            42 OAuth secret key
 ./docker/secrets/db_password.txt          PostgreSQL user password
 ./docker/secrets/pgadmin_password.txt     pgAdmin account password
-./docker/secrets/smtp_secret.txt          Brevo secret key
+./docker/secrets/smtp_secret.txt          Gmail account secret key
 ```
 
 ### Install, Build, and Run
@@ -62,18 +62,24 @@ make
 * Documentation
 	* [SDL](https://wiki.libsdl.org/SDL2/CategoryAPIFunction)
 	* [Prisma](https://www.prisma.io/docs/orm)
+	* [React](https://react.dev/learn)
+	* [Vite](https://vite.dev/guide)
+	* [Bulma](https://bulma.io)
 
 * Tutorials
 	* [Beginning Game Programming](https://lazyfoo.net/tutorials/SDL/index.php)
 	* [Creating a simple roguelike](https://www.parallelrealities.co.uk/tutorials/rogue/rogue1.php)
 	* [Databases](https://www.prisma.io/dataguide/intro/what-are-databases)
 	* [PostgreSQL](https://www.w3schools.com/postgresql/index.php)
+	* [Start with react](https://openclassrooms.com/fr/courses/8710331-debutez-avec-react)
+	* [Complete react application](https://openclassrooms.com/fr/courses/7150606-creez-une-application-react-complete)
 
 * Assets
 	* [Dungeon Gathering](https://snowhex.itch.io/dungeon-gathering)
 	* [Basic Forest Tileset](https://schwarnhild.itch.io/basic-forest-tileset-32x32-pixels)
 	* Itch.io
 	* [Pixilart](https://www.pixilart.com) ⮕ Create pixel-art assets for the game
+	* [Animation generator](https://animista.net/)
 
 * AI Usage
 	* Provide easy access to documentation and concept explanations
@@ -276,9 +282,29 @@ The database has been designed to maximize unique information sources, with mini
 #### agruet
 
 * Implemented:
+	* Backend API architecture (routes, controllers, services, plugins, schema)
+	* API Authentication and Authorization (login, register, security)
+	* API websocket setup
+	* Full docker environment
+	* Room routes for multiplayer game launching
+	* Setup communication between frontend and backend
+
 * Modules handled:
+	* Real-time features using WebSockets
+	* Framework for frontend and backend
+	* Standard user management and authentication
+	* Notification system
+	* Remote authentication
+
 * Challenges faced:
+	* Understand web architecture and organization
+	* Work efficiently in group and follow fixed deadlines
+	* Resolve every git issues we encountered
+
 * Solutions:
+	* Organize the tasks and split work and modules within the group members
+	* Provide a clean docker environment for both dev and prod
+	* Setup git branch protections
 
 #### ndabbous
 
@@ -312,7 +338,7 @@ The database has been designed to maximize unique information sources, with mini
 * Solutions:
 	* Implemented a custom event‑driven and tick-base(50ms) architecture in C++ to keep the server responsive and predictable.
 	* Added server‑side authority and reconciliation mechanisms to maintain consistent game state across clients.
-	* Used SDL_2 for it's easy comprehension and implementation for graphic programming.
+	* Used SDL2 for it's easy comprehension and implementation for graphic programming.
 	* Used WebAssembly bindings with emscripten to expose C++ game logic to the browser while keeping good performances.
 	* Designed a Json communication protocol in order to be simple to understand and to implement.
 
