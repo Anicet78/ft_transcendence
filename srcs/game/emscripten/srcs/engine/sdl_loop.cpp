@@ -82,7 +82,7 @@ void	updatePlayerPosition(Player &player, double deltaTime)
 		anim = "attacking";
 		if (player.getPrevState() == PLAYER_ATTACKING)
 		{
-			if (player.getFrame() >= 14 && player.getFrame() < 18)
+			if (player.getFrame() >= 12 && player.getFrame() < 20)
 				HitFrame = 1;
 			if (player.getFrame() == 24)
 				HitFrame = 2;

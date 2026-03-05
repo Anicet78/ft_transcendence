@@ -417,13 +417,11 @@ void	Mob::attack(Player &player)
 	if (this->_state != MOB_ATTACKING)
 		this->setState(MOB_ATTACKING);
 
-	//NERFED, TOO HARD
-	if (this->getTimeLastAction() <= 0.05f && !this->_isInvinsible) //<- from 0.1f to 0.05f
+	if (this->getTimeLastAction() <= 0.025f && !this->_isInvinsible) //<- from 0.05f to 0.025f
 		this->_isInvinsible = true;
-	else if (this->getTimeLastAction() > 0.05f && this->_isInvinsible) //<- from 0.1f to 0.05f
+	else if (this->getTimeLastAction() > 0.025f && this->_isInvinsible) //<- from 0.5f to 0.025f
 		this->_isInvinsible = false;
 	if (this->getTimeLastAction() <= 0.3f)
-	//----------------
 		return ;
 	box.updateHurtBox();
 	if (!player.checkInvinsibleFrame() && box.isDmgHit(this->_box.getAtkHitBox()))
