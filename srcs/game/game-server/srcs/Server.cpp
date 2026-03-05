@@ -1,5 +1,5 @@
 #include "Server.hpp"
-Server::Server(void)
+Server::Server(std::string serverId, std::string serverSecret) : _serverId(serverId), _serverSecret(serverSecret)
 {}
 
 Server::~Server(void)
@@ -212,6 +212,16 @@ std::string	Server::getServerToken(void) const
 	return (this->_serverToken);
 }
 
+std::string Server::getServerId(void) const
+{
+	return (this->_serverId);
+}
+
+std::string Server::getServerSecret(void) const
+{
+	return (this->_serverSecret);
+}
+
 void		Server::setServerToken(std::string token)
 {
 	this->_serverToken = token;
@@ -374,63 +384,6 @@ void	roomLoopUpdate(Room &room, std::vector<std::weak_ptr<Player>> &allPlayer, u
 	app->publish(room.getRoomId(), msg, uWS::OpCode::TEXT);
 }
 
-// void sendToBack(std::string url, std::string &msg, std::string method)
-// {
-//     CURL *curl = curl_easy_init();
-//     if(curl)
-// 	{
-// 		std::cout << "curl_easy_init() worked properly" << std::endl;
-// 		if (method == "POST")
-// 		{
-// 			if (curl_easy_setopt(curl, CURLOPT_URL, url.c_str()) != CURLE_OK)
-// 			{
-// 				std::cout << "CURLOPT_URL FAIL" << std::endl;
-// 			}
-
-// 			if (curl_easy_setopt(curl, CURLOPT_POST, 1L) != CURLE_OK)
-// 			{
-// 				std::cout << "CURLOPT_POST" << std::endl;
-// 			}
-
-// 			if (curl_easy_setopt(curl, CURLOPT_POSTFIELDS, msg.c_str()) != CURLE_OK)
-// 			{
-// 				std::cout << "CURLOPT_POSTFIELDS" << std::endl;
-// 			}
-
-// 			std::cout << url << " POST: " << msg << std::endl;
-// 		}
-// 		else if (method == "PATCH")
-// 		{
-// 			if (curl_easy_setopt(curl, CURLOPT_URL, url.c_str()) != CURLE_OK)
-// 			{
-// 				std::cout << "CURLOPT_URL" << std::endl;
-// 			}
-
-// 			if (curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PATCH") != CURLE_OK)
-// 			{
-// 				std::cout << "CURLOPT_CUSTOMREQUEST" << std::endl;
-// 			}
-
-// 			if (curl_easy_setopt(curl, CURLOPT_POSTFIELDS, msg.c_str()) != CURLE_OK)
-// 			{
-// 				std::cout << "CURLOPT_POSTFIELDS" << std::endl;
-// 			}
-// 			std::cout << url << " PATCH: " << msg << std::endl;
-// 		}
-
-// 		if (curl_easy_perform(curl) != CURLE_OK)
-// 		{
-// 			std::cout << "CURL_EASY_PERFORM" << std::endl;
-// 		}
-// 		curl_easy_cleanup(curl);
-// 		{
-// 			std::cout << "CURL_EASY_CLEANUP" << std::endl;
-// 		}
-//     }
-// 	else
-// 		std::cout << "fail" << std::endl;
-// }
-
 void	Server::run(void)
 {
 	uWS::App app;
@@ -452,11 +405,6 @@ void	Server::run(void)
 	{
 		auto *data = (TimerData *) us_timer_ext(t);
 
-		// if (*data->flag == false)
-		// {
-		// 	sendViaCurl(*data->server, "", "", 0);
-		// 	// *data->flag = true;
-		// }
 		for(auto &session : data->server->_sessions)
 		{
 			if (!session.getPlaceLeft() && session.doesAllPlayersConnected() && !session.isReadyToRun())
@@ -481,7 +429,7 @@ void	Server::run(void)
 				}
 				continue;
 			}
-			session.checkFinishedPlayers(*data->app);
+			session.checkFinishedPlayers(*data->app, *data->server);
 			if (session.hasEnded())
 			{
 				std::cout << "ended" << std::endl;

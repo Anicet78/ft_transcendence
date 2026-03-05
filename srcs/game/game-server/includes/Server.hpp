@@ -11,6 +11,8 @@ class Server
 		std::list<Party>						_matchMakingQueue;
 		std::vector<std::shared_ptr<Player>>	_players;
 		std::string								_serverToken;
+		std::string								_serverId;
+		std::string								_serverSecret;
 
 	private:
 		void							parseJson(std::map<std::string, std::string> &res, std::string msg);
@@ -26,11 +28,15 @@ class Server
 
 
 	public:
-		Server(void);
+		Server(std::string serverId, std::string serverSecret);
 		~Server();
 
 		std::string getServerToken(void) const;
 		void		setServerToken(std::string token);
+
+		std::string	getServerId(void) const;
+
+		std::string	getServerSecret(void) const;
 	
 	public:
 		void	run();
@@ -39,7 +45,5 @@ class Server
 void	updatePlayer(Player &player, std::map<std::string, std::string> &req);
 void	updateRoom(Player &player, uWS::App &app);
 void	updateWorld(Player &player);
-
-void	sendViaCurl(Server &server, std::string url, std::string method, std::string body, int flag);
 
 #endif

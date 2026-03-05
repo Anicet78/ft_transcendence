@@ -32,9 +32,11 @@ static size_t write_callback(char* ptr, size_t size, size_t nmemb, void* userdat
 	return (totalSize);
 }
 
-static void	generateToken(Server &server, CURL *curl, std::string &response, struct curl_slist *headers, CURLcode &result)
+static void	generateToken(Server &server, CURL *curl, CURLcode &result)
 {
-	std::string	body = R"({"clientId":"game-server-01", "clientSecret":"b723ea096f575e959637b81bdaadabaf22a39c98a73045c3f1e3bb96f10c3280"})";
+	struct curl_slist *headers = NULL;
+
+	std::string body = R"({"clientId":")" + server.getServerId() + R"(", "clientSecret":")" + server.getServerSecret() + R"("})";
 
 	//fill the headers
 	headers = curl_slist_append(headers, "Content-Type: application/json");
@@ -52,6 +54,8 @@ static void	generateToken(Server &server, CURL *curl, std::string &response, str
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 
 	//gather the response
+	std::string response;
+
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
 	//same as the -v of curl, just write what's happening
@@ -61,11 +65,16 @@ static void	generateToken(Server &server, CURL *curl, std::string &response, str
 	// curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, debug_callback);
 
 	//perform the request
+
 	result = curl_easy_perform(curl);
 	if (result != CURLE_OK)
 	{
 		fprintf(stderr, "curl_easy_perform() failed : %s\n", curl_easy_strerror(result));
 	}
+
+	long responseCode;
+
+	curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
 
 	//free the headers
 	curl_slist_free_all(headers);
@@ -73,48 +82,98 @@ static void	generateToken(Server &server, CURL *curl, std::string &response, str
 	if (!response.empty())
 	{
 		if (response.find(R"("token":)") != response.npos)
-		{
-			// std::string token = response;
 			server.setServerToken(response.substr(response.find(':') + 2, 185));
-		}
 	}
-	else
-		std::cout << "didnt get response" << std::endl;
 
 	curl_easy_reset(curl);
 }
 
-static void	postViaCurl(CURL *curl, struct curl_slist *headers, CURLcode &result, std::string url, std::string const &token, std::string body)
+static void	postViaCurl(Server &server, CURL *curl, CURLcode &result, std::string url, std::string body)
 {
-	// "Authorization: Bearer mytoken123"
+	struct curl_slist *headers = NULL;
+
 	headers = curl_slist_append(headers, "Content-Type: application/json");
 
-	std::string bearer = "Authorization: Bearer " + token;
+	std::string bearer = "Authorization: Bearer " + server.getServerToken();
 
 	headers = curl_slist_append(headers, bearer.c_str());
 
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-	curl_easy_setopt(curl, CURLOPT_URL, /*"http://node-c:3000/game/create"*/url.c_str());
+	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
 	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
 
 	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
+	//use for debugging
+	// curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, debug_callback);
+
 	result = curl_easy_perform(curl);
 	if (result != CURLE_OK)
 		fprintf(stderr, "curl_easy_perform() failed : %s\n", curl_easy_strerror(result));
 
+	long responseCode;
+
+	curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
+
 	curl_slist_free_all(headers);
 
 	curl_easy_reset(curl);
+
+	if (responseCode == 401)
+	{
+		generateToken(server, curl, result);
+		postViaCurl(server, curl, result, url, body);
+	}
+}
+
+static void	patchViaCurl(Server &server, CURL *curl, CURLcode &result, std::string url, std::string body)
+{
+	struct curl_slist *headers = NULL;
+
+	headers = curl_slist_append(headers, "Content-Type: application/json");
+
+	std::string bearer = "Authorization: Bearer " + server.getServerToken();
+
+	headers = curl_slist_append(headers, bearer.c_str());
+
+	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+
+	//we still use a POST for base
+	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
+
+	//there is no CURLOPT enum for PATCH so we create a custom PATCH, it replace the POST method defined just above
+	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PATCH");
+
+	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
+	// use for debugging
+	// curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, debug_callback);
+
+	result = curl_easy_perform(curl);
+	if (result != CURLE_OK)
+		fprintf(stderr, "curl_easy_perform() failed : %s\n", curl_easy_strerror(result));
+
+	long responseCode;
+
+	curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
+
+	curl_slist_free_all(headers);
+
+	curl_easy_reset(curl);
+
+	if (responseCode == 401)
+	{
+		generateToken(server, curl, result);
+		patchViaCurl(server, curl, result, url, body);
+	}
 }
 
 void	sendViaCurl(Server &server, std::string url, std::string method, std::string body, int flag)
 {
-	(void)method, (void)body;
-	std::string response;
-
 	CURL		*curl;
 
 	CURLcode	result = curl_global_init(CURL_GLOBAL_ALL);
@@ -125,18 +184,17 @@ void	sendViaCurl(Server &server, std::string url, std::string method, std::strin
 	if (!curl)
 		return ;
 
-	struct curl_slist	*headers = NULL;
-
 	if (server.getServerToken().empty() || flag)
-		generateToken(server, curl, response, headers, result);
+		generateToken(server, curl, result);
 
 	if (method == "POST")
-		postViaCurl(curl, headers, result, url, server.getServerToken(), body);
+		postViaCurl(server, curl, result, url, body);
+
+	if (method == "PATCH")
+		patchViaCurl(server, curl, result, url, body);
 
 	curl_easy_cleanup(curl);
 	curl_global_cleanup();
-
-	std::cout << server.getServerToken() << std::endl;
 
 	return ;
 }

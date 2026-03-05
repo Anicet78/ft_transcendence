@@ -4,6 +4,8 @@
 
 # include "Party.hpp"
 
+class Server;
+
 class Session
 {
 	private:
@@ -37,7 +39,7 @@ class Session
 		void									launch();
 		void									addParty(Party &newParty);
 		std::string								sendMaps(void);
-		void									checkFinishedPlayers(uWS::App &app);
+		void									checkFinishedPlayers(uWS::App &app, Server &server);
 		void									sendEndResults(uWS::App &app, std::shared_ptr<Player> &player, bool abort);
 		bool									removePlayer(std::weak_ptr<Player> rmPlayer);
 		bool									removePlayer(std::string uid);
@@ -65,6 +67,7 @@ class Session
 
 void	sendPlayerState(Player &player, Session &session, std::string uid_leave);
 void	sendLeaveUpdate(Player &player, uWS::App &app, std::string &topic);
-// void	sendToBack(std::string url, std::string &msg, std::string method);
+
+void	sendViaCurl(Server &server, std::string url, std::string method, std::string body, int flag);
 
 # endif
