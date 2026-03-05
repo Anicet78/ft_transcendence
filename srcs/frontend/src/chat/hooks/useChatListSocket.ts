@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSocket } from "../../socket/SocketContext";
 
-export function useListSocket() {
+export function useChatListSocket() {
 	const socket = useSocket();
 	const queryClient = useQueryClient();
 

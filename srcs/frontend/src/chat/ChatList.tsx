@@ -4,14 +4,10 @@ import type { GetResponse } from '../types/GetType'
 import api from '../serverApi';
 import { Box } from '@allxsmith/bestax-bulma';
 import { useNavigate } from 'react-router';
-import { useListSocket } from './hooks/useListSocket';
-// import { useAuth } from '../auth/AuthContext';
+import { useChatListSocket } from './hooks/useChatListSocket';
 
 type ChatListResponseType = GetResponse<"/chat/list", "get">;
 
-// const { user } = useAuth();
-
-// const ChatList = ({ onSelectChat }: { onSelectChat?: (id: string) => void }) => {
 const ChatList = ({
 	onSelectChat, 
 	onCreateGroup,
@@ -22,7 +18,7 @@ const ChatList = ({
 }) => {
 	
 	const navigate = useNavigate();
-	useListSocket();
+	useChatListSocket();
 
 	const { data, isLoading, isError, error } = useQuery({
 		queryKey: ['chat-list'],
@@ -40,19 +36,6 @@ const ChatList = ({
 	return (
 		<Box m="4" p="6" bgColor="white">
 			<h1 className="title">Your chats</h1>
-
-			{/* CREATE GROUP CHAT BUTTON */}
-			{/* <Link
-				to="/chat/group/new"
-				className="button is-primary is-small mb-4"
-			>
-			Create Group Chat
-			</Link> */}
-			{/* <Link
-				to="/group/invitations" className="button is-small is-warning"
-			>
-			Group Chat Invitations
-			</Link> */}
 
 			<button
 				className="button is-primary is-small mb-4"

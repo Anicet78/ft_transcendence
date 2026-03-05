@@ -3,6 +3,7 @@ import api from "../../serverApi";
 import { Box } from "@allxsmith/bestax-bulma";
 import { useAuth } from "../../auth/AuthContext";
 import toast from "../../Notifications";
+import { useInvitationSocket } from "../hooks/useInvitationSocket";
 
 // Fetch all chat invitations (pending and not pending at now)
 //export default function GroupChatInvitations() {
@@ -12,6 +13,7 @@ export default function GroupChatInvitations({
 	onClose?: () => void;
 }) {
 
+	useInvitationSocket();
 	const { user } = useAuth();
 	const queryClient = useQueryClient();
 
@@ -32,6 +34,7 @@ export default function GroupChatInvitations({
 		onSuccess: () => {
 			toast({ title: "Chat invitation succesfully updated", type: "is-success" });
 			//window.location.reload();//(nina) not goood causes refresh
+			queryClient.invalidateQueries({ queryKey: ["group-invitations"] }); 
 			queryClient.invalidateQueries({ queryKey: ["chat-list"] });
 		},
 		onError: (error: Error) => {
