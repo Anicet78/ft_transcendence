@@ -79,26 +79,6 @@ export default fp(async (fastify) => {
 			}
 			console.log(`\`${clientId}\` auto-joined chats:`, chats.length);
 
-			// socket.on("chat_join", async ({ chatId }) => {
-			// 	const isMember = await prisma.chatMember.findFirst({
-			// 		where: {
-			// 			chatId,
-			// 			userId: userPayload.id
-			// 		}
-			// 	});
-
-			// 	console.log("JOIN CHAT ROOM", chatId, "user:", userPayload.id);
-
-			// 	if (!isMember)
-			// 		return;
-
-			// 	await SocketService.addInRoom(chatId, socket);
-			// });
-
-			// socket.on("chat_leave", async ({ chatId }) => {
-			// 	socket.leave(chatId);
-			// });
-
 			if (disconnectionTimers.has(userPayload.id)) {
 				clearTimeout(disconnectionTimers.get(userPayload.id));
 				disconnectionTimers.delete(userPayload.id);

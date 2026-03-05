@@ -17,4 +17,4 @@ COPY --from=builder /app/build .
 
 RUN sed -i '/<\/title>/a <script src="/env-config.js"></script>' /usr/share/nginx/index.html
 
-ENTRYPOINT ["sh", "-c", "echo \"window._env_ = {VITE_GOOGLE_CLIENT_ID: '$VITE_GOOGLE_CLIENT_ID', VITE_42_CLIENT_ID: '$VITE_42_CLIENT_ID'};\" > /usr/share/nginx/env-config.js && nginx -g 'daemon off;'"]
+ENTRYPOINT ["sh", "-c", "echo \"window._env_ = {VITE_GOOGLE_CLIENT_ID: '$VITE_GOOGLE_CLIENT_ID', VITE_42_CLIENT_ID: '$VITE_42_CLIENT_ID',  SERVER_URL: '$SERVER_URL'};\" > /usr/share/nginx/env-config.js && nginx -g 'daemon off;'"]

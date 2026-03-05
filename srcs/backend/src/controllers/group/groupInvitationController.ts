@@ -14,6 +14,7 @@ import type {
 	UpdateInvitationBody
 } from '../../schema/chat/groupInvitationSchema.js';
 import { SocketService } from '../../services/socket/SocketService.js';
+import { prisma } from '../../services/db/prisma.js';
 
 //SEND GROUP CHAT INVITATION
 export async function inviteToGroupController(
@@ -28,6 +29,24 @@ export async function inviteToGroupController(
 	} 
 
 	const invitation = await inviteToGroupChat(chatId, senderId, receiverId);
+
+	const chat = await prisma.chat.findUnique({
+		where: { chatId: chatId },
+		select: { chatName: true }
+	});
+	const sender = await prisma.appUser.findUnique({
+		where: { appUserId: senderId },
+		select: { username: true }
+	});
+
+	SocketService.send(`user:${receiverId}`, "notification", {
+		type: "invite_received",
+		senderId: senderId,
+		senderName: sender?.username ?? "Companion",
+		receiverId: receiverId,
+		chatId: chatId,
+		chatName: chat?.chatName ?? "Chat"
+	});
 
 	return reply.status(201).send({
 		chatInvitationId: invitation.chatInvitationId,
@@ -87,17 +106,22 @@ export async function updateGroupInvitationController(
 			chatId: string;
 			userId: string;
 			joinedAt: Date;
+			senderId: string;
+			chatName: string;
+			receiverName: string;
 		};
 
 		const socket = await req.server.getSocketByUserId(member.userId);
-		if (socket) {
+		if (socket)
 			socket.join(member.chatId);
-		}
-
-		// SocketService.sendToUser(user1Id, "chat_created", { chatId });
-		// SocketService.sendToUser(user2Id, "chat_created", { chatId });
 
 		SocketService.send(member.chatId, "chat_member_joined", { chatId: member.chatId, member });
+
+		SocketService.send(`user:${member.senderId}`, "notification", {
+			type: "invite_accepted",
+			chatName: member.chatName,
+			receiverName: member.receiverName
+		});
 
 		return reply.status(201).send({
 			chatMemberId: member.chatMemberId,

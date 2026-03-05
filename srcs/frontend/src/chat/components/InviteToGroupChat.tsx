@@ -3,6 +3,7 @@ import api from "../../serverApi";
 import { Box } from "@allxsmith/bestax-bulma";
 import { useAuth } from "../../auth/AuthContext";
 import { useParams } from "react-router";
+import toast from "../../Notifications";
 
 type Props = {
 	chatId?: string;
@@ -45,6 +46,12 @@ export function InviteToGroupChat({
 	const inviteMutation = useMutation({
 		mutationFn: async (friendId: string) => {
 			await api.post(`/group/${chatId}/invite/${friendId}`);
+		},
+		onSuccess: () => {
+			toast({ title: "Invite to group chat send succesfully!", type: "is-success" });
+		},
+		onError: (error: Error) => {
+			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
 		}
 	});
 

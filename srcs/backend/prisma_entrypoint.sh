@@ -16,6 +16,13 @@ SECRET_42=$(cat /run/secrets/secret_42)
 export SECRET_42=$SECRET_42
 echo "SECRET_42=\"$SECRET_42\"" >> /app/.env
 
+SMTP_PASS=$(cat /run/secrets/smtp_secret)
+export SMTP_PASS=$SMTP_PASS
+echo "SMTP_SECRET=\"$SMTP_PASS\"" >> /app/.env
+
+GAME_CLIENT_SECRET=$(cat /run/secrets/game_secret)
+export GAME_CLIENT_SECRET=$GAME_CLIENT_SECRET
+echo "GAME_CLIENT_SECRET=\"$GAME_CLIENT_SECRET\"" >> /app/.env
 
 # wait for Postgres to be ready
 until python3 -c "import socket; s = socket.socket(); s.connect(('postgres', 5432))" >/dev/null 2>&1; do

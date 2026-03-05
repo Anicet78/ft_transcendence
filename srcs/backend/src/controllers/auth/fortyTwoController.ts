@@ -45,7 +45,7 @@ export async function fortyTwoCallbackController(
 			code,
 			client_id: process.env.VITE_42_CLIENT_ID,
 			client_secret: process.env.SECRET_42,
-			redirect_uri: 'https://localhost:8443/callback42',
+			redirect_uri: `${process.env.SERVER_URL}/callback42`,
 			grant_type: 'authorization_code',
 		}),
 	});

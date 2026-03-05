@@ -4,6 +4,7 @@ import * as controller from '../../controllers/game/gameController.js';
 import { sessionBodySchema, sessionEndBodySchema, sessionPlayerResult } from "../../schema/gameSchema.js";
 
 async function gameRoutes(fastify: FastifyInstance) {
+	fastify.addHook('preHandler', fastify.verifyServer);
 
 	//CREATE GAME SESSION
 	fastify.post("/game/create", {
@@ -37,6 +38,6 @@ async function gameRoutes(fastify: FastifyInstance) {
 		},
 		handler: controller.sessionPlayerResultController
 
-	})
+	});
 }
 export default gameRoutes;

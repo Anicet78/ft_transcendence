@@ -9,7 +9,7 @@ import toast from "../Notifications";
 type GoogleBodyType = GetBody<"/auth/google", "post">;
 type GoogleResponseType = GetResponse<"/auth/google", "post">;
 
-export const REDIRECT_URI = "https://localhost:8443/callback";
+export const REDIRECT_URI = `${window._env_?.SERVER_URL}/callback`;
 
 export const handleGoogleLogin = () => {
 	const GOOGLE_CLIENT_ID = window._env_?.VITE_GOOGLE_CLIENT_ID || import.meta.env.VITE_GOOGLE_CLIENT_ID;

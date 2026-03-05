@@ -45,7 +45,6 @@ CREATE TABLE app_user (
 	last_connected_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
 	CHECK (trim(first_name) <> ''),
-	CHECK (trim(last_name) <> ''),
 	CHECK (trim(username) <> ''),
 	CHECK (trim(mail_address) <> '')
 );

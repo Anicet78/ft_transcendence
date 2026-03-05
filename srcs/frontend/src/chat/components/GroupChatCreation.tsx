@@ -1,14 +1,20 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import api from "../../serverApi";
-import { useNavigate } from "react-router";
+//import { useNavigate } from "react-router";
 import { useState } from "react";
 import { Box } from "@allxsmith/bestax-bulma";
 import { useAuth } from "../../auth/AuthContext";
 import toast from "../../Notifications";
 
-export default function GroupChatCreation() {
-
-	const navigate = useNavigate();
+// export default function GroupChatCreation() {
+export default function GroupChatCreation({
+	onClose,
+	onCreated
+}: {
+	onClose?: () => void;
+	onCreated?: (chatId: string) => void;
+}) {
+	//const navigate = useNavigate();
 	const [name, setName] = useState("");
 	const [selected, setSelected] = useState<string[]>([]);
 	const { user } = useAuth();
@@ -35,7 +41,8 @@ export default function GroupChatCreation() {
 		},
 		onSuccess: (chat) => {
 			toast({ title: "Group succesfully created", type: "is-success" });
-			navigate(`/chat/${chat.chatId}/info`);
+			//navigate(`/chat/${chat.chatId}/info`);
+			onCreated?.(chat.chatId);
 		},
 		onError: (error: Error) => {
 			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
@@ -47,6 +54,12 @@ export default function GroupChatCreation() {
 
 	return (
 		<Box m="4" p="6" bgColor="white">
+			{onClose && (
+				<button className="button is-light is-small mb-3" onClick={onClose}>
+				Back
+				</button>
+			)}
+
 			<h1 className="title">Create Group Chat</h1>
 
 			<div className="field">

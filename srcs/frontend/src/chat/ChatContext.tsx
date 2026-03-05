@@ -69,6 +69,35 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
 			if (payload.senderId === user?.id)// ignore yourself
 				return;
+
+			//user has been added to chat group notif
+			if (payload.type === "added_to_group") {
+				toast({
+					title: `${payload.creatorName} added you to "${payload.chatName}" group chat`,
+					type: "is-info"
+				});
+			}
+
+			//user has received an invite to join group
+			if (payload.type === "invite_received") {
+				toast({
+					title: "Chat invite received!",
+					message: `${payload.senderName} invites you to join "${payload.chatName}" group chat`,
+					type: "is-info"
+				});
+			}
+
+			//user's sent chat invite has been accepted
+			if (payload.type === "invite_accepted") {
+				toast({
+					title: `${payload.chatName}`,
+					message: `${payload.receiverName} accepted your invitation to join this chat`,
+					type: "is-success"
+				});
+			}
+
+			// ***** send to all chat members *****//
+			//user has received an invite to join game session from group chat
 			if (payload.type === "game_invite") {
 				toast({
 					title: `${payload.chatName}`,
@@ -77,6 +106,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 				});
 			}
 
+			//a group chat user is a member of has launched a game
 			if (payload.type === "game_started") {
 				toast({
 					title: `${payload.chatName}`,
@@ -97,27 +127,10 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 			}, 3000);
 		});
 
-		// socket.on("chat_typing", ({ userId, username }) => {
-		// 	if (userId === user?.id)//show typing except for the typing user
-		// 		return;
-
-		// 	setTypingUsers(prev => ({
-		// 		...prev, [userId]: username
-		// 	}));
-
-		// 	setTimeout(() => {
-		// 		setTypingUsers(prev => {
-		// 			const copy = { ...prev };
-		// 			delete copy[userId];
-		// 			return copy;
-		// 		});
-		// 	}, 2000);
-		// });
-
 		return () => {
 			socket.off("chat_typing");
-			socket.off("game_invite");
-			socket.off("game_started");
+			socket.off("notification");
+			//socket.off("game_started");
 		};
 
 	}, [socket, user]);
