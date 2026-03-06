@@ -3,7 +3,10 @@ import { useTyping } from "../hooks/useTyping";
 
 //SEND MESSAGE
 type ChatInputProps = {
-	onSend: (content: string) => void;
+	onSend: (data: {
+		content: string;
+		type?: "text" | "game_invite" | "game_started"
+	}) => void;
 	chatId: string | undefined;
 }
 
@@ -15,7 +18,7 @@ export function ChatInput({ onSend, chatId }: ChatInputProps) {
 	const send = () => {
 		if (content.trim() === "")
 			return;
-		onSend(content);
+		onSend({content});
 		setContent("");
 	};
 

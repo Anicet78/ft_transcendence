@@ -34,7 +34,7 @@ export function useChatListSocket() {
 			socket.off("chat_member_quit", handleQuitChat);
 			socket.off("chat_member_kicked", handleQuitChat);
 			socket.off("chat_disbanded", handleQuitChat);
-			socket.off("chat_created", invalidateChatList);
+			socket.off("chat_created", invalidateChatList);//no event for joined ?
 		};
 
 	}, [socket, queryClient]);

@@ -64,10 +64,10 @@ export function useGroupChatMutations(chatId?: string) {
 
 			await api.post(`/room/${roomId}/attach-chat`, { chatId });
 			const content = `Join my game 🎮 http://localhost:5173/join/${roomId}`;
-			return sendMessageMutation.mutateAsync(content);
+			return sendMessageMutation.mutateAsync({ content, type: "game_invite" });
 		},
 		onSuccess: () => {
-			toast({ title: `Game invite sent`, type: "is-info" });
+			toast({ title: `Game invite sent`, type: "is-success" });
 		},
 		onError: (error: Error) => {
 			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });

@@ -73,7 +73,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 				return;
 
 			//user has been added to chat group notif
-			if (payload.type === "added_to_group") {
+			if (payload.type === "added_to_group" && payload.senderId !== user?.id) {
 				toast({
 					title: `${payload.creatorName} added you to "${payload.chatName}" group chat`,
 					type: "is-info"
@@ -81,7 +81,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 			}
 
 			//user has received an invite to join group
-			else if (payload.type === "invite_received") {
+			else if (payload.type === "invite_received" && payload.senderId !== user?.id) {
 				toast({
 					title: "Chat invite received!",
 					message: `${payload.senderName} invites you to join "${payload.chatName}" group chat`,
@@ -90,7 +90,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 			}
 
 			//user's sent chat invite has been accepted
-			else if (payload.type === "invite_accepted") {
+			else if (payload.type === "invite_accepted" && payload.senderId !== user?.id) {
 				toast({
 					title: `${payload.chatName}`,
 					message: `${payload.receiverName} accepted your invitation to join this chat`,
@@ -100,7 +100,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
 			// ***** send to all chat members *****//
 			//user has received an invite to join game session from group chat
-			else if (payload.type === "game_invite") {
+			else if (payload.type === "game_invite" && payload.senderId !== user?.id) {
 				toast({
 					title: `${payload.chatName}`,
 					message: `${payload.senderUsername} send you a game invitation 🎮`,
@@ -139,7 +139,6 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 		return () => {
 			socket.off("chat_typing");
 			socket.off("notification");
-			//socket.off("game_started");
 		};
 
 	}, [socket, user]);

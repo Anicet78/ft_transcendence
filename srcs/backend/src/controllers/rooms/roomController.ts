@@ -140,7 +140,7 @@ export async function launchController(
 	const room: Room = RoomService.get(request.body.roomId, request.user.id);
 
 	if (room.chatId && room.players.length > 1) {
-		await prisma.chatMessage.create({
+		const message = await prisma.chatMessage.create({
 			data: {
 				chatId: room.chatId,
 				userId: request.user.id, // or SYSTEM user later
@@ -148,6 +148,8 @@ export async function launchController(
 				type: "game_started"
 			}
 		});
+
+		SocketService.send(room.chatId, "chat_message_created", message);
 
 		const chat = await prisma.chat.findUnique({
 			where: { chatId: room.chatId },

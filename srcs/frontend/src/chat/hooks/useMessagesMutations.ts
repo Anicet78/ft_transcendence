@@ -2,6 +2,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../serverApi";
 import toast from "../../Notifications";
 
+type SendMessageInput = {
+	content: string;
+	type?: "text" | "game_invite" | "game_started";
+};
+
 export function useMessagesMutations(chatId?: string) {
 
 	const queryClient = useQueryClient();
@@ -10,10 +15,11 @@ export function useMessagesMutations(chatId?: string) {
 	queryClient.invalidateQueries({ queryKey: ["chat-messages", chatId] });
 
 	return {
+
 		//SEND MESSAGE MUTATION
 		sendMessageMutation: useMutation({
-			mutationFn: (content: string) =>
-			api.post(`/chat/${chatId}`, { content, type: "game_invite" }),
+			mutationFn: ( {content, type = "text"}: SendMessageInput ) =>
+			api.post(`/chat/${chatId}`, { content, type }),
 			onSuccess: invalidate, //mark cache as old (potentially updated) and update refetch it
 			onError: (error: Error) => {
 				toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
