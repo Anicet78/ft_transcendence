@@ -5,7 +5,12 @@ import { useAuth } from "../../auth/AuthContext";
 import toast from "../../Notifications";
 
 // Fetch all chat invitations (pending and not pending at now)
-export default function GroupChatInvitations() {
+//export default function GroupChatInvitations() {
+export default function GroupChatInvitations({
+	onClose
+}: {
+	onClose?: () => void;
+}) {
 
 	const { user } = useAuth();
 
@@ -25,7 +30,7 @@ export default function GroupChatInvitations() {
 		},
 		onSuccess: () => {
 			toast({ title: "Chat invitation succesfully updated", type: "is-success" });
-			window.location.reload();
+			window.location.reload();//(nina) not goood causes refresh
 		},
 		onError: (error: Error) => {
 			toast ({ title: "Error", message: error.message ?? "Unknown error", type: "is-danger" });
@@ -37,6 +42,12 @@ export default function GroupChatInvitations() {
 
 	return (
 		<Box m="4" p="6" bgColor="white">
+			{onClose && (
+				<button className="button is-light is-small mb-3" onClick={onClose}>
+				Back
+				</button>
+			)}
+
 			<h1 className="title">Group Invitations</h1>
 
 			{invitations.length === 0 && <p>No invitations.</p>}

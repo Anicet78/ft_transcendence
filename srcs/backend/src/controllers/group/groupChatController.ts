@@ -12,6 +12,12 @@ import type {
 	CreateGroupChatBody
 } from '../../schema/chat/groupChatSchema.js';
 import { SocketService } from '../../services/socket/SocketService.js';
+import { prisma } from '../../services/db/prisma.js';
+
+// sendToUser(userId: string, event: string, data: object = {}) {
+// 	this.io?.sockets.to(`user:${userId}`).emit(event, data);
+// }
+//SocketService.sendToUser(receiverId, "notification", {...});
 
 function normalizeChat(chat: any) {
 	return {
@@ -42,6 +48,21 @@ export async function createGroupChatController(
 	}
 
 	const chat = await createGroupChat(creatorId, name ?? null, memberIds);
+
+	const sender = await prisma.appUser.findUnique({
+		where: { appUserId: creatorId },
+		select: { username: true }
+	});
+
+	for (const m of memberIds) {
+		SocketService.send(`user:${m}`, "notification", {
+			type: "added_to_group",
+			creatorId: creatorId,
+			creatorName: sender?.username ?? "Companion",
+			chatId: chat.chatId,
+			chatName: chat?.chatName ?? "Chat"
+		});
+	}
 
 	return reply.status(201).send(normalizeChat(chat));
 }

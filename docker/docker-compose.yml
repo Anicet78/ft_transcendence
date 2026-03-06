@@ -30,6 +30,8 @@ services:
       - cookie_secret
       - google_secret
       - secret_42
+      - smtp_secret
+      - game_secret
     volumes:
       - ../srcs/frontend:/front
       - ../srcs/backend/uploads:/app/uploads
@@ -99,6 +101,10 @@ services:
     image: game-server
     container_name: game-server-c
     restart: on-failure
+    env_file:
+      - .env
+    secrets:
+      - game_secret
     volumes:
       - ../srcs/game/assets:/src/assets
     networks:
@@ -141,6 +147,10 @@ secrets:
     file: ./secrets/secret_42.txt
   pgadmin_password:
     file: ./secrets/pgadmin_password.txt
+  game_secret:
+    file: ./secrets/game_secret.txt
+  smtp_secret:
+    file: ./secrets/smtp_secret.txt
 
 volumes:
   postgres-v:

@@ -46,19 +46,6 @@ export function ChatRoom({ chatId }: {chatId: string}) {
 
 	}, [messages , socket, chatId ]);
 
-	// // Emit read receipt
-	// useEffect(() => {
-	// 	if (!messages.length)
-	// 		return;
-		
-	// 	const lastMessage = messages[messages.length - 1];
-		
-	// 	socket?.emit("chat_receipt", {
-	// 		chatId,
-	// 		messageId: lastMessage.messageId
-	// 	});
-	// }, [messages, chatId, socket]); 
-
 	return (
 		<>
 			<div style={{

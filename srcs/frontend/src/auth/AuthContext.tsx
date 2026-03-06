@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		};
 	}, [logout]);
 
-	const publicRoutes = ['/login', '/register', '/callback42', '/callbackGoogle'];
+	const publicRoutes = ['/login', '/register', '/callback42', '/callbackGoogle', '/reset-password'];
 
 	useEffect(() => {
 		if (data?.data?.user && data.data.token) {

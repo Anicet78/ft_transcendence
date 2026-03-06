@@ -4,6 +4,10 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import 'bulma/css/bulma.min.css'; // bulma style css
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import "./styles/tokens.css"
+import './index.css'
 import App from './App.tsx'
 import Login from './auth/login.tsx';
 import Register from './auth/register.tsx';
@@ -33,6 +37,8 @@ import CallbackGoogle from './auth/callbackGoogle.tsx';
 import Callback42 from './auth/callback42.tsx';
 import { InviteToGroupChat } from './chat/components/InviteToGroupChat.tsx';
 import SearchPage from './search/SearchPage.tsx';
+import ResetPassword from './auth/reset-password.tsx';
+import "./main.css"
 import GameRules from './about/game-rules.tsx';
 import Sidebar from './components/Sidebar.tsx';
 
@@ -56,6 +62,7 @@ const AppEntryPoint = () => {
 					<Route path="/register" element={<Register />} />
 					<Route path="/callbackGoogle" element={<CallbackGoogle />} />
 					<Route path="/callback42" element={<Callback42 />} />
+					<Route path="/reset-password" element={<ResetPassword />} />
 
 					<Route path="/home" element={<Home />} />
 					<Route path="/join/:roomId" element={<JoinRoom />} />

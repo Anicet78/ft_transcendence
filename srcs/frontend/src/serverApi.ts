@@ -46,7 +46,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
 	async (config) => {
-		const publicRoutes = ['/auth/login', '/auth/register', '/auth/refresh', '/auth/42', '/auth/google', '/'];
+		const publicRoutes = ['/auth/login', '/auth/register', '/auth/refresh', '/auth/42', '/auth/google', '/auth/reset-password', '/'];
 		if (config.url && !publicRoutes.includes(config.url) && accessToken) {
 			config.headers.Authorization = `Bearer ${accessToken}`;
 			config.headers['x-socket-id'] = await waitForSocketId();

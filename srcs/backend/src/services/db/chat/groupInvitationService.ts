@@ -127,6 +127,9 @@ export async function updateGroupInvitationService(
 		chatId: string;
 		userId: string;
 		joinedAt: Date;
+		senderId: string;
+		chatName: string;
+		receiverName: string;
 	} | { status: string; } > {
 
 	// 1. Load invitation
@@ -163,7 +166,7 @@ export async function updateGroupInvitationService(
 		// Chat must exist and be group
 		const chat = await prisma.chat.findUnique({
 			where: { chatId: invitation.chatId! },
-			select: { chatType: true }
+			select: { chatType: true, chatName:true }
 		});
 
 		if (!chat || chat.chatType !== 'group')
@@ -176,6 +179,14 @@ export async function updateGroupInvitationService(
 
 		if (alreadyMember)
 			throw new AppError('You are already a member of this group', 409);
+
+		const receiver = await prisma.appUser.findUnique({
+			where: {appUserId: userId },
+			select: { username:true }
+		});
+
+		if (!receiver)
+			throw new AppError('Receiver username not found', 409);
 
 		// Create member + role in a transaction
 		const result = await prisma.$transaction(async (tx) => {
@@ -211,7 +222,10 @@ export async function updateGroupInvitationService(
 				chatMemberId: member.chatMemberId,
 				chatId: member.chatId!,
 				userId: member.userId!,
-				joinedAt: member.joinedAt!
+				joinedAt: member.joinedAt!,
+				senderId: invitation.senderId ?? "",
+				chatName: chat.chatName ?? "Chat",
+				receiverName: receiver.username ?? "Companion"
 			};
 		});
 		return result;
