@@ -97,6 +97,7 @@ const ProfilePrivate = () => {
 				</div>
 			</div>
 			<NavLink to="/friends/list" className="button is-large is-outlined navlink-button">Friends list</NavLink>
+			<NavLink to="/friends/requests" className="button is-large is-outlined navlink-button">Ongoing friend requests</NavLink>
 		</div>
 	)
 }

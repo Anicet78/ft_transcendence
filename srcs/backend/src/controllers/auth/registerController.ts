@@ -15,7 +15,7 @@ export async function postRegisterController(
 	let dbUser: AppUser | null = await UserService.getUserByMail(email);
 
 	if (dbUser)
-		return reply.code(409).send({ error: "Already exist" });
+		return reply.code(409).send({ error: "Email already taken" });
 
 	const hash: string | null = await hashPassword(password);
 

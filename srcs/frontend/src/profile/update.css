@@ -33,6 +33,11 @@
 	gap: 1rem; /* consistent spacing between inputs */
 }
 
+.update-container input {
+	background-color: #3f3f3f;
+	color: #eee;
+}
+
 .update-container .button {
 	font-family: var(--font-button-large) !important;
 	font-size: clamp(1rem, 1.5vw, 1.5rem);
@@ -74,7 +79,7 @@
 	font-size: clamp(1rem, 2vw, 2rem);
 }
 
-..navlink-button {
+.navlink-button {
 	font-family: var(--font-button-large) !important;
 	font-size: clamp(1rem, 2.5vw, 2rem);
 	color: var(--color-primary) !important;

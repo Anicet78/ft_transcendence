@@ -20,7 +20,7 @@ export type Region = RegisterBodyType["region"];
 
 // Region
 type RegionType = RegisterBodyType['region']
-const regions: RegionType[] = ["EU", "NA", "SAM", "MENA", "OCE", "APAC", "SSA", "Deleted"];
+const regions: RegionType[] = ["EU", "NA", "SAM", "MENA", "OCE", "APAC", "SSA"];
 
 // Regex
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -31,15 +31,15 @@ const realnameRegex = /^[a-zA-Z]{2,20}$/;
 const schema = yup.object().shape({
 	firstname: yup
 		.string()
-		.matches(realnameRegex, "2-20 characters: letters")
+		.matches(realnameRegex, "2-15 characters: letters")
 		.required("First name is required"),
 	lastname: yup
 		.string()
-		.matches(realnameRegex, "2-20 characters: letters")
+		.matches(realnameRegex, "2-15 characters: letters")
 		.required("First name is required"),
 	username: yup
 		.string()
-		.matches(usernameRegex, "3-20 characters: letters, numbers, underscores")
+		.matches(usernameRegex, "3-10 characters: letters, numbers, underscores")
 		.required("User name is required"),
 	email: yup
 		.string()

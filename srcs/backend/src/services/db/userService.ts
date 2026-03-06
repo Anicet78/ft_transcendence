@@ -76,7 +76,7 @@ export const UserService = {
 		});
 	},
 	async createUser(user: User): Promise<AppUser> {
-		return prisma.appUser.create({
+		const newUser = await prisma.appUser.create({
 			data: {
 				firstName: user.firstname,
 				lastName: user.lastname,
@@ -91,9 +91,17 @@ export const UserService = {
 				}
 			},
 		});
+		// avoid having null gameProfile
+		await prisma.gameProfile.create({
+			data: {
+				userId: newUser.appUserId,
+			},
+		});
+
+		return newUser;
 	},
 	async createUserWithProvider(user: User, provider: auth_provider, providerId: string): Promise<AppUser> {
-		return prisma.appUser.create({
+		 const newUser = await prisma.appUser.create({
 			data: {
 				firstName: user.firstname,
 				lastName: user.lastname,
@@ -113,6 +121,12 @@ export const UserService = {
 				}
 			},
 		});
+		await prisma.gameProfile.create({
+			data: {
+				userId: newUser.appUserId,
+			},
+		});
+		return newUser;
 	},
 	async setAvailabality(userId: string, availabality: boolean): Promise<AppUser> {
 		return prisma.appUser.update({
