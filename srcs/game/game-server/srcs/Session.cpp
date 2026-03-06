@@ -4,7 +4,7 @@ Session::Session(void): _maxNumPlayer(2), _running(0), _ended(0), _startTime(std
 						_numPlayersFinished(0), _readyToRun(0), _timerBeforeRun(std::chrono::_V2::steady_clock::now()), _readyToRunStartTimer(0.0f)
 {
 	static std::string set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	int size = static_cast<int>(2 * sqrt(8 + 6 * (_maxNumPlayer - 1)));
+	int size = static_cast<int>(2 * sqrt(8 + 5 * (_maxNumPlayer - 1)));
 
 	for (int i = 0; i < 25; i++)
 	{
@@ -27,7 +27,7 @@ Session::Session(int numPLayer):	_maxNumPlayer(numPLayer), _running(0), _ended(0
 									_numPlayersFinished(0), _readyToRun(0), _timerBeforeRun(std::chrono::_V2::steady_clock::now()), _readyToRunStartTimer(0.0f)
 {
 	static std::string set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	int size = static_cast<int>(2 * sqrt(8 + 6 * (_maxNumPlayer - 1)));
+	int size = static_cast<int>(2 * sqrt(8 + 5 * (_maxNumPlayer - 1)));
 
 	for (int i = 0; i < 25; i++)
 	{

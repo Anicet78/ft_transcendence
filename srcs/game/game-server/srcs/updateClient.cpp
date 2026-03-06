@@ -91,7 +91,7 @@ void updateRoom(Player &player, uWS::App &app)
 		}
 
 		//NERFED, TOO HARD
-		player.setHp(3);
+		player.setHp(5);
 		//----------------
 
 		sendLeaveUpdate(player, app, oldTopic);

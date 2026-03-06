@@ -1,94 +1,9 @@
 #include "Game.hpp"
 
-int	check_tile(int x, int y, Player &player)
-{
-	int h = player.getRoom().getRoomPlan().size();
-	if (y < 0 || y >= h)
-		return (0);
-	int w = player.getRoom().getRoomPlan()[y].size();
-	if (x < 0 || x >= w)
-		return (0);
-	if (player.getRoom().getRoomPlan()[y][x] == '0')
-		return (1);
-	return (0);
-}
-
-int	check_valid_tile(int x, int y, Player &player)
-{
-	int h = player.getRoom().getRoomPlan().size();
-	if (y < 0 || y >= h)
-		return (0);
-	int w = player.getRoom().getRoomPlan()[y].size();
-	if (x < 0 || x >= w)
-		return (0);
-	if (player.getRoom().getRoomPlan()[y][x] == ' ')
-		return (0);
-	return (1);
-}
-
-//check if the actual tile is at the border of the map
-int	check_border(int x, int y, Player &player)
-{
-
-	if (!check_valid_tile(x - 1, y - 1, player) || !check_valid_tile(x, y - 1, player)
-		|| !check_valid_tile(x + 1, y - 1, player) || !check_valid_tile(x - 1, y, player)
-		|| !check_valid_tile(x + 1, y, player) || !check_valid_tile(x - 1, y + 1, player)
-		|| !check_valid_tile(x, y + 1, player) || !check_valid_tile(x + 1, y + 1, player))
-		return (1);
-	return (0);
-}
-
-void	manage_border(int x, int y, Player &player)
-{
-	int	tile_s = gSdl.getMapTileSize() * 2;
-	// check for top left wall corner
-	if (check_tile(x + 1, y + 1, player) && !check_tile(x, y + 1, player) && !check_tile(x + 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_UP_LEFT_CORNER, 2, 0);
-
-	// check for top right wall corner
-	else if (check_tile(x - 1, y + 1, player) && !check_tile(x, y + 1, player) && !check_tile(x - 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_UP_RIGHT_CORNER, 2, 0);
-
-	//check for down left wall corner 
-	else if (check_tile(x + 1, y - 1, player) && !check_tile(x, y - 1, player) && !check_tile(x + 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_DOWN_LEFT_CORNER, 2, 0);
-
-	//check for down right wall corner
-	else if (check_tile(x - 1, y - 1, player) && !check_tile(x, y - 1, player) && !check_tile(x - 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_DOWN_RIGHT_CORNER, 2, 0);
-
-	// check if the wall is on the left
-	else if (check_tile(x + 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_LEFT, 2, 0);
-
-	//check if the wall is on the right
-	else if (check_tile(x - 1, y, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_RIGHT, 2, 0);
-
-	//check if the wall is on the top
-	else if (check_tile(x, y + 1, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL, 2, 0);
-
-	//check if the wall is on the bottom
-	else if (check_tile(x, y - 1, player))
-		Assets::rendMap(x * tile_s, y * tile_s, Assets::WALL_DOWN, 2, 0);
-}
-
-//manage the wall print
-void	manage_wall(int x, int y, Player &player)
-{
-	if (check_border(x, y, player))
-	{
-		manage_border(x, y, player);
-		return ;
-	}
-}
-
-
 void	manageFloorPrint(int x, int y, char c, Player &player, int iteration)
 {
 	int	tile_s = gSdl.getMapTileSize() * 2;
-	if (player.getFloor() == 1 || player.getRoomRef().getName() == "waiting")
+	if (player.getFloor())
 	{
 		if (c == '1'  || c == ' ')
 			manage_wall_forest(x, y, player, iteration);
@@ -101,26 +16,31 @@ void	manageFloorPrint(int x, int y, char c, Player &player, int iteration)
 	{
 		if (c == '1' && !iteration)
 			manage_wall(x, y, player);
-		else if (c == '0')	
-			Assets::rendMap(x * tile_s, y * tile_s, Assets::FLOOR, 2, 0);
+		else if (c == '3')
+			manage_water(x, y, player);
+		else if (c == '0' || c == 'P')
+			manage_floor(x, y, player);
 		else if (c == 'E')
 			Assets::rendMap(x * tile_s, y * tile_s, Assets::DOOR_FRONT, 2, 0);
+		else if (c == 'S')
+			manage_stairs(x, y, player);
 	}
-	
 }
 
 void	print_map(Player &player)
 {
 	static int	mapX = -1;
 	static int	mapY = -1;
+	static int	floor = -1;
 
 	quadList	node = player.getNode();
 	int	tile_s = gSdl.getMapTileSize() * 2;
 
-	if (mapX != node->getX() || mapY != node->getY())
+	if (mapX != node->getX() || mapY != node->getY() || floor != player.getFloor())
 	{
 		mapX = node->getX();
 		mapY = node->getY();
+		floor = player.getFloor();
 
 		if (gSdl.texture == NULL)
 		{

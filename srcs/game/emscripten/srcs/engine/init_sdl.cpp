@@ -4,8 +4,8 @@ int	init_sdl(Engine &gSdl)
 {
 	//init SDL
 
-	SDL_SetHint(SDL_HINT_EMSCRIPTEN_KEYBOARD_ELEMENT, "#canvas");
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+	if (SDL_Init(SDL_INIT_VIDEO) != 0)
+	{
 		std::cerr << "SDL_Init error: " << SDL_GetError() << std::endl;
 		return (0);
 	}

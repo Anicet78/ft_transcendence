@@ -1,7 +1,7 @@
 #include"Player.hpp"
 
 Player::Player(std::string uid, std::string name, SDL_Color color) : _uid(uid), _name(name), _x(0), _y(0),
-					_screenX(0), _screenY(0), _anim(0), _hp(3), _atk(1), _def(0), _hurt(false), _dead(false), _atkState(false),
+					_screenX(0), _screenY(0), _anim(0), _hp(5), _atk(1), _def(0), _hurt(false), _dead(false), _atkState(false),
 					_camera(_x, _y, 12, 12, SCREEN_WIDTH, GAME_HEIGHT), _floor(0), _last_dir(0), _frame(0), _prev_state(PLAYER_IDLE), _kills(0), _nbrDeath(0)
 {
 	SDL_Surface* surf = TTF_RenderText_Blended(gSdl.font, name.c_str(), color);
@@ -9,7 +9,7 @@ Player::Player(std::string uid, std::string name, SDL_Color color) : _uid(uid), 
 		SDL_Log("RenderText error: %s", TTF_GetError());
 	this->_nameTexture = SDL_CreateTextureFromSurface(gSdl.renderer, surf);
 	SDL_FreeSurface(surf);
-	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
+	_wallHitBox = {_x - 0.1f, _y + 0.1f, 0.2f, 0.2f};
 	return ;
 }
 
@@ -399,7 +399,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect cons
 	if (flag == 0)
 	{
 		float y = rect.y - (6.0f * deltaTime);
-		if (plan[y][rect.x] == '1' || plan[y][rect.x + rect.h] == '1')
+		if (plan[y][rect.x] == '1' || plan[y][rect.x + rect.h] == '1' || plan[y][rect.x] == '3' || plan[y][rect.x + rect.h] == '3')
 			return (true);
 
 		//if the event in the room is not cleared, player cant go on 'E' tiles
@@ -414,7 +414,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect cons
 	if (flag == 1)
 	{
 		float x = rect.x - (6.0f * deltaTime);
-		if (plan[rect.y][x] == '1' || plan[rect.y + rect.h][x] == '1')
+		if (plan[rect.y][x] == '1' || plan[rect.y + rect.h][x] == '1' || plan[rect.y][x] == '3' || plan[rect.y + rect.h][x] == '3')
 			return (true);
 
 		//if the event in the room is not cleared, player cant go on 'E' tiles
@@ -429,7 +429,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect cons
 	if (flag == 2)
 	{
 		float y = rect.y + (6.0f * deltaTime);
-		if (plan[y + rect.h][rect.x] == '1' || plan[y + rect.h][rect.x + rect.w] == '1')
+		if (plan[y + rect.h][rect.x] == '1' || plan[y + rect.h][rect.x + rect.w] == '1' || plan[y + rect.h][rect.x] == '3' || plan[y + rect.h][rect.x + rect.w] == '3')
 			return (true);
 		
 		//if the event in the room is not cleared, player cant go on 'E' tiles
@@ -444,7 +444,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect cons
 	if (flag == 3)
 	{
 		float x = rect.x + (6.0f * deltaTime);
-		if (plan[rect.y][x + rect.h] == '1' || plan[rect.y + rect.h][x + rect.w] == '1')
+		if (plan[rect.y][x + rect.h] == '1' || plan[rect.y + rect.h][x + rect.w] == '1' || plan[rect.y][x + rect.h] == '3' || plan[rect.y + rect.h][x + rect.w] == '3')
 			return (true);
 		
 		//if the event in the room is not cleared, player cant go on 'E' tiles
@@ -462,7 +462,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, SDL_FRect cons
 
 void	Player::setWallHitBox(void)
 {
-	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
+	_wallHitBox = {_x - 0.1f, _y + 0.1f, 0.2f, 0.2f};
 	return ;
 }
 
@@ -478,25 +478,29 @@ void	Player::movePrediction(double deltaTime)
 	if (gSdl.key.w_key)
 	{
 		y -= 6.0f * deltaTime;
-		if (!(y >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 0, *this, deltaTime)))
+		SDL_FRect testHitbox = {x - 0.1f, y + 0.1f, 0.2f, 0.2f};
+		if (!(y >= 0 && !checkWallHitBox(plan, testHitbox, 0, *this, deltaTime)))
 			y += 6.0f * deltaTime;
 	}
 	if (gSdl.key.a_key)
 	{
 		x -= 6.0f * deltaTime;
-		if (!(x >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 1, *this, deltaTime)))
+		SDL_FRect testHitbox = {x - 0.1f, y + 0.1f, 0.2f, 0.2f};
+		if (!(x >= 0 && !checkWallHitBox(plan, testHitbox, 1, *this, deltaTime)))
 			x += 6.0f * deltaTime;
 	}
 	if (gSdl.key.s_key)
 	{
 		y += 6.0f * deltaTime;
-		if (!(y < room.getHeight() && !checkWallHitBox(plan, this->_wallHitBox, 2, *this, deltaTime)))
+		SDL_FRect testHitbox = {x - 0.1f, y + 0.1f, 0.2f, 0.2f};
+		if (!(y < room.getHeight() && !checkWallHitBox(plan, testHitbox, 2, *this, deltaTime)))
 			y -= 6.0f * deltaTime;
 	}
 	if (gSdl.key.d_key)
 	{
 		x += 6.0f * deltaTime;
-		if (!(x < room.getWidth() && !checkWallHitBox(plan, this->_wallHitBox, 3, *this, deltaTime)))
+		SDL_FRect testHitbox = {x - 0.1f, y + 0.1f, 0.2f, 0.2f};
+		if (!(x < room.getWidth() && !checkWallHitBox(plan, testHitbox, 3, *this, deltaTime)))
 			x -= 6.0f * deltaTime;
 	}
 	this->setPos(x, y);

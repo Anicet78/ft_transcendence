@@ -32,6 +32,8 @@ class Hud
 	private:
 		Minimap		_minimap;
 		SDL_Texture	*_hp;
+		SDL_Texture	*_nbMobsLine;
+		SDL_Texture	*_nbMobs;
 		SDL_Texture	*_placeHolderTexture;
 		SDL_Texture	*_healthTexture;
 		SDL_Texture	*_countDown;
@@ -42,6 +44,7 @@ class Hud
 		void	printHealthBar(Player const &player);
 		void	printPlayerName(Player const &player);
 		void	printCountDown();
+		void	printNbMobs(Player const &player);
 
 	public:
 		Hud(void);

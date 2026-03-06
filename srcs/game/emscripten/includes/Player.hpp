@@ -13,7 +13,7 @@ enum state
 	PLAYER_DYING
 };
 
-#define MAX_PLAYER_HP 3
+#define MAX_PLAYER_HP 5
 
 class Player
 {

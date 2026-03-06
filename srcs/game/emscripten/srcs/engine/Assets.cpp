@@ -84,12 +84,31 @@ void		Assets::rendMap(int x, int y, int assetIndex, float scale, int floor)
 
 	SDL_Rect	*rect = &_mapAssets[floor][assetIndex];
 	SDL_Rect	renderRect = {x, y, static_cast<int>(rect->w * scale), static_cast<int>(rect->h * scale)};
-	// if (rect != NULL)
-	// {
-	// 	renderRect.w = rect->w * scale;
-	// 	renderRect.h = rect->h * scale;
-	// }
 
 	SDL_RenderCopy(gSdl.renderer, _MapTexture[floor], rect, &renderRect);
 }
 
+void		Assets::rendMapFlip(int x, int y, int assetIndex, float scale, int floor, int flip)
+{
+	if (assetIndex < 0)
+	{
+		std::cerr << "Invalid index" << std::endl;
+		return ;
+	}
+	if (scale <= 0)
+	{
+		std::cerr << "Invalid scale" << std::endl;
+		return ;
+	}
+
+	SDL_Rect	*rect = &_mapAssets[floor][assetIndex];
+	SDL_Rect	renderRect = {x, y, static_cast<int>(rect->w * scale), static_cast<int>(rect->h * scale)};
+
+	if (!flip)
+		SDL_RenderCopy(gSdl.renderer, _MapTexture[floor], rect, &renderRect);
+	else if (flip == 1)
+		SDL_RenderCopyEx(gSdl.renderer, _MapTexture[floor], rect, &renderRect, 0, NULL, SDL_FLIP_HORIZONTAL);
+	else if (flip == 2)
+		SDL_RenderCopyEx(gSdl.renderer, _MapTexture[floor], rect, &renderRect, 0, NULL, SDL_FLIP_VERTICAL);
+
+}

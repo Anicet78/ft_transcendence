@@ -4,11 +4,11 @@ Player::Player(std::string uid, int partySize, std::string partyId, std::string 
 				: _uid(uid), _sessionSize(sessionSize), _partySize(partySize),  _partyId(partyId), _name(name), _inQueue(true), _inSession(false),
 					_launched(0), _connected(0), _reConnected(1), _finished(0), _hasWin(0), _nbrDeath(0), _isDead(false),
 					_timeDeath(std::chrono::steady_clock::time_point{}), _finalRanking(0), _exit(' '), _timeDeconnection(std::chrono::steady_clock::time_point{}), _ws(ws), _x(0), _y(0),
-					_floor(0), _startPos(-1), _anim(0), _last_dir(0), _hp(3), _atk(1), _isInvinsible(false), _timeInvincible(std::chrono::steady_clock::time_point{}), _def(0), _box(_x, _y, _last_dir),
+					_floor(0), _startPos(-1), _anim(0), _last_dir(0), _hp(5), _atk(1), _isInvinsible(false), _timeInvincible(std::chrono::steady_clock::time_point{}), _def(0), _box(_x, _y, _last_dir),
 					_isAttacking(false), _atkFrame(0), _timeAttack(std::chrono::steady_clock::now()), _kills(0)
 {
 	_wallHitBox =
-	{_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
+	{_x - 0.1f, _y + 0.1f, 0.2f, 0.2f};
 	return ;
 }
 
@@ -358,7 +358,7 @@ void	Player::setDef(int def)
 void	Player::setWallHitBox(void)
 {
 	_wallHitBox =
-	{_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
+	{_x - 0.1f, _y + 0.1f, 0.2f, 0.2f};
 	return ;
 }
 
@@ -399,7 +399,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &r
 	if (flag == 0)
 	{
 		float y = rect.y - (6.0f * deltaTime);
-		if (plan[y][rect.x] == '1' || plan[y][rect.x + rect.h] == '1')
+		if (plan[y][rect.x] == '1' || plan[y][rect.x + rect.h] == '1' || plan[y][rect.x] == '3' || plan[y][rect.x + rect.h] == '3')
 			return (true);
 
 		//if the event in the room is not cleared, player cant go on 'E' tiles
@@ -414,7 +414,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &r
 	if (flag == 1)
 	{
 		float x = rect.x - (6.0f * deltaTime);
-		if (plan[rect.y][x] == '1' || plan[rect.y + rect.h][x] == '1')
+		if (plan[rect.y][x] == '1' || plan[rect.y + rect.h][x] == '1' || plan[rect.y][x] == '3' || plan[rect.y + rect.h][x] == '3')
 			return (true);
 
 		//if the event in the room is not cleared, player cant go on 'E' tiles
@@ -429,7 +429,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &r
 	if (flag == 2)
 	{
 		float y = rect.y + (6.0f * deltaTime);
-		if (plan[y + rect.h][rect.x] == '1' || plan[y + rect.h][rect.x + rect.w] == '1')
+		if (plan[y + rect.h][rect.x] == '1' || plan[y + rect.h][rect.x + rect.w] == '1' || plan[y + rect.h][rect.x] == '3' || plan[y + rect.h][rect.x + rect.w] == '3')
 			return (true);
 		
 		//if the event in the room is not cleared, player cant go on 'E' tiles
@@ -444,7 +444,7 @@ static bool	checkWallHitBox(std::vector<std::string> const &plan, FRect const &r
 	if (flag == 3)
 	{
 		float x = rect.x + (6.0f * deltaTime);
-		if (plan[rect.y][x + rect.h] == '1' || plan[rect.y + rect.h][x + rect.w] == '1')
+		if (plan[rect.y][x + rect.h] == '1' || plan[rect.y + rect.h][x + rect.w] == '1' || plan[rect.y][x + rect.h] == '3' || plan[rect.y + rect.h][x + rect.w] == '3')
 			return (true);
 		
 		//if the event in the room is not cleared, player cant go on 'E' tiles
@@ -501,25 +501,29 @@ void	Player::move(std::map<std::string, std::string> &req)
 	if (req["w_key"] == "true")
 	{
 		y -= 6.0f * deltaTime;
-		if (!(y >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 0, *this, deltaTime)))
+		FRect testHitbox = {x - 0.1f, y + 0.1f, 0.2f, 0.2f};
+		if (!(y >= 0 && !checkWallHitBox(plan, testHitbox, 0, *this, deltaTime)))
 			y += 6.0f * deltaTime;
 	}
 	if (req["a_key"] == "true")
 	{
 		x -= 6.0f * deltaTime;
-		if (!(x >= 0 && !checkWallHitBox(plan, this->_wallHitBox, 1, *this, deltaTime)))
+		FRect testHitbox = {x - 0.1f, y + 0.1f, 0.2f, 0.2f};
+		if (!(x >= 0 && !checkWallHitBox(plan, testHitbox, 1, *this, deltaTime)))
 			x += 6.0f * deltaTime;
 	}
 	if (req["s_key"] == "true")
 	{
 		y += 6.0f * deltaTime;
-		if (!(y < room.getHeight() && !checkWallHitBox(plan, this->_wallHitBox, 2, *this, deltaTime)))
+		FRect testHitbox = {x - 0.1f, y + 0.1f, 0.2f, 0.2f};
+		if (!(y < room.getHeight() && !checkWallHitBox(plan, testHitbox, 2, *this, deltaTime)))
 			y -= 6.0f * deltaTime;
 	}
 	if (req["d_key"] == "true")
 	{
 		x += 6.0f * deltaTime;
-		if (!(x < room.getWidth() && !checkWallHitBox(plan, this->_wallHitBox, 3, *this, deltaTime)))
+		FRect testHitbox = {x - 0.1f, y + 0.1f, 0.2f, 0.2f};
+		if (!(x < room.getWidth() && !checkWallHitBox(plan, testHitbox, 3, *this, deltaTime)))
 			x -= 6.0f * deltaTime;
 	}
 	this->setPos(x, y);
@@ -577,13 +581,13 @@ void	Player::dieAction(void)
 			size_t j = plan[i].find('P');
 			if (j != plan[i].npos)
 			{
-				this->setPos(j, i);
+				this->setPos(j + 0.5, i + 0.5);
 				break;
 			}
 		}
 		this->_ws->unsubscribe(oldTopic);
 		this->_ws->subscribe(this->getRoom().getRoomId());
-		this->_hp = 3;
+		this->_hp = 5;
 		this->_nbrDeath++;
 	}
 	else

@@ -21,6 +21,7 @@ class Assets
 		// static SDL_Rect	*getAssets(int index);
 
 		static void		rendMap(int x, int y, int index, float scale, int floor);
+		static void		rendMapFlip(int x, int y, int assetIndex, float scale, int floor, int flip);
 		
 		enum AssetIndex
 		{

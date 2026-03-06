@@ -6,7 +6,7 @@ Mob::Mob(float x, float y, int hp) : _x(x), _y(y), _lastX(x), _lastY(y), _hp(hp)
 	_isInvinsible(false), _isDead(false), _invFrame(0), _tookDamage(false), _sendDeath(false),
 	_box(_x, _y, _last_dir)
 {
-	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
+	_wallHitBox = {_x - 0.1f, _y + 0.1f, 0.2f, 0.2f};
 }
 
 Mob::~Mob(void)
@@ -55,7 +55,7 @@ void	Mob::updateDirWalk(int dir)
 
 void	Mob::setWallHitBox(void)
 {
-	_wallHitBox = {_x - 0.3f, _y + 0.1f, 0.6f, 0.2f};
+	_wallHitBox = {_x - 0.1f, _y + 0.1f, 0.2f, 0.2f};
 	return ;
 }
 
@@ -217,7 +217,7 @@ static bool checkWallHitBox(std::vector<std::string> const &plan, FRect const &r
 	if (x1 < 0 || x2 >= static_cast<int>(plan[0].size()))
 		return false;
 
-	return (plan[y1][x1] != '1' && plan[y2][x2] != '1' && plan[y1][x1] != 'E' && plan[y2][x2] != 'E');
+	return (plan[y1][x1] != '1' && plan[y2][x2] != '1' && plan[y1][x1] != 'E' && plan[y2][x2] != 'E' && plan[y1][x1] != '3' && plan[y2][x2] != '3');
 }
 
 static bool checkWallHitBox2(std::vector<std::string> const &plan,
@@ -241,7 +241,7 @@ static bool checkWallHitBox2(std::vector<std::string> const &plan,
 	auto isBlocked = [&](int y, int x)
 	{
 		char c = plan[y][x];
-		return (c == '1' || c == 'E');
+		return (c == '1' || c == 'E' || c == '3');
 	};
 
 	return (!isBlocked(y1, x1) && !isBlocked(y1, x2) &&
@@ -261,17 +261,19 @@ void	Mob::move(std::vector<std::string> const &map, float px, float py, float sc
 	float stepX = dx * scaleX;
 	float stepY = dy * scaleY;
 
-	if (checkWallHitBox2(map, this->_wallHitBox, stepX, stepY))
+	FRect testHitbox = {this->_x + stepX - 0.1f, this->_y + stepY + 0.1f, 0.2f, 0.2f};
+	
+	if (checkWallHitBox2(map, testHitbox, stepX, stepY))
 	{
 		this->_x += stepX;
 		this->_y += stepY;
 	}
 	else
 	{
-		if (checkWallHitBox2(map, this->_wallHitBox, stepX, 0.0f))
+		if (checkWallHitBox2(map, testHitbox, stepX, 0.0f))
 			this->_x += stepX;
 
-		if (checkWallHitBox2(map, this->_wallHitBox, 0.0f, stepY))
+		if (checkWallHitBox2(map, testHitbox, 0.0f, stepY))
 			this->_y += stepY;
 	}
 }
@@ -295,17 +297,18 @@ void Mob::moveDodge(std::vector<std::string> const &map, float px, float py, flo
 	float stepX = tx * scaleX;
 	float stepY = ty * scaleY;
 
+	FRect testHitbox = {this->_x + stepX - 0.1f, this->_y + stepY + 0.1f, 0.2f, 0.2f};
 
-	if (checkWallHitBox2(map, this->_wallHitBox, stepX, stepY))
+	if (checkWallHitBox2(map, testHitbox, stepX, stepY))
 	{
 		this->_x += stepX;
 		this->_y += stepY;
 	}
 	else
 	{
-		if (checkWallHitBox2(map, this->_wallHitBox, stepX, 0.0f))
+		if (checkWallHitBox2(map, testHitbox, stepX, 0.0f))
 			this->_x += stepX;
-		if (checkWallHitBox2(map, this->_wallHitBox, 0.0f, stepY))
+		if (checkWallHitBox2(map, testHitbox, 0.0f, stepY))
 			this->_y += stepY;
 	}
 }
@@ -370,11 +373,13 @@ void	Mob::wanderingRoutine(std::vector<std::string> const &map)
 
 	if (this->getState() == MOB_WALKING)
 	{
+		FRect testHitbox = {x - 0.1f, y + 0.1f, 0.2f, 0.2f};
 		switch (this->_dirWalk)
 		{
 			case 0:
 				y -= 0.1;
-				if (y < 0 || !checkWallHitBox(map, this->_wallHitBox, 0, 0.1, 0.1))
+				testHitbox = {x - 0.1f, y + 0.1f, 0.2f, 0.2f};
+				if (y < 0 || !checkWallHitBox(map, testHitbox, 0, 0.1, 0.1))
 				{
 					changeMobAction(*this);
 					return ;
@@ -382,7 +387,8 @@ void	Mob::wanderingRoutine(std::vector<std::string> const &map)
 				break;
 			case 1:
 				x += 0.1;
-				if (x >= map[y].size() || !checkWallHitBox(map, this->_wallHitBox, 3, 0.1, 0.1))
+				testHitbox = {x - 0.1f, y + 0.1f, 0.2f, 0.2f};
+				if (x >= map[y].size() || !checkWallHitBox(map, testHitbox, 3, 0.1, 0.1))
 				{
 					changeMobAction(*this);
 					return ;
@@ -390,7 +396,8 @@ void	Mob::wanderingRoutine(std::vector<std::string> const &map)
 				break;
 			case 2:
 				y += 0.1;
-				if (y >= map.size() || !checkWallHitBox(map, this->_wallHitBox, 2, 0.1, 0.1))
+				testHitbox = {x - 0.1f, y + 0.1f, 0.2f, 0.2f};
+				if (y >= map.size() || !checkWallHitBox(map, testHitbox, 2, 0.1, 0.1))
 				{
 					changeMobAction(*this);
 					return ;
@@ -398,7 +405,8 @@ void	Mob::wanderingRoutine(std::vector<std::string> const &map)
 				break;
 			case 3 :
 				x -= 0.1;
-				if (x < 0 || !checkWallHitBox(map, this->_wallHitBox, 1, 0.1, 0.1))
+				testHitbox = {x - 0.1f, y + 0.1f, 0.2f, 0.2f};
+				if (x < 0 || !checkWallHitBox(map, testHitbox, 1, 0.1, 0.1))
 				{
 					changeMobAction(*this);
 					return ;
@@ -417,13 +425,11 @@ void	Mob::attack(Player &player)
 	if (this->_state != MOB_ATTACKING)
 		this->setState(MOB_ATTACKING);
 
-	//NERFED, TOO HARD
-	if (this->getTimeLastAction() <= 0.05f && !this->_isInvinsible) //<- from 0.1f to 0.05f
+	if (this->getTimeLastAction() <= 0.025f && !this->_isInvinsible) //<- from 0.05f to 0.025f
 		this->_isInvinsible = true;
-	else if (this->getTimeLastAction() > 0.05f && this->_isInvinsible) //<- from 0.1f to 0.05f
+	else if (this->getTimeLastAction() > 0.025f && this->_isInvinsible) //<- from 0.5f to 0.025f
 		this->_isInvinsible = false;
 	if (this->getTimeLastAction() <= 0.3f)
-	//----------------
 		return ;
 	box.updateHurtBox();
 	if (!player.checkInvinsibleFrame() && box.isDmgHit(this->_box.getAtkHitBox()))
@@ -522,7 +528,7 @@ bool Mob::isInSight(Player &player, std::vector<std::string> const &map)
 			return false;
 
 		char c = map[iy][ix];
-		if (c == '1' || c == 'E')
+		if (c == '1' || c == 'E' || c == '3')
 			return false;
 
 		mx += incX;

@@ -18,13 +18,33 @@ Hud::Hud(): _minimap(), _timeCountDown(6)
 	}
 	this->_hp = SDL_CreateTextureFromSurface(gSdl.renderer, surf);
 	SDL_FreeSurface(surf);
+	color = (SDL_Color){255, 128, 0, 255};
+	surf = TTF_RenderText_Blended(gSdl.font, "number of mobs :", color);
+	if (!surf)
+	{
+		SDL_Log("RenderText error: %s", TTF_GetError());
+		return ;
+	}
+	this->_nbMobsLine = SDL_CreateTextureFromSurface(gSdl.renderer, surf);
+	SDL_FreeSurface(surf);
+	color = (SDL_Color){0, 255, 0, 255};
+	surf = TTF_RenderText_Blended(gSdl.font, "0", color);
+	if (!surf)
+	{
+		SDL_Log("RenderText error: %s", TTF_GetError());
+		return ;
+	}
+	this->_nbMobs = SDL_CreateTextureFromSurface(gSdl.renderer, surf);
+	SDL_FreeSurface(surf);
 }
 
 Hud::~Hud(void)
 {
 	SDL_DestroyTexture(this->_placeHolderTexture);
 	SDL_DestroyTexture(this->_healthTexture);
+	SDL_DestroyTexture(this->_nbMobsLine);
 	SDL_DestroyTexture(this->_countDown);
+	SDL_DestroyTexture(this->_nbMobs);
 	SDL_DestroyTexture(this->_hp);
 }
 
@@ -57,7 +77,7 @@ void	Hud::printTimer(float t)
 
 	int w, h;
 	SDL_QueryTexture(time, nullptr, nullptr, &w, &h);
-	SDL_Rect dst = {static_cast<int>(215 - (w / 6)), static_cast<int>(105 - (h / 6)), w / 3, h / 3};
+	SDL_Rect dst = {static_cast<int>(215 - (w / 6)), static_cast<int>(75 - (h / 6)), w / 3, h / 3};
 	SDL_RenderCopy(gSdl.renderer, time, nullptr, &dst);
 
 	SDL_FreeSurface(surf);
@@ -100,10 +120,50 @@ void	Hud::printPlayerName(Player const &player)
 {
 	int w, h;
 	SDL_QueryTexture(player.getNameTex(), nullptr, nullptr, &w, &h);
-	SDL_Rect dst = {static_cast<int>(215 - (w / 6)), static_cast<int>(45 - (h / 6)), w / 3, h / 3};
+	SDL_Rect dst = {static_cast<int>(215 - (w / 6)), static_cast<int>(30 - (h / 6)), w / 3, h / 3};
 	SDL_SetTextureColorMod(player.getNameTex(), 255, 255, 0);
 	SDL_RenderCopy(gSdl.renderer, player.getNameTex(), nullptr, &dst);
 	SDL_SetTextureColorMod(player.getNameTex(), 0, 255, 0);
+}
+
+void	Hud::printNbMobs(Player const &player)
+{
+	Room &room = player.getRoom();
+	static int nb = 0;
+
+	if (room.getRoomEvent())
+	{
+		MobRush &mobrush = dynamic_cast<MobRush &>(*room.getRoomEvent());
+		int size = 0;
+		for (auto &mob : mobrush.getMobs())
+		{
+			if (!mob.second->isDead())
+				size++;
+		}
+		if (size != nb)
+		{
+			nb = size;
+			SDL_Color color = (nb) ? (SDL_Color){255, 0, 0, 255} : (SDL_Color){0, 255, 0, 255};
+			SDL_Surface *surf = TTF_RenderText_Blended(gSdl.font, std::to_string(nb).c_str(), color);
+			if (!surf)
+			{
+				SDL_Log("RenderText error: %s", TTF_GetError());
+				return ;
+			}
+			SDL_DestroyTexture(this->_nbMobs);
+			this->_nbMobs = SDL_CreateTextureFromSurface(gSdl.renderer, surf);
+			SDL_FreeSurface(surf);
+		}
+	}
+
+	int w, h, w2;
+	SDL_QueryTexture(this->_nbMobsLine, nullptr, nullptr, &w, &h);
+	SDL_Rect dst = {static_cast<int>(235 - 5 - (w / 6)), static_cast<int>(120 - (h / 6)), w / 3, h / 3};
+	SDL_RenderCopy(gSdl.renderer, this->_nbMobsLine, nullptr, &dst);
+
+	SDL_QueryTexture(this->_nbMobs, nullptr, nullptr, &w2, &h);
+	dst = {static_cast<int>(235 + (w / 6) - (w2 / 6)), static_cast<int>(120 - (h / 6)), w2 / 3, h / 3};
+	SDL_RenderCopy(gSdl.renderer, this->_nbMobs, nullptr, &dst);
 }
 
 static void drawRed(int x)
@@ -275,6 +335,7 @@ void	Hud::print(std::vector<Map> const &maps, Player const &player, int launched
 		this->_minimap.printMinimap(maps, player);
 	this->printTimer(time);
 	this->printPlayerName(player);
+	this->printNbMobs(player);
 	this->printCountDown();
 }
 
