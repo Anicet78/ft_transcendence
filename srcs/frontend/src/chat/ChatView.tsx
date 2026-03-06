@@ -48,7 +48,7 @@ const ChatView = ({ chatId: propChatId, onClose }: {
 	//console.log("chatInfo:", chat);
 
 	return (
-		<Box m="4" p="6" bgColor="white">
+		<div className='sidebar-content'>
 
 			{onClose && (
 				<button
@@ -112,7 +112,7 @@ const ChatView = ({ chatId: propChatId, onClose }: {
 				</button>
 			)}
 
-		</Box>
+		</div>
 	);
 };
 export default ChatView;

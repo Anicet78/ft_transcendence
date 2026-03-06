@@ -18,14 +18,19 @@ const SearchBar = () => {
 	const [region, setRegion] = useState<string | ''>('');
 	const [availability, setAvailability] = useState<boolean | ''>('');
 	const [playing, setPlaying] = useState<boolean | ''>('');
+
 	const [minLevel, setMinLevel] = useState<number | ''>('');
 	const [maxLevel, setMaxLevel] = useState<number | ''>('');
+
 	const [minGames, setMinGames] = useState<number | ''>('');
 	const [maxGames, setMaxGames] = useState<number | ''>('');
-	const [minEnnemies, setminEnnemies] = useState<number | ''>('');
-	const [maxEnnemies, setmaxEnnemies] = useState<number | ''>('');
+
+	const [minEnemies, setminEnemies] = useState<number | ''>('');
+	const [maxEnemies, setmaxEnemies] = useState<number | ''>('');
+
 	const [minBestTimes, setMinBestTimes] = useState<number | ''>('');
 	const [maxBestTimes, setMaxBestTimes] = useState<number | ''>('');
+	
 	const [alreadyFriends, setAlreadyFriends] = useState<boolean | ''>('');
 	const [sortBy, setSortBy] = useState<typeof sortFields[number]>('level');
 	const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -48,9 +53,23 @@ const SearchBar = () => {
 
 		if (search.trim()) params.set('searchBar', search.trim());
 		if (region) params.set('region', region);
+
 		if (availability !== '') params.set('availability', String(availability));
+		if (playing !== '') params.set('playing', String(playing));
+
 		if (minLevel !== '') params.set('minLevel', String(minLevel));
 		if (maxLevel !== '') params.set('maxLevel', String(maxLevel));
+
+		if (minGames !== '') params.set('minGames', String(minLevel));
+		if (maxGames !== '') params.set('maxGames', String(maxLevel))
+
+		if (minEnemies !== '') params.set('minEnemies', String(minEnemies));
+		if (maxEnemies !== '') params.set('maxEnemies', String(maxEnemies));
+
+		if (minBestTimes !== '') params.set('minBestTimes', String(minBestTimes));
+		if (maxBestTimes !== '') params.set('maxBestTimes', String(maxBestTimes));
+
+		if (alreadyFriends !== '') params.set('alreadyFriends', String(alreadyFriends));
 		params.set('sortBy', sortBy);
 		params.set('sortOrder', sortOrder);
 
@@ -84,7 +103,7 @@ const SearchBar = () => {
 			<BooleanFilter value={playing} onChange={setPlaying} label='playing status' />
 			<RangeFilter min={minLevel} max={maxLevel} onChangeMin={setMinLevel} onChangeMax={setMaxLevel} label="Level" />
 			<RangeFilter min={minGames} max={maxGames} onChangeMin={setMinGames} onChangeMax={setMaxGames} label="Games" />
-			<RangeFilter min={minEnnemies} max={maxEnnemies} onChangeMin={setminEnnemies} onChangeMax={setmaxEnnemies} label="Ennemies killed" />
+			<RangeFilter min={minEnemies} max={maxEnemies} onChangeMin={setminEnemies} onChangeMax={setmaxEnemies} label="Enemies killed" />
 			<RangeFilter min={minBestTimes} max={maxBestTimes} onChangeMin={setMinBestTimes} onChangeMax={setMaxBestTimes} label="Best times" />
 			<BooleanFilter value={alreadyFriends} onChange={setAlreadyFriends} label='friendship status' />
 			<SelectFilter<typeof sortFields[number]>

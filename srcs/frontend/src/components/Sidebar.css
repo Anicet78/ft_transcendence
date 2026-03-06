@@ -2,8 +2,7 @@
 .chat-sidebar {
 	width: 340px;
 	border-left: 1px solid #e5e5e5;
-	background: white;
-	height: calc(100vh - 140px); /* adjust for banner/footer */
+	height: auto;  /* Allow height to be based on the content */
 	overflow-y: auto;
 }
 
@@ -11,33 +10,45 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: center;
   z-index: 10;
   overflow: visible; /* IMPORTANT */
   border-left: 2px solid #ccc;
-  background: white;
+  background-color: transparent;
+  height: auto;  /* Set height to auto to adapt to content height */
 }
 
 .chat-sidebar-desktop::before {
-  content: '';
-  position: absolute;
+  position: relative;
   left: 0;
   top: 0;
   width: 2px;           /* visual border */
   height: 100%;
-  background: #ccc;
+  background-color: transparent;
+  min-width: 200px; /* Set minimum width to avoid shrinking too small */
   pointer-events: none; /* allow resize div to capture events */
 }
 
 .chat-sidebar-desktop.collapsed {
-  width: 60px; /* collapsed width */
+  width: 0px; /* collapsed width */
 }
 
-.sidebar-content {
-	background-color: white;
+.chat-sidebar-desktop .sidebar-content {
+    background-color: transparent; /* Changed background color for modern feel */
+	border-top-left-radius: 12px;
+	border-bottom-left-radius: 12px;
+	padding: 1rem;
+	margin: 1rem 0;
+	box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Added shadow for depth */
+	flex: 1; /* Ensure content can grow to fill the sidebar */
+}
+
+.chat-sidebar-desktop .sidebar-content h1 {
+	color: var(--color-primary);
 }
 
 /* Collapse button */
-.collapse-btn {
+.chat-sidebar-desktop .collapse-btn {
   position: absolute;
   top: 20px;
   left: 0px;
@@ -51,6 +62,11 @@
   background: var(--color-primary);
 }
 
+/* Resizing handle */
+.chat-sidebar-desktop div[style*="position: absolute"] {
+  cursor: ew-resize; /* Resizing cursor style added */
+}
+
 /* Floating button */
 .floating-chat-btn {
 	position: absolute;
@@ -61,9 +77,44 @@
 	height: 54px;
 	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 	z-index: 30;
+	background-color: var(--color-primary);; /* Modern accent color for floating button */
+	color: black;
+	border-color: var(--color-primary);;
 }
 
-/* Fullscreen mobile chat */
+.chat-list-item,
+.chat-view-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  color: #000000; /* Changed text color to black */
+  cursor: pointer;
+  border-bottom: 1px solid #00c7b166; /* Lighter border for separation */
+}
+
+.chat-list-item:hover,
+.chat-view-item:hover {
+  background-color: #00d1b2; /* Hover background in modern accent color */
+  color: #ffffff; /* White text on hover */
+}
+
+.chat-view-item .chat-message {
+  background-color: #00c7b166; /* Changed background of chat message */
+  padding: 0.5rem;
+  border-radius: 10px;
+  margin: 0.5rem 0;
+}
+
+.chat-view-item .chat-message.from-me {
+  background-color: #00d1b2; /* Different background for messages from the user */
+  align-self: flex-end; /* Align user's messages to the right */
+}
+
+.floating-chat-btn:hover {
+  background-color: #00c7b1e6; /* Lighter hover color */
+}
+
 /* Fullscreen mobile chat */
 .chat-mobile-overlay {
 	position: fixed;
@@ -71,12 +122,15 @@
 	bottom: 0;
 	left: 0;
 	right: 0;
-	background: var(--color-bg);
+	background:black;
 	z-index: 50;
 	display: flex;
 	flex-direction: column;
 	transform: translateY(100%);
 	animation: slideUp 0.3s ease forwards;
+	height: 80vh;                    /* Set height to 80% of the viewport height */
+	max-height: 80vh;                 /* Prevent it from going above 80% */
+	overflow-y: auto;  /* Allow scrolling if the content exceeds the max-height */
 }
 
 .chat-mobile-header {
@@ -85,16 +139,25 @@
 	align-items: center;
 	padding: 1rem;
 	border-bottom: 1px solid #e5e5e5;
-	background: white;
+	background-color: var(--color-primary);
+	color: black;
 	position: sticky;
 	top: 0;
 	z-index: 2;
 }
 
+.chat-mobile-header .close-button {
+	background-color: transparent;
+  color: black;
+  border-color: var(--color-primary);
+}
+
 .chat-mobile-body {
+	background-color: #1e1e1e;
 	flex: 1;
 	overflow-y: auto;
 	padding: 1rem;
+	max-height: calc(80vh - 60px); /* Adjust based on header height */
 }
 
 @keyframes slideUp {

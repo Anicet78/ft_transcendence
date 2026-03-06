@@ -93,30 +93,38 @@ function buildFriendFilter(
 	userId: string, 
 	query: SearchUsersQuery) : Prisma.AppUserWhereInput | undefined {
 
-	if (query.alreadyFriends !== false)
+	if (query.alreadyFriends === undefined)
 		return;
 
-	return {
-		AND: [
+	const friendCondition = {
+		OR: [
 			{
-			friendshipsSent: {
-				none: {
-				receiverId: userId,
-				status: 'accepted',
-				deletedAt: null,
+				friendshipsSent: {
+					some: {
+						receiverId: userId,
+						status: 'accepted',
+						deletedAt: null,
+					},
 				},
 			},
-			},
 			{
-			friendshipsReceived: {
-				none: {
-				senderId: userId,
-				status: 'accepted',
-				deletedAt: null,
+				friendshipsReceived: {
+					some: {
+						senderId: userId,
+						status: 'accepted',
+						deletedAt: null,
+					},
 				},
-			},
 			},
 		],
+	};
+
+	if (query.alreadyFriends === true) {
+		return friendCondition;
+	}
+
+	return {
+		NOT: friendCondition,
 	};
 }
 
@@ -148,17 +156,19 @@ export async function searchUsersService(userId: string, query: SearchUsersQuery
 	
 	const { page, take, skip } = buildPagination(query);
 
-	const where: Prisma.AppUserWhereInput = {
-		...buildUserFilters(userId, query),
-		...buildBlockFilter(userId),
-		...buildFriendFilter(userId, query),
-	};
-
+	const userFilters = buildUserFilters(userId, query);
+	const blockFilters = buildBlockFilter(userId);
+	const friendFilters = buildFriendFilter(userId, query);
 	const gameProfileFilter = buildGameProfileFilter(query);
-
-	if (gameProfileFilter) {
-		where.gameProfile = { is: gameProfileFilter };
-	}
+	
+	const where: Prisma.AppUserWhereInput = {
+		AND: [
+			userFilters,
+			blockFilters,
+			...(friendFilters ? [friendFilters] : []),
+			...(gameProfileFilter ? [{ gameProfile: { is: gameProfileFilter } }] : []),
+		],
+	};
 
 	const orderBy = buildSorting(query);
 
@@ -181,6 +191,7 @@ export async function searchUsersService(userId: string, query: SearchUsersQuery
 	const friendships = await prisma.friendship.findMany({
 		where: {
 			deletedAt: null,
+			status: { in: ['waiting', 'accepted'] },
 			OR: [
 			{
 				senderId: userId,
@@ -191,7 +202,6 @@ export async function searchUsersService(userId: string, query: SearchUsersQuery
 				senderId: { in: userIdsOnPage },
 			},
 			],
-			status: { in: ['waiting', 'accepted'] },
 		},
 	});
 
@@ -202,8 +212,12 @@ export async function searchUsersService(userId: string, query: SearchUsersQuery
 			friendship.senderId === userId
 			? friendship.receiverId
 			: friendship.senderId;
+		
+		if (!otherUserId) continue;
+		// prioritize accepted over waiting
+		const existing = friendshipMap.get(otherUserId);
 
-		if (otherUserId) {
+		if (!existing || existing.status === 'waiting') {
 			friendshipMap.set(otherUserId, friendship);
 		}
 	}

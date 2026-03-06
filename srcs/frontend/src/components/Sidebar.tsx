@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { SidebarChat } from "../chat/components/SidebarChat";
+import { useLocation } from "react-router";
 
 const Sidebar = () => {
 	const { user } = useAuth();
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const [collapsed, setCollapsed] = useState(false); // new state
-
-	if (!user) return null;
+	const location = useLocation();
 
 	// Lock body scroll on mobile overlay
 	useEffect(() => {
@@ -16,7 +16,19 @@ const Sidebar = () => {
 		} else {
 			document.body.style.overflow = "auto";
 		}
+		// Reset on unmount
+		return () => {
+			document.body.style.overflow = "auto";
+		};
 	}, [mobileOpen]);
+
+	useEffect(() => {
+		return () => {
+			// Safety cleanup if component unmounts while resizing
+			document.body.style.userSelect = "auto";
+			document.body.style.cursor = "auto";
+		};
+	}, []);
 
 	// RESIZING
 	const [width, setWidth] = useState(350);
@@ -50,6 +62,12 @@ const Sidebar = () => {
 			window.removeEventListener("mouseup", handleMouseUp);
 		};
 	}, [resizing]);
+
+	// Important to put after all hooks to keep rendering
+	if (!user || location.pathname === '/chat/list' || location.pathname === '/chat/group/new' 
+		|| location.pathname === '/group/invitations') {
+		return null;
+	}
 
 	return (
 		<>
@@ -87,16 +105,13 @@ const Sidebar = () => {
 					}}
 					/>
 				)}
-				{!collapsed && (
-					<div className="sidebar-content">
-						<SidebarChat />
-					</div>)}
+				{!collapsed && (<SidebarChat />)}
 			</aside>
 
 			{/* ===== MOBILE ===== */}
 			<div className="is-hidden-desktop">
 				<button
-					className="button is-primary floating-chat-btn"
+					className="button floating-chat-btn"
 					onClick={() => setMobileOpen(true)}
 				>
 					<span className="icon">
@@ -110,7 +125,7 @@ const Sidebar = () => {
 							<p className="has-text-weight-semibold">Messages</p>
 
 							<button
-							className="button is-white"
+							className="button close-button"
 							onClick={() => setMobileOpen(false)}
 						>
 							<span className="icon">
