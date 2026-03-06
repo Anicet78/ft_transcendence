@@ -2,7 +2,6 @@ import { useParams } from "react-router"
 import { useEffect } from "react";
 import { useChat } from "./ChatContext";
 import { useChatMessages } from "./hooks/useChatMessages";
-import { Box } from "@allxsmith/bestax-bulma";
 
 import { useChatSocket } from "./hooks/useChatSocket";
 import { useGroupChatMutations } from "./hooks/useGroupChatMutations";
@@ -10,14 +9,24 @@ import { ChatMembers } from "./components/ChatMembers";
 import { ChatRoom } from "./components/ChatRoom";
 import { InviteToGroupChat } from "./components/InviteToGroupChat";
 import { useChatInfo } from "./hooks/useChatInfo";
-// import { useSocket } from "../socket/SocketContext";
+import { useAuth } from "../auth/AuthContext";
 
-// const ChatView = () => {
+function chatNameToDisplay(chat: any, userId?: string) {
+	if (chat.chatType === "private") {
+		const other = chat.members.find(
+			(m: any) => m.user.appUserId !== userId
+		);
+		return other?.user?.username || "Private chat";
+	}
+	return chat.chatName || "Group chat";
+}
+
 const ChatView = ({ chatId: propChatId, onClose }: {
 	chatId?: string;
 	onClose?: () => void;
 }) => {
 	const params = useParams();
+	const user = useAuth();
 	const chatId = propChatId ?? params.chatId;
 	const { data: chat } = useChatInfo(chatId);
 
@@ -25,8 +34,6 @@ const ChatView = ({ chatId: propChatId, onClose }: {
 
 	const { isLoading, isError } = useChatMessages(chatId);
 	const { quitChatMutation, disbandMutation, gameInviteMutation } = useGroupChatMutations(chatId);
-
-	// const userSocket = useSocket();
 
 	useChatSocket(chatId, onClose);
 
@@ -60,7 +67,7 @@ const ChatView = ({ chatId: propChatId, onClose }: {
 			)}
 
 			<h1 className="title">
-				{chat.chatName || (chat.chatType === "private" ? "Private chat" : "Group chat")}
+				{chatNameToDisplay(chat, user?.user?.id) || (chat.chatType === "private" ? "Private chat" : "Group chat")}
 			</h1>
 
 			<ChatMembers chatId={chatId} />
