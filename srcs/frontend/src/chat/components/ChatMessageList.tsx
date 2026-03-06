@@ -166,7 +166,7 @@ export function MessageList({
 
 				return (
 					<Box className="box" m="2" p="3">
-					<p><strong>{msg.author.username}</strong> 🎮 Game session is going! </p>
+					<p><strong>{msg.author.username}</strong> 🎮 Game session is going on! </p>
 					<> 
 						{/* DISPLAY MESSAGES & DATE*/}
 						<small>

@@ -3,7 +3,10 @@ import { useTyping } from "../hooks/useTyping";
 
 //SEND MESSAGE
 type ChatInputProps = {
-	onSend: (content: string) => void;
+	onSend: (data: {
+		content: string;
+		type?: "text" | "game_invite" | "game_started"
+	}) => void;
 	chatId: string | undefined;
 }
 
@@ -15,7 +18,7 @@ export function ChatInput({ onSend, chatId }: ChatInputProps) {
 	const send = () => {
 		if (content.trim() === "")
 			return;
-		onSend(content);
+		onSend({content});
 		setContent("");
 	};
 
@@ -30,6 +33,12 @@ export function ChatInput({ onSend, chatId }: ChatInputProps) {
 				onChange={(e) => {
 					setContent(e.target.value);
 					emitTypingEffect();
+				}}
+				onKeyDown={(e) => {
+					if (e.key === "Enter") {
+						e.preventDefault();
+						send();
+					}
 				}}
 			/>
 			</div>

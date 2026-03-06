@@ -60,6 +60,8 @@ export default fp(async (fastify) => {
 
 			console.log(`Client \`${clientId}\` is connected`);
 
+			await UserService.setAvailabality(userPayload.id, true);
+
 			//Fetch all chats user is a member of
 			const chats = await prisma.chatMember.findMany({
 				where: {

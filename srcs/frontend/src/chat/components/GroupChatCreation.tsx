@@ -1,6 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import api from "../../serverApi";
-//import { useNavigate } from "react-router";
 import { useState } from "react";
 import { Box } from "@allxsmith/bestax-bulma";
 import { useAuth } from "../../auth/AuthContext";
@@ -14,7 +13,6 @@ export default function GroupChatCreation({
 	onClose?: () => void;
 	onCreated?: (chatId: string) => void;
 }) {
-	//const navigate = useNavigate();
 	const [name, setName] = useState("");
 	const [selected, setSelected] = useState<string[]>([]);
 	const { user } = useAuth();
@@ -41,7 +39,6 @@ export default function GroupChatCreation({
 		},
 		onSuccess: (chat) => {
 			toast({ title: "Group succesfully created", type: "is-success" });
-			//navigate(`/chat/${chat.chatId}/info`);
 			onCreated?.(chat.chatId);
 		},
 		onError: (error: Error) => {

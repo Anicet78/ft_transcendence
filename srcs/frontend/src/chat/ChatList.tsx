@@ -3,14 +3,11 @@ import '../App.css'
 import type { GetResponse } from '../types/GetType'
 import api from '../serverApi';
 import { Box } from '@allxsmith/bestax-bulma';
-//import { Link, useNavigate } from 'react-router';
-// import { useAuth } from '../auth/AuthContext';
+import { useNavigate } from 'react-router';
+import { useChatListSocket } from './hooks/useChatListSocket';
 
 type ChatListResponseType = GetResponse<"/chat/list", "get">;
 
-// const { user } = useAuth();
-
-// const ChatList = ({ onSelectChat }: { onSelectChat?: (id: string) => void }) => {
 const ChatList = ({
 	onSelectChat, 
 	onCreateGroup,
@@ -20,7 +17,8 @@ const ChatList = ({
 	onCreateGroup?: () => void; onShowInvitations?: () => void;
 }) => {
 	
-	//const navigate = useNavigate();
+	const navigate = useNavigate();
+	useChatListSocket();
 
 	const { data, isLoading, isError, error } = useQuery({
 		queryKey: ['chat-list'],
@@ -39,15 +37,6 @@ const ChatList = ({
 		<Box m="4" p="6" bgColor="white">
 			<h1 className="title">Your chats</h1>
 
-			{/* CREATE GROUP CHAT BUTTON */}
-			{/* <Link
-				to="/chat/group/new"
-				className="button is-primary is-small mb-4"
-			>
-			Create Group Chat
-			</Link> */}
-
-
 			<button
 				className="button is-primary is-small mb-4"
 				onClick={onCreateGroup}
@@ -61,12 +50,6 @@ const ChatList = ({
 				>
 				Group Chat Invitations
 			</button>
-{/* 
-			<Link
-				to="/group/invitations" className="button is-small is-warning"
-			>
-			Group Chat Invitations
-			</Link> */}
 
 
 			{/* LIST CHATS */}
@@ -80,8 +63,8 @@ const ChatList = ({
 
 				<p>Type: {chat.chatType}</p>
 				<p>Members: {chat.members.length}</p>
-{/* 
-				<button
+
+			<button
 				className="button is-dark is-small mt-2"
 				onClick={() => {
 					if (onSelectChat)
@@ -89,12 +72,6 @@ const ChatList = ({
 					else
 						navigate(`/chat/${chat.chatId}/info`);
 				}}
-				>
-				Open chat
-				</button> */}
-			<button
-				className="button is-dark is-small mt-2"
-				onClick={() => onSelectChat?.(chat.chatId)}
 			>
 				Open chat
 			</button>

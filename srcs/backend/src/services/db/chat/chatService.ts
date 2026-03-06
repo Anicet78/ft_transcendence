@@ -19,9 +19,7 @@ export const chatSelect = {
 	},
 
 	members: {
-		where: {
-			deletedAt: null
-		},
+		where: { deletedAt: null },
 		select: {
 			chatMemberId: true,
 			joinedAt: true,
@@ -39,6 +37,7 @@ export const chatSelect = {
 	},
 
 	roles: {
+		where: { deletedAt: null },
 		select: {
 			userId: true,
 			role: true

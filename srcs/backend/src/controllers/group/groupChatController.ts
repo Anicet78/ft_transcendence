@@ -42,6 +42,7 @@ export async function createGroupChatController(
 	req: FastifyRequest<{ Body: CreateGroupChatBody }>, reply: FastifyReply ) {
 	const creatorId = req.user.id;
 	const { name, memberIds } = req.body;
+	const creatorSocket = req.getSocket()
 
 	if (!creatorId) {
 		throw new AppError('Unauthorized', 401);
@@ -54,7 +55,13 @@ export async function createGroupChatController(
 		select: { username: true }
 	});
 
+	creatorSocket.join(chat.chatId);
+
 	for (const m of memberIds) {
+		const userSocket = await req.server.getSocketByUserId(m);
+		if (userSocket) {
+			await userSocket.join(chat.chatId);
+		}
 		SocketService.send(`user:${m}`, "notification", {
 			type: "added_to_group",
 			creatorId: creatorId,
@@ -63,6 +70,8 @@ export async function createGroupChatController(
 			chatName: chat?.chatName ?? "Chat"
 		});
 	}
+
+	SocketService.send(chat.chatId, "chat_created", {});
 
 	return reply.status(201).send(normalizeChat(chat));
 }
@@ -75,16 +84,42 @@ export async function disbandGroupChatController(
 	const userId = req.user.id;
 	const { chatId } = req.params;
 
-	// const socket = req.getSocket();
-	// await SocketService.addInRoom(chatId, socket);
+	if (!userId)
+		throw new AppError('Unauthorized', 401);
 
-	if (!userId) {
-	throw new AppError('Unauthorized', 401);
-	}
+	const members = await prisma.chatMember.findMany({ 
+		where: { chatId: chatId, deletedAt: null}
+	})
+
+	if (!members)
+		throw new AppError('Members of disbanded chat not found', 401);
 
 	const result = await disbandGroupChat(chatId, userId);
 
-	SocketService.send(chatId, "chat_disbanded", { chatId }); 
+	SocketService.send(chatId, "chat_disbanded", { chatId });
+	// for (const m of members) {
+	// 	if (!m.userId)
+	// 		continue;
+	// 	const userSocket = await req.server.getSocketByUserId(m.userId);
+	// 	if (userSocket) {
+	// 		userSocket.emit("chat_member_quit", { chatId });
+	// 		userSocket.leave(chatId);
+	// 	}
+	// }
+
+	await Promise.all(
+		members.map(async (m) => {
+			if (!m.userId)
+				return;
+
+			const socket = await req.server.getSocketByUserId(m.userId);
+			if (!socket)
+				return;
+
+			socket.emit("chat_member_quit", { chatId });
+			socket.leave(chatId);
+		})
+	);
 
 	return reply.status(200).send(result);
 }
@@ -97,14 +132,16 @@ export async function quitGroupChatController(
 	const userId = req.user.id;
 	const { chatId } = req.params;
 
-	// const socket = req.getSocket();
+	const userSocket = req.getSocket();
 	// await SocketService.addInRoom(chatId, socket);
 
-	if (!userId) {
-	throw new AppError('Unauthorized', 401);
-	}
+	if (!userId)
+		throw new AppError('Unauthorized', 401);
 
 	const result = await quitGroupChat(chatId, userId);
+
+	userSocket.emit("chat_member_quit", { chatId });
+	userSocket.leave(chatId);
 
 	SocketService.send(chatId, "chat_member_left", { chatId, userId });
 

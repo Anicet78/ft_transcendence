@@ -39,6 +39,9 @@ export async function inviteToGroupController(
 		select: { username: true }
 	});
 
+	SocketService.send(`user:${senderId}`, "invite_sent", { chatInvitationId: invitation.chatInvitationId });
+	SocketService.send(`user:${receiverId}`, "invite_received", { chatInvitationId: invitation.chatInvitationId });
+
 	SocketService.send(`user:${receiverId}`, "notification", {
 		type: "invite_received",
 		senderId: senderId,
@@ -111,11 +114,14 @@ export async function updateGroupInvitationController(
 			receiverName: string;
 		};
 
-		const socket = await req.server.getSocketByUserId(member.userId);
-		if (socket)
-			socket.join(member.chatId);
+		const userSocket = await req.server.getSocketByUserId(member.userId);
+		if (userSocket)
+			userSocket.join(member.chatId);
 
 		SocketService.send(member.chatId, "chat_member_joined", { chatId: member.chatId, member });
+
+		SocketService.send(`user:${member.senderId}`, "invite_accepted", { chatInvitationId });
+		SocketService.send(`user:${member.userId}`, "invite_accepted", { chatInvitationId });
 
 		SocketService.send(`user:${member.senderId}`, "notification", {
 			type: "invite_accepted",
@@ -131,6 +137,32 @@ export async function updateGroupInvitationController(
 			joinedAt: member.joinedAt ? member.joinedAt.toISOString() : null
 		});
 	}
-	//reject or cancel
+	
+	else if ( action === "reject")
+	{
+		const invitation = await prisma.chatInvitation.findUnique({
+			where: { chatInvitationId },
+			select: { senderId: true, receiverId: true }
+		});
+
+		if (invitation)
+			SocketService.send(`user:${invitation.senderId}`, "invite_rejected", { chatInvitationId });
+		
+		return reply.status(200).send(result);
+	}
+
+	else if ( action === "cancel") {
+		const invitation = await prisma.chatInvitation.findUnique({
+			where: { chatInvitationId },
+			select: { senderId: true, receiverId: true }
+		});
+
+		if (invitation) {
+			SocketService.send(`user:${invitation.receiverId}`, "invite_canceled", { chatInvitationId });
+		}
+
+		return reply.status(200).send(result);
+	}
+
 	return reply.status(200).send(result);
 }

@@ -4,20 +4,13 @@ import { useSocket } from "../../socket/SocketContext";
 //import toast from "../../Notifications";
 
 //When a socket event arrives, it directly updates the React Query cache
-export function useChatSocket(chatId?: string) {
+export function useChatSocket(
+	chatId?: string,
+	onChatClosed?: () => void
+) {
 
 	const socket = useSocket();
 	const queryClient = useQueryClient();
-
-	// useEffect(() => {
-	// 	if (!socket || !chatId) return;
-
-	// 	socket.emit("chat_join", { chatId });
-
-	// 	return () => {
-	// 		socket.emit("chat_leave", { chatId });
-	// 	};
-	// }, [socket, chatId]);
 
 	useEffect(() => {
 	
@@ -83,6 +76,19 @@ export function useChatSocket(chatId?: string) {
 			});
 		};
 
+		const handleChatClosed = ({ chatId: closedChatId }: { chatId: string }) => {
+			if (closedChatId !== chatId)
+				return;
+
+			queryClient.removeQueries({ queryKey: ["chat-info", chatId] });
+			queryClient.removeQueries({ queryKey: ["chat-messages", chatId] });
+			queryClient.removeQueries({ queryKey: ["chat-read-state", chatId] });
+			queryClient.invalidateQueries({ queryKey: ["chat-list"] });
+
+			onChatClosed?.();
+		};
+
+
 		socket.on("chat_message_created", onMessageCreated);
 		socket.on("chat_message_edited", onMessageEdited);
 		socket.on("chat_message_deleted", onMessageDeleted);
@@ -90,10 +96,11 @@ export function useChatSocket(chatId?: string) {
 		socket.on("chat_message_restored", onMessageRestored);
 
 		socket.on("chat_member_joined", invalidateChatInfo);
-		socket.on("chat_member_left", invalidateChatInfo);
+		socket.on("chat_member_left", invalidateChatInfo);//send to all chat when a user has left chat
 		socket.on("chat_member_kicked", invalidateChatInfo);
 		socket.on("chat_member_role_changed", invalidateChatInfo);
 		socket.on("chat_disbanded", invalidateChatInfo);
+		socket.on("chat_member_quit", handleChatClosed);//send to a user who quit/is kicked/member of disbanded chat/disband
 
 
 		return () => {
@@ -110,6 +117,7 @@ export function useChatSocket(chatId?: string) {
 			socket.off("chat_member_kicked", invalidateChatInfo);
 			socket.off("chat_member_role_changed", invalidateChatInfo);
 			socket.off("chat_disbanded", invalidateChatInfo);
+			socket.off("chat_member_quit", handleChatClosed);
 		}
 
 	}, [socket, chatId, queryClient]);
