@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { NavLink, useNavigate, useSearchParams } from 'react-router';
 import api from '../serverApi';
 import { Button } from '@allxsmith/bestax-bulma';
-import './SearchPage.css'
 import skull from '../assets/skull.svg';
 import { useFriendshipModification } from '../friendship/useFriendshipModification';
 import type { actionType } from '../friendship/friendshipQueries';

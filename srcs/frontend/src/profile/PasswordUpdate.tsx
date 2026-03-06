@@ -1,6 +1,4 @@
-import { Button } from "@allxsmith/bestax-bulma"
-import "../auth/register.css"
-
+import { Button } from "@allxsmith/bestax-bulma";
 import { NavLink, useNavigate } from "react-router";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../serverApi.ts';

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
-import "./Sidebar.css"
 import { SidebarChat } from "../chat/components/SidebarChat";
 
 const Sidebar = () => {

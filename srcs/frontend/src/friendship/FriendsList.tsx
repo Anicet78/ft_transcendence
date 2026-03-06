@@ -1,6 +1,4 @@
-import { Box, Button } from "@allxsmith/bestax-bulma"
-import "./friendList.css"
-
+import { Button } from "@allxsmith/bestax-bulma"
 import { NavLink } from "react-router";
 import { useQuery } from '@tanstack/react-query';
 import api, { getAccessToken } from '../serverApi.ts';

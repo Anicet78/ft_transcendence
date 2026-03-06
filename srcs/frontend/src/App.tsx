@@ -1,4 +1,3 @@
-import './App.css'
 import { NavLink, useNavigate } from 'react-router';
 import { useAuth } from './auth/AuthContext';
 import { useEffect } from 'react';
