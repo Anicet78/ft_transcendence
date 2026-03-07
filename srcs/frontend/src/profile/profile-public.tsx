@@ -84,7 +84,7 @@ const ProfilePublic = () => {
 					<div className="button-group">
 						{(friendshipStatus === 'sent') &&
 							<div className="button-row">
-								<Button color="dark" disabled size='large' className='profile-button'>Request pending</Button>
+								<Button disabled size='large' className='profile-button'>Request pending</Button>
 								<Button
 									size='large'
 									onClick={() => {handleModification('cancel', friendshipData.friendshipId)}}

@@ -13,9 +13,9 @@
   align-items: center;
   z-index: 10;
   overflow: visible; /* IMPORTANT */
-  border-left: 2px solid #ccc;
+  border-left: 1px solid var(--color-primary);
   background-color: transparent;
-  height: auto;  /* Set height to auto to adapt to content height */
+  height: auto;
 }
 
 .chat-sidebar-desktop::before {
@@ -62,6 +62,12 @@
   background: var(--color-primary);
 }
 
+.chat-sidebar-desktop.collapsed .collapse-btn {
+	position: absolute;
+	top: 5px;
+	left: 0px;
+}
+
 /* Resizing handle */
 .chat-sidebar-desktop div[style*="position: absolute"] {
   cursor: ew-resize; /* Resizing cursor style added */
@@ -69,10 +75,9 @@
 
 /* Floating button */
 .floating-chat-btn {
-	/*TODO*/
 	position: absolute;
-	top: 0px;
-	right: 10px;
+	top: 5px;
+	right: 10px !important;
 	border-radius: 50% !important;
 	width: 54px !important;
 	height: 54px !important;
@@ -171,4 +176,8 @@
   .chat-sidebar-desktop {
     display: none;
   }
+
+  .is-hidden-desktop {
+	  text-align: right;
+}
 }

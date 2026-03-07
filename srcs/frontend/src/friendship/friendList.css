@@ -10,7 +10,7 @@
 /* Section title */
 .wrapbox h2 {
   font-family: var(--font-section-title);
-  color: var(--color-primary);
+  color: var(--color-primary) !important;
   font-size: clamp(1.5rem, 4vw, 4rem) !important;
   padding-top: clamp(0.8rem, 1.5vw, 1.5rem) !important;
 }
@@ -92,6 +92,7 @@
 /* Buttons styles */
 .interaction_btn, .view_profile_btn {
   font-family: var(--font-body);
+  font-weight: bold !important;
   background-color: black;
   color: white;
   border: none;
@@ -100,29 +101,34 @@
   font-size: 1rem;
   cursor: pointer;
   text-decoration: none;
-  text-align: center;
   white-space: nowrap;
   min-width: fit-content;
   flex-shrink: 0;      /* prevent shrinking */
 }
 
 .interaction_btn:hover, .view_profile_btn:hover {
-  background-color: #333;
+  background-color: var(--color-hover) !important;
+  color: white;
 }
 
 .bottom-button {
   display: grid;
   place-items: center;
-    gap: 1rem;
+  gap: 1rem;
+  color: white;
 
 }
 
 .request-button, .myprofile-button, .friendlist-button {
   font-family: var(--font-button-large) !important;
   font-size: clamp(1rem, 2vw, 2rem);
-  color: var(--color-primary) !important;
   border-color: var(--color-primary) !important;
   border-radius: var(--radius-md);
+}
+
+.request-button:hover, .myprofile-button:hover, .friendlist-button:hover {
+  color: white;
+  background-color: var(--color-hover);
 }
 
 @media (max-width: 1000px) {

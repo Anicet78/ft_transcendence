@@ -51,7 +51,7 @@ const FriendList = () => {
 										>
 											Remove friend
 										</Button>
-										<NavLink to={"/profile/" + friendUser.username} className="view_profile_btn">
+										<NavLink to={"/profile/" + friendUser.username} className=" button view_profile_btn">
 											View Profile
 										</NavLink>
 									</div>
@@ -60,8 +60,8 @@ const FriendList = () => {
 						})}
 					</ul>
 					<div className="bottom-button">
-						<NavLink to="/friends/requests" className="button is-medium request-button">View ongoing friend requests</NavLink>
-						<NavLink to="/profile" className="button is-medium myprofile-button">Back to profile</NavLink>
+						<NavLink to="/friends/requests" className="button is-large request-button">Ongoing friend requests</NavLink>
+						<NavLink to="/profile" className="button is-large myprofile-button">Back to profile</NavLink>
 					</div>
 			</div>
 		</div>

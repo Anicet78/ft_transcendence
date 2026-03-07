@@ -10,7 +10,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 700px;
+  max-width: 600px;
   margin: 32px auto;
   padding: 24px;
   gap: 32px;
@@ -112,6 +112,10 @@
   box-sizing: border-box;
 }
 
+.icon-button {
+  margin-left: clamp(0.1rem, 1rem , 0.5rem);
+}
+
 /* Category name (bold) */
 .category-name {
   font-weight: bold;
@@ -120,13 +124,18 @@
   color: black;
 }
 
-.navlink-button {
+.button.navlink-button {
   font-family: var(--font-button-large) !important;
   font-size: clamp(1rem, 2.5vw, 2rem);
-  color: var(--color-primary) !important;
+  color: white !important;
   border-color: var(--color-primary) !important;
   border-radius: var(--radius-md);
   margin: clamp(1rem, 2.5vw, 2rem);
+}
+
+.button.navlink-button:hover, .icon-button:hover {
+  color: white;
+  background-color: var(--color-hover);
 }
 
 .button-group {
@@ -149,9 +158,20 @@
   min-width: 140px;     /* optional: make buttons consistent width */
   font-family: var(--font-button-large);
   font-size: clamp(1rem, 2.5vw, 2rem);
-  color: var(--color-primary);
+  color: white;
+  background-color: black;
   border-color: var(--color-primary) !important;
   border-radius: var(--radius-md);
+}
+
+.button-group .profile-button:hover {
+  color: white !important;
+  background-color: var(--color-hover) !important;
+}
+
+.button-group .profile-button:disabled {
+  background-color: var(--color-primary-light) !important;
+  color: black !important;
 }
 
 /* ===================== */

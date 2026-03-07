@@ -162,12 +162,13 @@
   .navbar-end {
     justify-self: stretch;          /* Stretch right zone */
     flex-direction: column;         /* Stack buttons vertically */
+    justify-content: center;
     align-items: center;            /* Center items horizontally */
     gap: 8px;                       /* Smaller gap */
   }
 
   .navbar-end .button {
-    max-width: 90%;                 /* Limit button width */
+    font-size: 1rem;                 /* Limit button width */
     text-align: center;             /* Center text */
   }
 

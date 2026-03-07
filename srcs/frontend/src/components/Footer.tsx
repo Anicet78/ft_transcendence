@@ -1,12 +1,21 @@
 import { Footer, Content } from '@allxsmith/bestax-bulma';
 import { NavLink } from 'react-router';
-import "./ui/parchment.css";
+import parchmentCenter from "../assets/parchment-center.png"
+import parchmentLeft from "../assets/parchment-left.svg"
+import parchmentRight from "../assets/parchment-right.svg"
 
 const MyFooter = () => {
 	return (
 		<Footer className="my-footer">
-			<img src="../assets/parchment-left.svg" />
-			<div id="parchment-center">
+			<img src={parchmentLeft} />
+			<div className='parchment-center'
+				style={{
+					backgroundImage: `url(${parchmentCenter})`,
+					backgroundSize: 'contain',
+					display: 'flex',
+					alignItems: 'center'
+				}}
+			>
 				<div className='parchment-text'>
 					<Content textAlign="centered" style={{marginTop: 'auto'}}>
 						<p>
@@ -36,7 +45,7 @@ const MyFooter = () => {
 					</Content>
 				</div>
 			</div>
-			<img src="../assets/parchment-right.svg" />
+			<img src={parchmentRight} />
 		</Footer>
 	)
 }

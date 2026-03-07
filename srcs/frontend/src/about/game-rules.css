@@ -11,25 +11,26 @@
 	margin: 2rem auto; /* spacing on top/bottom for mobile */
 	box-sizing: border-box; /* Include padding in width */
 	overflow: hidden; /* Prevent children from stick out of the container */
-	color: black;
+	color: var(--color-text);
 }
 
 .rules-box h2, h3 {
 	font-family: var(--font-section-title);
-	color: black;
 }
 
 .rules-box h2 {
-	font-size:clamp(1.2rem, 4vw, 4rem) !important;
+	font-size:clamp(1.5rem, 4vw, 4rem) !important;
+	color: var(--color-text) !important;
 }
 
 .rules-box h3 {
 	font-size:clamp(1rem, 2vw, 2rem) !important;
-	color: black;
+	color: white;
 }
 
 .rules-box p {
 	font-family: var(--font-body);
+	color: white;
 	font-size:clamp(0.7rem, 1vw, 1.2rem) !important;
 	gap: 2px;
 }
@@ -38,11 +39,23 @@
 	font-weight: 900;
 }
 
+.rules-subbox {
+	background-color: black;
+	border-radius: 20px;
+	padding: clamp(1rem, 2vw, 2rem);
+	margin: clamp(0.3rem, 1vw, 1rem);
+}
+
 .home-button {
 	font-family: var(--font-button-large);
 	font-size: clamp(1rem, 2vw, 2rem);
 	background-color: black;
-	color: var(--color-primary);
+	color: white !important;
 	border-color: var(--color-primary) !important;
 	margin-top: 2rem;
+}
+
+.home-button:hover {
+	background-color: var(--color-hover) !important;
+	color: white;
 }

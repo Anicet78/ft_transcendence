@@ -172,7 +172,7 @@ const SearchPage = () => {
 										Remove friend
 									</Button>
 								}
-								<NavLink to={"/profile/" + user.username} className="view_profile_btn">View Profile</NavLink>
+								<NavLink to={"/profile/" + user.username} className="button view_profile_btn">View Profile</NavLink>
 							</div>
 						)
 					})}

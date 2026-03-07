@@ -21,17 +21,18 @@
 	/* Footer */
 	--footer-color-bg: #282828;
 	--footer-color-text: #00d1b2;
-	--footer-color-link: #000;
+	--footer-color-link: white;
 	--footer-color-shadow: #e0cc91;
 	--footer-color-shadow: #e0cc91;
 
 	/* Neutral */
-	--color-bg: #605f5f;
-	--color-surface: #1e293b;
+	--color-bg: #1cbca4;
+	--color-bg-light: #def9f5;
+	--color-hover: #078c78;
 	--color-border: #334155;
 
 	/* Text */
-	--color-text: #f1f5f9;
+	--color-text: black;
 	--color-text-muted: #94a3b8;
 
 	/* Fonts */

@@ -46,28 +46,3 @@
 .search_button:hover {
   background-color: #e0e0e0;
 }
-
-/* ======================= */
-/* MOBILE / TINY SCREEN FIX */
-/* ======================= */
-
-/* Tiny screens: wrap buttons under input if needed */
-@media screen and (max-width: 400px) {
-  .search_form {
-    flex-wrap: wrap;
-  }
-
-  .search_input {
-    flex: 1 1 100%;
-  }
-
-  .search_form .is-primary {
-    flex: 1 1 48%;     /* 2 buttons per row max */
-    max-width: 48%;
-  }
-
-  .filter_panel {
-    width: 100%;       /* scale filter panel to input width */
-    max-width: 100%;
-  }
-}

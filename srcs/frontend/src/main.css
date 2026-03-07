@@ -9,6 +9,7 @@
 @import "./components/Banner.css";
 @import "./components/Footer.css";
 @import "./components/Sidebar.css";
+@import "./components/ui/parchment.css";
 @import "./friendship/friendList.css";
 @import "./game/game.css";
 @import "./home/home.css";

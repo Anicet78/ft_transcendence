@@ -65,7 +65,7 @@ const ProfilePrivate = () => {
 					<p><span className='category-name'>Last name:</span>{lastname}</p>
 					<p>
 						<span className='category-name'>Email:</span>{email}
-						<NavLink to='/profile/update/email' className='button is-small'>
+						<NavLink to='/profile/update/email' className='button is-small icon-button'>
 							<span className="icon">
 								<i className="fas fa-pen"></i>
 							</span>
@@ -73,7 +73,7 @@ const ProfilePrivate = () => {
 					</p>
 					<p>
 						<span className='category-name'>Password:</span>{password}
-						<NavLink to='/profile/update/password' className='button is-small'>
+						<NavLink to='/profile/update/password' className='button is-small icon-button'>
 							<span className="icon">
 								<i className="fas fa-pen"></i>
 							</span>
@@ -81,7 +81,7 @@ const ProfilePrivate = () => {
 					</p>
 					<p>
 						<span className='category-name'>Region:</span>{region}
-						<NavLink to='/profile/update/region' className='button is-small'>
+						<NavLink to='/profile/update/region' className='button is-small icon-button'>
 								<span className="icon">
 									<i className="fas fa-pen"></i>
 								</span>
@@ -96,8 +96,8 @@ const ProfilePrivate = () => {
 					<p><span className='category-name'>Total loses:</span>{totalLoses}</p>
 				</div>
 			</div>
-			<NavLink to="/friends/list" className="button is-large is-outlined navlink-button">Friends list</NavLink>
-			<NavLink to="/friends/requests" className="button is-large is-outlined navlink-button">Ongoing friend requests</NavLink>
+			<NavLink to="/friends/list" className="button is-large navlink-button">Friends list</NavLink>
+			<NavLink to="/friends/requests" className="button is-large navlink-button">Ongoing friend requests</NavLink>
 		</div>
 	)
 }
