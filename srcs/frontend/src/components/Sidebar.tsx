@@ -115,19 +115,17 @@ const Sidebar = () => {
 					onClick={() => setMobileOpen(true)}
 				>
 					<span className="icon">
-						<i className="fas fa-comment-dots"></i>
+						<i className="fas fa-comment"></i>
 					</span>
 				</button>
 
 				{mobileOpen && (
 					<div className="chat-mobile-overlay">
 						<div className="chat-mobile-header">
-							<p className="has-text-weight-semibold">Messages</p>
-
 							<button
 							className="button close-button"
 							onClick={() => setMobileOpen(false)}
-						>
+							>
 							<span className="icon">
 								<i className="fas fa-times"></i>
 							</span>

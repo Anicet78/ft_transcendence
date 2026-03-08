@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import api from "../../serverApi";
-import { Box } from "@allxsmith/bestax-bulma";
+import { Box, Button } from "@allxsmith/bestax-bulma";
 import { useAuth } from "../../auth/AuthContext";
 import { useParams } from "react-router";
 import toast from "../../Notifications";
@@ -70,14 +70,14 @@ export function InviteToGroupChat({
 
 	if (eligibleFriends.length === 0)
 		return (
-		<Box className="box mt-4">
-			<strong>No friends available to invite.</strong>
-		</Box>
+		<div className="invite2group-none">
+			No friends available to invite.
+		</div>
 		);
 
 	return (
-		<Box className="box mt-4">
-		<strong>Invite Friends to Join Group</strong>
+		<div className="invite2group">
+		<h2>Invite Friends to Join Group</h2>
 
 		{eligibleFriends.map((f: any) => {
 			const isPending = pendingInvites.some(
@@ -85,27 +85,27 @@ export function InviteToGroupChat({
 			);
 		
 		return (
-			<div key={f.appUserId} className="mt-2">
+			<div key={f.appUserId} className="friend2invite">
 			{f.username}
 
 			{
 				isPending ? (
-				<button className="button is-small is-light ml-2" disabled>
-					Invite already pending
-				</button>
+				<Button className="chat-invite-button" disabled>
+					Invite pending
+				</Button>
 
 				) : (
 
-				<button
-				className="button is-small is-primary ml-2"
+				<Button
+				className="chat-invite-button"
 				onClick={() => inviteMutation.mutate(f.appUserId)}
 				>
 				Invite
-				</button>
+				</Button>
 				)}
 			</div>
 			);
 		})}
-		</Box>
+		</div>
 	);
 }

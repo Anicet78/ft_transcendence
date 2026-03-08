@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTyping } from "../hooks/useTyping";
+import { Button } from "@allxsmith/bestax-bulma";
 
 //SEND MESSAGE
 type ChatInputProps = {
@@ -23,8 +24,8 @@ export function ChatInput({ onSend, chatId }: ChatInputProps) {
 	};
 
 	return (
-		<div className="field has-addons">
-			<div className="control is-expanded">
+		<div className="field has-addons input-msg">
+			<p className="control is-expanded">
 			<input
 				className="input"
 				type="text"
@@ -41,13 +42,13 @@ export function ChatInput({ onSend, chatId }: ChatInputProps) {
 					}
 				}}
 			/>
-			</div>
+			</p>
 
-			<div className="control">
-			<button className="button is-dark" onClick={send}>
-				Send
-			</button>
-			</div>
+			<p className="control">
+			<Button size="medium" onClick={send}>
+				<i className="fas fa-paper-plane"></i>
+			</Button>
+			</p>
 		</div>
 	);
 }

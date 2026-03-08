@@ -12,7 +12,7 @@ export function SidebarChat() {
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
 
   return (
-    <div>
+    <div className="sidebar-box">
       {/* CONTENT */}
       {/* {!activeChatId && (
         <ChatList onSelectChat={(id) => setActiveChatId(id)} />

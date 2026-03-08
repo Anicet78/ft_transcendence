@@ -13,7 +13,8 @@
 	/* Brand */
 	--color-primary: #00d1b2;
 	--color-primary-dark: #027c6a;
-	--color-primary-light: #a9fcef;;
+	--color-primary-light: #a9fcef;
+	--color-primary-dark2: #013f36;
 
 	/* Banner */
 	--banner-color-bg: #3D3C3C;
@@ -33,7 +34,19 @@
 
 	/* Text */
 	--color-text: black;
-	--color-text-muted: #94a3b8;
+
+	/* Button */
+	--color-delete-bg: #fc025e;
+	--color-delete-txt: #4f021e;
+	--color-delete-bg-light: #fc377f;
+	--color-delete-txt-light: #680328;
+	--color-invite-bg: #008afc;
+	--color-invite-txt: #0a0554;
+	--color-invite-bd: #1204db;
+	--color-invite-dark: #0255fc;
+	--color-invite-light: #d9e4fc;
+	--color-game-bg: #00c7b1;
+	--color-game-border: #318e83;
 
 	/* Fonts */
 /*	--font-game-title: 'MoRk DuNgEoN', serif;*/

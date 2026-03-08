@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../serverApi";
-import { Box } from "@allxsmith/bestax-bulma";
+import { Box, Button } from "@allxsmith/bestax-bulma";
 import { useAuth } from "../../auth/AuthContext";
 import toast from "../../Notifications";
 import { useInvitationSocket } from "../hooks/useInvitationSocket";
@@ -46,14 +46,14 @@ export default function GroupChatInvitations({
 		return <div>Loading...</div>;
 
 	return (
-		<Box m="4" p="6" bgColor="white">
+		<div className="chat-invitation">
 			{onClose && (
-				<button className="button is-light is-small mb-3" onClick={onClose}>
-				Back
-				</button>
+				<Button className="back-button" onClick={onClose}>
+					Back
+				</Button>
 			)}
 
-			<h1 className="title">Group Invitations</h1>
+			<h1 aria-label="section title">Group Invitations</h1>
 
 			{invitations.length === 0 && <p>No invitations.</p>}
 
@@ -116,6 +116,6 @@ export default function GroupChatInvitations({
 				)}
 			</Box>
 			))}
-		</Box>
+		</div>
 	);
 }

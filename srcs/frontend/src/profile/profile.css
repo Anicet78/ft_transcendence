@@ -75,13 +75,13 @@
 
 .info {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: auto 1fr;
   text-align: left;
-  color: black;
+  color: var(--color-text);
   font-family: var(--font-body);
-  font-size: clamp(1,1rem, 2vw, 1.5rem);
+  font-size: clamp(1,1rem, 2vw, 2rem) !important;
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
   margin: 24px auto;
   padding: 24px;
   gap: 16px;
@@ -119,7 +119,7 @@
 
 /* Category name (bold) */
 .category-name {
-  font-weight: bold;
+  font-weight: 800;
   display: inline-block; /* allows fixed width for alignment */
   width: 150px;
   color: black;
