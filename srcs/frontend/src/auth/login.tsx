@@ -74,8 +74,8 @@ function Login() {
 	return (
 		<div className='login-box'>
 			<div className='social-buttons'>
-				<Button color='primary' isOutlined className='login-button' onClick={handleGoogleLogin} size='large'>Login with Google</Button>
-				<Button color='primary' isOutlined className='login-button' onClick={handle42Login} size='large'>Login with 42</Button>
+				<Button color='primary' className='login-button' onClick={handleGoogleLogin} size='large'>Login with Google</Button>
+				<Button color='primary' className='login-button' onClick={handle42Login} size='large'>Login with 42</Button>
 			</div>
 			<br />
 			<form onSubmit={loginSubmit}>
@@ -100,16 +100,16 @@ function Login() {
 						</span>
 					</p>
 				</div>
-				<Button type="button" color="primary" isOutlined className="submit-wrapper" onClick={onForgot}>Forgot Password</Button>
+				<Button type="button" color="primary" className="submit-wrapper" onClick={onForgot}>Forgot Password</Button>
 				{loginMutation.isError && (
 					<div style={{ color: 'red' }}>
 						{/* this part only show 'Error:' when nginx isn't running */}
 						Error : {loginMutation.error instanceof Error ? loginMutation.error.message : 'Unknown'}
 					</div>
 				)}
-				<Button type="submit" color="primary" isOutlined size='large'>{loginMutation.isPending ? 'Loading...' : 'Sign in'}</Button>
+				<Button type="submit" color="primary" size='large'>{loginMutation.isPending ? 'Loading...' : 'Sign in'}</Button>
 			</form>
-			<NavLink to="/" className="button is-primary is-medium is-outlined">Back to home</NavLink>
+			<NavLink to="/" className="button is-primary is-medium">Back to home</NavLink>
 		</div>
 	)
 }

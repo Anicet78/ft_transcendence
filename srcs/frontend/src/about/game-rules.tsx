@@ -48,8 +48,6 @@ const GameRules = () => {
 
 			<p>Level up every 20xp</p>
 
-			<NavLink to="/" className="button is-medium home-button">Back to home</NavLink>
-				<p><span>SPACE</span> - attack</p>
 			</div>
 			<NavLink to="/" className="button is-large home-button">Back to home</NavLink>
 		</div>

@@ -1,8 +1,11 @@
 .update-container {
 	width: 90%; /* use most of the screen width */
 	max-width: 700px; /* controls overall box width */
-	border-radius: 30px; /* rounded borders */
+	border-radius: 16px; /* rounded borders */
 	background-color: var(--color-bg);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid rgba(45, 212, 191, 0.12);
 	display: flex;
 	flex-direction: column; /* stack children vertically */
 	justify-content: center; /* vertical centering */
@@ -20,7 +23,7 @@
 	font-size: clamp(1.5rem, 2vw, 2rem);
 	margin-bottom: 6px;
 	display: inline-block;
-	color: black;
+	color: var(--color-primary-light);
 }
 
 .update-container form {
@@ -36,7 +39,7 @@
 .update-container input, select {
 	background-color: var(--color-primary-dark2) !important;
 	color: var(--color-primary-light) !important;
-	border: 2px solid var(--color-primary-dark0) !important;
+	border: 1px solid var(--color-primary-dark0) !important;
 }
 
 .update-container .input::placeholder {
@@ -46,24 +49,33 @@
 .update-container .button {
 	font-family: var(--font-button-large) !important;
 	font-size: clamp(1rem, 1.5vw, 1.5rem);
-	color:var(--color-primary-dark2) !important;
-	background-color: var(--color-primary-light);
-	border: 2px solid var(--color-primary-dark0) !important;
+	color: var(--color-primary) !important;
+	background-color: rgba(45, 212, 191, 0.1);
+	border: 1px solid rgba(45, 212, 191, 0.25) !important;
 	border-radius: var(--radius-md);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	transition: all 0.2s ease;
+}
+
+.update-container .button:hover {
+	color: #fff !important;
+	background-color: rgba(45, 212, 191, 0.25) !important;
+	border-color: rgba(45, 212, 191, 0.4) !important;
 }
 
 /* update avatar button */
 .update-container .material-button-root {
 	color:var(--color-primary-light) !important;
 	background-color: var(--color-primary-dark2) !important;
-	border: 3px solid var(--color-primary-dark0) !important;
+	border: 1px solid var(--color-primary-dark0) !important;
 	font-family: var(--font-button-large);
 	font-size: clamp(1rem, 1.5vw, 1.5rem);
 }
 
 .update-container input:focus, select:focus {
 	outline: none;
-	border: 2px solid var(--color-primary-dark2) !important;
+	border: 1px solid var(--color-primary-dark2) !important;
 	background-color: var(--color-primary-light) !important;
 	color: var(--color-primary-dark1) !important;
 }
@@ -74,6 +86,9 @@
 	width: 100%;
 	max-width: 700px;
 	background-color: var(--color-bg);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid rgba(45, 212, 191, 0.12);
 	border-radius: 12px;
 	height: 300px;
 	justify-content: center;
@@ -92,8 +107,18 @@
 	font-family: var(--font-button-large) !important;
 	font-size: clamp(1rem, 2.5vw, 2rem);
 	color: var(--color-primary) !important;
-	border-color: var(--color-primary) !important;
+	background-color: rgba(45, 212, 191, 0.1) !important;
+	border: 1px solid rgba(45, 212, 191, 0.25) !important;
 	border-radius: var(--radius-md);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	transition: all 0.2s ease;
+}
+
+.navlink-button:hover {
+	color: #fff !important;
+	background-color: rgba(45, 212, 191, 0.25) !important;
+	border-color: rgba(45, 212, 191, 0.4) !important;
 }
 
 @media (max-width: 480px) {

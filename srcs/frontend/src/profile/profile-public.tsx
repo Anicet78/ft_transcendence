@@ -104,10 +104,6 @@ const ProfilePublic = () => {
 										Remove friend
 									</Button>
 								</div>
-								<div className="button-row">
-									<Button aria-label='join button' size='large' className='profile-button'>Join</Button>
-									<Button aria-label='spectate button' size='large' className='profile-button'>Spectate</Button>
-								</div>
 							</div>}
 						{friendshipStatus === 'received' &&
 							<div className="button-row">

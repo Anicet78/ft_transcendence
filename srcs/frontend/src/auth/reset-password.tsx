@@ -83,7 +83,7 @@ function ResetPassword() {
 					<InputPassword placeholder="Confirm password" register={register("confirmPassword")} error={errors.confirmPassword} watchValue={confirmPassword} />
 				</div>
 				<div className='bottom'>
-					<Button type="submit" color="primary" isOutlined size='large' className="submit-wrapper">{mutation.isPending ? 'Reseting...' : 'Reset password'}</Button>
+					<Button type="submit" color="primary" size='large' className="submit-wrapper">{mutation.isPending ? 'Reseting...' : 'Reset password'}</Button>
 				</div>
 			</form>
 		</div>

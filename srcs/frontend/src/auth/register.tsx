@@ -107,8 +107,8 @@ function Register() {
 	return (
 		<div className="register-box">
 			<div className='social-buttons'>
-				<Button color='primary' isOutlined className='login-button' onClick={handleGoogleLogin} size='large'>Login with Google</Button>
-				<Button color='primary' isOutlined className='login-button' onClick={handle42Login} size='large'>Login with 42</Button>
+				<Button color='primary' className='login-button' onClick={handleGoogleLogin} size='large'>Login with Google</Button>
+				<Button color='primary' className='login-button' onClick={handle42Login} size='large'>Login with 42</Button>
 			</div>
 			<br />
 			<form onSubmit={handleSubmit(onSubmit)}>
@@ -123,10 +123,10 @@ function Register() {
 				</div>
 				<div className='bottom'>
 					<SelectRegion placeholder="Select Region" options={regions} register={register("region")} error={errors.region} />
-					<Button type="submit" color="primary" isOutlined size='large'>{mutation.isPending ? 'Registering...' : 'Sign up'}</Button>
+					<Button type="submit" color="primary" size='large'>{mutation.isPending ? 'Registering...' : 'Sign up'}</Button>
 				</div>
 			</form>
-			<NavLink to="/" className="button is-primary is-medium is-outlined">Back to home</NavLink>
+			<NavLink to="/" className="button is-primary is-medium">Back to home</NavLink>
 		</div>
 	)
 }

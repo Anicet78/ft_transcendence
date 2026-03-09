@@ -31,12 +31,20 @@
 }
 
 .banner-home-button {
-  color: var(--color-text) !important;
-  background-color: var(--color-primary) !important;
-  border: none !important;
+  color: var(--color-primary) !important;
+  background-color: rgba(45, 212, 191, 0.12) !important;
+  border: 1px solid rgba(45, 212, 191, 0.25) !important;
   font-family: var(--font-body);
   font-size: var(--fs-md2) !important;
   padding: 8px 12px !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+.banner-home-button:hover {
+  background-color: rgba(45, 212, 191, 0.25) !important;
+  color: #fff !important;
 }
 
 /* ============================= */
@@ -93,6 +101,23 @@
   font-family: var(--font-body);
 }
 
+/* Profile button (NavLink) */
+.navbar-end > a.button.is-primary {
+  background-color: rgba(45, 212, 191, 0.12) !important;
+  border: 1px solid rgba(45, 212, 191, 0.25) !important;
+  color: var(--color-primary) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: none !important;
+}
+
+.navbar-end > a.button.is-primary:hover,
+.navbar-end > a.button.is-primary:focus {
+  background-color: rgba(45, 212, 191, 0.25) !important;
+  color: #fff !important;
+  border: 1px solid rgba(45, 212, 191, 0.4) !important;
+}
+
 .profile-dropdown {
   position: relative;
   display: inline-flex;
@@ -101,6 +126,17 @@
 
 .profile-dropdown .button {
 	font-size: var(--fs-lg);
+	background-color: rgba(45, 212, 191, 0.1) !important;
+	border: 1px solid rgba(45, 212, 191, 0.2) !important;
+	color: var(--color-primary) !important;
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+}
+
+.profile-dropdown .button:hover {
+	background-color: rgba(45, 212, 191, 0.25) !important;
+	color: #fff !important;
+	border-color: rgba(45, 212, 191, 0.4) !important;
 }
 
 .navbar-end > .navbar-item.profile-dropdown {
@@ -131,18 +167,28 @@
 }
 
 .dropdown-full {
- background-color: black !important;
+ background: rgba(15, 23, 42, 0.85) !important;
+ backdrop-filter: blur(20px);
+ -webkit-backdrop-filter: blur(20px);
+ border: 1px solid rgba(45, 212, 191, 0.15);
+ border-radius: 8px;
 }
 
 .dropdown-content {
   color: var(--color-primary) !important;
-  background-color: black !important;
+  background: rgba(15, 23, 42, 0.85) !important;
   font-weight: 600;
   font-size: var(--fs-md);
+  border-radius: 8px;
+}
+
+.dropdown-content a:hover {
+  background-color: rgba(45, 212, 191, 0.15) !important;
+  color: #fff !important;
 }
 
 .dropdown-divider {
-	background-color: var(--color-primary) !important;
+	background-color: rgba(45, 212, 191, 0.2) !important;
 }
 
 /* ============================= */

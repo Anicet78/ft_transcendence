@@ -21,6 +21,9 @@
   margin: 0 auto;
   max-width: 900px;
   background-color: var(--color-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(45, 212, 191, 0.12);
   border-radius: 12px;
   padding: clamp(0.8rem, 1vw, 1.3rem) !important;
   box-sizing: border-box; /* ensure padding doesn't exceed width */
@@ -31,7 +34,7 @@
   display: flex;
   flex-direction: column;
   align-items: center !important;
-  color: black;
+  color: var(--color-text);
   margin: 0 auto;
   width: 90% !important;
   max-width: 800px;
@@ -49,13 +52,16 @@
   gap: var(--space-md);
   padding: clamp(0.5rem, 1vw, 1rem) !important;
   box-sizing: border-box; /* ensure padding doesn't exceed width */
-  background-color: var(--color-bg-light) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(45, 212, 191, 0.1);
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   width: 100%;       /* take full width of parent */
   max-width: 800px;
   font-family: var(--font-body);
-  color: black;
+  color: var(--color-text);
 }
 
 /* Avatar image */
@@ -87,9 +93,9 @@
 .interaction_btn, .view_profile_btn {
   font-family: var(--font-body);
   font-weight: bold !important;
-  background-color: white !important;
-  color: var(--color-primary-dark2) !important;
-  border: 1px solid var(--color-primary-dark0) !important;
+  background-color: rgba(45, 212, 191, 0.1) !important;
+  color: var(--color-primary) !important;
+  border: 1px solid rgba(45, 212, 191, 0.25) !important;
   border-radius: 4px;
   padding: 0.35rem;
   cursor: pointer;
@@ -99,12 +105,15 @@
   flex-shrink: 0;      /* prevent shrinking */
   margin: 2px;
   font-size: clamp(0.8rem, 1vw, 1rem) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
 }
 
 .interaction_btn:hover, .view_profile_btn:hover {
-  background-color: var(--color-hover) !important;
-  color: white !important;
-  border: 2px solid var(--color-primary) !important;
+  background-color: rgba(45, 212, 191, 0.25) !important;
+  color: #fff !important;
+  border: 1px solid rgba(45, 212, 191, 0.4) !important;
 }
 
 .bottom-button {
@@ -117,14 +126,19 @@
 .request-button, .myprofile-button, .friendlist-button {
   font-family: var(--font-button-large) !important;
   font-size: clamp(1rem, 2vw, 2rem);
-  background-color: var(--color-primary-light) !important;
-  border: 2px solid var(--color-primary-dark0) !important;
+  background-color: rgba(45, 212, 191, 0.1) !important;
+  color: var(--color-primary) !important;
+  border: 1px solid rgba(45, 212, 191, 0.25) !important;
   border-radius: var(--radius-md);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
 }
 
 .request-button:hover, .myprofile-button:hover, .friendlist-button:hover {
-  color: var(--color-primary-light);
-  background-color: var(--color-primary-dark0) !important;
+  color: #fff !important;
+  background-color: rgba(45, 212, 191, 0.25) !important;
+  border-color: rgba(45, 212, 191, 0.4) !important;
 }
 
 @media (max-width: 1000px) {
@@ -178,4 +192,3 @@
     gap: 0.5rem;
   }
 }
-

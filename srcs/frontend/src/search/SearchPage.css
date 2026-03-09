@@ -20,6 +20,9 @@
   margin: 0 auto;
   max-width: 1000px;
   background-color: var(--color-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(45, 212, 191, 0.12);
   border-radius: 12px;
   padding: clamp(0.1rem, 1.3vw, 1.3rem) !important;
   overflow-x: visible; /* no scroll needed on desktop */
@@ -53,11 +56,15 @@
   justify-content: flex-start; /* items start from left */
   padding: 0.75rem 1rem; /* add some spacing inside each item */
   width: 100%; /* make each item full width of container */
-  background-color: var(--color-bg-light);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(45, 212, 191, 0.1);
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   box-sizing: border-box; /* ensures padding is included in width */
   gap: var(--space-md); /* spacing between avatar, username, button */
+  color: var(--color-text);
 }
 
 .user_avatar {
@@ -83,16 +90,21 @@
 .view_profile_btn {
   display: inline-block;
   padding: 0.35rem 0.75rem;
-  background-color: black;
-  color: white;
+  background-color: rgba(45, 212, 191, 0.1);
+  color: var(--color-primary);
   text-decoration: none;
+  border: 1px solid rgba(45, 212, 191, 0.25);
   border-radius: 4px;
   font-size: 0.9rem;
-  transition: background-color 0.2s;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
 }
 
 .view_profile_btn:hover {
-  background-color: #333;
+  background-color: rgba(45, 212, 191, 0.25);
+  color: #fff;
+  border-color: rgba(45, 212, 191, 0.4);
 }
 
 .pagination {
@@ -105,25 +117,32 @@
 
 .pagination span {
   font-weight: bold;
+  color: var(--color-text);
 }
 
 .pagination button {
   padding: 0.4rem 0.8rem;
-  border: none;
+  border: 1px solid rgba(45, 212, 191, 0.25);
   border-radius: 4px;
-  background-color: black;
-  color: white;
+  background-color: rgba(45, 212, 191, 0.1);
+  color: var(--color-primary);
   cursor: pointer;
-  transition: background-color 0.2s;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
 }
 
 .pagination button:disabled {
-  background-color: #7f7f7f;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #64748b;
+  border-color: rgba(255, 255, 255, 0.08);
   cursor: not-allowed;
 }
 
 .pagination button:hover:not(:disabled) {
-  background-color: #333;
+  background-color: rgba(45, 212, 191, 0.25);
+  color: #fff;
+  border-color: rgba(45, 212, 191, 0.4);
 }
 
 @media (max-width: 780px) {
