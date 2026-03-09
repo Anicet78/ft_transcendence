@@ -2,7 +2,7 @@ import { Box, Button } from "@allxsmith/bestax-bulma";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "../../auth/AuthContext";
 
-type Message = {
+export type Message = {
 	messageId: string;
 	chatId: string;
 	userId: string;
@@ -23,6 +23,8 @@ type Message = {
 type MessageListProps = {
 	messages: Message[];
 	readState?: Record<string, string>;
+	chatType?: string | null;
+	memberCount: number,
 	role: string | null;
 	permissions: Record<string, boolean>;
 	onEdit: (data: { messageId: string; content: string }) => void;
@@ -78,6 +80,8 @@ export function MessageList({
 	messages,
 	// role,
 	readState,
+	chatType,
+	memberCount = 0,
 	permissions,
 	onEdit,
 	onDelete,
@@ -88,8 +92,10 @@ export function MessageList({
 	const { user } = useAuth();
 	const navigate = useNavigate();
 
-	if (!messages || messages.length === 0)
+	if (!messages || messages.length === 0) {
+
 		return null;
+	}
 
 	const readersByMessage = buildReadersByMessage(messages, readState);
 
@@ -243,15 +249,19 @@ export function MessageList({
 					)}
 
 
-					{/* READ RECEIPTS */}
-					{read && (
+					{/* READ RECEIPTS - PRIVATE*/}
+					{chatType === "private" && read && (
 						<span style={{ marginLeft: 8, color: "#4fc3f7" }}>
 							✓✓
 						</span>
 					)}
-					{msg.userId === user?.id && readers.length > 0 && (
+
+					{/* READ RECEIPTS - GROUP CHAT*/}
+					{chatType === "group" && msg.userId === user?.id && readers.length > 0 && (
 						<div style={{ fontSize: "0.75rem", opacity: 0.7 }}>
-							Seen by {readers.length}
+							{readers.length === memberCount - 1
+							? "✓ Read by everyone"
+							: `Seen by ${readers.length}`}
 						</div>
 					)}
 					</div>

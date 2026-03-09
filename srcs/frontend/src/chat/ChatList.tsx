@@ -5,8 +5,20 @@ import api from '../serverApi';
 import { Button} from '@allxsmith/bestax-bulma';
 import { useNavigate } from 'react-router';
 import { useChatListSocket } from './hooks/useChatListSocket';
+import { useAuth } from '../auth/AuthContext';
 
 type ChatListResponseType = GetResponse<"/chat/list", "get">;
+
+//you need to create a chat model, and a member model
+function chatNameToDisplay(chat: any, userId?: string) {
+	if (chat.chatType === "private") {
+		const other = chat.members.find(
+			(m: any) => m.user.appUserId !== userId
+		);
+		return other?.user?.username || "Private chat";
+	}
+	return chat.chatName || "Group chat";
+}
 
 const ChatList = ({
 	onSelectChat, 
@@ -18,6 +30,8 @@ const ChatList = ({
 }) => {
 	
 	const navigate = useNavigate();
+	const user = useAuth();
+
 	useChatListSocket();
 
 	const { data, isLoading, isError, error } = useQuery({
@@ -60,24 +74,27 @@ const ChatList = ({
 			{data.map(chat => (
 			<div key={chat.chatId} className="chat-box">
 				<h2 className="subtitle">
-				{chat.chatName || (chat.chatType === "private" ? "Private chat" : "Group chat")}
-				</h2>
+						<a
+							className="has-text-dark"
+							style={{ cursor: "pointer" }}
+							onClick={() => {
+								if (onSelectChat)
+									onSelectChat(chat.chatId);
+								else
+									navigate(`/chat/${chat.chatId}/info`);
+							}}
+						>
+							{chatNameToDisplay(chat, user?.user?.id)}
+						</a>
+					</h2>
 
-				<p>Type: {chat.chatType}</p>
-				<p>Members: {chat.members.length}</p>
-
-				<Button
-					className="chat-button"
-					onClick={() => {
-						if (onSelectChat)
-							onSelectChat(chat.chatId);
-						else
-							navigate(`/chat/${chat.chatId}/info`);
-					}}
-				>
-					Open chat
-				</Button>
-			</div>
+					{/* Chat metadata */}
+					<p style={{ fontSize: "0.85rem", opacity: 0.7 }}>
+						{chat.chatType === "group" && (
+							<>{chat.members.length} members</>
+						)}
+					</p>
+				</div>
 			))}
 		</div>
 		);

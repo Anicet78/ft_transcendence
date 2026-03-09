@@ -26,8 +26,28 @@ export default function GroupChatCreation({
 
 			return friendships.map((f: any) =>
 				f.sender.appUserId === user?.id ? f.receiver : f.sender);
-			}
-		});
+		}
+	});
+
+		const groupChatInput = () => {
+
+			const trimmed = name.trim();
+
+			if (!trimmed)
+				return toast({ title: "Group name required", type: "is-warning" });
+
+			if (trimmed.length < 3)
+				return toast({ title: "Name too short", type: "is-warning" });
+
+			if (selected.length < 2)
+				return toast({ title: "Select at least 2 friends", type: "is-warning" });
+
+			if (createGroupMutation.isPending)
+				return <div>Creating group chat...</div>;
+
+			createGroupMutation.mutate();
+		};
+
 
 	const createGroupMutation = useMutation({
 		mutationFn: async () => {
@@ -91,7 +111,8 @@ export default function GroupChatCreation({
 
 			<Button
 				className="group-chat-btn"
-				onClick={() => createGroupMutation.mutate()}
+				onClickCapture={ groupChatInput}
+				//</Box>onClick={() => createGroupMutation.mutate()}
 			>
 				Create Group Chat
 			</Button>

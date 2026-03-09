@@ -2,9 +2,10 @@ import { createContext, useContext, useEffect, useState } from "react";
 import type { GetResponse } from "../types/GetType";
 import { useSocket } from "../socket/SocketContext";
 import { useAuth } from "../auth/AuthContext";
-import api from "../serverApi";
+// import api from "../serverApi";
 import toast from "../Notifications";
 import { useRoom } from "../home/RoomContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 type ChatInfoResponse = GetResponse<"/chat/{chatId}/info", "get">;
 
@@ -24,6 +25,7 @@ const ChatContext = createContext<ChatContextValue | null>(null);
 
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
+	const queryClient = useQueryClient();
 	const socket = useSocket();
 	const { user } = useAuth();
 	const { room } = useRoom()!;
@@ -35,19 +37,20 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 	const role = chat?.members.find(mbr => mbr.user.appUserId === user?.id)?.role ?? null;
 
 	const permissions = {
-		canModerate: ["owner", "admin", "moderator"].includes(role ?? ""),
 		canInvite: ["owner", "admin", "moderator", "writer", "member"].includes(role ?? ""),
+		canWrite: ["owner", "admin", "moderator", "writer"].includes(role ?? ""),
+		canModerate: ["owner", "admin", "moderator"].includes(role ?? ""),
 		canBan: ["owner", "admin"].includes(role ?? ""),
 		canKick: ["owner", "admin"].includes(role ?? ""),
-		canRename: ["owner", "admin"].includes(role ?? ""),
-		canChangeRoles: ["owner", "admin"].includes(role ?? "")
+		canChangeRoles: ["owner", "admin"].includes(role ?? ""),
+		canRename: ["owner"].includes(role ?? "")
 	}
 
 	const joinChat = async(chatId: string) => {
 
 		//GET CHAT INFO
-		const res = await api.get<ChatInfoResponse>(`/chat/${chatId}/info`);
-		setChat(res.data);
+		//const res = await api.get<ChatInfoResponse>(`/chat/${chatId}/info`);
+		//setChat(res.data);
 
 		if (socket)
 			socket.emit("join_chat", { chatId });
@@ -61,6 +64,24 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 		//setTypingUsers({});
 		setIsTyping(false);
 	};
+
+	useEffect(() => {
+
+		const unsubscribe = queryClient.getQueryCache().subscribe(event => {
+
+			if (event?.query?.queryKey?.[0] !== "chat-info")
+				return;
+
+			const data = event.query.state.data;
+
+			if (data)
+				setChat(data);
+
+		});
+
+		return unsubscribe;
+
+	}, [queryClient]);
 
 	useEffect(() => {
 

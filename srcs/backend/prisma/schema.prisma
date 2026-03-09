@@ -44,7 +44,6 @@ model AppUser {
   refreshTokens                                         RefreshToken[]   @relation("UserToken")
   rolesGiven                                            UserRole[]       @relation("UserRoleAttributedBy")
   rolesReceived                                         UserRole[]       @relation("UserRoleAttributedTo")
-  //chatReceipt                                           ChatReceipt[]
   ChatState                                             ChatReadState[]
 
   @@map("app_user")
@@ -155,7 +154,6 @@ model Chat {
   messages    ChatMessage[]
   roles       ChatRole[]
   privateChat PrivateChat[]
-  //reads       ChatReceipt[]
   ChatState   ChatReadState[]
 
 
@@ -225,7 +223,6 @@ model ChatMessage {
   chat        Chat           @relation(fields: [chatId], references: [chatId], onDelete: NoAction, onUpdate: NoAction)
   moderator   AppUser?       @relation("chat_message_moderated_byToapp_user", fields: [moderatedBy], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
   author      AppUser        @relation("chat_message_user_idToapp_user", fields: [userId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
-  //reads       ChatReceipt[]
   ChatState   ChatReadState[]
 
 

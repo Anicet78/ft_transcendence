@@ -11,7 +11,7 @@ import { useChatSocket } from "../hooks/useChatSocket";
 export function ChatRoom({ chatId }: {chatId: string}) {
 
 	useChatSocket(chatId);
-	const {permissions, role, isTyping} = useChat();
+	const {chat, permissions, role, isTyping} = useChat();
 	const {messages} = useChatMessages(chatId);
 	const mutations = useMessagesMutations(chatId);
 	const bottomRef = useRef<HTMLDivElement>(null);
@@ -58,6 +58,8 @@ export function ChatRoom({ chatId }: {chatId: string}) {
 				<MessageList
 					messages={messages}
 					readState={readState}
+					chatType={chat?.chatType}
+					memberCount={chat?.members?.length ?? 0}
 					role={role}
 					permissions={permissions}
 					onEdit={mutations.editMessageMutation.mutate}
@@ -72,10 +74,24 @@ export function ChatRoom({ chatId }: {chatId: string}) {
 			{/* <TypingIndicator typingUsers={typingUsers} /> */}
 			<TypingIndicator isTyping={isTyping} />
 
-			<ChatInput
-				chatId={chatId}
-				onSend={mutations.sendMessageMutation.mutate}
-			/>
+			{/* {permissions.canWrite && (
+				<ChatInput
+					chatId={chatId}
+					onSend={mutations.sendMessageMutation.mutate}
+				/>
+			)} */}
+			{permissions.canWrite ? (
+				<ChatInput
+					chatId={chatId}
+					onSend={mutations.sendMessageMutation.mutate}
+					/>
+				) : (
+				<p style={{ opacity: 0.6 }}>
+					You don't have permission to write in this chat.
+				</p>
+			)}
 		</>
 	);
 }
+
+

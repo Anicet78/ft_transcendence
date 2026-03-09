@@ -113,7 +113,8 @@ export async function sessionPlayerResultService(playerResult: sessionPlayerResu
 			totalLoses: true,
 			totalEnemiesKilled: true,
 			totalXp: true,
-			bestTime: true
+			bestTime: true,
+			level: true
 		}
 	});
 
@@ -125,6 +126,7 @@ export async function sessionPlayerResultService(playerResult: sessionPlayerResu
 
 	let totalWins = gameProfile.totalWins;
 	let totalLoses = gameProfile.totalLoses;
+	let level = gameProfile.level;
 
 	if (playerResult.isWinner === true) {
 		totalWins++;
@@ -135,9 +137,12 @@ export async function sessionPlayerResultService(playerResult: sessionPlayerResu
 
 	const totalEnemiesKilled = gameProfile.totalEnemiesKilled + playerResult.ennemiesKilled;
 	const totalXp = gameProfile.totalXp + playerResult.gainedXp;
+
+	level = totalXp / 20;
+
 	let bestTime = gameProfile.bestTime;
 
-	if (bestTime > playerResult.completionTime) {
+	if (bestTime > playerResult.completionTime || bestTime === 0) {
 		bestTime = playerResult.completionTime;
 	}
 
@@ -149,7 +154,8 @@ export async function sessionPlayerResultService(playerResult: sessionPlayerResu
 			totalLoses: totalLoses,
 			totalEnemiesKilled: totalEnemiesKilled,
 			totalXp: totalXp,
-			bestTime: bestTime
+			bestTime: bestTime,
+			level: level
 		}
 	});
 
