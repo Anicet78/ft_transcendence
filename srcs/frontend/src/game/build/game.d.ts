@@ -4,6 +4,8 @@ export interface GameModule {
 	getMessage(args: {}): void;
 	finishGame(): void;
 	enableInput(args: boolean): void;
+	pauseGame(): void;
+	resumeGame(): void;
 }
 
 declare function createModule(options?: any): Promise<GameModule>;

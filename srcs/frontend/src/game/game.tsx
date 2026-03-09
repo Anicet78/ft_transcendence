@@ -168,6 +168,20 @@ const Game = () => {
 		};
 	}, [Module]);
 
+	useEffect(() =>
+	{
+		const canvas = canvasRef.current;
+		if (!canvas)
+			return;
+
+		const handleContextLost = (e: Event) =>
+		{
+			e.preventDefault();
+		};
+
+		canvas.addEventListener("webglcontextlost", handleContextLost, false);
+		return () => canvas.removeEventListener("webglcontextlost", handleContextLost);
+	}, []);
 
 	useEffect(() =>
 	{
@@ -175,8 +189,24 @@ const Game = () => {
 		return () => window.removeEventListener("beforeunload", cleanupWasm);
 	}, [Module]);
 
+	useEffect(() =>
+	{
+		const handleVisibility = () =>
+		{
+			if (!moduleRef.current)
+				return;
+			if (document.hidden)
+				moduleRef.current.pauseGame?.();
+			else
+				moduleRef.current.resumeGame?.();
+		};
 
-	useEffect(() => {
+		document.addEventListener("visibilitychange", handleVisibility);
+		return () => document.removeEventListener("visibilitychange", handleVisibility);
+	}, []);
+
+	useEffect(() =>
+	{
 
 		if (!gameSocket || !Module || !user || !room) return;
 		gameSocket.onmessage = async (event) => {

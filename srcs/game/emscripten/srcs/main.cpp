@@ -2,27 +2,38 @@
 
 Engine gSdl;
 
+bool	pause = false;
+
 #ifdef __EMSCRIPTEN__
 
 	std::queue<val> msgJson;
 
 
-	void finishGame()
+	void	finishGame()
 	{
 		SDL_EventState(SDL_KEYDOWN, SDL_DISABLE);
 		SDL_EventState(SDL_KEYUP, SDL_DISABLE);
 		emscripten_cancel_main_loop();
 	}
 
-	void getMessage(val obj)
+	void	getMessage(val obj)
 	{
 		msgJson.push(obj);
 		if (msgJson.size() > 7)
 			msgJson.pop();
 	}
 
+	void	resumeGame()
+	{
+		pause = false;
+	}
 
-	void enableInput(bool enable)
+	void	pauseGame()
+	{
+		pause = true;
+	}
+
+	void	enableInput(bool enable)
 	{
 		if (!enable)
 			reset_key();
@@ -41,6 +52,8 @@ Engine gSdl;
 		emscripten::function("getMessage", &getMessage);
 		emscripten::function("finishGame", &finishGame);
 		emscripten::function("enableInput", &enableInput);
+		emscripten::function("resumeGame", &resumeGame);
+		emscripten::function("pauseGame", &pauseGame);
 	}
 #endif
 
@@ -49,6 +62,8 @@ void mainloopE(void *arg)
 	static bool init = false;
 	static double frameTime = gSdl.getActualTime();
 	Game *game = static_cast<Game *>(arg);
+	if (pause)
+		return ;
 	try
 	{
 		parseJson(init, *game);
