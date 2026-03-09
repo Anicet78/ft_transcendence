@@ -1,6 +1,6 @@
 import { Button } from "@allxsmith/bestax-bulma"
 import { NavLink } from "react-router";
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import api, { getAccessToken } from '../serverApi.ts';
 import type { GetResponse } from '../types/GetType.ts'
 import { useAuth } from "../auth/AuthContext.tsx";
@@ -14,6 +14,7 @@ const FriendRequest = () => {
 
 	const { user } = useAuth();
 	const friendRequestMutation = useFriendshipModification();
+	const queryClient = useQueryClient();
 
 	const { data, isLoading, isError, error } = useQuery({
 		queryKey: ['/friends/requests', getAccessToken()],
@@ -21,7 +22,9 @@ const FriendRequest = () => {
 	});
 
 	const handleRequest = (action: actionType, id: string) => {
-		friendRequestMutation.run( action, id);
+		friendRequestMutation.run( action, id, () => {
+			queryClient.invalidateQueries({ queryKey: ["chat-list"] });
+		});
 	};
 
 	if (isLoading) return <div>Loading...</div>;
@@ -36,7 +39,7 @@ const FriendRequest = () => {
 			<ul className="user_list">
 				{userData.map(friend => {
 					const friendUser = friend.sender.appUserId !== user?.id ? friend.sender : friend.receiver;
-					const avatarUrl = friendUser.avatarUrl 
+					const avatarUrl = friendUser.avatarUrl
 						? `https://${window.location.host}/uploads/${friendUser.avatarUrl}`
 						: skull;
 
@@ -67,8 +70,8 @@ const FriendRequest = () => {
 										Cancel request
 									</Button>
 								}
-								
-								<NavLink to={"/profile/" + friendUser.username} className="button view_profile_btn">
+
+								<NavLink to={"/profile/" + friendUser.username} className="view_profile_btn">
 									View Profile
 								</NavLink>
 							</div>
