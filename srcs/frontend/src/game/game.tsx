@@ -80,7 +80,7 @@ const Game = () => {
 						if (path.endsWith('.data')) return `https://${window.location.host}/game/game.data`;
 						return path;
 					},
-					onCppMessage: (obj: Object) => 
+					onCppMessage: (obj: Object) =>
 						{
 							if (gameSocket.readyState === WebSocket.OPEN)
 								gameSocket.send(JSON.stringify(obj))

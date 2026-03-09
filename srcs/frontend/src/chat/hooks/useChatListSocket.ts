@@ -29,12 +29,17 @@ export function useChatListSocket() {
 		socket.on("chat_member_kicked", handleQuitChat);
 		socket.on("chat_disbanded", handleQuitChat);
 		socket.on("chat_created", invalidateChatList);
+		socket.on("blocked", invalidateChatList);
+		socket.on("unblocked", invalidateChatList);
+		socket.on("friendship_notification", invalidateChatList);
 
 		return () => {
 			socket.off("chat_member_quit", handleQuitChat);
 			socket.off("chat_member_kicked", handleQuitChat);
 			socket.off("chat_disbanded", handleQuitChat);
 			socket.off("chat_created", invalidateChatList);//no event for joined ?
+			socket.off("blocked");
+			socket.off("unblocked");
 		};
 
 	}, [socket, queryClient]);

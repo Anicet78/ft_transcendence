@@ -42,7 +42,7 @@ async function createFixedUsers() {
 
 console.log(Object.keys(prisma));
 
-//BLOCKLIST
+// BLOCKLIST
 async function seedBlocks(users) {
   const blocks = [
     [users[0], users[3]], // Nina blocks Julie
@@ -71,8 +71,8 @@ async function seedFriendships(users) {
     [users[5], users[0], "accepted"],
     [users[0], users[6], "accepted"],
     [users[0], users[7], "accepted"],
-	  [users[0], users[8], "waiting"],
-	  [users[4], users[0], "waiting"],
+    [users[0], users[8], "waiting"],
+    [users[4], users[0], "waiting"],
     [users[1], users[3], "accepted"],
     [users[2], users[4], "waiting"],
     [users[3], users[4], "accepted"],
@@ -89,20 +89,33 @@ async function seedFriendships(users) {
   }
 }
 
-// PRIVATE CHATS
+// PRIVATE CHATS — one per accepted friendship, both members get writer role
 async function seedPrivateChats(users) {
-  const pairs = [
-    [users[0], users[1]],
-    [users[3], users[4]],
-  ];
+  // Build a map of userId -> user object for easy lookup
+  const userMap = new Map(users.map((u) => [u.appUserId, u]));
 
-  for (const [u1, u2] of pairs) {
+  // Fetch all accepted friendships seeded just above
+  const acceptedFriendships = await prisma.friendship.findMany({
+    where: { status: "accepted" },
+  });
 
-    // Enforce ordering for the DB constraint
+  for (const friendship of acceptedFriendships) {
+    const u1 = userMap.get(friendship.senderId);
+    const u2 = userMap.get(friendship.receiverId);
+
+    if (!u1 || !u2) continue;
+
+    // Enforce ordering for the DB unique constraint
     const [user1Id, user2Id] =
       u1.appUserId < u2.appUserId
         ? [u1.appUserId, u2.appUserId]
         : [u2.appUserId, u1.appUserId];
+
+    // Skip if a private chat between these two already exists
+    const existing = await prisma.privateChat.findUnique({
+      where: { user1Id_user2Id: { user1Id, user2Id } },
+    });
+    if (existing) continue;
 
     const chat = await prisma.chat.create({
       data: {
@@ -113,6 +126,12 @@ async function seedPrivateChats(users) {
           create: [
             { userId: u1.appUserId },
             { userId: u2.appUserId },
+          ],
+        },
+        roles: {
+          create: [
+            { userId: u1.appUserId, role: chat_role_type.writer, attributedBy: u1.appUserId },
+            { userId: u2.appUserId, role: chat_role_type.writer, attributedBy: u1.appUserId },
           ],
         },
         privateChat: {
@@ -129,7 +148,7 @@ async function seedPrivateChats(users) {
       },
     });
 
-    // Static messages
+    // Seed a few static messages per chat
     await prisma.chatMessage.createMany({
       data: [
         { chatId: chat.chatId, userId: u1.appUserId, content: "Hello!" },
@@ -176,19 +195,8 @@ async function seedGroupChat(users) {
     userId: messageAuthors[i % messageAuthors.length].appUserId,
     content: `Gamers United message #${i + 1}`,
   }));
-    
-  await prisma.chatMessage.createMany({ data: messages }); 
 
-  // // Static messages
-  // await prisma.chatMessage.createMany({
-  //   data: [
-  //     { chatId: chat.chatId, userId: owner.appUserId, content: "Welcome everyone!" },
-  //     { chatId: chat.chatId, userId: admin.appUserId, content: "Glad to be here." },
-  //     { chatId: chat.chatId, userId: moderator.appUserId, content: "Let's keep things clean." },
-  //     { chatId: chat.chatId, userId: writer.appUserId, content: "Ready to play!" },
-  //     { chatId: chat.chatId, userId: member.appUserId, content: "Hi all!" },
-  //   ],
-  // });
+  await prisma.chatMessage.createMany({ data: messages });
 
   // Ban one user (Tom)
   await prisma.chatBan.create({
@@ -269,34 +277,34 @@ async function seedGameSessions(users) {
 
 // MAIN
 async function main() {
-	const adminEmail = "admin@transcendence.com";
-	const adminFirstname = "admin";
-	const adminLastname = "admin";
-	const adminUsername = "admin";
-	const adminPassword = await hashPassword("password123");
+  const adminEmail = "admin@transcendence.com";
+  const adminFirstname = "admin";
+  const adminLastname = "admin";
+  const adminUsername = "admin";
+  const adminPassword = await hashPassword("password123");
 
-	console.log("🌱 Seeding database...");
+  console.log("🌱 Seeding database...");
 
-	await prisma.appUser.upsert({
-		where: { mail: adminEmail },
-		update: {},
-		create: {
-			firstName: adminFirstname,
-			lastName: adminLastname,
-			username: adminUsername,
-			mail: adminEmail,
-			region: "EU",
-			passwordHash: adminPassword,
-			rolesReceived: {
-				create: {
-					role: "admin",
-				}
-			}
-		},
-	});
+  await prisma.appUser.upsert({
+    where: { mail: adminEmail },
+    update: {},
+    create: {
+      firstName: adminFirstname,
+      lastName: adminLastname,
+      username: adminUsername,
+      mail: adminEmail,
+      region: "EU",
+      passwordHash: adminPassword,
+      rolesReceived: {
+        create: {
+          role: "admin",
+        }
+      }
+    },
+  });
 
   const users = await createFixedUsers();
-  console.log(" Users created!");
+  console.log("✅ Users created!");
 
   await prisma.chatReadState.deleteMany();
   await prisma.chatMessage.deleteMany();
@@ -307,19 +315,18 @@ async function main() {
   await prisma.privateChat.deleteMany();
   await prisma.chat.deleteMany();
 
-
   await seedBlocks(users);
-  console.log(" Blocks created!");
+  console.log("✅ Blocks created!");
   await seedFriendships(users);
-  console.log(" Friendships created!");
+  console.log("✅ Friendships created!");
   await seedPrivateChats(users);
-  console.log(" PrivateChats created!");
+  console.log("✅ PrivateChats created!");
   await seedGroupChat(users);
-  console.log(" GroupChat created!");
+  console.log("✅ GroupChat created!");
   await seedGameProfiles(users);
-  console.log(" GameProfiles created!");
+  console.log("✅ GameProfiles created!");
   await seedGameSessions(users);
-  console.log(" GameSessions created!");
+  console.log("✅ GameSessions created!");
 
   console.log("🌱 Seeding complete!");
 }
