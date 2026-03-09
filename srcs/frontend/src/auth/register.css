@@ -72,9 +72,11 @@
 }
 
 .register-box input:focus, select:focus {
-  outline: none;
-  border-color: #00f0f0;
-  background-color: #8c8a8a;
+	background-color: #026354;
+	border: 1.55px solid #013029;
+	color: var(--color-primary-light);
+	font-size: var(--fs-md1);
+	font-family: var(--font-body);
 }
 
 .register-box .bottom {
@@ -120,6 +122,122 @@
 }
 
 .register-box .password-feedback .invalid {
+  color: #f44336;
+}
+
+.resetpwd-box {
+	width: 90%; /* use most of the screen width */
+  max-width: 700px; /* controls overall box width */
+  border-radius: 30px; /* rounded borders */
+  border: 2px solid var(--color-primary);
+  display: flex;
+  flex-direction: column; /* stack children vertically */
+  justify-content: center; /* vertical centering */
+  align-items: center; /* horizontal centering */
+  gap: clamp(1rem, 4vw, 2rem);
+  padding: clamp(1rem, 2vw, 2rem); /* add some spacing between elements and borders */
+  margin: 2rem auto; /* spacing on top/bottom for mobile */
+  box-sizing: border-box; /* Include padding in width */
+  overflow: hidden; /* Prevent children from stick out of the container */
+}
+
+.resetpwd-box h2 {
+	color: var(--color-primary);
+	font-family: var(--font-section-title);
+	font-size: var(--fs-2xl);
+}
+
+.resetpwd-box .button {
+  font-family: var(--font-button-large);
+  margin-top: 20px;
+}
+
+.resetpwd-box form {
+	width: 100%;
+	max-width: 600px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+.resetpwd-box form .form-fields {
+  gap: var(--space-md);
+  width: 100%;
+}
+
+.resetpwd-box label {
+  font-weight: 700;
+  font-family: var(--font-label);
+  font-size: clamp(1.2rem, 2vw, 2rem);
+  margin-bottom: 6px;
+  display: inline-block;
+  color: #00d1b2;
+}
+
+.resetpwd-box input {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--color-primary);
+  background-color: #3f3f3f;
+  color: #eee;
+  font-size: var(--fs-md1);
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.resetpwd-box input::placeholder {
+	color: var(--color-primary);
+}
+
+.resetpwd-box input:focus {
+	background-color: #026354;
+	border: 1.55px solid #013029;
+	color: var(--color-primary-light);
+	font-size: var(--fs-md1);
+	font-family: var(--font-body);
+}
+
+/* Error styles */
+.resetpwd-box .error {
+  border-color: #f44336 !important;
+}
+
+.resetpwd-box .error-message {
+  color: #f44336;
+  font-family: var(--font-body) !important;
+  font-size: var(--fs-md1) !important;
+  font-weight: 600;
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+
+/* Password toggle style */
+.resetpwd-box .toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 38px;
+  font-size: 0.9rem;
+  color: #00f0f0;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 600;
+}
+
+/* Password feedback style */
+.resetpwd-box .password-feedback {
+  margin-top: 4px;
+  color: #00f0f0;
+    font-family: var(--font-body) !important;
+  font-size: var(--fs-sm) !important;
+  font-weight: 600;
+}
+
+.resetpwd-box .password-feedback .valid {
+  color: #4caf50;
+}
+
+.resetpwd-box .password-feedback .invalid {
   color: #f44336;
 }
 

@@ -25,12 +25,12 @@
 
 .rules-box h3 {
 	font-size:clamp(1rem, 2vw, 2rem) !important;
-	color: white;
+	color: var(--color-primary-dark2) !important;
 }
 
 .rules-box p {
 	font-family: var(--font-body);
-	color: white;
+	color: var(--color-primary-dark0);
 	font-size:clamp(0.7rem, 1vw, 1.2rem) !important;
 	gap: 2px;
 }
@@ -40,7 +40,7 @@
 }
 
 .rules-subbox {
-	background-color: black;
+	background-color: var(--color-bg-light);
 	border-radius: 20px;
 	padding: clamp(1rem, 2vw, 2rem);
 	margin: clamp(0.3rem, 1vw, 1rem);
@@ -49,9 +49,9 @@
 .home-button {
 	font-family: var(--font-button-large);
 	font-size: clamp(1rem, 2vw, 2rem);
-	background-color: black;
-	color: white !important;
-	border-color: var(--color-primary) !important;
+	color:var(--color-primary-dark2) !important;
+	background-color: var(--color-primary-light) !important;
+	border: 2px solid var(--color-primary-dark0) !important;
 	margin-top: 2rem;
 }
 

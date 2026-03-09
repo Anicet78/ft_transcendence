@@ -12,7 +12,7 @@ import InputPassword from "../components/InputPassword";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { Box, Button } from "@allxsmith/bestax-bulma";
+import { Button } from "@allxsmith/bestax-bulma";
 
 type ResetType = GetBody<"/auth/reset-password", "post">;
 
@@ -75,21 +75,18 @@ function ResetPassword() {
 	};
 
 	return (
-
-		<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='center' textSize='3' textWeight='bold'>
-			<div className="register-box">
-				<form onSubmit={handleSubmit(onSubmit)}>
-					<span>Enter your new password</span>
-					<div className="form-fields">
-						<InputPassword placeholder="New password" register={register("password")} error={errors.password} watchValue={password} />
-						<InputPassword placeholder="Confirm password" register={register("confirmPassword")} error={errors.confirmPassword} watchValue={confirmPassword} />
-					</div>
-					<div className='bottom'>
-						<Button type="submit" color="primary" isOutlined className="submit-wrapper">{mutation.isPending ? 'Reseting...' : 'Reset password'}</Button>
-					</div>
-				</form>
-			</div>
-		</Box>
+		<div className='resetpwd-box'>
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<h2>Enter your new password</h2>
+				<div className="form-fields">
+					<InputPassword placeholder="New password" register={register("password")} error={errors.password} watchValue={password} />
+					<InputPassword placeholder="Confirm password" register={register("confirmPassword")} error={errors.confirmPassword} watchValue={confirmPassword} />
+				</div>
+				<div className='bottom'>
+					<Button type="submit" color="primary" isOutlined size='large' className="submit-wrapper">{mutation.isPending ? 'Reseting...' : 'Reset password'}</Button>
+				</div>
+			</form>
+		</div>
 	)
 }
 

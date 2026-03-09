@@ -489,6 +489,7 @@
 
 .input-msg .button {
 	background-color: #026354 !important;
+	color: var(--color-primary-light) !important;
 	border: 1.55px solid  #013029;
 	margin: 0 !important;
 }
