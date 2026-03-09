@@ -10,17 +10,17 @@ void	printPortal(int x, int y, Player &player)
 		&& map[y][x - 1] == 'F' && map[y][x + 1] == 'F'
 		&& map[y + 1][x - 1] == 'F' && map[y + 1][x] && map[y + 1][x + 1] == 'F')
 	{
-		Assets::rendMap((x - 1) * tile_s, (y - 1) * tile_s, 541, 1, 1);
-		Assets::rendMap(x * tile_s, (y - 1) * tile_s, 541, 1, 1);
-		Assets::rendMap((x + 1) * tile_s, (y - 1) * tile_s, 541, 1, 1);
+		Assets::rendMap((x - 1) * tile_s, (y - 1) * tile_s, 550, 1, 1);
+		Assets::rendMap(x * tile_s, (y - 1) * tile_s, 550, 1, 1);
+		Assets::rendMap((x + 1) * tile_s, (y - 1) * tile_s, 550, 1, 1);
 
-		Assets::rendMap((x - 1) * tile_s, y * tile_s, 541, 1, 1);
-		Assets::rendMap(x * tile_s, y * tile_s, 541, 1, 1);
-		Assets::rendMap((x + 1) * tile_s, y * tile_s, 541, 1, 1);
+		Assets::rendMap((x - 1) * tile_s, y * tile_s, 550, 1, 1);
+		Assets::rendMap(x * tile_s, y * tile_s, 550, 1, 1);
+		Assets::rendMap((x + 1) * tile_s, y * tile_s, 550, 1, 1);
 
-		Assets::rendMap((x - 1) * tile_s, (y + 1) * tile_s, 541, 1, 1);
-		Assets::rendMap(x * tile_s, (y + 1) * tile_s, 541, 1, 1);
-		Assets::rendMap((x + 1) * tile_s, (y + 1) * tile_s, 541, 1, 1);
+		Assets::rendMap((x - 1) * tile_s, (y + 1) * tile_s, 550, 1, 1);
+		Assets::rendMap(x * tile_s, (y + 1) * tile_s, 550, 1, 1);
+		Assets::rendMap((x + 1) * tile_s, (y + 1) * tile_s, 550, 1, 1);
 
 
 		Assets::rendMap((x - 1) * tile_s, (y - 1) * tile_s, 0, 1, 3);
