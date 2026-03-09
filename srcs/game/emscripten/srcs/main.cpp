@@ -119,6 +119,7 @@ static void	importAssetsAndRoom(void)
 	Assets::importAssets("../assets/sprite/assets.bmp", 16);
 	Assets::importAssets("../assets/sprite/forest/tiles-all.bmp", 32);
 	Assets::importAssets("../assets/sprite/water.bmp", 16);
+	Assets::importAssets("../assets/sprite/forest/Portal.bmp", 32);
 	PlayerAssets::importPlayersAssets(100);
 	Mob::importMobsAssets(100);
 
