@@ -13,7 +13,7 @@ MobRush::~MobRush() {
 
 bool	farEnought(float objetX, float objetY, float farX, float farY)
 {
-	if (std::fabs(farY - objetY) + std::fabs(farX - objetX) > 2.0f)
+	if (std::fabs(farY - objetY) + std::fabs(farX - objetX) > 5.0f)
 		return (true);
 	return (false);
 }
@@ -35,30 +35,26 @@ void	MobRush::createEvent(void) {
 	}
 
 	//fill the room with mobs
-	for (int y = 0; y < maxY; y++)
-	{
-		int maxX = _roomPlan[y].size();
-		for (int x = 0; x < maxX; x++)
-		{
-			//NERFED, TOO HARD
-			if (id >= 4)
-				break ;
-			//----------------
+	int nbr_mob = rand() % 5;
 
-			if (_roomPlan[y][x] == '0' && (rand() % 100) < 2)
+	while (id <= nbr_mob)
+	{
+		int y = rand() % _roomPlan.size();
+		int x = rand() % _roomPlan[y].size();
+
+		if (_roomPlan[y][x] == '0')
+		{
+			for (auto &i : doorPos)
 			{
-				for (auto &i : doorPos)
-				{
-					if (!farEnought(x + 0.5f, y + 0.5f, i.first, i.second))
-						continue;
-				}
-				_mobs.emplace(id, std::make_unique<Mob>(x + 0.5f, y + 0.5f, 3));
-				_mobsId.push_back(id);
-				id++;
+				if (!farEnought(x + 0.5f, y + 0.5f, i.first, i.second))
+					continue;
 			}
+			_mobs.emplace(id, std::make_unique<Mob>(x + 0.5f, y + 0.5f, 3));
+			_mobsId.push_back(id);
+			id++;
 		}
-		_nbrMob = _mobs.size();
 	}
+	_nbrMob = _mobs.size();
 }
 
 void	MobRush::destroyEvent(void) {
