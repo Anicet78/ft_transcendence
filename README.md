@@ -62,6 +62,7 @@ make
 * Documentation
 	* [SDL](https://wiki.libsdl.org/SDL2/CategoryAPIFunction)
 	* [Prisma](https://www.prisma.io/docs/orm)
+	* [Curl](https://curl.se/libcurl/c/allfuncs.html)
 
 * Tutorials
 	* [Beginning Game Programming](https://lazyfoo.net/tutorials/SDL/index.php)
@@ -72,6 +73,7 @@ make
 * Assets
 	* [Dungeon Gathering](https://snowhex.itch.io/dungeon-gathering)
 	* [Basic Forest Tileset](https://schwarnhild.itch.io/basic-forest-tileset-32x32-pixels)
+	* [Pixel Art Top Down](https://cainos.itch.io/pixel-art-top-down-basic)
 	* Itch.io
 	* [Pixilart](https://www.pixilart.com) ⮕ Create pixel-art assets for the game
 
@@ -312,7 +314,8 @@ The database has been designed to maximize unique information sources, with mini
 
 ## Credits
 
-**Thanks to Snowhex and Schwarnhild for their free textures**
+**Thanks to Snowhex, Schwarnhild and Cainos for their free textures**
 
 [Snowhex's dungeon textures](https://snowhex.itch.io/dungeon-gathering)
 [Schwarnhild's forest textures](https://schwarnhild.itch.io/basic-forest-tileset-32x32-pixels)
+[Cainos's grass and stone textures](https://cainos.itch.io/pixel-art-top-down-basic)
