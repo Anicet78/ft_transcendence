@@ -41,11 +41,11 @@ function ResetPassword() {
 	const [searchParams] = useSearchParams();
 	const token = searchParams.get("token");
 
-	// if (!token) {
-	// 	toast({ title: "No token found", message: "Url doesn't contain any token", type: "is-danger" });
-	// 	navigate("/login");
-	// 	return ;
-	// }
+	if (!token) {
+		toast({ title: "No token found", message: "Url doesn't contain any token", type: "is-danger" });
+		navigate("/login");
+		return ;
+	}
 
 	const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({
 		resolver: yupResolver(schema),
