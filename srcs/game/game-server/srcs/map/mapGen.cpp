@@ -62,7 +62,7 @@ quadList Map::chooseRoom(std::string mapName, int lvl)
 		int x = rand() % this->_width;
 		int y = rand() % this->_height;
 
-		while (this->_nodes[y * _width + x]->getRoom() && x == 0 && y == 0)
+		while (this->_nodes[y * _width + x]->getRoom() || (x == 0 && y == 0))
 		{
 			x = rand() % this->_width;
 			y = rand() % this->_height;
