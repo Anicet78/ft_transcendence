@@ -21,14 +21,14 @@ function chatNameToDisplay(chat: any, userId?: string) {
 }
 
 const ChatList = ({
-	onSelectChat, 
+	onSelectChat,
 	onCreateGroup,
 	onShowInvitations
 }: {
 	onSelectChat?: (id: string) => void;
 	onCreateGroup?: () => void; onShowInvitations?: () => void;
 }) => {
-	
+
 	const navigate = useNavigate();
 	const user = useAuth();
 
@@ -72,28 +72,25 @@ const ChatList = ({
 			{data.length === 0 && <p>You have no chats yet.</p>}
 
 			{data.map(chat => (
-			<div key={chat.chatId} className="chat-box">
-				<h2 className="subtitle">
-						<a
-							className="has-text-dark"
-							style={{ cursor: "pointer" }}
-							onClick={() => {
-								if (onSelectChat)
-									onSelectChat(chat.chatId);
-								else
-									navigate(`/chat/${chat.chatId}/info`);
-							}}
-						>
+			<div key={chat.chatId} className="chat-box" style={{ cursor: "pointer" }}
+				onClick={() => {
+					if (onSelectChat)
+						onSelectChat(chat.chatId);
+					else
+						navigate(`/chat/${chat.chatId}/info`);
+				}}>
+					<h2 className="subtitle">
+						<a className="has-text-dark">
 							{chatNameToDisplay(chat, user?.user?.id)}
 						</a>
 					</h2>
 
 					{/* Chat metadata */}
-					<p style={{ fontSize: "0.85rem", opacity: 0.7 }}>
-						{chat.chatType === "group" && (
-							<>{chat.members.length} members</>
-						)}
-					</p>
+					{chat.chatType === "group" && (
+						<p style={{ fontSize: "0.85rem", opacity: 0.7 }}>
+							{chat.members.length} members
+						</p>
+					)}
 				</div>
 			))}
 		</div>
