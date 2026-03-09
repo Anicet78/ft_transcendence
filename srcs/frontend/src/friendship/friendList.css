@@ -35,7 +35,7 @@
   margin: 0 auto;
   width: 90% !important;
   max-width: 800px;
-  gap: 1rem;
+  gap: var(--space-md);
   list-style: none;
   padding: 0;
 }
@@ -44,11 +44,12 @@
 .user_item_card {
   display: grid;
   grid-template-columns: 1fr auto;  /* left: auto width, right: take remaining space */
-  align-items: center;               /* vertical centering */
-  gap: 1rem;
+  align-items: center !important;               /* vertical centering */
+  justify-content: center !important;
+  gap: var(--space-md);
   padding: clamp(0.5rem, 1vw, 1rem) !important;
   box-sizing: border-box; /* ensure padding doesn't exceed width */
-  background-color: #f9f9f9;
+  background-color: var(--color-bg-light) !important;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   width: 100%;       /* take full width of parent */
@@ -68,9 +69,10 @@
 /* Username text */
 .username {
   font-weight: bold;
-  font-size: 1.1rem;
-  color: black;
+  font-size: 1.var(--fs-md1);
+  color: var(--color-text);
   font-family: var(--font-body);
+  margin: 0 auto !important;
 }
 
 /* Buttons container */
@@ -85,44 +87,44 @@
 .interaction_btn, .view_profile_btn {
   font-family: var(--font-body);
   font-weight: bold !important;
-  background-color: black;
-  color: white;
-  border: none;
+  background-color: white !important;
+  color: var(--color-primary-dark2) !important;
+  border: 1px solid var(--color-primary-dark0) !important;
   border-radius: 4px;
   padding: 0.35rem;
-  font-size: 1rem;
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
   min-width: fit-content;
   flex-shrink: 0;      /* prevent shrinking */
   margin: 2px;
-  font-size: clamp(0.8rem, 1vw, 1rem) !important;;
+  font-size: clamp(0.8rem, 1vw, 1rem) !important;
 }
 
 .interaction_btn:hover, .view_profile_btn:hover {
   background-color: var(--color-hover) !important;
-  color: white;
+  color: white !important;
+  border: 2px solid var(--color-primary) !important;
 }
 
 .bottom-button {
   display: grid;
   place-items: center;
-  gap: 1rem;
-  color: white;
+  gap: var(--space-md);
 
 }
 
 .request-button, .myprofile-button, .friendlist-button {
   font-family: var(--font-button-large) !important;
   font-size: clamp(1rem, 2vw, 2rem);
-  border-color: var(--color-primary) !important;
+  background-color: var(--color-primary-light) !important;
+  border: 2px solid var(--color-primary-dark0) !important;
   border-radius: var(--radius-md);
 }
 
 .request-button:hover, .myprofile-button:hover, .friendlist-button:hover {
-  color: white;
-  background-color: var(--color-hover);
+  color: var(--color-primary-light);
+  background-color: var(--color-primary-dark0) !important;
 }
 
 @media (max-width: 1000px) {
@@ -141,6 +143,10 @@
 
   .username {
     flex-grow: 0;
+  }
+
+  .myprofile-button {
+	margin-bottom: 15px;
   }
 }
 

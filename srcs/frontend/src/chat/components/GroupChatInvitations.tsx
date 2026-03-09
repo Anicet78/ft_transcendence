@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../serverApi";
-import { Box, Button } from "@allxsmith/bestax-bulma";
+import { Button } from "@allxsmith/bestax-bulma";
 import { useAuth } from "../../auth/AuthContext";
 import toast from "../../Notifications";
 import { useInvitationSocket } from "../hooks/useInvitationSocket";
@@ -58,7 +58,7 @@ export default function GroupChatInvitations({
 			{invitations.length === 0 && <p>No invitations.</p>}
 
 			{invitations.map((inv: any) => (
-			<Box key={inv.chatInvitationId} className="box" m="2" p="4">
+			<div key={inv.chatInvitationId} className="invitation-box">
 				<p><strong>Group:</strong> {inv.chat.chatName}</p>
 				<p><strong>From:</strong> {inv.sender.username}</p>
 				<p><strong>To:</strong> {inv.receiver.username}</p>
@@ -68,8 +68,8 @@ export default function GroupChatInvitations({
 				{/* RECEIVED INVITATION */}
 				{inv.receiver.appUserId === user?.id && inv.status === "waiting" && (
 					<>
-					<button
-						className="button is-success is-small mt-2 mr-2"
+					<Button
+						className="chat-accept-button"
 						onClick={() =>
 							updateMutation.mutate({
 								invId: inv.chatInvitationId,
@@ -78,10 +78,10 @@ export default function GroupChatInvitations({
 						}
 					>
 						Accept
-					</button>
+					</Button>
 
 					<button
-						className="button is-danger is-small mt-2"
+						className="chat-reject-button"
 						onClick={() =>
 						updateMutation.mutate({
 							invId: inv.chatInvitationId,
@@ -97,12 +97,12 @@ export default function GroupChatInvitations({
 				{/* SENT INVITATION */}
 				{inv.sender.appUserId === user?.id && inv.status === "waiting" && (
 					<>
-					<button className="button is-light is-small mt-2 mr-2" disabled>
+					<Button className="chat-pending-button" disabled>
 						Pending
-					</button>
+					</Button>
 
-					<button
-						className="button is-warning is-small mt-2"
+					<Button
+						className="chat-cancel-button"
 						onClick={() =>
 						updateMutation.mutate({
 							invId: inv.chatInvitationId,
@@ -111,10 +111,10 @@ export default function GroupChatInvitations({
 						}
 					>
 						Cancel
-					</button>
+					</Button>
 					</>
 				)}
-			</Box>
+			</div>
 			))}
 		</div>
 	);

@@ -99,7 +99,7 @@
 
 .public-info {
   text-align: left;
-  color: black;
+  color: var(--color-text);
   font-family: var(--font-body);
   font-size: clamp(1.1rem, 1.2vw, 1.5rem);
   width: 100%;
@@ -115,6 +115,9 @@
 
 .icon-button {
   margin-left: clamp(0.1rem, 1rem , 0.5rem);
+  background-color: var(--color-primary-light) !important;
+  color: var(--color-primary-dark2) !important;
+  border: 1px solid white !important;
 }
 
 /* Category name (bold) */
@@ -128,8 +131,9 @@
 .button.navlink-button {
   font-family: var(--font-button-large) !important;
   font-size: clamp(1.2rem, 2.5vw, 2rem);
-  color: white !important;
-  border-color: var(--color-primary) !important;
+  color: var(--color-primary-dark2) !important;
+  background-color: var(--color-primary-light);
+  border: 2px solid var(--color-primary) !important;
   border-radius: var(--radius-md);
   margin: clamp(1rem, 2.5vw, 2rem);
 }
@@ -159,14 +163,14 @@
   min-width: 140px;     /* optional: make buttons consistent width */
   font-family: var(--font-button-large);
   font-size: clamp(1rem, 2.5vw, 2rem);
-  color: white;
-  background-color: black;
-  border-color: var(--color-primary) !important;
+  color: var(--color-primary-dark2) !important;
+  background-color: var(--color-primary-light);
+  border: 2px solid var(--color-primary) !important;
   border-radius: var(--radius-md);
 }
 
 .button-group .profile-button:hover {
-  color: white !important;
+  color: var(--color-primary-light) !important;
   background-color: var(--color-hover) !important;
 }
 

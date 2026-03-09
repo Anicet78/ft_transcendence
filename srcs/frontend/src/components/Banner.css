@@ -31,8 +31,12 @@
 }
 
 .banner-home-button {
-  color: black !important;
+  color: var(--color-text) !important;
   background-color: var(--color-primary) !important;
+  border: none !important;
+  font-family: var(--font-body);
+  font-size: var(--fs-md2) !important;
+  padding: 8px 12px !important;
 }
 
 /* ============================= */
@@ -86,13 +90,17 @@
   white-space: nowrap;             /* Prevent text from wrapping */
   overflow: hidden;
   text-overflow: ellipsis;         /* Add "..." if text is too long */
-  font-family: var(--font-body)
+  font-family: var(--font-body);
 }
 
 .profile-dropdown {
   position: relative;
   display: inline-flex;
   font-family: var(--font-body);
+}
+
+.profile-dropdown .button {
+	font-size: var(--fs-lg);
 }
 
 .navbar-end > .navbar-item.profile-dropdown {
@@ -128,7 +136,9 @@
 
 .dropdown-content {
   color: var(--color-primary) !important;
-   background-color: black !important;
+  background-color: black !important;
+  font-weight: 600;
+  font-size: var(--fs-md);
 }
 
 .dropdown-divider {
@@ -168,7 +178,7 @@
   }
 
   .navbar-end .button {
-    font-size: 1rem;                 /* Limit button width */
+    font-size: var(--fs-md1);                 /* Limit button width */
     text-align: center;             /* Center text */
   }
 

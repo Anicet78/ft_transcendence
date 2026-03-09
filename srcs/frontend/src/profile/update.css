@@ -30,39 +30,42 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 1rem; /* consistent spacing between inputs */
+	gap: var(--space-md); /* consistent spacing between inputs */
 }
 
-.update-container input {
-	background-color: black;
-	color: white;
+.update-container input, select {
+	background-color: var(--color-primary-dark2) !important;
+	color: var(--color-primary-light) !important;
+	border: 2px solid var(--color-primary-dark0) !important;
 }
 
 .update-container .input::placeholder {
-	color: #a0a0a0;
+	color: var(--color-primary-light);
 }
 
 .update-container .button {
 	font-family: var(--font-button-large) !important;
 	font-size: clamp(1rem, 1.5vw, 1.5rem);
-	color:white !important;
-	border-color: var(--color-primary) !important;
+	color:var(--color-primary-dark2) !important;
+	background-color: var(--color-primary-light);
+	border: 2px solid var(--color-primary-dark0) !important;
 	border-radius: var(--radius-md);
 }
 
+/* update avatar button */
 .update-container .material-button-root {
-	color: white!important;
-	background-color: black !important;
-	border-color: black !important;
-	border-width: 3px !important;
+	color:var(--color-primary-light) !important;
+	background-color: var(--color-primary-dark2) !important;
+	border: 3px solid var(--color-primary-dark0) !important;
 	font-family: var(--font-button-large);
 	font-size: clamp(1rem, 1.5vw, 1.5rem);
 }
 
 .update-container input:focus, select:focus {
 	outline: none;
-	border-color: #00f0f0;
-	background-color: #333;
+	border: 2px solid var(--color-primary-dark2) !important;
+	background-color: var(--color-primary-light) !important;
+	color: var(--color-primary-dark1) !important;
 }
 
 .update-box {

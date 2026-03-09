@@ -6,7 +6,7 @@ export const PlayerDropdown = ({ player, kickFn, hostFn, isHost, isSelf }) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
-		<div key={player.username}>
+		<div key={player.username} className="player-card">
 			<p onClick={() => setIsOpen(!isOpen)}>
 				{player.username}
 			</p>

@@ -12,12 +12,10 @@
 :root {
 	/* Brand */
 	--color-primary: #00d1b2;
-	--color-primary-dark: #027c6a;
 	--color-primary-light: #a9fcef;
+	--color-primary-dark0: #027c6a;
+	--color-primary-dark1: #026354;
 	--color-primary-dark2: #013f36;
-
-	/* Banner */
-	--banner-color-bg: #3D3C3C;
 
 	/* Footer */
 	--footer-color-bg: #282828;
@@ -40,6 +38,7 @@
 	--color-delete-txt: #4f021e;
 	--color-delete-bg-light: #fc377f;
 	--color-delete-txt-light: #680328;
+	--color-delete-txt-light2: #fcd1e1;
 	--color-invite-bg: #008afc;
 	--color-invite-txt: #0a0554;
 	--color-invite-bd: #1204db;
@@ -66,7 +65,8 @@
 	/* Typography scale */
 	--fs-xs: 0.75rem;
 	--fs-sm: 0.875rem;
-	--fs-md: 1rem;
+	--fs-md1: 1rem;
+	--fs-md2: 1.2rem;
 	--fs-lg: 1.5rem;
 	--fs-xl: 2rem;
 	--fs-2xl: 3rem;

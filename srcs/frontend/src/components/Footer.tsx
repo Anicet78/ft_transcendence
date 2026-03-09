@@ -19,12 +19,12 @@ const MyFooter = () => {
 				<div className='parchment-text'>
 					<Content textAlign="centered" style={{marginTop: 'auto'}}>
 						<p>
-						<strong>DungeonNoDragon</strong> a transcendence project by{' '}
-						<strong><a href="">agruet</a></strong>{', '}
-						<strong><a href="">jumichel</a></strong>{', '}
-						<strong><a href="">mprokosc</a></strong>{', '}
-						<strong><a href="">ndabbous</a></strong>{', '}
-						<strong><a href="">tpinton</a></strong>.
+						<span>DungeonNoDragon</span> a transcendence project by{' '}
+						<span><a href="">agruet</a></span>{', '}
+						<span><a href="">jumichel</a></span>{', '}
+						<span><a href="">mprokosc</a></span>{', '}
+						<span><a href="">ndabbous</a></span>{', '}
+						<span><a href="">tpinton</a></span>.
 						</p>
 					</Content>
 					<Content textAlign="centered">

@@ -31,7 +31,7 @@
   max-width: 900px;
 
   /* Darker teal background */
-  background: rgba(0, 51, 45, 0.85);  /* deep dark teal with opacity */
+  background: var(--color-primary-dark0);  /* deep dark teal with opacity */
 
   /* Stronger shadow with teal tint */
   box-shadow:
@@ -47,14 +47,14 @@
 
 .game-room h2 {
 	font-family: var(--font-section-title);
-	font-size:clamp(1.2rem, 4vw, 4rem);
-	color: white;
+	font-size:clamp(1.2rem, 4vw, 4rem) !important;
+	color: white !important;
 }
 
 .game-room .game-rules-link {
 	font-family: var(--font-section-title);
-	font-size:clamp(1rem, 2vw, 2rem);
-	color: white;
+	font-size:clamp(1rem, 2vw, 2rem) !important;
+	color: white !important;
 }
 
 /* ============================= */
@@ -69,6 +69,13 @@
 	width: 100%;
 }
 
+.player-card {
+	display: flex;
+	flex-direction: column;
+	justify-content: center !important;
+	align-items: center !important;
+}
+
 /* Arcane player cards */
 .room-players > * {
 	background: linear-gradient(145deg, #004c49, #003532) !important;
@@ -77,8 +84,10 @@
 
 	border: 1px solid rgba(0, 199, 177, 0.4) !important;
 
-	color: #dbe6ff;
-
+	color: var(--color-primary-light);
+	font-family: var(--font-body) !important;
+	font-size: var(--fs-md2) !important;
+	font-weight: 600;
 	transition: all 0.2s ease-in-out;
 }
 
@@ -97,12 +106,15 @@
 	display: flex !important;
 	flex-direction: row !important;
 	align-items: center !important;
+	justify-content: center !important;
 	gap: clamp(0.5rem, 1vw, 0.75rem) !important;
 }
 
 .player-button, .kick-button, .host-button {
 	color: white !important;
 	border: 1px solid rgba(0, 199, 177, 0.4) !important;
+	align-self: center !important;
+	justify-self: center !important;
 }
 
 /* ============================= */
@@ -126,11 +138,12 @@
 /* ============================= */
 
 .invite-button {
-	background: linear-gradient(145deg, #1c5e54, #10503f) !important;
-	border: 1px solid rgba(0, 199, 177, 0.6) !important;
-	color: #dbe6ff;
-	font-family: serif !important;
+	background: linear-gradient(145deg, var(--color-invite-dark), var(--color-invite-light)) !important;
+	border: 1px solid var(--color-invite-bd) !important;
+	color: var(--color-invite-txt) !important;
+	font-family: var(--font-body) !important;
 	transition: all 0.2s ease-in-out;
+	font-weight: 800 !important;
 }
 
 /* Hover glow */
@@ -141,12 +154,16 @@
 
 /* Optional: Differentiate Quit button (kept original crimson tone) */
 .quit-button {
-	background: linear-gradient(145deg, #4a2a35, #311b24) !important;
-	border: 1px solid rgba(200, 90, 120, 0.5) !important;
-	font-family: serif !important;
+	background: linear-gradient(145deg, #4f021e, #fc025e) !important;
+	border: 1px solid var(--color-delete-bg-light) !important;
+	font-family: var(--font-body) !important;
+	color: var(--color-delete-txt-light2) !important;
+	font-weight: 800 !important;
+	transition: all 0.2s ease-in-out;
 }
 
 .quit-button:hover {
+	transform: scale(1.05);
 	box-shadow: 0 0 12px rgba(200, 90, 120, 0.6) !important;
 }
 
@@ -155,9 +172,10 @@
 /* ============================= */
 
 .launch-game {
-  background: linear-gradient(145deg, #00c7b1, #00594c);
-  color: white;
+  background: linear-gradient(145deg, #00c7b1, #a9fcef);
+  color: var(--color-primary-dark1) !important;
   font-family: serif !important;
+  font-weight: 800 !important;
   border: 1px solid rgba(0, 199, 177, 0.9);
   font-weight: bold;
   letter-spacing: 0.1px;

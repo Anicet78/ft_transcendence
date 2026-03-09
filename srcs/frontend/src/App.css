@@ -68,7 +68,7 @@
 	font-family: var(--font-button-large);
 	font-size: clamp(1rem, 2.5vw, 2rem);
     color: var(--color-primary);
-    border-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark0);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-soft);
 }

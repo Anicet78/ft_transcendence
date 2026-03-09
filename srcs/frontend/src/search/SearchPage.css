@@ -35,7 +35,7 @@
   margin: clamp(1rem, 1vw, 2rem) auto; /* center container with some spacing */
   width: 100%; /* limit width so items don’t stretch too much */
   max-width: 900px; /* optional: keep list readable on large screens */
-  gap: 1rem; /* space between cards */
+  gap: var(--space-md); /* space between cards */
   list-style: none;
   padding: 0;
 }
@@ -57,7 +57,7 @@
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   box-sizing: border-box; /* ensures padding is included in width */
-  gap: 1rem; /* spacing between avatar, username, button */
+  gap: var(--space-md); /* spacing between avatar, username, button */
 }
 
 .user_avatar {
@@ -65,7 +65,7 @@
   height: 50px;
   border-radius: 50%; /* circular avatar */
   object-fit: cover; /* crop avatar to fit nicely */
-  margin-right: 1rem;
+  margin-right: var(--space-md);
 }
 
 .user_info {

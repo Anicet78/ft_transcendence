@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import '../App.css'
 import type { GetResponse } from '../types/GetType'
 import api from '../serverApi';
-import { Box, Button} from '@allxsmith/bestax-bulma';
+import { Button} from '@allxsmith/bestax-bulma';
 import { useNavigate } from 'react-router';
 import { useChatListSocket } from './hooks/useChatListSocket';
 

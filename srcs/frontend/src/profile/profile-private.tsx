@@ -40,7 +40,7 @@ const ProfilePrivate = () => {
 			<div className='box-head'>
 				<div className='image-box'>
 						<img aria-label='avatar of the user' src={avatar} crossOrigin="anonymous"/>
-					<NavLink to='/profile/update/avatar' className='button is-small'>
+					<NavLink to='/profile/update/avatar' className='button is-small icon-button'>
 						<span className="icon">
 							<i className="fas fa-pen"></i>
 						</span>
@@ -49,7 +49,7 @@ const ProfilePrivate = () => {
 				<div className='head-text'>
 					<div className='profile_username'>
 						{username}
-						<NavLink to='/profile/update/username' className='button is-small'>
+						<NavLink to='/profile/update/username' className='button is-small icon-button'>
 							<span className="icon">
 								<i className="fas fa-pen"></i>
 							</span>

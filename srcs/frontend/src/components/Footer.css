@@ -19,17 +19,22 @@
 }*/
 
 .parchment-text {
-	font-size: clamp(0.55rem, 1vw, 2rem);
+	font-size: clamp(0.62rem, 2vw, 1.4rem);
 }
 
 .my-footer .content {
-	margin-bottom: 1rem;
+	margin-bottom: var(--space-md);
 }
 
 .my-footer p {
 	margin-bottom: 0.75rem;
 	line-height: 1.5;
 	text-shadow: 0 0 2px var(--footer-color-shadow);
+}
+
+.my-footer span {
+	font-weight: 700 !important;
+	color: var(--color-primary-light) !important;
 }
 
 .my-footer p:last-child {
@@ -39,6 +44,7 @@
 /* Link styling */
 .my-footer a {
 	color: var(--footer-color-link);
+	font-weight: 700 !important;
 	text-decoration: none;
 	transition: all 0.3s ease;
 }

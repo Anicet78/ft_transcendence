@@ -57,7 +57,7 @@
     background-color: transparent; /* Changed background color for modern feel */
 	border-top-left-radius: 12px;
 	border-bottom-left-radius: 12px;
-	padding: 1rem;
+	padding: var(--space-md);
 	margin: 1rem 0;
 	box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Added shadow for depth */
 	flex: 1; /* Ensure content can grow to fill the sidebar */
@@ -142,8 +142,8 @@
 	display: flex;
 	justify-content: flex-end;
 	height: 50px;
-	padding: 1rem;
-	border-bottom: 1px solid var(--color-primary-dark);
+	padding: var(--space-md);
+	border-bottom: 1px solid var(--color-primary-dark0);
 	background-color: black;
 	color: var(--color-primary);
 	position: sticky;
@@ -161,7 +161,7 @@
 	background-color: var(--color-primary);
 	flex: 1;
 	overflow-y: auto;
-	padding: 1rem;
+	padding: var(--space-md);
 	z-index: 2;
 	overflow-y: auto;
 	font-family: var(--font-body);
@@ -172,7 +172,7 @@
 	border: 3px solid #135903 !important;
 	color: #082601 !important;
 	font-weight: 600 !important;
-	font-size: 1rem !important;
+	font-size: var(--fs-md1) !important;
 	-webkit-text-stroke: 0.2px #1000fc;
 	margin: 2px;
 	border-radius: 10px !important;
@@ -183,7 +183,7 @@
 	border: 3px solid var(--color-invite-bd) !important;
 	color: var(--color-invite-txt) !important;
 	font-weight: 600 !important;
-	font-size: 1rem !important;
+	font-size: var(--fs-md1) !important;
 	-webkit-text-stroke: 0.2px #135903;
 	margin: 2px;
 	border-radius: 10px !important;
@@ -195,7 +195,7 @@
 	font-weight: 600 !important;
 	padding: 1em;
 	margin: 1em;
-	border: 2px solid var(--color-primary-dark);
+	border: 2px solid var(--color-primary-dark0);
 	border-radius: 12px;
 }
 
@@ -207,6 +207,7 @@
 .chat-button {
 	font-size: 0.8rem !important;
 	font-weight: 600 !important;
+	background-color: black !important;
 	color: white !important;
 	margin-top: 5px !important;
 }
@@ -223,7 +224,7 @@
 
 .chat-creation {
 	background-color: var(--color-primary-light) !important;
-	border: 2px solid var(--color-primary-dark);
+	border: 2px solid var(--color-primary-dark0);
 	border-radius: 12px;
 	margin: 1em auto !important;
 	padding: 15px;
@@ -236,7 +237,7 @@
 }
 
 .back-button {
-	background-color: var(--color-primary-dark) !important;
+	background-color: var(--color-primary-dark0) !important;
 	border: 1px solid var(--color-primary-dark2) !important;
 	color: var(--color-primary-light) !important;
 	font-size: 0.9rem !important;
@@ -253,14 +254,14 @@
 }
 
 .chat-creation .select-label, .groupname {
-	color: var(--color-primary-dark);
+	color: var(--color-primary-dark0);
 	font-size: 1.5rem;
 	font-weight: 800;
 	margin-bottom: 10px;
 }
 
 .groupname input.input::placeholder {
-	font-size: 0.9rem !important;
+	font-size: clamp(0.73rem, 1vw, 0.9rem) !important;
 }
 
 .members-checkbox {
@@ -272,7 +273,7 @@
 .members-checkbox .checkbox {
 	margin-left: 20px;
 	font-weight: 800;
-	color: var(--color-primary-dark);
+	color: var(--color-primary-dark0);
 }
 
 /* ======================= */
@@ -281,7 +282,7 @@
 
 .chat-invitation {
 	background-color: var(--color-primary-light) !important;
-	border: 2px solid var(--color-primary-dark);
+	border: 2px solid var(--color-primary-dark0);
 	border-radius: 12px;
 	margin: 1em auto!important;
 	padding: 15px;
@@ -301,13 +302,43 @@
 	margin-bottom: 15px;
 }
 
+.chat-invitation p {
+	color: var(--color-primary-dark0);
+	font-weight: 600 !important;
+}
+
+.invitation-box {
+	background-color: var(--color-bg-light);
+	border: 1px solid var(--color-primary);
+	border-radius: var(--radius-md);
+	padding: var(var(--space-md));
+}
+
+.invitation-box button {
+	font-size: var(--fs-sm) !important;
+	font-weight: 600;
+	margin-top: 15px !important;
+}
+
+.chat-cancel-button, .chat-reject-button {
+	background-color: var(--color-delete-bg) !important;
+	color: var(--color-delete-txt) !important;
+	border: 1px solid var(--color-delete-txt) !important;
+}
+
+.chat-accept-button, .chat-pending-button {
+	background-color: var(--color-primary) !important;
+	color: var(--color-primary-dark2) !important;
+	border: 1px solid var(--color-primary-dark0) !important;
+}
+
 /* ============ */
 /*  Chat view   */
 /* ============ */
 
 .back2chat-btn {
 	background-color: var(--color-primary-light) !important;
-	border: 1px solid var(--color-primary-dark) !important;
+	border: 1px solid var(--color-primary-dark0) !important;
 	color: #013f36 !important;
 	font-size: 0.85rem !important;
 	font-weight: 800 !important;
@@ -366,7 +397,7 @@
 }
 
 .invite2group {
-	background-color: var(--color-primary-dark);
+	background-color: var(--color-primary-dark0);
 	color: var(--color-primary-light);
 	font-weight: 600;
 	margin: 10px;
@@ -381,7 +412,7 @@
 }
 
 .invite2group-none {
-	background-color: var(--color-primary-dark);
+	background-color: var(--color-primary-dark0);
 	color: var(--color-primary-light);
 	font-weight: 600;
 	margin: 10px;
@@ -395,7 +426,7 @@
 	color: #025b4e;
 	margin: 10px;
 	padding: 3px;
-	border: 1px solid var(--color-primary-dark);
+	border: 1px solid var(--color-primary-dark0);
 	border-radius: 12px;
 	display: flex;
 	flex-direction: column;
@@ -451,7 +482,9 @@
 .input.input {
 	background-color: #026354;
 	border: 1.55px solid #013029;
-	font-size: 0.99rem;
+	color: var(--color-primary-light);
+	font-size: var(--fs-md1);
+	font-family: var(--font-body);
 }
 
 .input-msg .button {
@@ -462,6 +495,11 @@
 
 .input.input::placeholder {
 	color: var(--color-primary-light) !important;
+}
+
+.input.input:focus {
+	border: 2px solid var(--color-primary-light);
+	box-shadow: var(--shadow-soft);
 }
 
 .join-box {
@@ -506,6 +544,7 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
+	align-items: center;
 	gap: 10px;
 }
 

@@ -39,7 +39,7 @@
 .login-box .social-buttons {
 	display: flex;
 	flex-direction: row;       /* side by side by default */
-	gap: 1rem;                 /* spacing between buttons */
+	gap: var(--space-md);                 /* spacing between buttons */
 	justify-content: center;   /* center on large screens */
 	flex-wrap: wrap;           /* wrap to next line on small screens */
 	width: 100%;

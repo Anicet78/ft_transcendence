@@ -56,7 +56,7 @@ const Banner = () => {
 	return (
 		<Navbar color='dark' role='navigation' aria-label='main navigation' className="navbar-full">
 				<Navbar.Brand>
-					<NavLink to={logo_path} aria-label='home button' className='button is-centered banner-home-button' style={{fontFamily: 'Serif'}}>
+					<NavLink to={logo_path} aria-label='home button' className='button is-centered banner-home-button'>
 						<Icon
 							name="dragon"
 							ariaLabel="dragon logo"
