@@ -1,5 +1,4 @@
 import { type FastifyReply, type FastifyRequest } from "fastify";
-import { createRefreshToken } from "../../services/auth/token.js";
 import { prisma } from "../../services/db/prisma.js";
 import { UserService } from "../../services/db/userService.js";
 
@@ -47,7 +46,6 @@ export async function postRefreshController(
 		await UserService.setAvailabality(user.app_user.appUserId, true);
 
 	const jwt = await reply.jwtSign({ id: user.app_user.appUserId, username: user.app_user.username, email: user.app_user.mail, role: user.app_user.rolesReceived[0]?.role || "user" });
-	const refresh = await createRefreshToken(user.app_user.appUserId);
 
 	await prisma.refreshToken.update({
 		where: {
@@ -59,11 +57,7 @@ export async function postRefreshController(
 		}
 	});
 
-	return reply.setCookie('refreshToken', refresh, {
-			path: '/',
-			httpOnly: true,
-			secure: true,
-			sameSite: 'strict',
-			maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in ms
-		}).status(200).send({ token: jwt, user: { id: user.app_user.appUserId, username: user.app_user.username, email: user.app_user.mail, role: user.app_user.rolesReceived[0]?.role || "user" }});
+	await reply.setAuthCookie(user.app_user.appUserId);
+
+	return reply.status(200).send({ token: jwt, user: { id: user.app_user.appUserId, username: user.app_user.username, email: user.app_user.mail, role: user.app_user.rolesReceived[0]?.role || "user" }});
 }

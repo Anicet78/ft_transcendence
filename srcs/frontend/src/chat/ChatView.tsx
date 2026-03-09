@@ -45,8 +45,6 @@ const ChatView = ({ chatId: propChatId, onClose }: {
 	if (isError)
 		return <div>Error loading chat</div>;
 
-	//console.log("chatInfo:", chat);
-
 	return (
 		<div className='sidebar-content'>
 
@@ -97,7 +95,7 @@ const ChatView = ({ chatId: propChatId, onClose }: {
 			{chat.chatType === "group" &&
 				<InviteToGroupChat
 					chatId={chat.chatId}
-					existingMembers={chat.members} 
+					existingMembers={chat.members}
 				/>
 			}
 

@@ -18,9 +18,7 @@ export async function forgotPasswordController(
 
 	const token = crypto.randomBytes(32).toString('hex');
 
-	const info = await sendResetPasswordEmail(request.body.email, token, `${process.env.SERVER_URL}/reset-password?token=${token}`);
-
-	console.log(info);
+	await sendResetPasswordEmail(request.body.email, token, `${process.env.SERVER_URL}/reset-password?token=${token}`);
 
 	return reply.status(204).send();
 }

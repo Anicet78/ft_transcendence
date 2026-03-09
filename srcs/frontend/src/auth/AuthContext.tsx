@@ -22,18 +22,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const [user, setUser] = useState< User | null>(null);
 	const [token, setToken] = useState<string | null>(null);
-	const [isInitializing, setIsInitializing] = useState(true);
+	const [isInitializing, setIsInitializing] = useState<boolean>(true);
+	const [redirectURL, setRedirectURL] = useState<string>("");
 
 	const login = useCallback((userData: User, userToken: string) => {
 		setUser(userData);
 		setToken(userToken);
 		setAccessToken(userToken);
 		toast({ title: `Welcome ${userData.username}` });
-		navigate("/home");
+		if (redirectURL)
+			navigate(redirectURL);
+		else
+			navigate("/home");
 	}, [navigate]);
 
 	const logout = useCallback(async () => {
-		await api.post('/auth/logout');
+		if (token)
+			await api.post('/auth/logout');
 		setUser(null);
 		setToken(null);
 		setAccessToken(null);
@@ -74,6 +79,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			setUser(null);
 			setToken(null);
 			setAccessToken(null);
+			setRedirectURL(window.location.pathname);
 			if (!publicRoutes.includes(window.location.pathname))
 				navigate('/');
 		}

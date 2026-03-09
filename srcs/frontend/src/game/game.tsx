@@ -80,7 +80,7 @@ const Game = () => {
 						if (path.endsWith('.data')) return `https://${window.location.host}/game/game.data`;
 						return path;
 					},
-					onCppMessage: (obj: Object) => 
+					onCppMessage: (obj: Object) =>
 						{
 							if (gameSocket.readyState === WebSocket.OPEN)
 								gameSocket.send(JSON.stringify(obj))
@@ -88,7 +88,6 @@ const Game = () => {
 					sendResults: (obj: Object) =>
 					{
 						setJsonEnd(obj);
-						console.log(JSON.stringify(obj))
 						setShowButton(true);
 						setBoxSize({ width: "900px", height: "300px" });
 						gameSocket.onmessage = null;
@@ -97,7 +96,6 @@ const Game = () => {
 						gameSocket.close();
 						if (!mod)
 							return;
-						console.log(mod);
 						mod.finishGame();
 						if ((mod as any).ctx)
 						{

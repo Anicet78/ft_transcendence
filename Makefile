@@ -38,6 +38,12 @@ cert:
 doc:
 	@docker exec -it node-c npx --prefix /front openapi-typescript http://node:3000/documentation/json --output /front/src/types/api.ts
 
+deps:
+	@docker run --rm -v ./srcs/backend:/backend -v ./srcs/frontend:/frontend -w /backend node:25.2.1 sh -c "npm install prisma@5.22.0 --legacy-peer-deps && npm install --legacy-peer-deps && npx prisma generate && npm install --prefix /frontend"
+
+seed:
+	@docker exec -it node-c npx prisma db seed
+
 $(SECRET_PATH)/secret_42.txt:
 	@mkdir -p $(SECRET_PATH)
 	@touch $@

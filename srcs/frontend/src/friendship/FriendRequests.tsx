@@ -23,7 +23,7 @@ const FriendRequest = () => {
 	const handleRequest = (action: actionType, id: string) => {
 		friendRequestMutation.run( action, id);
 	};
-	
+
 	if (isLoading) return <div>Loading...</div>;
 	if (isError || !data) return <div>Error: {error?.message || 'unknown'}</div>;
 
@@ -45,23 +45,23 @@ const FriendRequest = () => {
 							<img src={avatarUrl} alt={friendUser.username} className="user_avatar"/>
 							<p className="username">{friendUser.username}</p>
 							<div className="friend_actions">
-								{friendUser.appUserId === friend.sender.appUserId && 
-									<Button 
-										className="interaction_btn" 
+								{friendUser.appUserId === friend.sender.appUserId &&
+									<Button
+										className="interaction_btn"
 										onClick={() => {handleRequest('accept', friend.friendshipId)}}
 									>
 										Accept request
 									</Button>}
 								{friendUser.appUserId === friend.sender.appUserId &&
-									<Button 
-										className="interaction_btn" 
+									<Button
+										className="interaction_btn"
 										onClick={() => {handleRequest('reject', friend.friendshipId)}}
 									>
 										Reject request
 									</Button>}
-								{friendUser.appUserId !== friend.sender.appUserId && 
-									<Button 
-										className="interaction_btn" 
+								{friendUser.appUserId !== friend.sender.appUserId &&
+									<Button
+										className="interaction_btn"
 										onClick={() => {handleRequest('cancel', friend.friendshipId)}}
 									>
 										Cancel request

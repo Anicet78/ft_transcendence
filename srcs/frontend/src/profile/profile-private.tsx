@@ -18,8 +18,6 @@ const ProfilePrivate = () => {
 
 	const userData: ProfileResponseType = data.data;
 
-	console.log(`https://${window.location.host}/uploads/${userData.avatarUrl}`);
-
 	const username = userData.username;
 	const avatar = userData.avatarUrl ? `https://${window.location.host}/uploads/${userData.avatarUrl}` : skull;
 	const level = userData.gameProfile?.level || '0';
