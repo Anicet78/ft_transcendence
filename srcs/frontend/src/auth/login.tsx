@@ -1,9 +1,4 @@
-import 'bulma/css/bulma.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import './login.css'
-import '../index.css'
-
-import { Button, Box } from '@allxsmith/bestax-bulma';
+import { Button } from '@allxsmith/bestax-bulma';
 import InputEmail from '../components/InputEmail.tsx';
 import { useMutation } from '@tanstack/react-query';
 import api from '../serverApi.ts';
@@ -80,6 +75,7 @@ function Login() {
 			<br />
 			<form onSubmit={loginSubmit}>
 				<InputEmail label="Email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email"/>
+				<Button type="button" color="primary" className="forgot-pwd-button" onClick={onForgot}>Forgot Password</Button>
 				<div className="field">
 					<label htmlFor="password">Password</label>
 					<p className="control has-icons-left">
@@ -96,11 +92,10 @@ function Login() {
 							placeholder="Enter your password"
 						/>
 						<span className="icon is-small is-left">
-							<i className="fas fa-lock"></i>
+							<i className="input-icon fas fa-lock"></i>
 						</span>
 					</p>
 				</div>
-				<Button type="button" color="primary" className="submit-wrapper" onClick={onForgot}>Forgot Password</Button>
 				{loginMutation.isError && (
 					<div style={{ color: 'red' }}>
 						{/* this part only show 'Error:' when nginx isn't running */}

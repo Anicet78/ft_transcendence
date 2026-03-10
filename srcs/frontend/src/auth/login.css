@@ -23,6 +23,13 @@
 	gap: 1.5rem; /* consistent spacing between inputs */
 }
 
+.login-box .field {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
 .login-box  label {
 	font-weight: 700;
 	font-family: var(--font-label);
@@ -79,5 +86,14 @@
 
 	.login-box .social-buttons {
 		flex-direction: column;
+		align-items: center;
+	}
+
+	.login-box .button {
+		font-size: var(--fs-md2);
+	}
+
+	.login-box .forgot-pwd-button {
+		font-size: var(--fs-sm);
 	}
 }

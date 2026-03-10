@@ -21,7 +21,7 @@ const InputText: React.FC<TextInputProps> = ({ placeholder, type = "text", error
 				className={`input ${error ? "error" : ""}`}
 			/>
 			<span className="icon is-small is-left">
-				<i className={icon}></i>
+				<i className={`input-icon ${icon}`}></i>
 			</span>
 		</p>
 		{error && <p className="error-message">{error.message}</p>}
