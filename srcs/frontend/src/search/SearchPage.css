@@ -10,8 +10,8 @@
 /* Section title */
 .search-box h2 {
   font-family: var(--font-section-title);
-  color: var(--color-primary);
-  font-size: clamp(1.2rem, 4vw, 4rem) !important;
+  color: var(--color-primary) !important;
+  font-size: clamp(1.7rem, 4vw, 4rem) !important;
   padding-top: clamp(0.8rem, 1.5vw, 1.5rem) !important;
 }
 
@@ -20,9 +20,13 @@
   margin: 0 auto;
   max-width: 1000px;
   background-color: var(--color-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(45, 212, 191, 0.12);
   border-radius: 12px;
   padding: clamp(0.1rem, 1.3vw, 1.3rem) !important;
   overflow-x: visible; /* no scroll needed on desktop */
+  font-family: var(--font-body);
 }
 
 .user_list {
@@ -30,11 +34,11 @@
   flex-direction: column; /* stack items vertically */
   justify-content: flex-start; /* align to top */
   align-items: center; /* center items horizontally */
-  color: black;
-  margin: 2rem auto; /* center container with some spacing */
+  color: var(--color-text);
+  margin: clamp(1rem, 1vw, 2rem) auto; /* center container with some spacing */
   width: 100%; /* limit width so items don’t stretch too much */
   max-width: 900px; /* optional: keep list readable on large screens */
-  gap: 1rem; /* space between cards */
+  gap: var(--space-md); /* space between cards */
   list-style: none;
   padding: 0;
 }
@@ -42,7 +46,7 @@
 .user_list p {
   text-align: center;
   width: 100%;
-  margin: 1rem 0;
+  margin: 0 auto;
 }
 
 .user_item_card {
@@ -52,11 +56,15 @@
   justify-content: flex-start; /* items start from left */
   padding: 0.75rem 1rem; /* add some spacing inside each item */
   width: 100%; /* make each item full width of container */
-  background-color: #f9f9f9;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(45, 212, 191, 0.1);
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   box-sizing: border-box; /* ensures padding is included in width */
-  gap: 1rem; /* spacing between avatar, username, button */
+  gap: var(--space-md); /* spacing between avatar, username, button */
+  color: var(--color-text);
 }
 
 .user_avatar {
@@ -64,7 +72,7 @@
   height: 50px;
   border-radius: 50%; /* circular avatar */
   object-fit: cover; /* crop avatar to fit nicely */
-  margin-right: 1rem;
+  margin-right: var(--space-md);
 }
 
 .user_info {
@@ -82,49 +90,65 @@
 .view_profile_btn {
   display: inline-block;
   padding: 0.35rem 0.75rem;
-  background-color: black;
-  color: white;
+  background-color: rgba(45, 212, 191, 0.1);
+  color: var(--color-primary);
   text-decoration: none;
+  border: 1px solid rgba(45, 212, 191, 0.25);
   border-radius: 4px;
   font-size: 0.9rem;
-  transition: background-color 0.2s;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
 }
 
 .view_profile_btn:hover {
-  background-color: #333;
+  background-color: rgba(45, 212, 191, 0.25);
+  color: #fff;
+  border-color: rgba(45, 212, 191, 0.4);
 }
 
 .pagination {
  display: flex;
  justify-content: space-between; /* buttons on sides */
-  align-items: center;
-  position: relative; /* needed for absolute centering of text */
-  width: 300px;
-  margin: 1rem auto 0;
+ align-items: center;
+ width: 320px;
+ margin: 1rem auto 0;
 }
 
 .pagination span {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%); /* center horizontally */
   font-weight: bold;
+  color: var(--color-text);
 }
 
 .pagination button {
   padding: 0.4rem 0.8rem;
-  border: none;
+  border: 1px solid rgba(45, 212, 191, 0.25);
   border-radius: 4px;
-  background-color: black;
-  color: white;
+  background-color: rgba(45, 212, 191, 0.1);
+  color: var(--color-primary);
   cursor: pointer;
-  transition: background-color 0.2s;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
 }
 
 .pagination button:disabled {
-  background-color: #7f7f7f;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #64748b;
+  border-color: rgba(255, 255, 255, 0.08);
   cursor: not-allowed;
 }
 
 .pagination button:hover:not(:disabled) {
-  background-color: #333;
+  background-color: rgba(45, 212, 191, 0.25);
+  color: #fff;
+  border-color: rgba(45, 212, 191, 0.4);
+}
+
+@media (max-width: 780px) {
+  .pagination {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
 }

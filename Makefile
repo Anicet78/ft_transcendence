@@ -38,6 +38,12 @@ cert:
 doc:
 	@docker exec -it node-c npx --prefix /front openapi-typescript http://node:3000/documentation/json --output /front/src/types/api.ts
 
+deps:
+	@docker run --rm -v ./srcs/backend:/backend -v ./srcs/frontend:/frontend -w /backend node:25.2.1 sh -c "npm install prisma@5.22.0 --legacy-peer-deps && npm install --legacy-peer-deps && npx prisma generate && npm install --prefix /frontend"
+
+seed:
+	@docker exec -it node-c npx prisma db seed
+
 $(SECRET_PATH)/secret_42.txt:
 	@mkdir -p $(SECRET_PATH)
 	@touch $@
@@ -69,6 +75,10 @@ clean: down
 
 fclean:
 	$(INFO) "Removing containers, images and volumes..."
+	@rm -rf srcs/frontend/src/game/build/game.data
+	@rm -rf srcs/frontend/src/game/build/game.wasm
+	@rm -rf srcs/frontend/src/game/build/game.js
+	@rm -rf srcs/game/emscripten/objs_wasm
 	@$(DOCKER_COMPOSE) down --rmi all -v
 	$(INFO) "Cleanup complete."
 

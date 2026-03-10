@@ -107,7 +107,7 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 	}
 
 	const leaveRoom = () => {
-		if (room?.roomId) {
+		if (room?.roomId && user) {
 			quitMutation.mutate();
 		} else {
 			setRoom(null);

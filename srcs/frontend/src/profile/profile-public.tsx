@@ -84,7 +84,7 @@ const ProfilePublic = () => {
 					<div className="button-group">
 						{(friendshipStatus === 'sent') &&
 							<div className="button-row">
-								<Button color="dark" disabled size='large' className='profile-button'>Request pending</Button>
+								<Button disabled size='large' className='profile-button'>Request pending</Button>
 								<Button
 									size='large'
 									onClick={() => {handleModification('cancel', friendshipData.friendshipId)}}
@@ -103,10 +103,6 @@ const ProfilePublic = () => {
 									>
 										Remove friend
 									</Button>
-								</div>
-								<div className="button-row">
-									<Button aria-label='join button' size='large' className='profile-button'>Join</Button>
-									<Button aria-label='spectate button' size='large' className='profile-button'>Spectate</Button>
 								</div>
 							</div>}
 						{friendshipStatus === 'received' &&

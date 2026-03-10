@@ -88,7 +88,7 @@ void	Hud::printCountDown()
 {
 	static int t = 0;
 	static int w, h;
-	if (this->_timeCountDown == 6 || this->_timeCountDown < 0)
+	if (this->_timeCountDown >= 6 || this->_timeCountDown < 0)
 		return ;
 	if (t != this->_timeCountDown)
 	{

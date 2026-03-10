@@ -61,7 +61,9 @@ static void	generateToken(Server &server, CURL *curl, CURLcode &result)
 	//same as the -v of curl, just write what's happening
 	// curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
+	
 	//use for debugging
+	// curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 	// curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, debug_callback);
 
 	//perform the request
@@ -106,7 +108,9 @@ static void	postViaCurl(Server &server, CURL *curl, CURLcode &result, std::strin
 
 	// curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
+	
 	//use for debugging
+	// curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 	// curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, debug_callback);
 
 	result = curl_easy_perform(curl);
@@ -150,7 +154,9 @@ static void	patchViaCurl(Server &server, CURL *curl, CURLcode &result, std::stri
 
 	// curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
+	
 	// use for debugging
+	// curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 	// curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, debug_callback);
 
 	result = curl_easy_perform(curl);

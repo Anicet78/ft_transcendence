@@ -13,7 +13,7 @@ export function useChatSocket(
 	const queryClient = useQueryClient();
 
 	useEffect(() => {
-	
+
 		if (!socket || !chatId)
 			return;
 
@@ -48,7 +48,7 @@ export function useChatSocket(
 		//DELETE
 		const onMessageDeleted = (message: any) => {
 			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] = []) => {
-				return cache.map(msg => msg.messageId === message.messageId 
+				return cache.map(msg => msg.messageId === message.messageId
 					? {...msg, status: "deleted", deletedAt: message.deletedAt }
 					: msg
 				);
@@ -59,7 +59,7 @@ export function useChatSocket(
 		//MODERATED
 		const onMessageModerated = (message: any) => {
 			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] = []) => {
-				return cache.map(msg => msg.messageId === message.messageId 
+				return cache.map(msg => msg.messageId === message.messageId
 					? {...msg, status: "moderated", deletedAt: message.deletedAt }
 					: msg
 				);
@@ -69,7 +69,7 @@ export function useChatSocket(
 		//RESTORE
 		const onMessageRestored = (message: any) => {
 			queryClient.setQueryData(["chat-messages", chatId], (cache: any[] = []) => {
-				return cache.map(msg => msg.messageId === message.messageId 
+				return cache.map(msg => msg.messageId === message.messageId
 					? {...msg, status: "posted"}
 					: msg
 				);
@@ -101,6 +101,7 @@ export function useChatSocket(
 		socket.on("chat_member_role_changed", invalidateChatInfo);
 		socket.on("chat_disbanded", invalidateChatInfo);
 		socket.on("chat_member_quit", handleChatClosed);//send to a user who quit/is kicked/member of disbanded chat/disband
+		socket.on("blocked", handleChatClosed);
 
 
 		return () => {
@@ -118,6 +119,7 @@ export function useChatSocket(
 			socket.off("chat_member_role_changed", invalidateChatInfo);
 			socket.off("chat_disbanded", invalidateChatInfo);
 			socket.off("chat_member_quit", handleChatClosed);
+			socket.off("blocked");
 		}
 
 	}, [socket, chatId, queryClient]);

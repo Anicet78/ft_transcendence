@@ -54,8 +54,8 @@ const Home = () => {
 					{room.hostId === user?.id &&
 						<NavLink to="/game" className='button launch-game is-medium'>Launch Game</NavLink>
 					}
-					<Button className='quit-button' aria-label='quit button' onClick={QuitRoom}>Quit room</Button>
-					<Button className='invite-button' aria-label='copy link button' onClick={CopyRoomUrl}>Copy invite link</Button>
+					<Button className='quit-button is-medium' aria-label='quit button' onClick={QuitRoom}>Quit room</Button>
+					<Button className='invite-button is-medium' aria-label='copy link button' onClick={CopyRoomUrl}>Copy invite link</Button>
 				</div>
 				<NavLink to="/about" className='game-rules-link'>
 				<i className="fa-solid fa-hand-point-right"></i>

@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Almendra:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 /* MoRk DuNgEoN font for title */
 @font-face {
@@ -10,28 +11,40 @@
 
 :root {
 	/* Brand */
-	--color-primary: #00d1b2;
-	--color-primary-dark: #027c6a;
-	--color-primary-light: #a9fcef;;
-
-	/* Banner */
-	--banner-color-bg: #3D3C3C;
+	--color-primary: #2dd4bf;
+	--color-primary-light: #ccfbf1;
+	--color-primary-dark0: #0f766e;
+	--color-primary-dark1: #115e59;
+	--color-primary-dark2: #134e4a;
 
 	/* Footer */
-	--footer-color-bg: #282828;
-	--footer-color-text: #00d1b2;
-	--footer-color-link: #000;
-	--footer-color-shadow: #e0cc91;
-	--footer-color-shadow: #e0cc91;
+	--footer-color-bg: #1a1a1a;
+	--footer-color-text: #5eead4;
+	--footer-color-link: #e2e8f0;
+	--footer-color-shadow: #d4a853;
 
 	/* Neutral */
-	--color-bg: #605f5f;
-	--color-surface: #1e293b;
+	--color-bg: rgba(255, 255, 255, 0.06);
+	--color-bg-light: rgba(255, 255, 255, 0.10);
+	--color-hover: rgba(45, 212, 191, 0.18);
 	--color-border: #334155;
 
 	/* Text */
-	--color-text: #f1f5f9;
-	--color-text-muted: #94a3b8;
+	--color-text: #e2e8f0;
+
+	/* Button */
+	--color-delete-bg: #e11d48;
+	--color-delete-txt: #fff1f2;
+	--color-delete-bg-light: #fb7185;
+	--color-delete-txt-light: #881337;
+	--color-delete-txt-light2: #ffe4e6;
+	--color-invite-bg: #3b82f6;
+	--color-invite-txt: #eff6ff;
+	--color-invite-bd: #2563eb;
+	--color-invite-dark: #1d4ed8;
+	--color-invite-light: #dbeafe;
+	--color-game-bg: #14b8a6;
+	--color-game-border: #0f766e;
 
 	/* Fonts */
 /*	--font-game-title: 'MoRk DuNgEoN', serif;*/
@@ -39,8 +52,8 @@
 	--font-section-title: 'Pirata One', serif;
 	--font-label: 'Pirata One', serif;
 	--font-button-large: 'Pirata One', serif;
-	--font-button-small: 'Inter', serif;
-	--font-body: 'Inter', serif;
+	--font-button-small: 'Almendra', serif;
+	--font-body: 'Almendra', serif;
 	--font-footer: 'Cinzel', 'Garamond', serif;
 
 	/* Feedback */
@@ -51,7 +64,8 @@
 	/* Typography scale */
 	--fs-xs: 0.75rem;
 	--fs-sm: 0.875rem;
-	--fs-md: 1rem;
+	--fs-md1: 1rem;
+	--fs-md2: 1.2rem;
 	--fs-lg: 1.5rem;
 	--fs-xl: 2rem;
 	--fs-2xl: 3rem;
@@ -69,6 +83,5 @@
 	--radius-lg: 20px;
 
 	/* Shadows */
-	--shadow-soft: 0 2px 5px #64bcaf;
+	--shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
-

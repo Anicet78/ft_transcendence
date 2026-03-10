@@ -4,48 +4,43 @@ import { useChat } from "../ChatContext";
 import { useChatRoleMutation } from "../hooks/useChatRoleMutations";
 import { useGroupChatMutations } from "../hooks/useGroupChatMutations";
 import { useChatInfo } from "../hooks/useChatInfo";
+import { Button } from "@allxsmith/bestax-bulma";
+import toast from "../../Notifications";
 
 export function ChatMembers({chatId}) {
 
 	const { data: chat } = useChatInfo(chatId);
-	const { /*chat,*/ permissions } = useChat();
+	const { permissions, role } = useChat();
 	const { user } = useAuth();
 
 	const roleMutation = useChatRoleMutation(chatId);
 	const {kickMutation} = useGroupChatMutations(chatId);
 
-	 const [open, setOpen] = useState(false); 
+	 const [open, setOpen] = useState(false);
 
-	if (!chat)
+	if (!chat) {
+		toast({ title: "Error", message: "Chat not found, please refresh page.", type: "is-danger"})
 		return null; //<div>Loading chat...</div>;
+	}
 
 	return (
-		<div className="mb-4">
+		<div className="mb-4 members-container">
 		{/* HEADER */}
-			<div onClick={() => setOpen(!open)}
-				style={{
-					cursor: "pointer",
-					fontWeight: "bold",
-					display: "flex",
-					alignItems: "center",
-					userSelect: "none",
-					marginBottom: "6px"
-				}}
-			>
+			<div className="members-dropdown" onClick={() => setOpen(!open)}>
 				<span style={{ marginRight: "6px" }}>
 					{open ? "▼" : "▶"}
 				</span>
 					Members ({chat.members.length})
 			</div>
 
-			{open && (<ul>
+			{open && (<ul className="members-list">
 				{chat.members.map((m: any) => (
 				<li key={m.chatMemberId} className="mb-1">
 					{m.user.username} - <em>{m.role}</em>
 
-					{permissions.canChangeRoles && m.user.appUserId !== user?.id && (
+					{permissions.canChangeRoles && m.user.appUserId !== user?.id && (m.role != "owner" || (role == "admin" && m.role != "admin")) && (
 					<select
-						className="ml-2"
+						className="ml-2 role-options"
 						value={m.role}
 						onChange={(e) =>
 							roleMutation.mutate({
@@ -54,22 +49,21 @@ export function ChatMembers({chatId}) {
 							})
 						}
 					>
-						<option value="owner">Owner</option>
-						<option value="admin">Admin</option>
-						<option value="moderator">Moderator</option>
+						{role == "owner" && <option value="admin">Admin</option>}
+						{permissions.canChangeRoles && <option value="moderator">Moderator</option>}
 						<option value="writer">Writer</option>
 						<option value="member">Member</option>
 					</select>
 					)}
 
 					{/* KICK MEMBER */}
-					{permissions.canKick && m.user.appUserId !== user?.id && (
-						<button
-							className="button is-danger is-light is-small ml-2"
+					{permissions.canKick && m.user.appUserId !== user?.id && (m.role != "owner" || (role == "admin" && m.role != "admin")) && (
+						<Button
+							className="chat-kick-button"
 							onClick={() => kickMutation.mutate(m.user.appUserId)}
 						>
 							Kick
-						</button>
+						</Button>
 					)}
 				</li>
 				))}

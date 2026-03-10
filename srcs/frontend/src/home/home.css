@@ -5,6 +5,7 @@
 
 .body-box {
 	min-height: 80vh;
+	height: 100% !important;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -13,98 +14,8 @@
 	position: relative;
 	overflow: hidden;
 	width: 100%;
-
-	/* Darker underground gradient with teal */
-	background: radial-gradient(
-		circle at 50% 20%,
-		#2e2e2e 0% ,      /* slightly lighter center */
-		#242424 30%,     /* requested base */
-		#004c49 60%,     /* teal instead of dark blue */
-		#003532 85%,     /* deep teal shadow */
-		#00221f 100%     /* strong teal vignette */
-	) !important;
+	background-color: transparent;
 }
-
-/* ============================= */
-/* 🌫 Animated Fog (Teal)         */
-/* ============================= */
-
-.body-box::before,
-.body-box::after {
-	content: "";
-	position: absolute;
-	width: 200%;
-	height: 200%;
-	top: -50%;
-	left: -50%;
-	pointer-events: none;
-	filter: blur(80px);
-	mix-blend-mode: screen;
-}
-
-/* First fog layer – darker & slower */
-.body-box::before {
-	background:
-	radial-gradient(circle at 30% 40%, rgba(0, 199, 177, 0.12), transparent 60%),
-    radial-gradient(circle at 70% 60%, rgba(0, 155, 140, 0.10), transparent 70%) !important;
-
-	animation: fogDrift 45s linear infinite,
-	arcanePulseBg 8s ease-in-out infinite;
-}
-
-/* Second fog layer – subtle opposing motion */
-.body-box::after {
-	background:
-	radial-gradient(circle at 50% 50%, rgba(0, 199, 177, 0.10), transparent 65%),
-	radial-gradient(circle at 80% 30%, rgba(0, 130, 120, 0.12), transparent 70%) !important;
-
-	animation: fogDriftReverse 70s linear infinite;
-}
-
-/* Smooth drifting motion */
-@keyframes fogDrift {
-	0%   { transform: translate(0, 0) scale(1); }
-	50%  { transform: translate(-6%, -4%) scale(1.05); }
-	100% { transform: translate(-12%, -8%) scale(1); }
-}
-
-@keyframes fogDriftReverse {
-	0%   { transform: translate(0, 0) scale(1); }
-	50%  { transform: translate(5%, 7%) scale(1.08); }
-	100% { transform: translate(10%, 12%) scale(1); }
-}
-
-/* Subtle breathing arcane glow */
-@keyframes arcanePulseBg {
-	0%   { opacity: 0.6; }
-	50%  { opacity: 0.9; }
-	100% { opacity: 0.6; }
-}
-
-/* ============================= */
-/* ✨ Subtle Arcane Light Pulses  */
-/* ============================= */
-
-.body-box::before,
-.body-box::after {
-	filter: blur(60px);
-}
-
-/* Separate pulse overlay */
-.body-box::after {
-	box-shadow: inset 0 0 200px rgba(0, 199, 177, 0.05) !important;
-}
-
-.body-box::before {
-	animation: fogDrift 35s linear infinite, arcanePulseBg 6s ease-in-out infinite;
-}
-
-@keyframes arcanePulseBg {
-	0%   { opacity: 0.7; }
-	50%  { opacity: 1; }
-	100% { opacity: 0.7; }
-}
-
 /* ============================= */
 /* Main container (stone panel)  */
 /* ============================= */
@@ -119,31 +30,32 @@
   width: 100%;
   max-width: 900px;
 
-  /* Darker teal background */
-  background: rgba(0, 51, 45, 0.85);  /* deep dark teal with opacity */
+  /* Glass panel */
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 
-  /* Stronger shadow with teal tint */
+  /* Softer shadow */
   box-shadow:
-    inset 0 0 40px rgba(0, 30, 27, 0.7),
-    0 20px 40px rgba(0, 20, 18, 0.8);
+    0 8px 32px rgba(0, 0, 0, 0.4);
 
   border-radius: 18px;
   padding: clamp(0rem, 4vw, 3rem) !important;
 
 	/* Subtle teal border */
-	border: 1px solid rgba(0, 199, 177, 0.4) !important;
+	border: 1px solid rgba(45, 212, 191, 0.12) !important;
 }
 
 .game-room h2 {
 	font-family: var(--font-section-title);
-	font-size:clamp(1.2rem, 4vw, 4rem);
-	color: white;
+	font-size:clamp(1.2rem, 4vw, 4rem) !important;
+	color: white !important;
 }
 
 .game-room .game-rules-link {
 	font-family: var(--font-section-title);
-	font-size:clamp(1rem, 2vw, 2rem);
-	color: white;
+	font-size:clamp(1rem, 2vw, 2rem) !important;
+	color: white !important;
 }
 
 /* ============================= */
@@ -158,40 +70,97 @@
 	width: 100%;
 }
 
+.player-card {
+	display: flex;
+	flex-direction: column;
+	justify-content: center !important;
+	align-items: center !important;
+}
+
 /* Arcane player cards */
 .room-players > * {
-	background: linear-gradient(145deg, #004c49, #003532) !important;
+	background: rgba(255, 255, 255, 0.06) !important;
 	padding: 15px 25px;
 	border-radius: 10px;
 
-	border: 1px solid rgba(0, 199, 177, 0.4) !important;
+	border: 1px solid rgba(45, 212, 191, 0.15) !important;
 
-	color: #dbe6ff;
-
+	color: var(--color-primary-light);
+	font-family: var(--font-body) !important;
+	font-size: var(--fs-md2) !important;
+	font-weight: 600;
 	transition: all 0.2s ease-in-out;
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
 }
 
 /* Magical hover glow */
 .room-players > *:hover {
-	transform: translateY(-5px);
-
 	box-shadow:
-	0 0 15px rgba(0, 199, 177, 0.5),
-	0 8px 20px rgba(0, 0, 0, 0.7) !important;
+	0 0 10px rgba(45, 212, 191, 0.2),
+	0 6px 16px rgba(0, 0, 0, 0.3) !important;
 
-	background: linear-gradient(145deg, #004c49, #003532) !important;
+	background: rgba(255, 255, 255, 0.10) !important;
 }
 
 .player-buttons {
 	display: flex !important;
 	flex-direction: row !important;
 	align-items: center !important;
+	justify-content: center !important;
 	gap: clamp(0.5rem, 1vw, 0.75rem) !important;
 }
 
+.player-button {
+	color: var(--color-primary) !important;
+	background-color: rgba(45, 212, 191, 0.1) !important;
+	border: 1px solid rgba(45, 212, 191, 0.25) !important;
+	align-self: center !important;
+	justify-self: center !important;
+	transition: all 0.2s ease;
+}
+
+.player-button:hover {
+	color: #fff !important;
+	background-color: rgba(45, 212, 191, 0.25) !important;
+	border-color: rgba(45, 212, 191, 0.4) !important;
+	box-shadow: 0 0 12px rgba(45, 212, 191, 0.2) !important;
+}
+
 .player-button, .kick-button, .host-button {
-	color: white !important;
-	border: 1px solid rgba(0, 199, 177, 0.4) !important;
+	font-size: var(--fs-sm) !important;
+	font-weight: 600 !important;
+	transition: all 0.2s ease-in-out !important;
+	border-radius: 6px !important;
+	padding: 4px 10px !important;
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+}
+
+.kick-button {
+	color: #fda4af !important;
+	background-color: rgba(225, 29, 72, 0.15) !important;
+	border: 1px solid rgba(225, 29, 72, 0.3) !important;
+}
+
+.kick-button:hover {
+	color: #fff !important;
+	background-color: rgba(225, 29, 72, 0.3) !important;
+	border: 1px solid rgba(225, 29, 72, 0.5) !important;
+	box-shadow: 0 0 12px rgba(225, 29, 72, 0.2) !important;
+}
+
+.host-button {
+	color: #fcd34d !important;
+	background-color: rgba(245, 158, 11, 0.12) !important;
+	border: 1px solid rgba(245, 158, 11, 0.25) !important;
+}
+
+.host-button:hover {
+	color: #fff !important;
+	background-color: rgba(245, 158, 11, 0.25) !important;
+	border: 1px solid rgba(245, 158, 11, 0.45) !important;
+	box-shadow: 0 0 12px rgba(245, 158, 11, 0.2) !important;
 }
 
 /* ============================= */
@@ -215,28 +184,41 @@
 /* ============================= */
 
 .invite-button {
-	background: linear-gradient(145deg, #1c5e54, #10503f) !important;
-	border: 1px solid rgba(0, 199, 177, 0.6) !important;
-	color: #dbe6ff;
-	font-family: serif !important;
+	background: rgba(59, 130, 246, 0.15) !important;
+	border: 1px solid rgba(59, 130, 246, 0.3) !important;
+	color: #93c5fd !important;
+	font-family: var(--font-body) !important;
 	transition: all 0.2s ease-in-out;
+	font-weight: 700 !important;
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
 }
 
 /* Hover glow */
 .invite-button:hover {
-	transform: scale(1.05);
-	box-shadow: 0 0 12px rgba(0, 199, 177, 0.6) !important;
+	background: rgba(59, 130, 246, 0.25) !important;
+	border-color: rgba(59, 130, 246, 0.5) !important;
+	color: #dbeafe !important;
+	box-shadow: 0 0 12px rgba(59, 130, 246, 0.2) !important;
 }
 
 /* Optional: Differentiate Quit button (kept original crimson tone) */
 .quit-button {
-	background: linear-gradient(145deg, #4a2a35, #311b24) !important;
-	border: 1px solid rgba(200, 90, 120, 0.5) !important;
-	font-family: serif !important;
+	background: rgba(225, 29, 72, 0.15) !important;
+	border: 1px solid rgba(225, 29, 72, 0.3) !important;
+	font-family: var(--font-body) !important;
+	color: #fda4af !important;
+	font-weight: 700 !important;
+	transition: all 0.2s ease-in-out;
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
 }
 
 .quit-button:hover {
-	box-shadow: 0 0 12px rgba(200, 90, 120, 0.6) !important;
+	background: rgba(225, 29, 72, 0.25) !important;
+	border-color: rgba(225, 29, 72, 0.5) !important;
+	color: #ffe4e6 !important;
+	box-shadow: 0 0 12px rgba(225, 29, 72, 0.2) !important;
 }
 
 /* ============================= */
@@ -244,47 +226,41 @@
 /* ============================= */
 
 .launch-game {
-  background: linear-gradient(145deg, #00c7b1, #00594c);
-  color: white;
-  font-family: serif !important;
-  border: 1px solid rgba(0, 199, 177, 0.9);
-  font-weight: bold;
-  letter-spacing: 0.1px;
+  background: #03151e !important;
+  color: var(--color-primary) !important;
+  font-family: var(--font-button-large) !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(6, 33, 29, 0.3) !important;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 
   position: relative;
   overflow: hidden;
 
-  transition: transform 0.2s ease-in-out;
+  transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 
-  animation: arcanePulse 2.5s infinite ease-in-out;
-  box-shadow:
-    0 0 10px rgba(0, 199, 177, 0.6),
-    0 0 20px rgba(0, 199, 177, 0.3);
+  animation: arcanePulse 3s infinite ease-in-out;
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.15);
 }
 
 .launch-game:hover {
-  transform: scale(1.08);
-  box-shadow:
-    0 0 25px rgba(0, 199, 177, 1),
-    0 0 50px rgba(0, 199, 177, 0.8);
+  background: var(--color-primary-dark1) !important;
+  border-color: rgba(45, 212, 191, 0.4) !important;
+  color: #fff !important;
+  box-shadow: 0 0 20px rgba(45, 212, 191, 0.3);
 }
 
 /* Arcane pulse animation */
 @keyframes arcanePulse {
   0% {
-    box-shadow:
-      0 0 10px rgba(0, 199, 177, 0.6),
-      0 0 20px rgba(0, 199, 177, 0.3);
+    box-shadow: 0 0 8px rgba(45, 212, 191, 0.1);
   }
   50% {
-    box-shadow:
-      0 0 25px rgba(0, 199, 177, 1),
-      0 0 50px rgba(0, 199, 177, 0.8);
+    box-shadow: 0 0 16px rgba(45, 212, 191, 0.25);
   }
   100% {
-    box-shadow:
-      0 0 10px rgba(0, 199, 177, 0.6),
-      0 0 20px rgba(0, 199, 177, 0.3);
+    box-shadow: 0 0 8px rgba(45, 212, 191, 0.1);
   }
 }
 

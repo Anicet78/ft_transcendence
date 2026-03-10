@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router';
 import { useRoom } from '../home/RoomContext';
-import { Box } from '@allxsmith/bestax-bulma';
+import { Box, Button } from '@allxsmith/bestax-bulma';
 import { useAuth } from '../auth/AuthContext';
 import api from '../serverApi';
 import { useMutation } from '@tanstack/react-query';
@@ -14,7 +14,7 @@ const Game = () => {
 	const { user } = useAuth();
 	const { room, start, cancelStart } = useRoom()!;
 	const [showButton, setShowButton] = useState(false);
-	const [boxSize, setBoxSize] = useState({ width: "900px", height: "1050px" });
+	const [compact, setCompact] = useState(false);;
 	const [JsonEnd, setJsonEnd] = useState(Object);
 
 
@@ -132,7 +132,7 @@ const Game = () => {
 						if (path.endsWith('.data')) return `https://${window.location.host}/game/game.data`;
 						return path;
 					},
-					onCppMessage: (obj: Object) => 
+					onCppMessage: (obj: Object) =>
 						{
 							if (gameSocket.readyState === WebSocket.OPEN)
 								gameSocket.send(JSON.stringify(obj))
@@ -141,7 +141,7 @@ const Game = () => {
 					{
 						setJsonEnd(obj);
 						setShowButton(true);
-						setBoxSize({ width: "900px", height: "300px" });
+						setCompact(true);
 						delete (window as any).onCppMessage;
 						delete (window as any).sendResults;
 					}
@@ -282,17 +282,22 @@ const Game = () => {
 
 
 	return (
-		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between' style={{ width: boxSize.width, height: boxSize.height}}>
+		<div className={`game-box ${compact ? "game-box--results" : ""}`}>
 			{showButton &&
-			(<div id='end-results'>
-				<h2 style={{ marginBottom: "10px" }}> {JsonEnd.is_winner ? "🎉 Victoire !" : "💀 Défaite"}</h2>
-				<p style={{ fontSize: "18px"}}> <strong>Monstres tués :</strong> {JsonEnd.mob_killed} </p>
-				<p style={{ fontSize: "18px"}}> <strong>Temps :</strong> {JsonEnd.completion_time_min}min {JsonEnd.completion_time_sec}s {Math.round(JsonEnd.completion_time_mil * 1000)}ms </p>
+			(<div className='end-results'>
+				<h2>{JsonEnd.is_winner ? "🎉 Victoire !" : "💀 Défaite"}</h2>
+				<p>🗡️ <span>Monstres tués :</span> <span className='game-numbers'>{JsonEnd.mob_killed}</span></p>
+				<p>⏱️ <span>Temps :</span>
+					<span className='game-numbers'>{JsonEnd.completion_time_min}</span>min
+					<span className='game-numbers'>{JsonEnd.completion_time_sec}</span>s
+					<span className='game-numbers'>{Math.round(JsonEnd.completion_time_mil * 1000)}</span>ms
+				</p>
+				<Button className="home-button" onClick={handleHomeClick}>Return home</Button>
 			</div>)}
 			<br></br>
 			{showButton == true && ( <button id="home-button" onClick={handleHomeClick}> Return home </button> )}
 			{showButton == false && (<div ref={canvasContainerRef} id="canvas-container" />)}
-		</Box>
+		</div>
 	)
 
 }

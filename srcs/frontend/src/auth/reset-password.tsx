@@ -4,7 +4,7 @@ import './register.css'
 import './login.css'
 
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate, useSearchParams } from "react-router";
+import { NavLink, useNavigate, useSearchParams } from "react-router";
 import type { GetBody } from "../types/GetType";
 import api from "../serverApi";
 import toast from "../Notifications";
@@ -12,7 +12,7 @@ import InputPassword from "../components/InputPassword";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { Box, Button } from "@allxsmith/bestax-bulma";
+import { Button } from "@allxsmith/bestax-bulma";
 
 type ResetType = GetBody<"/auth/reset-password", "post">;
 
@@ -41,11 +41,11 @@ function ResetPassword() {
 	const [searchParams] = useSearchParams();
 	const token = searchParams.get("token");
 
-	if (!token) {
-		toast({ title: "No token found", message: "Url doesn't contain any token", type: "is-danger" });
-		navigate("/login");
-		return ;
-	}
+	// if (!token) {
+	// 	toast({ title: "No token found", message: "Url doesn't contain any token", type: "is-danger" });
+	// 	navigate("/login");
+	// 	return ;
+	// }
 
 	const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({
 		resolver: yupResolver(schema),
@@ -75,21 +75,19 @@ function ResetPassword() {
 	};
 
 	return (
-
-		<Box m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='center' textSize='3' textWeight='bold'>
-			<div className="register-box">
-				<form onSubmit={handleSubmit(onSubmit)}>
-					<span>Enter your new password</span>
-					<div className="form-fields">
-						<InputPassword placeholder="New password" register={register("password")} error={errors.password} watchValue={password} />
-						<InputPassword placeholder="Confirm password" register={register("confirmPassword")} error={errors.confirmPassword} watchValue={confirmPassword} />
-					</div>
-					<div className='bottom'>
-						<Button type="submit" color="primary" isOutlined className="submit-wrapper">{mutation.isPending ? 'Reseting...' : 'Reset password'}</Button>
-					</div>
-				</form>
-			</div>
-		</Box>
+		<div className='resetpwd-box'>
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<h2>Enter your new password</h2>
+				<div className="form-fields">
+					<InputPassword placeholder="New password" register={register("password")} error={errors.password} watchValue={password} />
+					<InputPassword placeholder="Confirm password" register={register("confirmPassword")} error={errors.confirmPassword} watchValue={confirmPassword} />
+				</div>
+				<div className='bottom'>
+					<Button type="submit" color="primary" size='large' className="submit-wrapper">{mutation.isPending ? 'Reseting...' : 'Reset password'}</Button>
+				</div>
+			</form>
+			<NavLink to="/" className="button is-primary is-medium is-outlined">Back to home</NavLink>
+		</div>
 	)
 }
 

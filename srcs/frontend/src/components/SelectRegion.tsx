@@ -12,7 +12,6 @@ const SelectRegion: React.FC<SelectInputProps> = ({ options, placeholder, error,
   return (
 	<div className="field">
 		<label htmlFor={placeholder}>{placeholder}</label>
-		<br />
 		<p className="control has-icons-left">
 		<select {...register} defaultValue="" className={`input ${error ? "error" : ""}`} style={{color: '#00d1b2'}}>
 			<option value="" disabled>{placeholder}</option>
@@ -21,7 +20,7 @@ const SelectRegion: React.FC<SelectInputProps> = ({ options, placeholder, error,
 			))}
 		</select>
 		<span className="icon is-small is-left">
-				<i className="fas fa-globe"></i>
+				<i className="input-icon fas fa-globe"></i>
 			</span>
 		</p>
 		{error && <p className="error-message">{error.message}</p>}

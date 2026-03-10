@@ -2,22 +2,36 @@ import { useQuery } from '@tanstack/react-query';
 import '../App.css'
 import type { GetResponse } from '../types/GetType'
 import api from '../serverApi';
-import { Box } from '@allxsmith/bestax-bulma';
+import { Button} from '@allxsmith/bestax-bulma';
 import { useNavigate } from 'react-router';
 import { useChatListSocket } from './hooks/useChatListSocket';
+import { useAuth } from '../auth/AuthContext';
 
 type ChatListResponseType = GetResponse<"/chat/list", "get">;
 
+//you need to create a chat model, and a member model
+function chatNameToDisplay(chat: any, userId?: string) {
+	if (chat.chatType === "private") {
+		const other = chat.members.find(
+			(m: any) => m.user.appUserId !== userId
+		);
+		return other?.user?.username || "Private chat";
+	}
+	return chat.chatName || "Group chat";
+}
+
 const ChatList = ({
-	onSelectChat, 
+	onSelectChat,
 	onCreateGroup,
 	onShowInvitations
 }: {
 	onSelectChat?: (id: string) => void;
 	onCreateGroup?: () => void; onShowInvitations?: () => void;
 }) => {
-	
+
 	const navigate = useNavigate();
+	const user = useAuth();
+
 	useChatListSocket();
 
 	const { data, isLoading, isError, error } = useQuery({
@@ -37,46 +51,47 @@ const ChatList = ({
 		<div className='sidebar-content'>
 			<h1 className="title">Your chats</h1>
 
-			<button
-				className="button is-primary is-small mb-4"
+			<Button
+				className='group-chat-btn'
+				size='small'
 				onClick={onCreateGroup}
 				>
 				Create Group Chat
-			</button>
+			</Button>
 
-			<button
-				className="button is-small is-warning mb-4"
+			<Button
+				className='group-invit-btn'
+				size='small'
 				onClick={onShowInvitations}
 				>
 				Group Chat Invitations
-			</button>
+			</Button>
 
 
 			{/* LIST CHATS */}
 			{data.length === 0 && <p>You have no chats yet.</p>}
 
 			{data.map(chat => (
-			<Box key={chat.chatId} className="box" m="2" p="4">
-				<h2 className="subtitle">
-				{chat.chatName || (chat.chatType === "private" ? "Private chat" : "Group chat")}
-				</h2>
-
-				<p>Type: {chat.chatType}</p>
-				<p>Members: {chat.members.length}</p>
-
-			<button
-				className="button is-dark is-small mt-2"
+			<div key={chat.chatId} className="chat-box" style={{ cursor: "pointer" }}
 				onClick={() => {
 					if (onSelectChat)
 						onSelectChat(chat.chatId);
 					else
 						navigate(`/chat/${chat.chatId}/info`);
-				}}
-			>
-				Open chat
-			</button>
+				}}>
+					<h2 className="subtitle">
+						<a className="has-text-dark">
+							{chatNameToDisplay(chat, user?.user?.id)}
+						</a>
+					</h2>
 
-			</Box>
+					{/* Chat metadata */}
+					{chat.chatType === "group" && (
+						<p style={{ fontSize: "0.85rem", opacity: 0.7 }}>
+							{chat.members.length} members
+						</p>
+					)}
+				</div>
 			))}
 		</div>
 		);

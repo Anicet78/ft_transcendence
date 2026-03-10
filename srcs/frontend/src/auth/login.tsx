@@ -1,9 +1,4 @@
-import 'bulma/css/bulma.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import './login.css'
-import '../index.css'
-
-import { Button, Box } from '@allxsmith/bestax-bulma';
+import { Button } from '@allxsmith/bestax-bulma';
 import InputEmail from '../components/InputEmail.tsx';
 import { useMutation } from '@tanstack/react-query';
 import api from '../serverApi.ts';
@@ -74,12 +69,13 @@ function Login() {
 	return (
 		<div className='login-box'>
 			<div className='social-buttons'>
-				<Button color='primary' isOutlined className='login-button' onClick={handleGoogleLogin} size='large'>Login with Google</Button>
-				<Button color='primary' isOutlined className='login-button' onClick={handle42Login} size='large'>Login with 42</Button>
+				<Button color='primary' className='login-button' onClick={handleGoogleLogin} size='large'>Login with Google</Button>
+				<Button color='primary' className='login-button' onClick={handle42Login} size='large'>Login with 42</Button>
 			</div>
 			<br />
 			<form onSubmit={loginSubmit}>
 				<InputEmail label="Email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email"/>
+				<Button type="button" color="primary" className="forgot-pwd-button" onClick={onForgot}>Forgot Password</Button>
 				<div className="field">
 					<label htmlFor="password">Password</label>
 					<p className="control has-icons-left">
@@ -96,20 +92,19 @@ function Login() {
 							placeholder="Enter your password"
 						/>
 						<span className="icon is-small is-left">
-							<i className="fas fa-lock"></i>
+							<i className="input-icon fas fa-lock"></i>
 						</span>
 					</p>
 				</div>
-				<Button type="button" color="primary" isOutlined className="submit-wrapper" onClick={onForgot}>Forgot Password</Button>
 				{loginMutation.isError && (
 					<div style={{ color: 'red' }}>
 						{/* this part only show 'Error:' when nginx isn't running */}
 						Error : {loginMutation.error instanceof Error ? loginMutation.error.message : 'Unknown'}
 					</div>
 				)}
-				<Button type="submit" color="primary" isOutlined size='large'>{loginMutation.isPending ? 'Loading...' : 'Sign in'}</Button>
+				<Button type="submit" color="primary" size='large'>{loginMutation.isPending ? 'Loading...' : 'Sign in'}</Button>
 			</form>
-			<NavLink to="/" className="button is-primary is-medium is-outlined">Back to home</NavLink>
+			<NavLink to="/" className="button is-primary is-medium">Back to home</NavLink>
 		</div>
 	)
 }

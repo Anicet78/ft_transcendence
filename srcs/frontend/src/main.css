@@ -9,11 +9,13 @@
 @import "./components/Banner.css";
 @import "./components/Footer.css";
 @import "./components/Sidebar.css";
+@import "./components/ui/parchment.css";
 @import "./friendship/friendList.css";
 @import "./game/game.css";
 @import "./home/home.css";
 @import "./profile/profile.css";
 @import "./profile/update.css";
+@import "./policies/privacy_policy.css";
 @import "./search/SearchBar.css";
 @import "./search/SearchPage.css";
 
@@ -21,7 +23,105 @@
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
+	width: 100%;
+	height: 100% !important;
+
+	/* Darker underground gradient with teal */
+	background: radial-gradient(
+		circle at 50% 20%,
+		#2e2e2e 0% ,      /* slightly lighter center */
+		#242424 30%,     /* requested base */
+		#004c49 60%,     /* teal instead of dark blue */
+		#003532 85%,     /* deep teal shadow */
+		#00221f 100%     /* strong teal vignette */
+	) !important;
 }
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-primary-dark0) inset !important;
+  -webkit-text-fill-color: var(--color-primary-light) !important;
+}
+
+/* ============================= */
+/*  Animated Fog (Teal)          */
+/* ============================= */
+
+.page-container::before,
+.page-container::after {
+	content: "";
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: -50%;
+	left: -50%;
+	pointer-events: none;
+	filter: blur(80px);
+	mix-blend-mode: screen;
+}
+
+/* First fog layer – darker & slower */
+.page-container::before {
+	background:
+	radial-gradient(circle at 30% 40%, rgba(45, 212, 191, 0.08), transparent 60%),
+	radial-gradient(circle at 70% 60%, rgba(20, 184, 166, 0.07), transparent 70%) !important;
+
+	animation: fogDrift 45s linear infinite,
+	arcanePulseBg 8s ease-in-out infinite;
+}
+
+/* Second fog layer – subtle opposing motion */
+.page-container::after {
+	background:
+	radial-gradient(circle at 50% 50%, rgba(45, 212, 191, 0.07), transparent 65%),
+	radial-gradient(circle at 80% 30%, rgba(15, 118, 110, 0.08), transparent 70%) !important;
+
+	animation: fogDriftReverse 70s linear infinite;
+}
+
+/* Smooth drifting motion */
+@keyframes fogDrift {
+	0%   { transform: translate(0, 0) scale(1); }
+	50%  { transform: translate(-6%, -4%) scale(1.05); }
+	100% { transform: translate(-12%, -8%) scale(1); }
+}
+
+@keyframes fogDriftReverse {
+	0%   { transform: translate(0, 0) scale(1); }
+	50%  { transform: translate(5%, 7%) scale(1.08); }
+	100% { transform: translate(10%, 12%) scale(1); }
+}
+
+/* Subtle breathing arcane glow */
+@keyframes arcanePulseBg {
+	0%   { opacity: 0.6; }
+	50%  { opacity: 0.9; }
+	100% { opacity: 0.6; }
+}
+
+/* ============================= */
+/*  Subtle Arcane Light Pulses   */
+/* ============================= */
+
+.page-container::before,
+.page-container::after {
+	filter: blur(60px);
+}
+
+/* Separate pulse overlay */
+.page-container::after {
+	box-shadow: inset 0 0 200px rgba(45, 212, 191, 0.03) !important;
+}
+
+.page-container::before {
+	animation: fogDrift 35s linear infinite, arcanePulseBg 6s ease-in-out infinite;
+}
+
+@keyframes arcanePulseBg {
+	0%   { opacity: 0.7; }
+	50%  { opacity: 1; }
+	100% { opacity: 0.7; }
+}
+
 
 .main-layout {
 	display: flex;
@@ -37,4 +137,11 @@
 	margin-bottom: 0 !important;
 	position: relative;
 	z-index: 1;
+}
+
+@media (max-width: 480px) {
+	.main-layout {
+		flex-direction: column-reverse;
+		justify-content: flex-end !important;
+	}
 }

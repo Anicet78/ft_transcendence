@@ -1,5 +1,7 @@
 .slide-in-elliptic-bottom-bck .text-focus-in {
 	color: var(--color-primary);
+    margin-top: clamp(20px, 2vw, 50px);;
+    margin-bottom: clamp(20px, 2vw, 50px);
 	-webkit-animation:text-focus-in 2.5s cubic-bezier(.55,.085,.68,.53) both;
 	animation:text-focus-in 2.5s cubic-bezier(.55,.085,.68,.53) both;
 }
@@ -42,8 +44,7 @@
 	flex-direction: column; /* stack children vertically */
 	justify-content: center; /* vertical centering */
 	align-items: center; /* horizontal centering */
-	gap: clamp(1rem, 4vw, 2rem); /* Space between title and buttons */
-	padding: clamp(1.5rem, 5vw, 5rem); /* add some spacing between elements and borders */
+	padding: clamp(1rem, 3vw, 3rem); /* add some spacing between elements and borders */
 	margin: 0 auto; /* centers the div horizontally inside the Box */
 	box-sizing: border-box; /* Include padding in width */
 	text-align: center;
@@ -66,22 +67,27 @@
 .button-group .heartbeat {
 	font-family: var(--font-button-large);
 	font-size: clamp(1rem, 2.5vw, 2rem);
-	padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 4vw, 2rem);
     color: var(--color-primary);
-    border-color: var(--color-primary-dark);
+    background-color: rgba(45, 212, 191, 0.1);
+    border: 1px solid rgba(45, 212, 191, 0.25);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
 }
 
 .button-group .button:hover {
-        background-color: var(--color-primary-light);
-        transform: scale(1.05);
+    background-color: rgba(45, 212, 191, 0.25);
+    color: #fff;
+    border-color: rgba(45, 212, 191, 0.4);
 }
 
 /* stacks buttons vertically on small devices */
 @media (max-width: 768px) {
 	.slide-in-elliptic-bottom-bck {
 		padding: var(--space-lg);
+        height: 80vh;
 	}
 
 	.text-focus-in p {
@@ -209,4 +215,3 @@
             animation-timing-function: ease-out;
   }
 }
-

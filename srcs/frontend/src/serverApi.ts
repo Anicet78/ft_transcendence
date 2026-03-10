@@ -34,6 +34,13 @@ const waitForSocketId = (): Promise<string | null> => {
 	});
 };
 
+const getCookie = (name: string) => {
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
+	if (parts.length === 2) return parts.pop()!.split(';').shift();
+	return null;
+};
+
 const api = axios.create({
 	baseURL: (window.location.port == "5173" ? 'https://localhost:8443' : '') + `/api`,
 	withCredentials: true,
@@ -46,6 +53,16 @@ const api = axios.create({
 
 api.interceptors.request.use(
 	async (config) => {
+		if (config.url === '/auth/refresh') {
+			const hasSession = getCookie('hasSession');
+
+			if (!hasSession) {
+				const controller = new AbortController();
+				config.signal = controller.signal;
+				controller.abort("No active session, refresh skipped.");
+			}
+		}
+
 		const publicRoutes = ['/auth/login', '/auth/register', '/auth/refresh', '/auth/42', '/auth/google', '/auth/reset-password', '/'];
 		if (config.url && !publicRoutes.includes(config.url) && accessToken) {
 			config.headers.Authorization = `Bearer ${accessToken}`;

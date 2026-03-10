@@ -19,8 +19,8 @@ const App = () => {
 			</div>
 			<br/>
 			<div className='button-group'>
-				<NavLink to="/login" className="button is-medium is-outlined heartbeat">Sign in</NavLink>
-				<NavLink to="/register" className="button is-primary is-medium is-outlined heartbeat">Sign up</NavLink>
+				<NavLink to="/login" className="button is-medium heartbeat">Sign in</NavLink>
+				<NavLink to="/register" className="button is-primary is-medium heartbeat">Sign up</NavLink>
 			</div>
 		</div>
 	)

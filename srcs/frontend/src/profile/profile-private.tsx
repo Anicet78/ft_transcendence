@@ -18,8 +18,6 @@ const ProfilePrivate = () => {
 
 	const userData: ProfileResponseType = data.data;
 
-	console.log(`https://${window.location.host}/uploads/${userData.avatarUrl}`);
-
 	const username = userData.username;
 	const avatar = userData.avatarUrl ? `https://${window.location.host}/uploads/${userData.avatarUrl}` : skull;
 	const level = userData.gameProfile?.level || '0';
@@ -40,7 +38,7 @@ const ProfilePrivate = () => {
 			<div className='box-head'>
 				<div className='image-box'>
 						<img aria-label='avatar of the user' src={avatar} crossOrigin="anonymous"/>
-					<NavLink to='/profile/update/avatar' className='button is-small'>
+					<NavLink to='/profile/update/avatar' className='button is-small icon-button'>
 						<span className="icon">
 							<i className="fas fa-pen"></i>
 						</span>
@@ -49,7 +47,7 @@ const ProfilePrivate = () => {
 				<div className='head-text'>
 					<div className='profile_username'>
 						{username}
-						<NavLink to='/profile/update/username' className='button is-small'>
+						<NavLink to='/profile/update/username' className='button is-small icon-button'>
 							<span className="icon">
 								<i className="fas fa-pen"></i>
 							</span>
@@ -65,7 +63,7 @@ const ProfilePrivate = () => {
 					<p><span className='category-name'>Last name:</span>{lastname}</p>
 					<p>
 						<span className='category-name'>Email:</span>{email}
-						<NavLink to='/profile/update/email' className='button is-small'>
+						<NavLink to='/profile/update/email' className='button is-small icon-button'>
 							<span className="icon">
 								<i className="fas fa-pen"></i>
 							</span>
@@ -73,7 +71,7 @@ const ProfilePrivate = () => {
 					</p>
 					<p>
 						<span className='category-name'>Password:</span>{password}
-						<NavLink to='/profile/update/password' className='button is-small'>
+						<NavLink to='/profile/update/password' className='button is-small icon-button'>
 							<span className="icon">
 								<i className="fas fa-pen"></i>
 							</span>
@@ -81,7 +79,7 @@ const ProfilePrivate = () => {
 					</p>
 					<p>
 						<span className='category-name'>Region:</span>{region}
-						<NavLink to='/profile/update/region' className='button is-small'>
+						<NavLink to='/profile/update/region' className='button is-small icon-button'>
 								<span className="icon">
 									<i className="fas fa-pen"></i>
 								</span>
@@ -96,8 +94,8 @@ const ProfilePrivate = () => {
 					<p><span className='category-name'>Total loses:</span>{totalLoses}</p>
 				</div>
 			</div>
-			<NavLink to="/friends/list" className="button is-large is-outlined navlink-button">Friends list</NavLink>
-			<NavLink to="/friends/requests" className="button is-large is-outlined navlink-button">Ongoing friend requests</NavLink>
+			<NavLink to="/friends/list" className="button is-large navlink-button">Friends list</NavLink>
+			<NavLink to="/friends/requests" className="button is-large navlink-button">Ongoing friend requests</NavLink>
 		</div>
 	)
 }

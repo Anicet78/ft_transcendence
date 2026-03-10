@@ -1,8 +1,8 @@
 .login-box {
 	width: 90%; /* takes most of the screen on small devices */
 	max-width: 600px; /* controls overall box width */
-	border-radius: 30px; /* rounded borders */
-	 border: 2px solid var(--color-primary);
+	border-radius: 20px; /* rounded borders */
+	 border: 1px solid rgba(45, 212, 191, 0.25);
 	display: flex;
     flex-direction: column; /* stack children vertically */
     justify-content: center; /* vertical centering */
@@ -19,8 +19,15 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	color: #00d1b2;
+	color: var(--color-primary);
 	gap: 1.5rem; /* consistent spacing between inputs */
+}
+
+.login-box .field {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 }
 
 .login-box  label {
@@ -29,17 +36,28 @@
 	font-size: clamp(1.2rem, 2vw, 2rem);
 	margin-bottom: 6px;
 	display: inline-block;
-	color: #00d1b2;
+	color: var(--color-primary);
 }
 
 .login-box .button {
 	font-family: var(--font-button-large);
+	background-color: rgba(45, 212, 191, 0.1) !important;
+	color: var(--color-primary) !important;
+	border: 1px solid rgba(45, 212, 191, 0.25) !important;
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+}
+
+.login-box .button:hover {
+	background-color: rgba(45, 212, 191, 0.25) !important;
+	color: #fff !important;
+	border-color: rgba(45, 212, 191, 0.4) !important;
 }
 
 .login-box .social-buttons {
 	display: flex;
 	flex-direction: row;       /* side by side by default */
-	gap: 1rem;                 /* spacing between buttons */
+	gap: var(--space-md);                 /* spacing between buttons */
 	justify-content: center;   /* center on large screens */
 	flex-wrap: wrap;           /* wrap to next line on small screens */
 	width: 100%;
@@ -48,16 +66,16 @@
 
 .login-box input {
 	background-color: #3f3f3f;
-	border-color: var(--color-primary);
+	border-color: rgba(45, 212, 191, 0.4);
 }
 .login-box input::placeholder {
-	color: var(--color-primary);
+	color: rgba(45, 212, 191, 0.6);
 }
 
 .login-box input:focus, select:focus {
   outline: none;
-  border-color: #00f0f0;
-  background-color: #8c8a8a;
+  border-color: var(--color-primary);
+  background-color: #525252;
 }
 
 @media (max-width: 480px) {
@@ -68,6 +86,14 @@
 
 	.login-box .social-buttons {
 		flex-direction: column;
+		align-items: center;
+	}
+
+	.login-box .button {
+		font-size: var(--fs-md2);
+	}
+
+	.login-box .forgot-pwd-button {
+		font-size: var(--fs-sm);
 	}
 }
-

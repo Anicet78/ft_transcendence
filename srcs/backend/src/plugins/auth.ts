@@ -5,6 +5,7 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import fastifyCors from "@fastify/cors";
 import cookies from "@fastify/cookie";
 import type { RequestUser } from "../schema/userSchema.js";
+import { createRefreshToken } from "../services/auth/token.js";
 
 export default fp(async (fastify) => {
 	// CORS
@@ -74,6 +75,42 @@ export default fp(async (fastify) => {
 		if (!user || user.role !== 'game-server')
 			return reply.code(403).send({ error: "Forbidden", message: "Not Game Server" });
 	});
+
+	fastify.decorateReply('setAuthCookie', async function (this: FastifyReply, userId: string) {
+		const refresh = await createRefreshToken(userId);
+
+		this.setCookie('hasSession', 'true', {
+			path: '/',
+			httpOnly: false,
+			secure: true,
+			sameSite: 'strict',
+			maxAge: 7 * 24 * 60 * 60 * 1000
+		});
+
+		this.setCookie('refreshToken', refresh, {
+			path: '/',
+			httpOnly: true,
+			secure: true,
+			sameSite: 'strict',
+			maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in ms
+		});
+	});
+
+	fastify.decorateReply('clearAuthCookie', function (this: FastifyReply) {
+		this.clearCookie('hasSession', {
+			path: '/',
+			httpOnly: false,
+			secure: true,
+			sameSite: 'strict'
+		});
+
+		this.clearCookie('refreshToken', {
+			path: '/',
+			httpOnly: true,
+			secure: true,
+			sameSite: 'strict'
+		});
+	});
 });
 
 declare module "@fastify/jwt" {
@@ -87,5 +124,9 @@ declare module "fastify" {
 		authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
 		verifyAdmin: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
 		verifyServer: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+	}
+	interface FastifyReply {
+		setAuthCookie: (this: FastifyReply, userId: string) => Promise<void>;
+		clearAuthCookie: (this: FastifyReply) => void;
 	}
 }

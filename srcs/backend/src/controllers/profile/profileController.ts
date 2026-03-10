@@ -9,6 +9,8 @@ import path from 'path';
 import type { UpdatePasswordBody } from '../../schema/profileSchema.js';
 import { prisma } from '../../services/db/prisma.js';
 import { hashPassword, verifyPassword } from '../../services/auth/password.js';
+import { SocketService } from '../../services/socket/SocketService.js';
+import { findOrCreatePrivateChat } from '../../services/db/chat/privateChatService.js';
 
 // GET /profile
 export async function getProfile( req: FastifyRequest, reply: FastifyReply ) {
@@ -123,6 +125,10 @@ export async function blockProfile(req: FastifyRequest<{ Params: ProfileIdParams
 
   await profileService.blockProfile(userId, targetId);
 
+  const chat = await findOrCreatePrivateChat(req.params.id, req.user.id);
+
+  SocketService.send(chat.chatId!, 'blocked', { chatId: chat.chatId });
+
   return reply.status(204).send();
 }
 
@@ -143,6 +149,10 @@ export async function unblockProfile(req: FastifyRequest<{ Params: ProfileIdPara
     return reply.code(400).send({ error: 'Not blocked' });
 
   await profileService.unblockProfile(lastBlockId);
+
+  const chat = await findOrCreatePrivateChat(req.params.id, req.user.id);
+
+  SocketService.send(chat.chatId!, 'unblocked', { chatId: chat.privateChatId });
 
   return reply.status(204).send();
 }

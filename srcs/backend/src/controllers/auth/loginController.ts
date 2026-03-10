@@ -3,7 +3,6 @@ import type { LoginResponseType, LoginType } from "../../routes/auth/loginRoute.
 import "@fastify/cookie";
 import { verifyPassword } from "../../services/auth/password.js";
 import { UserService } from "../../services/db/userService.js";
-import { createRefreshToken } from "../../services/auth/token.js";
 
 export async function postLoginController(
 	request: FastifyRequest<{ Body: LoginType }>,
@@ -34,15 +33,9 @@ export async function postLoginController(
 	};
 
 	const jwt = await reply.jwtSign({ id: user.id, username: user.username, email: user.email, role: user.role });
-	const refresh = await createRefreshToken(user.id);
-
 	const response: LoginResponseType = { token: jwt, user: user };
 
-	return reply.setCookie('refreshToken', refresh, {
-			path: '/',
-			httpOnly: true,
-			secure: true,
-			sameSite: 'strict',
-			maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in ms
-		}).status(200).send(response);
+	await reply.setAuthCookie(user.id);
+
+	return reply.status(200).send(response);
 }

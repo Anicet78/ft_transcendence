@@ -10,20 +10,22 @@
 /* Section title */
 .wrapbox h2 {
   font-family: var(--font-section-title);
-  color: var(--color-primary);
-  font-size: clamp(1.5rem, 4vw, 4rem) !important;
+  color: var(--color-primary) !important;
+  font-size: clamp(2rem, 4vw, 4rem) !important;
   padding-top: clamp(0.8rem, 1.5vw, 1.5rem) !important;
 }
 
 /* Friend list box */
 .friendbox {
   width: 100%;
-  margin: auto;
-  max-width: 1000px;
+  margin: 0 auto;
+  max-width: 900px;
   background-color: var(--color-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(45, 212, 191, 0.12);
   border-radius: 12px;
-  padding: clamp(0.8rem, 1.3vw, 1.3rem) !important;
-  overflow-x: visible; /* no scroll needed on desktop */
+  padding: clamp(0.8rem, 1vw, 1.3rem) !important;
   box-sizing: border-box; /* ensure padding doesn't exceed width */
 }
 
@@ -31,13 +33,12 @@
 .user_list {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  color: black;
-  margin: 2rem auto;
-  width: 100%;
-  max-width: 900px;
-  gap: 1rem;
+  align-items: center !important;
+  color: var(--color-text);
+  margin: 0 auto;
+  width: 90% !important;
+  max-width: 800px;
+  gap: var(--space-md);
   list-style: none;
   padding: 0;
 }
@@ -45,24 +46,22 @@
 /* Each friend card */
 .user_item_card {
   display: grid;
-  grid-template-columns: auto 1fr;  /* left: auto width, right: take remaining space */
-  align-items: center;               /* vertical centering */
-  gap: 1rem;
+  grid-template-columns: 1fr auto;  /* left: auto width, right: take remaining space */
+  align-items: center !important;               /* vertical centering */
+  justify-content: center !important;
+  gap: var(--space-md);
   padding: clamp(0.5rem, 1vw, 1rem) !important;
   box-sizing: border-box; /* ensure padding doesn't exceed width */
-  background-color: #f9f9f9;
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(45, 212, 191, 0.1);
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   width: 100%;       /* take full width of parent */
-  max-width: 1000px;
+  max-width: 800px;
   font-family: var(--font-body);
-  color: black;
-}
-
-.user_info {
-  justify-self: end;  /* push the buttons to the right column */
-  display: flex;
-  gap: 1rem; /* spacing between avatar and username */
+  color: var(--color-text);
 }
 
 /* Avatar image */
@@ -76,9 +75,10 @@
 /* Username text */
 .username {
   font-weight: bold;
-  font-size: 1.1rem;
-  color: black;
+  font-size: 1.var(--fs-md1);
+  color: var(--color-text);
   font-family: var(--font-body);
+  margin: 0 auto !important;
 }
 
 /* Buttons container */
@@ -92,37 +92,53 @@
 /* Buttons styles */
 .interaction_btn, .view_profile_btn {
   font-family: var(--font-body);
-  background-color: black;
-  color: white;
-  border: none;
+  font-weight: bold !important;
+  background-color: rgba(45, 212, 191, 0.1) !important;
+  color: var(--color-primary) !important;
+  border: 1px solid rgba(45, 212, 191, 0.25) !important;
   border-radius: 4px;
-  padding: 0.35rem 0.75rem;
-  font-size: 1rem;
+  padding: 0.35rem;
   cursor: pointer;
   text-decoration: none;
-  text-align: center;
   white-space: nowrap;
   min-width: fit-content;
   flex-shrink: 0;      /* prevent shrinking */
+  margin: 2px;
+  font-size: clamp(0.8rem, 1vw, 1rem) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
 }
 
 .interaction_btn:hover, .view_profile_btn:hover {
-  background-color: #333;
+  background-color: rgba(45, 212, 191, 0.25) !important;
+  color: #fff !important;
+  border: 1px solid rgba(45, 212, 191, 0.4) !important;
 }
 
 .bottom-button {
   display: grid;
   place-items: center;
-    gap: 1rem;
+  gap: var(--space-md);
 
 }
 
 .request-button, .myprofile-button, .friendlist-button {
   font-family: var(--font-button-large) !important;
   font-size: clamp(1rem, 2vw, 2rem);
+  background-color: rgba(45, 212, 191, 0.1) !important;
   color: var(--color-primary) !important;
-  border-color: var(--color-primary) !important;
+  border: 1px solid rgba(45, 212, 191, 0.25) !important;
   border-radius: var(--radius-md);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+.request-button:hover, .myprofile-button:hover, .friendlist-button:hover {
+  color: #fff !important;
+  background-color: rgba(45, 212, 191, 0.25) !important;
+  border-color: rgba(45, 212, 191, 0.4) !important;
 }
 
 @media (max-width: 1000px) {
@@ -142,10 +158,14 @@
   .username {
     flex-grow: 0;
   }
+
+  .myprofile-button {
+	margin-bottom: 15px;
+  }
 }
 
 /* Responsive for mobile */
-@media (max-width: 680px) {
+@media (max-width: 780px) {
   .friendbox {
     padding: 0 !important;
   }
@@ -172,4 +192,3 @@
     gap: 0.5rem;
   }
 }
-

@@ -90,15 +90,31 @@ export default fp(async (fastify) => {
 			socket.on("disconnect", async (reason) => {
 				console.log(`Client \`${clientId}\` is gone. Reason: ${reason}`);
 
+				const remainingNow = await fastify.io
+					.in(`user:${userPayload.id}`)
+					.fetchSockets();
+
+				if (remainingNow.length === 0) {
+					await UserService.setAvailabality(userPayload.id, false);
+				}
+
 				const timer = setTimeout(async () => {
+					const remainingAfter = await fastify.io
+						.in(`user:${userPayload.id}`)
+						.fetchSockets();
+
+					if (remainingAfter.length > 0) {
+						console.log(`User ${userPayload.id} still connected elsewhere. Skipping room leave`);
+						disconnectionTimers.delete(userPayload.id);
+						return;
+					}
+
 					await RoomService.leave(userPayload.id, socket);
 					disconnectionTimers.delete(userPayload.id);
 					console.log(`User ${userPayload.id} has been removed from his room (disconnection timeout)`);
 				}, 5000);
 
 				disconnectionTimers.set(userPayload.id, timer);
-
-				await UserService.setAvailabality(userPayload.id, false);
 			});
 
 			// broadcast typing into chat effect in the chat room

@@ -12,62 +12,61 @@
   top: 100%;
   left: 0;
   z-index: 10;
-  background: white;
-  border: 1px solid #ccc;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(45, 212, 191, 0.15);
   padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 84%;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  box-sizing: border-box; /* ensure padding doesn't exceed width */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-sizing: border-box;
+  border-radius: 8px;
+  color: var(--color-text);
 }
 
 .search_input {
   flex: 1 1 auto;             /* allow input to shrink and grow */
   min-width: 0;               /* critical: allows input to shrink below content */
   padding: 0.5rem;
-  border: 1px solid #00d1b2;
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: var(--fs-md1);
+  font-family: var(--font-body);
+  	background-color: var(--color-primary-dark2) !important;
+	color: var(--color-primary-light) !important;
+	border: 1px solid rgba(45, 212, 191, 0.3) !important;
+}
+
+.search_input::placeholder {
+	color: var(--color-primary-light) !important;
+}
+
+.search_input:focus .navbar-item:focus {
+	border: 1px solid var(--color-primary-light) !important;
 }
 
 .search_button {
   padding: 0.5rem 0.75rem;
   font-size: 0.9rem;
   cursor: pointer;
-  border: 1px solid #ccc;
+  border: 1px solid rgba(45, 212, 191, 0.25);
   border-radius: 4px;
-  background-color: #f0f0f0;
-  transition: background-color 0.2s ease;
-  box-sizing: border-box;          /* Include padding/border in width */
+  background-color: rgba(45, 212, 191, 0.1);
+  color: var(--color-primary);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .search_button:hover {
-  background-color: #e0e0e0;
+  background-color: rgba(45, 212, 191, 0.25);
+  color: #fff;
+  border-color: rgba(45, 212, 191, 0.4);
 }
 
-/* ======================= */
-/* MOBILE / TINY SCREEN FIX */
-/* ======================= */
-
-/* Tiny screens: wrap buttons under input if needed */
-@media screen and (max-width: 400px) {
-  .search_form {
-    flex-wrap: wrap;
-  }
-
-  .search_input {
-    flex: 1 1 100%;
-  }
-
-  .search_form .is-primary {
-    flex: 1 1 48%;     /* 2 buttons per row max */
-    max-width: 48%;
-  }
-
-  .filter_panel {
-    width: 100%;       /* scale filter panel to input width */
-    max-width: 100%;
-  }
+.search_form:hover, .navbar-start .navbar-item {
+	background-color: transparent !important;
 }

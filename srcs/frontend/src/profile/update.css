@@ -1,15 +1,18 @@
 .update-container {
 	width: 90%; /* use most of the screen width */
 	max-width: 700px; /* controls overall box width */
-	border-radius: 30px; /* rounded borders */
+	border-radius: 16px; /* rounded borders */
 	background-color: var(--color-bg);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid rgba(45, 212, 191, 0.12);
 	display: flex;
 	flex-direction: column; /* stack children vertically */
 	justify-content: center; /* vertical centering */
 	align-items: center; /* horizontal centering */
 	gap: clamp(1rem, 4vw, 2rem);
 	padding: clamp(1rem, 2vw, 2rem); /* add some spacing between elements and borders */
-	margin: 2rem auto; /* spacing on top/bottom for mobile */
+	margin: auto;
 	box-sizing: border-box; /* Include padding in width */
 	overflow: hidden; /* Prevent children from stick out of the container */
 }
@@ -17,10 +20,10 @@
 .update-container label {
 	font-weight: 700;
 	font-family: var(--font-label);
-	font-size: clamp(1.2rem, 2vw, 2rem);
+	font-size: clamp(1.5rem, 2vw, 2rem);
 	margin-bottom: 6px;
 	display: inline-block;
-	color: black;
+	color: var(--color-primary-light);
 }
 
 .update-container form {
@@ -30,33 +33,51 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 1rem; /* consistent spacing between inputs */
+	gap: var(--space-md); /* consistent spacing between inputs */
 }
 
-.update-container input {
-	background-color: #3f3f3f;
-	color: #eee;
+.update-container input, select {
+	background-color: var(--color-primary-dark2) !important;
+	color: var(--color-primary-light) !important;
+	border: 1px solid var(--color-primary-dark0) !important;
+}
+
+.update-container .input::placeholder {
+	color: var(--color-primary-light);
 }
 
 .update-container .button {
 	font-family: var(--font-button-large) !important;
 	font-size: clamp(1rem, 1.5vw, 1.5rem);
 	color: var(--color-primary) !important;
-	border-color: var(--color-primary) !important;
+	background-color: rgba(45, 212, 191, 0.1);
+	border: 1px solid rgba(45, 212, 191, 0.25) !important;
 	border-radius: var(--radius-md);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	transition: all 0.2s ease;
 }
 
+.update-container .button:hover {
+	color: #fff !important;
+	background-color: rgba(45, 212, 191, 0.25) !important;
+	border-color: rgba(45, 212, 191, 0.4) !important;
+}
+
+/* update avatar button */
 .update-container .material-button-root {
-	color: var(--color-primary) !important;
-	border-color: var(--color-primary) !important;
+	color:var(--color-primary-light) !important;
+	background-color: var(--color-primary-dark2) !important;
+	border: 1px solid var(--color-primary-dark0) !important;
 	font-family: var(--font-button-large);
 	font-size: clamp(1rem, 1.5vw, 1.5rem);
 }
 
 .update-container input:focus, select:focus {
 	outline: none;
-	border-color: #00f0f0;
-	background-color: #333;
+	border: 1px solid var(--color-primary-dark2) !important;
+	background-color: var(--color-primary-light) !important;
+	color: var(--color-primary-dark1) !important;
 }
 
 .update-box {
@@ -65,6 +86,9 @@
 	width: 100%;
 	max-width: 700px;
 	background-color: var(--color-bg);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid rgba(45, 212, 191, 0.12);
 	border-radius: 12px;
 	height: 300px;
 	justify-content: center;
@@ -83,6 +107,22 @@
 	font-family: var(--font-button-large) !important;
 	font-size: clamp(1rem, 2.5vw, 2rem);
 	color: var(--color-primary) !important;
-	border-color: var(--color-primary) !important;
+	background-color: rgba(45, 212, 191, 0.1) !important;
+	border: 1px solid rgba(45, 212, 191, 0.25) !important;
 	border-radius: var(--radius-md);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	transition: all 0.2s ease;
+}
+
+.navlink-button:hover {
+	color: #fff !important;
+	background-color: rgba(45, 212, 191, 0.25) !important;
+	border-color: rgba(45, 212, 191, 0.4) !important;
+}
+
+@media (max-width: 480px) {
+	.update-container {
+		margin-top: 10px;
+	}
 }

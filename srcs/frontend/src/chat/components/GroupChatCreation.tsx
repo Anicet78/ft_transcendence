@@ -1,9 +1,9 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import api from "../../serverApi";
 import { useState } from "react";
-import { Box } from "@allxsmith/bestax-bulma";
 import { useAuth } from "../../auth/AuthContext";
 import toast from "../../Notifications";
+import { Button } from "@allxsmith/bestax-bulma";
 
 // export default function GroupChatCreation() {
 export default function GroupChatCreation({
@@ -26,8 +26,28 @@ export default function GroupChatCreation({
 
 			return friendships.map((f: any) =>
 				f.sender.appUserId === user?.id ? f.receiver : f.sender);
-			}
-		});
+		}
+	});
+
+		const groupChatInput = () => {
+
+			const trimmed = name.trim();
+
+			if (!trimmed)
+				return toast({ title: "Group name required", type: "is-warning" });
+
+			if (trimmed.length < 3)
+				return toast({ title: "Name too short", type: "is-warning" });
+
+			if (selected.length < 2)
+				return toast({ title: "Select at least 2 friends", type: "is-warning" });
+
+			if (createGroupMutation.isPending)
+				return <div>Creating group chat...</div>;
+
+			createGroupMutation.mutate();
+		};
+
 
 	const createGroupMutation = useMutation({
 		mutationFn: async () => {
@@ -50,17 +70,17 @@ export default function GroupChatCreation({
 		return <div>Loading friends...</div>; 
 
 	return (
-		<Box m="4" p="6" bgColor="white">
+		<div className="chat-creation">
 			{onClose && (
-				<button className="button is-light is-small mb-3" onClick={onClose}>
-				Back
-				</button>
+				<Button className="back-button" onClick={onClose}>
+					Back
+				</Button>
 			)}
 
-			<h1 className="title">Create Group Chat</h1>
+			<h1 aria-label="section title">Create Group Chat</h1>
 
-			<div className="field">
-			<label className="label">Group Name</label>
+			<div className="field groupname">
+			<label>Group Name</label>
 			<input
 				className="input"
 				value={name}
@@ -69,8 +89,8 @@ export default function GroupChatCreation({
 			/>
 			</div>
 
-			<div className="field">
-			<label className="label">Select Members</label>
+			<div className="field members-checkbox">
+			<label className="select-label">Select Members</label>
 			{friends?.map((f: any) => (
 				<label key={f.appUserId} className="checkbox is-block">
 				<input
@@ -89,12 +109,13 @@ export default function GroupChatCreation({
 			))}
 			</div>
 
-			<button
-				className="button is-primary mt-4"
-				onClick={() => createGroupMutation.mutate()}
+			<Button
+				className="group-chat-btn"
+				onClickCapture={ groupChatInput}
+				//</Box>onClick={() => createGroupMutation.mutate()}
 			>
-			Create Group Chat
-			</button>
-		</Box>
+				Create Group Chat
+			</Button>
+		</div>
 	);
 }

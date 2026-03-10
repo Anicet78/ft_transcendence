@@ -1,14 +1,29 @@
 .my-footer {
-	background-color: var(--banner-color-bg);
+	background-color: transparent !important;
 	color: var(--footer-color-text);
-	padding: 2rem 1.5rem 1.5rem;
+	padding: clamp(1rem, 1.5rem, 1.5rem) !important;
 	font-size: 0.95rem;
 	font-family: var(--font-footer);
 	background-size: cover;
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	justify-content: center;
+}
+
+/*.parchment-center {
+	background-image: url("../assets/parchment-center.png");
+	background-size: contain;
+	display: flex;
+	align-items: center;
+}*/
+
+.parchment-text {
+	font-size: clamp(0.62rem, 2vw, 1.4rem);
 }
 
 .my-footer .content {
-	margin-bottom: 1rem;
+	margin-bottom: var(--space-md);
 }
 
 .my-footer p {
@@ -17,13 +32,19 @@
 	text-shadow: 0 0 2px var(--footer-color-shadow);
 }
 
+.my-footer span {
+	font-weight: 700 !important;
+	color: var(--color-primary-light) !important;
+}
+
 .my-footer p:last-child {
 	margin-bottom: 0;
 }
 
 /* Link styling */
 .my-footer a {
-	color: var(---footer-color-link);
+	color: var(--footer-color-link);
+	font-weight: 700 !important;
 	text-decoration: none;
 	transition: all 0.3s ease;
 }
@@ -44,4 +65,16 @@
 	.my-footer p {
 		line-height: 1.4;
 	}
+}
+
+@media (max-width: 400px) {
+	.my-footer {
+		font-size: 0.85rem;
+		padding: 1.5rem 1rem;
+	}
+
+	.my-footer p {
+		line-height: 1.4;
+	}
+
 }

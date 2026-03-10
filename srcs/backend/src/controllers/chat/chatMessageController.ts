@@ -34,7 +34,7 @@ export async function sendMessageController(
 	SocketService.send(chatId, "chat_message_created", message);
 
 	if (message.type === "game_invite") {
-	
+
 		const chat = await prisma.chat.findUnique({
 			where: { chatId },
 			select: { chatName: true }
@@ -171,7 +171,6 @@ export async function deleteMessageController(
 ) {
 	const userId = req.user.id;
 	const { chatId, messageId } = req.params;
-	console.log("DELETE controller hit", chatId, messageId);
 
 	// const socket = req.getSocket();
 	// await SocketService.addInRoom(chatId, socket);
