@@ -295,7 +295,6 @@ const Game = () => {
 				<Button className="home-button" onClick={handleHomeClick}>Return home</Button>
 			</div>)}
 			<br></br>
-			{showButton == true && ( <button id="home-button" onClick={handleHomeClick}> Return home </button> )}
 			{showButton == false && (<div ref={canvasContainerRef} id="canvas-container" />)}
 		</div>
 	)
