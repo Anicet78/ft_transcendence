@@ -67,7 +67,6 @@ services:
   emscripten:
     image: emscripten/emsdk:4.0.23
     container_name: emscripten-c
-    user: "${UID:-1000}:${GID:-1000}"
     working_dir: /emscripten
     volumes:
       - ../srcs/game/assets:/assets

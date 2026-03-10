@@ -78,7 +78,7 @@ fclean:
 	@rm -rf srcs/frontend/src/game/build/game.data
 	@rm -rf srcs/frontend/src/game/build/game.wasm
 	@rm -rf srcs/frontend/src/game/build/game.js
-	@rm -rf srcs/game/emscripten/objs_wasm
+	@rm -rf srcs/game/emscripten/objs_wasm 2>/dev/null
 	@$(DOCKER_COMPOSE) down --rmi all -v
 	$(INFO) "Cleanup complete."
 
