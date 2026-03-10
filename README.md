@@ -219,10 +219,10 @@ The database has been designed to maximize unique information sources, with mini
 | Feature             | Description                             | Contributor(s)     |
 |:-------------------:|:---------------------------------------:|:------------------:|
 | **Profile**         | Complete profile system                 | ndabbous, jumichel |
-| **Friendships**     | Friend request system                   | ndabbous           |
+| **Friendships**     | Friend request system                   | ndabbous, jumichel |
 | **Private chat**    | Private conversations with friends      | ndabbous           |
 | **Organizations**   | Public chats with role management       | ndabbous           |
-| **Search Bar**      | Search users with filters and sorting   | ndabbous           |
+| **Search Bar**      | Search users with filters and sorting   | ndabbous, jumichel |
 | **Rooms**           | Play game with your friends             | agruet             |
 | **Auth**            | Login, register and use your account    | agruet, jumichel   |
 | **Rogue-like game** | Multiplayer dungeon crawler PvE game    | tpinton, mprokosc  |
@@ -248,7 +248,7 @@ The database has been designed to maximize unique information sources, with mini
 | **User activity analytics**       | Minor | Better user experience                   | Public profile analytics                     | tpinton                    |
 | **Remote authentication**         | Minor | Better user experience                   | Register or login with google or 42 accounts | agruet                     |
 | **Notifications**                 | Minor | Better user experience                   | Pop up on some actions                       | agruet                     |
-| **Search**                        | Minor | Essential for our project's scope        | Search Bar to search users                   | jumichel                   |
+| **Search**                        | Minor | Essential for our project's scope        | Search Bar to search users                   | jumichel, ndabbous         |
 | **Custom module**                 | Major | See below                                | See below                                    | tpinton, mprokosc          |
 | **Total**                         | 26    |                                          |                                              |                            |
 
@@ -311,9 +311,27 @@ The database has been designed to maximize unique information sources, with mini
 #### ndabbous
 
 * Implemented:
+	* Complete database architecture, including the full relational schema design and all SQL definitions
+	* Prisma ORM integration, migrations, models, and database access layer
+	* Advanced search, profile, friendships, and chat systems routes
+	* Full chat frontend, including advanced chat features: room management, read receipts, typing indicators, React Query integration and cache synchronization
+
 * Modules handled:
+	* ORM and database layer (Prisma)
+	* User interactions (chat, profiles, friends, search)
+	* Advanced real-time chat using WebSockets
+	* Organization system inside chat including advanced permissions and role management
+	* Advanced search functionnality
+
 * Challenges faced:
+	* Designing a scalable and normalized database schema that supports complex social interactions
+	* Ensuring backend and frontend chat system stay perfectly synchronized through WebSockets
+	* Managing team coordination, deadlines, and task distribution across multiple domains
+
 * Solutions:
+	* Created the full database schema early and iterated with the team to ensure long‑term scalability
+	* Built a clean backend architecture (schemas → services → controllers) to keep features maintainable
+	* Organized daily and weekly meetings, implemented notion to‑do list, reassigned tasks when needed, and ensured the team stayed aligned with deadlines
 
 #### mprokosc
 
