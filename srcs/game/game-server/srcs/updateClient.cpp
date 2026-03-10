@@ -95,12 +95,11 @@ void updateRoom(Player &player, uWS::App &app)
 		//----------------
 
 		sendLeaveUpdate(player, app, oldTopic);
-		player.getWs()->unsubscribe(oldTopic);
-		player.getWs()->subscribe(player.getRoom().getRoomId());
-		// if (player.getWs()->unsubscribe(oldTopic))
-		// 	std::cout << "Unsubscribe from " << oldTopic << std::endl;
-		// if (player.getWs()->subscribe(player.getRoom().getRoomId()))
-		// 	std::cout << "Subscribe to " << player.getRoom().getRoomId() << std::endl;
+		if (player.isReConnected())
+		{
+			player.getWs()->unsubscribe(oldTopic);
+			player.getWs()->subscribe(player.getRoom().getRoomId());
+		}
 	}
 	else if (plan[y][x] == 'S')
 	{
@@ -114,8 +113,11 @@ void updateRoom(Player &player, uWS::App &app)
 		player.setStartNode(player.getNode());
 		player.findP();
 		sendLeaveUpdate(player, app, oldTopic);
-		player.getWs()->unsubscribe(oldTopic);
-		player.getWs()->subscribe(player.getRoom().getRoomId());
+		if (player.isReConnected())
+		{
+			player.getWs()->unsubscribe(oldTopic);
+			player.getWs()->subscribe(player.getRoom().getRoomId());
+		}
 	}
 	else if (plan[y][x] == 'F')
 		player.setFinished(true);

@@ -20,6 +20,47 @@ Engine::~Engine(void)
 	return ;
 }
 
+void Engine::cleanup()
+{
+	if (renderer)
+	{
+		SDL_DestroyRenderer(renderer);
+		renderer = nullptr;
+	}
+	if (window)  
+	{
+		SDL_DestroyWindow(window);
+		window = nullptr;
+	}
+	if (font)	
+	{
+		TTF_CloseFont(font);
+		font = nullptr;
+	}
+	if (game)	
+	{
+		SDL_DestroyTexture(game);
+		game = nullptr;
+	}
+	if (hud)	 
+	{
+		SDL_DestroyTexture(hud);
+		hud = nullptr;
+	}
+	if (texture) 
+	{
+		SDL_DestroyTexture(texture);
+		texture = nullptr;
+	}
+	if (texture2)
+	{
+		SDL_DestroyTexture(texture2);
+		texture2 = nullptr;
+	}
+	TTF_Quit();
+	SDL_Quit();
+}
+
 void	Engine::setPlayerId(std::string id)
 {
 	this->_playerId = id;

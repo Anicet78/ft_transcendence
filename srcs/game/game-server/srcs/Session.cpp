@@ -78,12 +78,11 @@ void	Session::launch()
 
 		player->setStartPos(pos);
 
-		player->getWs()->unsubscribe(roomId);
-		player->getWs()->subscribe(node->getRoom()->getRoomId());
-		// if (this->_players[pos]->getWs()->unsubscribe(roomId))
-		// 	std::cout << "unsubscribe from waiting room" << std::endl;
-		// if (this->_players[pos]->getWs()->subscribe(node->getRoom()->getRoomId()))
-		// 	std::cout << "subscribed to " << node->getRoom()->getRoomId() << std::endl;
+		if (player->isReConnected())
+		{
+			player->getWs()->unsubscribe(roomId);
+			player->getWs()->subscribe(node->getRoom()->getRoomId());
+		}
 		pos++;
 	}
 }
@@ -336,7 +335,10 @@ void	Session::sendEndResults(uWS::App &app, std::shared_ptr<Player> &player, boo
 	player->getWs()->send(msg, uWS::OpCode::TEXT);
 	std::string	oldTopic = player->getRoomRef().getRoomId();
 	sendLeaveUpdate(*player, app, oldTopic);
-	player->getWs()->unsubscribe(oldTopic);
+	if (player->isReConnected())
+	{
+		player->getWs()->unsubscribe(oldTopic);
+	}
 
 	std::cout << player->getName() << ": " << std::endl
 		<< "Kills: " << player->getKills() << "Place :" << player->getFinalRanking() << std::endl;

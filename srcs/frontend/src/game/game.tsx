@@ -22,25 +22,58 @@ const Game = () => {
 	const socketRef = useRef<WebSocket | null>(null);
 	const [Module, setModule] = useState<GameModule | null>(null);
 	const moduleRef = useRef<GameModule | null>(null);
+	const canvasContainerRef = useRef<HTMLDivElement | null>(null);
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
 	const mutation = useMutation({
 		mutationFn: () => api.post("/room/launch", room),
 	});
 
+
+	function createCanvas()
+	{
+		const canvas = document.createElement('canvas');
+		canvas.id = 'canvas';
+		canvas.width = 800;
+		canvas.height = 950;
+		canvas.tabIndex = 1;
+		canvasContainerRef.current?.appendChild(canvas);
+		canvasRef.current = canvas;
+		return canvas;
+	}
+
+	function destroyCanvas()
+	{
+		const canvas = canvasRef.current;
+		if (canvas)
+		{
+			const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+			if (gl)
+			{
+				const ext = gl.getExtension('WEBGL_lose_context');
+				if (ext)
+					ext.loseContext();
+			}
+
+			setTimeout(() =>
+			{
+				canvas.width = 0;
+				canvas.height = 0;
+				canvas.remove();
+				canvasRef.current = null;
+			}, 100);
+		}
+	}
+
 	function cleanupWasm()
 	{
-		try {
+		try
+		{
+			destroyCanvas();
 			if (moduleRef.current)
 			{
 				moduleRef.current.finishGame();
-				const ctx = (moduleRef.current as any).ctx;
-				if (ctx)
-				{
-					const ext = ctx.getExtension('WEBGL_lose_context');
-					if (ext)
-						ext.loseContext();
-				}
+				moduleRef.current = null;
 			}
 			if (socketRef.current)
 			{
@@ -48,7 +81,9 @@ const Game = () => {
 				socketRef.current.onerror = null;
 				socketRef.current.onclose = null;
 				socketRef.current.close();
+				socketRef.current = null;
 			}
+			setModule(null);
 		} catch (e) {
 			console.error("cleanup error", e);
 		}
@@ -73,21 +108,24 @@ const Game = () => {
 
 		if (!socket) return ;
 
-		return () => {
+		return () =>
+		{
+			cleanupWasm();
 			if (start)
 				return;
-			cleanupWasm();
 			cancelStart();
 		};
 	}, []);
 
 	useEffect(() => {
-		if (!canvasRef.current || mutation.isPending || !gameSocket || !user || !room) return;
+		if (mutation.isPending || !gameSocket || !user || !room) return;
 
-		const initWasm = async () => {
+		const initWasm = async () =>
+		{
+			const canvas = createCanvas();
 			try {
 				const mod = await createModule({
-					canvas: canvasRef.current,
+					canvas: canvas,
 					noInitialRun: true,
 					locateFile: (path: string) => {
 						if (path.endsWith('.wasm')) return `https://${window.location.host}/game/game.wasm`;
@@ -104,20 +142,6 @@ const Game = () => {
 						setJsonEnd(obj);
 						setShowButton(true);
 						setBoxSize({ width: "900px", height: "300px" });
-						gameSocket.onmessage = null;
-						gameSocket.onerror = null;
-						gameSocket.onclose = null;
-						gameSocket.close();
-						if (!mod)
-							return;
-						mod.finishGame();
-						const ctx = (mod as any).ctx;
-						if (ctx)
-						{
-							const ext = ctx.getExtension('WEBGL_lose_context');
-							if (ext)
-								ext.loseContext();
-						}
 						delete (window as any).onCppMessage;
 						delete (window as any).sendResults;
 					}
@@ -127,13 +151,16 @@ const Game = () => {
 				(window as any).sendResults = (mod as any).sendResults;
 				moduleRef.current = mod;
 				setModule(mod);
-				// Add username and session size
 			} catch (e) {
 				console.error("Wasm Error:", e);
 			}
 		};
 
-		initWasm();
+		const timer = setTimeout(() =>
+		{
+			initWasm();
+		}, 200);
+		return () => clearTimeout(timer);
 	}, [mutation.isPending, gameSocket]);
 
 
@@ -172,10 +199,10 @@ const Game = () => {
 	}, [Module]);
 
 	useEffect(() =>
-	{
-		const canvas = canvasRef.current;
-		if (!canvas)
-			return;
+{
+    const canvas = canvasRef.current;
+    if (!canvas)
+        return;
 
 		const handleContextLost = (e: Event) =>
 		{
@@ -264,7 +291,7 @@ const Game = () => {
 			</div>)}
 			<br></br>
 			{showButton == true && ( <button id="home-button" onClick={handleHomeClick}> Return home </button> )}
-			{showButton == false && (<canvas ref={canvasRef} id="canvas" width="800" height="950" tabIndex={1}></canvas>)}
+			{showButton == false && (<div ref={canvasContainerRef} id="canvas-container" />)}
 		</Box>
 	)
 

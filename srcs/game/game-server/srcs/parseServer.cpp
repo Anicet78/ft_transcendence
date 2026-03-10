@@ -166,8 +166,9 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
 		if (this->playerInServer(data->playerId))
 		{
 			this->reconnectPlayer(data->playerId, ws);
-			Player &player = this->getPlayer(data->playerId);
-			player.setReconnexion(1);
+			std::shared_ptr<Player> player = this->getPlayer(data->playerId);
+			if (player)
+				player->setReconnexion(1);
 			data->jsonMsg.clear();
 			return 1;
 		}
@@ -178,7 +179,9 @@ int Server::executeJson(PerSocketData *data, uWS::WebSocket<false, true, PerSock
         return 0;
     }
 	else if (action == "reconnected")
-		ws->subscribe(this->getPlayer(data->playerId).getRoomRef().getRoomId());
+	{
+		ws->subscribe(this->getPlayer(data->playerId)->getRoomRef().getRoomId());
+	}
     else if (action == "player_move" || action == "connected" || action == "launched")
     {
         for (Session &session : _sessions)

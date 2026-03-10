@@ -59,7 +59,7 @@ static void	generateToken(Server &server, CURL *curl, CURLcode &result)
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
 	//same as the -v of curl, just write what's happening
-	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+	// curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
 	//use for debugging
 	// curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, debug_callback);
@@ -104,7 +104,7 @@ static void	postViaCurl(Server &server, CURL *curl, CURLcode &result, std::strin
 
 	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
 
-	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+	// curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
 	//use for debugging
 	// curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, debug_callback);
@@ -148,7 +148,7 @@ static void	patchViaCurl(Server &server, CURL *curl, CURLcode &result, std::stri
 	//there is no CURLOPT enum for PATCH so we create a custom PATCH, it replace the POST method defined just above
 	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PATCH");
 
-	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+	// curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
 	// use for debugging
 	// curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, debug_callback);
@@ -223,4 +223,5 @@ void	sendPlayerResultCurl(Server &server, Session const &session, Player &player
 	std::string url = "http://node-c:3000/game/result/" + player.getUid();
 
 	sendViaCurl(server, url, "PATCH", msg, 0);
+	std::cout << "player result sended" << std::endl;
 }

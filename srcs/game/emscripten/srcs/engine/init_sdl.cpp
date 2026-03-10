@@ -9,10 +9,22 @@ int	init_sdl(Engine &gSdl)
 		std::cerr << "SDL_Init error: " << SDL_GetError() << std::endl;
 		return (0);
 	}
+	int n = SDL_GetNumRenderDrivers();
+	for (int i = 0; i < n; i++)
+	{
+		SDL_RendererInfo	openInfo;
+		SDL_GetRenderDriverInfo(i, &openInfo);
+		std::string name(openInfo.name);
+		if (name == "opengles2")
+		{	
+			n = i;
+			break;
+		}
+	}
 
 	//need a pointer on the window we'll create
-	gSdl.window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-
+	if (!gSdl.window)
+		gSdl.window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	if (!gSdl.window)
 	{
 		std::cerr << "Window error: " << SDL_GetError() << std::endl;
@@ -35,7 +47,8 @@ int	init_sdl(Engine &gSdl)
 	}
 
 	//need a renderer for the texture in general
-	gSdl.renderer = SDL_CreateRenderer(gSdl.window, -1, SDL_RENDERER_ACCELERATED);
+	if (!gSdl.renderer)
+		gSdl.renderer = SDL_CreateRenderer(gSdl.window, n, SDL_RENDERER_ACCELERATED);
 	if (!gSdl.renderer) {
 		std::cerr << "render/20 : " << SDL_GetError() << std::endl;
 		SDL_DestroyWindow(gSdl.window);

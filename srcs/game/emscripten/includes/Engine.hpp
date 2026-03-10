@@ -32,6 +32,7 @@ class Engine
 		Engine();
 		~Engine();
 
+		void	cleanup();
 		void	setPlayerId(std::string id);
 		void	setPlayerName(std::string name);
 		void	setMouseInWindow(bool value);

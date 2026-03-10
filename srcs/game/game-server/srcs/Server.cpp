@@ -199,12 +199,12 @@ std::vector<Session>::iterator	Server::endSession(std::string sessionId, uWS::Ap
 	return this->_sessions.end();
 }
 
-Player	&Server::getPlayer(std::string &uid)
+std::shared_ptr<Player>	Server::getPlayer(std::string &uid)
 {
 	for (auto &player : this->_players)
 		if (player->getUid() == uid)
-			return *player;
-	return *this->_players[0];
+			return player;
+	return (NULL);
 }
 
 std::string	Server::getServerToken(void) const
@@ -426,6 +426,7 @@ void	Server::run(void)
 
 					sendViaCurl(*data->server, "http://node-c:3000/game/create", "POST", msg, 0);
 					session.launch();
+					std::cout << "session launched" << std::endl;
 				}
 				continue;
 			}
@@ -483,6 +484,7 @@ void	Server::run(void)
 			{
 				std::string msg = R"({"sessionGameId":")" + it->getSessionId() + R"(", "status":"finished"})";
 				sendViaCurl(*data->server, "http://node-c:3000/game/end", "PATCH", msg, 0);
+				std::cout << "session ended" << std::endl;
 				it = data->server->endSession(it->getSessionId(), *data->app);
 			}
 			if (it != data->server->_sessions.end())
@@ -516,10 +518,13 @@ void	Server::run(void)
 			{
 				(void)ws, (void)code, (void)msg, (void)app;
 				auto *data = (PerSocketData *)ws->getUserData();
-				Player &player = this->getPlayer(data->playerId);
-				player.setReconnexion(0);
-				if (player.getFinished())
-					this->removePlayer(data->playerId);
+				std::shared_ptr<Player> player = this->getPlayer(data->playerId);
+				if (player)
+				{
+					player->setReconnexion(0);
+					if (player->getFinished())
+						this->removePlayer(data->playerId);
+				}
 				std::cout << "Client déconnecté" << std::endl;
 			}
 		})
