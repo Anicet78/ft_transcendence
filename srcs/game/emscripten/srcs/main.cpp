@@ -15,7 +15,6 @@ static bool gameRunning = true;
 		SDL_EventState(SDL_KEYDOWN, SDL_DISABLE);
 		SDL_EventState(SDL_KEYUP, SDL_DISABLE);
 		gameRunning = false;
-		gSdl.cleanup();
 	}
 
 	void	getMessage(val obj)
