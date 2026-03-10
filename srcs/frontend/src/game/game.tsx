@@ -222,16 +222,15 @@ const Game = () => {
 		<div className={`game-box ${compact ? "game-box--results" : ""}`}>
 			{showButton &&
 			(<div className='end-results'>
-				<h2> {JsonEnd.is_winner ? "🎉 Victoire !" : "💀 Défaite"}</h2>
-				<p> <span>Monstres tués :</span> <span className='game-numbers'>{JsonEnd.mob_killed}</span> </p>
-				<p>
-					<span>Temps :</span>
+				<h2>{JsonEnd.is_winner ? "🎉 Victoire !" : "💀 Défaite"}</h2>
+				<p>🗡️ <span>Monstres tués :</span> <span className='game-numbers'>{JsonEnd.mob_killed}</span></p>
+				<p>⏱️ <span>Temps :</span>
 					<span className='game-numbers'>{JsonEnd.completion_time_min}</span>min
 					<span className='game-numbers'>{JsonEnd.completion_time_sec}</span>s
-					<span className='game-numbers'>{Math.round(JsonEnd.completion_time_mil * 1000)}</span>ms </p>
+					<span className='game-numbers'>{Math.round(JsonEnd.completion_time_mil * 1000)}</span>ms
+				</p>
+				<Button className="home-button" onClick={handleHomeClick}>Return home</Button>
 			</div>)}
-			<br></br>
-			{showButton == true && ( <Button className="home-button" onClick={handleHomeClick}> Return home </Button> )}
 			{showButton == false && (
 				<div className="canvas-wrapper">
 					<canvas ref={canvasRef} id="canvas" width="800" height="950" tabIndex={1}/>

@@ -34,53 +34,80 @@
 }
 
 .end-results {
-  background: var(--color-bg-light);
-  padding: 20px;
-  border-radius: 10px;
+  background: rgba(10, 18, 36, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(45, 212, 191, 0.2);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border-radius: 16px;
   width: 100%;
   max-width: 500px;
   text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(45, 212, 191, 0.08);
+  animation: resultsAppear 0.5s ease forwards;
 }
 
-.end-results p {
-	color: var(--color-primary-dark2);
-  font-family: var(--font-body);
-  font-size: var(--fs-lg);
-}
-
-.end-results span {
-	font-weight: 700;
-}
-
-.end-results .game-numbers {
-	font-weight: 400;
-	font-size: var(--fs-xl) !important;
+@keyframes resultsAppear {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .end-results h2 {
-	font-family: var(--font-section-title);
-	font-size: var(--fs-2xl) !important;
-	margin-bottom: 10px;
+  font-family: var(--font-section-title);
+  font-size: clamp(1.8rem, 4vw, 2.8rem) !important;
+  margin-bottom: 1.2rem;
+  color: var(--color-primary);
+  text-shadow: 0 0 20px rgba(45, 212, 191, 0.3);
+}
+
+.end-results p {
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--fs-lg);
+  margin: 0.6rem 0;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+}
+
+.end-results span {
+  font-weight: 700;
+  color: var(--color-primary-light);
+}
+
+.end-results .game-numbers {
+  font-weight: 400;
+  font-size: var(--fs-xl) !important;
+  color: #fff;
+  margin: 0 4px;
 }
 
 .home-button {
-  background-color: var(--color-primary-light) !important;
-  border: 2px solid var(--color-primary-dark0) !important;
-  color: var(--color-primary-dark2) !important;
+  margin-top: 1.5rem !important;
+  background: rgba(45, 212, 191, 0.12) !important;
+  border: 1px solid rgba(45, 212, 191, 0.3) !important;
+  color: var(--color-primary) !important;
   border-radius: var(--radius-md) !important;
   font-family: var(--font-button-large);
   font-size: var(--fs-lg) !important;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
 
 .home-button:hover {
-  color: var(--color-primary-light) !important;
-  background-color: var(--color-primary-dark0) !important;
+  background: rgba(45, 212, 191, 0.25) !important;
+  color: #fff !important;
+  border-color: rgba(45, 212, 191, 0.5) !important;
+  box-shadow: 0 0 20px rgba(45, 212, 191, 0.25);
 }
 
 .home-button:active {

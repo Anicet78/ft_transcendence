@@ -1,3 +1,4 @@
+import { Button } from '@allxsmith/bestax-bulma';
 import { toast as sonnerToast } from 'sonner';
 
 interface CustomToastProps {
@@ -18,7 +19,7 @@ const toast = ({ title, message, type = 'is-info' }: CustomToastProps) => {
 			<p className="title is-6 mb-1">{title}</p>
 			{message && <p className="subtitle is-7">{message}</p>}
 		</div>
-		<button
+		<Button
 			className="delete"
 			onClick={() => sonnerToast.dismiss(t)}
 			aria-label="close"

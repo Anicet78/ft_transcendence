@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { SidebarChat } from "../chat/components/SidebarChat";
 import { useLocation } from "react-router";
+import { Button } from "@allxsmith/bestax-bulma";
 
 const Sidebar = () => {
 	const { user } = useAuth();
@@ -64,7 +65,7 @@ const Sidebar = () => {
 	}, [resizing]);
 
 	// Important to put after all hooks to keep rendering
-	if (!user || location.pathname === '/chat/list' || location.pathname === '/chat/group/new' 
+	if (!user || location.pathname === '/chat/list' || location.pathname === '/chat/group/new'
 		|| location.pathname === '/group/invitations') {
 		return null;
 	}
@@ -72,7 +73,7 @@ const Sidebar = () => {
 	return (
 		<>
 			{/* ===== DESKTOP SIDEBAR ===== */}
-			<aside 
+			<aside
 				className={`chat-sidebar-desktop ${collapsed ? "collapsed" : ""}`}
 				style={{
 					width: collapsed ? "0px" : `${width}px`,
@@ -80,14 +81,14 @@ const Sidebar = () => {
 				}}
 			>
 				{/* COLLAPSE BUTTON */}
-				<button
+				<Button
 					className="button is-small collapse-btn"
 					onClick={() => setCollapsed(!collapsed)}
 				>
 					<span className="icon">
 						<i className={`fas ${collapsed ? "fa-angle-left" : "fa-angle-right"}`}></i>
 					</span>
-				</button>
+				</Button>
 				{/* RESIZE HANDLE (only when expanded) */}
 				{!collapsed && (
 					<div
@@ -110,26 +111,26 @@ const Sidebar = () => {
 
 			{/* ===== MOBILE ===== */}
 			<div className="is-hidden-desktop">
-				<button
+				<Button
 					className="button floating-chat-btn"
 					onClick={() => setMobileOpen(true)}
 				>
 					<span className="icon">
 						<i className="fas fa-comment"></i>
 					</span>
-				</button>
+				</Button>
 
 				{mobileOpen && (
 					<div className="chat-mobile-overlay">
 						<div className="chat-mobile-header">
-							<button
+							<Button
 							className="button close-button"
 							onClick={() => setMobileOpen(false)}
 							>
 							<span className="icon">
 								<i className="fas fa-times"></i>
 							</span>
-						</button>
+						</Button>
 						</div>
 
 						<div className="chat-mobile-body">

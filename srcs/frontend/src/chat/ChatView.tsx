@@ -94,12 +94,12 @@ const ChatView = ({ chatId: propChatId, onClose }: {
 
 			{/* DISBAND CHAT */}
 			{chat.chatType === "group" && role === "owner" && (
-				<button
+				<Button
 					className="quit-chat-button"
 					onClick={() => disbandMutation.mutate()}
 				>
 					Disband Group Chat
-				</button>
+				</Button>
 			)}
 
 			{/* INVITE TO JOIN GROUP CHAT */}

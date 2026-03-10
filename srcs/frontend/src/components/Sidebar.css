@@ -613,6 +613,12 @@
 	font-weight: 600;
 }
 
+.msg-deleted {
+	font-style: italic;
+	opacity: 0.5;
+	font-weight: 400 !important;
+}
+
 .view-author-profile {
 	font-weight: 600;
 	color: var(--color-primary-light);
