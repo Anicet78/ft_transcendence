@@ -7,6 +7,7 @@ import {
 
 import { findOrCreatePrivateChat } from '../../services/db/chat/privateChatService.js';
 import { AppError } from '../../schema/errorSchema.js';
+import { SocketService } from '../../services/socket/SocketService.js';
 
 function normalize<T extends Record<string, any>>(obj: T): T {
   return {
@@ -73,7 +74,7 @@ export async function sendRequest(
   await Service.sendRequest(senderId, receiverId);
 
   // send notification to receiver
-  req.server.io.to(`user:${receiverId}`).emit("friendship_notification", {
+  SocketService.send(`user:${receiverId}`, "friendship_notification", {
     action: "add",
     fromUserId: senderId,
     fromUsername: senderUsername,
@@ -129,20 +130,20 @@ export async function updateFriendshipRequest(
 
   await Service.updateFriendshipRequestStatus(friendshipId, newStatus);
 
-	// Determine who should receive the notification
-	const targetUserId =
-	action === "accept" || action === "reject"
-		? senderId
-		: receiverId;
+  // Determine who should receive the notification
+  const targetUserId =
+  action === "accept" || action === "reject"
+    ? senderId
+    : receiverId;
 
-	// Emit notification
-	req.server.io.to(`user:${targetUserId}`).emit("friendship_notification", {
-	action,
-	fromUserId: userId,
-	fromUsername: req.user.username,
-	});
+  // Emit notification
+  SocketService.send(`user:${targetUserId}`, "friendship_notification", {
+    action,
+    fromUserId: userId,
+    fromUsername: req.user.username,
+  });
 
-	return reply.send({ success: true });
+  return reply.send({ success: true });
 }
 
 //DELETE FRIENDSHIP by friend ID
@@ -160,7 +161,7 @@ export async function removeFriend(
     throw new AppError('Friendship not found', 404);
 
   // notify the receiver
-  req.server.io.to(`user:${otherId}`).emit("friendship_notification", {
+  SocketService.send(`user:${otherId}`, "friendship_notification", {
     action: "remove",
     fromUserId: userId,
     fromUsername: username,

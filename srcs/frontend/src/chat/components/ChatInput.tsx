@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTyping } from "../hooks/useTyping";
+import toast from "../../Notifications";
 import { Button } from "@allxsmith/bestax-bulma";
 
 //SEND MESSAGE
@@ -11,15 +12,31 @@ type ChatInputProps = {
 	chatId: string | undefined;
 }
 
+const MAX_MESSAGE_LENGTH = 2000;
+
 export function ChatInput({ onSend, chatId }: ChatInputProps) {
 
 	const [content, setContent] = useState("");
 	const { emitTypingEffect } = useTyping(chatId);
 
 	const send = () => {
-		if (content.trim() === "")
+		const text = content.trim();
+
+		if (!text){
+			toast({ title: "Error", message: "Your message can't be empty.", type: "is-warning"})
+			setContent("");
 			return;
-		onSend({content});
+		}
+
+		if (text.length > MAX_MESSAGE_LENGTH) {
+			toast({ title: "Error", message: "Your message can't contain more than 2000 characters.", type: "is-warning"})
+			return;
+		}
+
+		if (!chatId)
+			return;
+
+		onSend({content: text});
 		setContent("");
 	};
 

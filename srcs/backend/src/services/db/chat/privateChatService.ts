@@ -46,22 +46,25 @@ export async function findOrCreatePrivateChat(userA: string, userB: string) {
 						{ userId: user2Id }
 					]
 				},
-				roles: {//doesnt work, need to check why
-					create: [
-						{
-							userId: user1Id,
-							role: 'writer',
-							attributedBy: user2Id
-						},
-						{
-							userId: user2Id,
-							role: 'writer',
-							attributedBy: user1Id
-						}
-					]
-				}
 			},
 			select: { chatId: true }
+		});
+
+		await tx.chatRole.createMany({
+			data: [
+				{
+					chatId: chat.chatId,
+					userId: user1Id,
+					role: 'writer',
+					attributedBy: user2Id
+				},
+				{
+					chatId: chat.chatId,
+					userId: user2Id,
+					role: 'writer',
+					attributedBy: user1Id
+				}
+			]
 		});
 
 		//create 1 row inside private_chat table

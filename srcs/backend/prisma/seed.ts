@@ -1,349 +1,327 @@
-import { PrismaClient, region_list, roles, chat_role_type, type_list, auth_provider } from '@prisma/client';
-import argon2 from "argon2";
-
+import { PrismaClient, roles, region_list, chat_role_type } from '@prisma/client';
+import { hashPassword } from '../src/services/auth/password.js';
 const prisma = new PrismaClient();
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// USERS
+async function createFixedUsers() {
+  const users = [
+    { firstName: "Nina", lastName: "Nina", username: "nina", email: "nina@example.com", password: "nina1234", region: "EU" },
+    { firstName: "Anicet", lastName: "Anicet", username: "anicet", email: "anicet@example.com", password: "anicet123", region: "NA" },
+    { firstName: "Maxime", lastName: "Maxime", username: "maxime", email: "maxime@example.com", password: "maxime123", region: "EU" },
+    { firstName: "Julie", lastName: "Julie", username: "julie", email: "julie@example.com", password: "julie1234", region: "APAC" },
+    { firstName: "Tom", lastName: "Tom", username: "tom", email: "tom@example.com", password: "tom12345", region: "OCE" },
 
+    { firstName: "Alice", lastName: "Wonder", username: "alice", email: "alice@example.com", password: "alice123", region: "EU" },
+    { firstName: "Bob", lastName: "Builder", username: "bob", email: "bob@example.com", password: "bob12345", region: "NA" },
+    { firstName: "Charlie", lastName: "Day", username: "charlie", email: "charlie@example.com", password: "charlie123", region: "EU" },
+    { firstName: "Diana", lastName: "Prince", username: "diana", email: "diana@example.com", password: "diana1234", region: "APAC" },
+    { firstName: "Eve", lastName: "Hacker", username: "eve", email: "eve@example.com", password: "eve12345", region: "OCE" },
+  ];
+
+  const created = [];
+
+  for (const u of users) {
+    const user = await prisma.appUser.upsert({
+      where: { mail: u.email },
+      update: {},
+      create: {
+        firstName: u.firstName,
+        lastName: u.lastName,
+        username: u.username,
+        mail: u.email,
+        passwordHash: await hashPassword(u.password),
+        region: u.region as region_list,
+      },
+    });
+
+    created.push(user);
+  }
+
+  return created;
+}
+
+console.log(Object.keys(prisma));
+
+//BLOCKLIST
+async function seedBlocks(users) {
+  const blocks = [
+    [users[0], users[3]], // Nina blocks Julie
+    [users[5], users[0]], // Alice blocks Nina
+    [users[1], users[6]], // Anicet blocks Bob
+    [users[7], users[2]], // Charlie blocks Maxime
+    [users[9], users[3]], // Eve blocks Julie
+  ];
+
+  for (const [blocker, blocked] of blocks) {
+    await prisma.blockedList.create({
+      data: {
+        blocker: blocker.appUserId,
+        blocked: blocked.appUserId,
+      },
+    });
+  }
+}
+
+// FRIENDSHIPS
+async function seedFriendships(users) {
+  const pairs = [
+    [users[0], users[1], "accepted"],
+    [users[0], users[2], "accepted"],
+    [users[0], users[3], "accepted"],
+    [users[5], users[0], "accepted"],
+    [users[0], users[6], "accepted"],
+    [users[0], users[7], "accepted"],
+	  [users[0], users[8], "waiting"],
+	  [users[4], users[0], "waiting"],
+    [users[1], users[3], "accepted"],
+    [users[2], users[4], "waiting"],
+    [users[3], users[4], "accepted"],
+  ];
+
+  for (const [sender, receiver, status] of pairs) {
+    await prisma.friendship.create({
+      data: {
+        senderId: sender.appUserId,
+        receiverId: receiver.appUserId,
+        status,
+      },
+    });
+  }
+}
+
+// PRIVATE CHATS
+async function seedPrivateChats(users) {
+  const pairs = [
+    [users[0], users[1]],
+    [users[3], users[4]],
+  ];
+
+  for (const [u1, u2] of pairs) {
+
+    // Enforce ordering for the DB constraint
+    const [user1Id, user2Id] =
+      u1.appUserId < u2.appUserId
+        ? [u1.appUserId, u2.appUserId]
+        : [u2.appUserId, u1.appUserId];
+
+    const chat = await prisma.chat.create({
+      data: {
+        chatType: "private",
+        chatName: `${u1.username}-${u2.username}`,
+        createdBy: u1.appUserId,
+        members: {
+          create: [
+            { userId: u1.appUserId },
+            { userId: u2.appUserId },
+          ],
+        },
+        privateChat: {
+          connectOrCreate: {
+            where: {
+              user1Id_user2Id: { user1Id, user2Id },
+            },
+            create: {
+              user1Id,
+              user2Id,
+            },
+          },
+        },
+      },
+    });
+
+    // Static messages
+    await prisma.chatMessage.createMany({
+      data: [
+        { chatId: chat.chatId, userId: u1.appUserId, content: "Hello!" },
+        { chatId: chat.chatId, userId: u2.appUserId, content: "Hi!" },
+        { chatId: chat.chatId, userId: u1.appUserId, content: "How are you?" },
+        { chatId: chat.chatId, userId: u2.appUserId, content: "Doing great!" },
+      ],
+    });
+  }
+}
+
+// GROUP CHAT
+async function seedGroupChat(users) {
+  const owner = users[0];
+  const admin = users[1];
+  const moderator = users[2];
+  const writer = users[3];
+  const member = users[4];
+
+  const chat = await prisma.chat.create({
+    data: {
+      chatType: "group",
+      chatName: "Gamers United",
+      createdBy: owner.appUserId,
+      members: {
+        create: users.map((u) => ({ userId: u.appUserId })),
+      },
+      roles: {
+        create: [
+          { userId: owner.appUserId, role: chat_role_type.owner, attributedBy: owner.appUserId },
+          { userId: admin.appUserId, role: chat_role_type.admin, attributedBy: owner.appUserId },
+          { userId: moderator.appUserId, role: chat_role_type.moderator, attributedBy: owner.appUserId },
+          { userId: writer.appUserId, role: chat_role_type.writer, attributedBy: owner.appUserId },
+          { userId: member.appUserId, role: chat_role_type.member, attributedBy: owner.appUserId },
+        ],
+      },
+    },
+  });
+
+  // 100 deterministic messages
+  const messageAuthors = [owner, admin, moderator, writer, member];
+  const messages = Array.from({ length: 100 }).map((_, i) => ({
+    chatId: chat.chatId,
+    userId: messageAuthors[i % messageAuthors.length].appUserId,
+    content: `Gamers United message #${i + 1}`,
+  }));
+
+  await prisma.chatMessage.createMany({ data: messages });
+
+  // // Static messages
+  // await prisma.chatMessage.createMany({
+  //   data: [
+  //     { chatId: chat.chatId, userId: owner.appUserId, content: "Welcome everyone!" },
+  //     { chatId: chat.chatId, userId: admin.appUserId, content: "Glad to be here." },
+  //     { chatId: chat.chatId, userId: moderator.appUserId, content: "Let's keep things clean." },
+  //     { chatId: chat.chatId, userId: writer.appUserId, content: "Ready to play!" },
+  //     { chatId: chat.chatId, userId: member.appUserId, content: "Hi all!" },
+  //   ],
+  // });
+
+  // Ban one user (Tom)
+  await prisma.chatBan.create({
+    data: {
+      chatId: chat.chatId,
+      userId: member.appUserId,
+      bannedBy: owner.appUserId,
+      reason: "Spamming",
+    },
+  });
+
+  // Invitations
+  await prisma.chatInvitation.createMany({
+    data: [
+      { chatId: chat.chatId, senderId: owner.appUserId, receiverId: admin.appUserId, status: "accepted" },
+      { chatId: chat.chatId, senderId: admin.appUserId, receiverId: moderator.appUserId, status: "waiting" },
+      { chatId: chat.chatId, senderId: moderator.appUserId, receiverId: writer.appUserId, status: "accepted" },
+      { chatId: chat.chatId, senderId: writer.appUserId, receiverId: member.appUserId, status: "waiting" },
+    ],
+  });
+}
+
+// GAME PROFILES
 function randomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function randomBool() {
-  return Math.random() > 0.5;
+async function seedGameProfiles(users) {
+  for (const u of users) {
+    const totalGames = randomInt(5, 20);
+    const totalWins = randomInt(0, totalGames);
+    const totalLoses = totalGames - totalWins;
+    const totalEnemiesKilled = randomInt(50, 500);
+    const totalXp = randomInt(100, 1000);
+    const level = Math.floor(totalXp / 200) + 1;
+    const bestTime = randomInt(80, 200);
+
+    await prisma.gameProfile.create({
+      data: {
+        userId: u.appUserId,
+        totalGames,
+        totalWins,
+        totalLoses,
+        totalEnemiesKilled,
+        totalXp,
+        level,
+        bestTime,
+      },
+    });
+  }
 }
 
-function randomFrom<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
+// GAME SESSIONS + RESULTS
+async function seedGameSessions(users) {
+  const maps = ["Forest", "Desert", "Ruins"];
+
+  for (const map of maps) {
+    const session = await prisma.gameSession.create({
+      data: {
+        mapName: map,
+        status: "finished",
+      },
+    });
+
+    for (const u of users) {
+      await prisma.gameResult.create({
+        data: {
+          gameId: session.sessionId,
+          playerId: u.appUserId,
+          enemiesKilled: 10,
+          gainedXp: 50,
+          isWinner: u === users[0], // Nina wins all sessions
+        },
+      });
+    }
+  }
 }
 
-async function hashPassword(password: string): Promise<string> {
-  return argon2.hash(password);
-}
-
-// ─── Seed ─────────────────────────────────────────────────────────────────────
-
+// MAIN
 async function main() {
-  console.log('🌱 Starting seed...');
+	const adminEmail = "admin@transcendence.com";
+	const adminFirstname = "admin";
+	const adminLastname = "admin";
+	const adminUsername = "admin";
+	const adminPassword = await hashPassword("password123");
 
-  // ── Users ──────────────────────────────────────────────────────────────────
-  const regions = Object.values(region_list).filter((r) => r !== 'Deleted');
+	console.log("🌱 Seeding database...");
 
-  const usersData = [
-    { firstName: "Nina",   lastName: "Nina",    username: "nina",    mail: "nina@example.com",   passwordHash: "nina1234"  },
-    { firstName: "Anicet", lastName: "Anicet",  username: "anicet",  mail: "anicet@example.com", passwordHash: "anicet123" },
-    { firstName: "Maxime", lastName: "Maxime",  username: "maxime",  mail: "maxime@example.com", passwordHash: "maxime123" },
-    { firstName: "Julie",  lastName: "Julie",   username: "julie",   mail: "julie@example.com",  passwordHash: "julie1234" },
-    { firstName: "Tom",    lastName: "Tom",     username: "tom",     mail: "tom@example.com",    passwordHash: "tom12345"  },
-    { firstName: 'Frank',  lastName: 'Petit',   username: 'frankP',  mail: 'frank@example.com',  passwordHash: "frank123"  },
-    { firstName: 'Grace',  lastName: 'Simon',   username: 'graceS',  mail: 'grace@example.com',  passwordHash: "frank1234" },
-    { firstName: 'Hank',   lastName: 'Laurent', username: 'hank_l',  mail: 'hank@example.com',   passwordHash: "hank1234"  },
-    { firstName: 'Iris',   lastName: 'Michel',  username: 'iris_m',  mail: 'iris@example.com',   passwordHash: "iris1234"  },
-    { firstName: 'Jules',  lastName: 'Garcia',  username: 'jules_g', mail: 'jules@example.com',  passwordHash: "jules1234" },
-  ];
+	await prisma.appUser.upsert({
+		where: { mail: adminEmail },
+		update: {},
+		create: {
+			firstName: adminFirstname,
+			lastName: adminLastname,
+			username: adminUsername,
+			mail: adminEmail,
+			region: "EU",
+			passwordHash: adminPassword,
+			rolesReceived: {
+				create: {
+					role: "admin",
+				}
+			}
+		},
+	});
 
-  // upsert on username (unique) — safe to re-run
-  const users = await Promise.all(
-    usersData.map(async (u) => {
-      const passwordHash = await hashPassword(u.passwordHash);
-      return prisma.appUser.upsert({
-        where:  { username: u.username },
-        update: {},
-        create: {
-          ...u,
-          passwordHash,
-          availability: randomBool(),
-          playing:      false,
-          region:       randomFrom(regions) as region_list,
-        },
-      });
-    })
-  );
-  console.log(`✅ Users ready (${users.length})`);
+  const users = await createFixedUsers();
+  console.log(" Users created!");
 
-  // ── OAuth Identities ───────────────────────────────────────────────────────
-  await prisma.identify.createMany({
-    skipDuplicates: true,
-    data: [
-      { provider: auth_provider.google,   providerId: 'google-uid-001', userId: users[0].appUserId },
-      { provider: auth_provider.fortyTwo, providerId: '42-uid-002',     userId: users[1].appUserId },
-    ],
-  });
-  console.log('✅ OAuth identities ready');
+  await prisma.chatReadState.deleteMany();
+  await prisma.chatMessage.deleteMany();
+  await prisma.chatInvitation.deleteMany();
+  await prisma.chatRole.deleteMany();
+  await prisma.chatBan.deleteMany();
+  await prisma.chatMember.deleteMany();
+  await prisma.privateChat.deleteMany();
+  await prisma.chat.deleteMany();
 
-  // ── Roles ──────────────────────────────────────────────────────────────────
-  // No unique constraint on user_role — only insert if none exist yet for these users
-  const existingRoles = await prisma.userRole.count({
-    where: { attributedTo: { in: users.map((u) => u.appUserId) } },
-  });
-  if (existingRoles === 0) {
-    await prisma.userRole.createMany({
-      data: [
-        { attributedTo: users[0].appUserId, attributedBy: users[0].appUserId, role: roles.admin },
-        ...users.slice(1).map((u) => ({
-          attributedTo: u.appUserId,
-          attributedBy: users[0].appUserId,
-          role:         roles.user,
-        })),
-      ],
-    });
-  }
-  console.log('✅ User roles ready');
 
-  // ── Game Profiles ──────────────────────────────────────────────────────────
-  await Promise.all(
-    users.map((u) =>
-      prisma.gameProfile.upsert({
-        where:  { userId: u.appUserId },
-        update: {},
-        create: {
-          userId:             u.appUserId,
-          totalGames:         randomInt(0, 200),
-          totalWins:          randomInt(0, 100),
-          totalLoses:         randomInt(0, 100),
-          totalEnemiesKilled: randomInt(0, 5000),
-          totalXp:            randomInt(0, 100000),
-          level:              randomInt(1, 50),
-          bestTime:           randomInt(60, 3600),
-        },
-      })
-    )
-  );
-  console.log('✅ Game profiles ready');
+  await seedBlocks(users);
+  console.log(" Blocks created!");
+  await seedFriendships(users);
+  console.log(" Friendships created!");
+  await seedPrivateChats(users);
+  console.log(" PrivateChats created!");
+  await seedGroupChat(users);
+  console.log(" GroupChat created!");
+  await seedGameProfiles(users);
+  console.log(" GameProfiles created!");
+  await seedGameSessions(users);
+  console.log(" GameSessions created!");
 
-  // ── Game Sessions & Results ────────────────────────────────────────────────
-  const sessionIds = Array.from({ length: 5 }, (_, i) => `game-session-seed-${i}`);
-
-  const sessions = await Promise.all(
-    sessionIds.map((sessionGameId, i) =>
-      prisma.gameSession.upsert({
-        where:  { sessionGameId },
-        update: {},
-        create: {
-          sessionGameId,
-          startedAt: new Date(Date.now() - (i + 1) * 86400000),
-          endedAt:   new Date(),
-          status:    'finished',
-        },
-      })
-    )
-  );
-
-  for (const session of sessions) {
-    const alreadyHasResults = await prisma.gameResult.count({ where: { gameId: session.sessionId } });
-    if (alreadyHasResults > 0) continue;
-
-    const players = [...users].sort(() => 0.5 - Math.random()).slice(0, randomInt(2, 4));
-    const winnerIdx = randomInt(0, players.length - 1);
-
-    await prisma.gameResult.createMany({
-      data: players.map((p, idx) => ({
-        gameId:         session.sessionId,
-        playerId:       p.appUserId,
-        completionTime: randomInt(120, 1800),
-        enemiesKilled:  randomInt(0, 50),
-        gainedXp:       randomInt(100, 2000),
-        isWinner:       idx === winnerIdx,
-      })),
-    });
-  }
-  console.log('✅ Game sessions & results ready');
-
-  // ── Friendships ────────────────────────────────────────────────────────────
-  const friendshipPairs: [number, number][] = [
-    [0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6], [5, 7], [6, 8], [7, 9],
-  ];
-
-  for (const [a, b] of friendshipPairs) {
-    const exists = await prisma.friendship.findFirst({
-      where: { senderId: users[a].appUserId, receiverId: users[b].appUserId },
-    });
-    if (!exists) {
-      await prisma.friendship.create({
-        data: {
-          senderId:   users[a].appUserId,
-          receiverId: users[b].appUserId,
-          status:     randomFrom(['waiting', 'accepted', 'accepted', 'accepted']),
-        },
-      });
-    }
-  }
-  console.log('✅ Friendships ready');
-
-  // ── Block List ─────────────────────────────────────────────────────────────
-  const blockExists = await prisma.blockedList.findFirst({
-    where: { blocker: users[0].appUserId, blocked: users[9].appUserId },
-  });
-  if (!blockExists) {
-    await prisma.blockedList.create({
-      data: { blocker: users[0].appUserId, blocked: users[9].appUserId },
-    });
-  }
-  console.log('✅ Block list ready');
-
-  // ── Group Chat ─────────────────────────────────────────────────────────────
-  let groupChat = await prisma.chat.findFirst({
-    where: { chatName: 'General', createdBy: users[0].appUserId, chatType: type_list.group },
-  });
-
-  if (!groupChat) {
-    groupChat = await prisma.chat.create({
-      data: { chatType: type_list.group, chatName: 'General', createdBy: users[0].appUserId },
-    });
-
-    await prisma.chatMember.createMany({
-      skipDuplicates: true,
-      data: users.map((u) => ({ chatId: groupChat!.chatId, userId: u.appUserId })),
-    });
-
-    await prisma.chatRole.createMany({
-      skipDuplicates: true,
-      data: [
-        { chatId: groupChat.chatId, userId: users[0].appUserId, role: chat_role_type.owner, attributedBy: users[0].appUserId },
-        { chatId: groupChat.chatId, userId: users[1].appUserId, role: chat_role_type.admin, attributedBy: users[0].appUserId },
-        ...users.slice(2).map((u) => ({
-          chatId:       groupChat!.chatId,
-          userId:       u.appUserId,
-          role:         chat_role_type.member,
-          attributedBy: users[0].appUserId,
-        })),
-      ],
-    });
-
-    const groupMessages = await Promise.all(
-      [
-        { userId: users[0].appUserId, content: 'Hey everyone! 👋' },
-        { userId: users[1].appUserId, content: "What's up?" },
-        { userId: users[2].appUserId, content: 'Anyone up for a game?' },
-        { userId: users[3].appUserId, content: "I'm in!" },
-        { userId: users[4].appUserId, content: "Let's go 🎮" },
-      ].map((msg) =>
-        prisma.chatMessage.create({ data: { chatId: groupChat!.chatId, ...msg } })
-      )
-    );
-
-    await Promise.all(
-      users.slice(0, 5).map((u) =>
-        prisma.chatReadState.upsert({
-          where:  { chatId_userId: { chatId: groupChat!.chatId, userId: u.appUserId } },
-          update: { lastReadMessageId: groupMessages[groupMessages.length - 1].messageId },
-          create: {
-            chatId:            groupChat!.chatId,
-            userId:            u.appUserId,
-            lastReadMessageId: groupMessages[groupMessages.length - 1].messageId,
-          },
-        })
-      )
-    );
-  }
-  console.log('✅ Group chat ready');
-
-  // ── Private Chats ──────────────────────────────────────────────────────────
-  const privatePairs: [number, number][] = [[0, 1], [1, 2], [0, 3]];
-
-  for (const [a, b] of privatePairs) {
-    const [u1, u2] = [users[a], users[b]].sort((x, y) =>
-      x.appUserId.localeCompare(y.appUserId)
-    );
-
-    const existingPrivate = await prisma.privateChat.findUnique({
-      where: { user1Id_user2Id: { user1Id: u1.appUserId, user2Id: u2.appUserId } },
-    });
-    if (existingPrivate) continue;
-
-    const chat = await prisma.chat.create({
-      data: { chatName: `${u1.username}-${u2.username}`, chatType: type_list.private, createdBy: u1.appUserId },
-    });
-
-    await prisma.privateChat.create({
-      data: { user1Id: u1.appUserId, user2Id: u2.appUserId, chatId: chat.chatId },
-    });
-
-    await prisma.chatMember.createMany({
-      skipDuplicates: true,
-      data: [
-        { chatId: chat.chatId, userId: u1.appUserId },
-        { chatId: chat.chatId, userId: u2.appUserId },
-      ],
-    });
-
-    const msgs = await Promise.all([
-      prisma.chatMessage.create({ data: { chatId: chat.chatId, userId: u1.appUserId, content: 'Hey, how are you?' } }),
-      prisma.chatMessage.create({ data: { chatId: chat.chatId, userId: u2.appUserId, content: 'All good, you?' } }),
-    ]);
-
-    await Promise.all(
-      [u1, u2].map((u) =>
-        prisma.chatReadState.upsert({
-          where:  { chatId_userId: { chatId: chat.chatId, userId: u.appUserId } },
-          update: { lastReadMessageId: msgs[msgs.length - 1].messageId },
-          create: {
-            chatId:            chat.chatId,
-            userId:            u.appUserId,
-            lastReadMessageId: msgs[msgs.length - 1].messageId,
-          },
-        })
-      )
-    );
-  }
-  console.log('✅ Private chats ready');
-
-  // ── Chat Ban ───────────────────────────────────────────────────────────────
-  const banExists = await prisma.chatBan.findFirst({
-    where: { chatId: groupChat.chatId, userId: users[9].appUserId },
-  });
-  if (!banExists) {
-    await prisma.chatBan.create({
-      data: {
-        chatId:    groupChat.chatId,
-        userId:    users[9].appUserId,
-        bannedBy:  users[0].appUserId,
-        reason:    'Toxic behavior',
-        expiresAt: new Date(Date.now() + 7 * 86400000),
-      },
-    });
-  }
-  console.log('✅ Chat ban ready');
-
-  // ── Chat Invitation ────────────────────────────────────────────────────────
-  const inviteExists = await prisma.chatInvitation.findFirst({
-    where: { senderId: users[0].appUserId, receiverId: users[8].appUserId, chatId: groupChat.chatId },
-  });
-  if (!inviteExists) {
-    await prisma.chatInvitation.create({
-      data: {
-        senderId:   users[0].appUserId,
-        receiverId: users[8].appUserId,
-        chatId:     groupChat.chatId,
-        status:     'waiting',
-      },
-    });
-  }
-  console.log('✅ Chat invitation ready');
-
-  // ── Refresh Tokens ─────────────────────────────────────────────────────────
-  for (const u of users.slice(0, 3)) {
-    const tokenExists = await prisma.refreshToken.findFirst({ where: { userId: u.appUserId } });
-    if (!tokenExists) {
-      await prisma.refreshToken.create({
-        data: {
-          userId:    u.appUserId,
-          tokenHash: `fake-token-hash-${u.username}-${Date.now()}`,
-          expiresAt: new Date(Date.now() + 30 * 86400000),
-        },
-      });
-    }
-  }
-  console.log('✅ Refresh tokens ready');
-
-  console.log('\n🎉 Seed complete!');
+  console.log("🌱 Seeding complete!");
 }
 
-main()
-  .catch((e) => {
-    console.error('❌ Seed failed:', e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main().catch(e => console.error(e)).finally(() => prisma.$disconnect());
