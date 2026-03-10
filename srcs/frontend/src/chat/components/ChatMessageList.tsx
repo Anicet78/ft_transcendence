@@ -123,7 +123,7 @@ export function MessageList({
 					>
 						Join Room
 					</Button>
-					<> 
+					<>
 						{/* DISPLAY MESSAGES & DATE*/}
 						<small>
 							{msg.postedAt ? new Date(msg.postedAt).toLocaleString() : ""}
@@ -140,7 +140,7 @@ export function MessageList({
 							)}
 
 							{/* MODERATOR ACTIONS */}
-							{permissions.canModerate && (
+							{permissions.canModerate && msg.status !== "deleted" && (
 								<>
 									{msg.status !== "moderated" && (
 										<Button
@@ -174,7 +174,7 @@ export function MessageList({
 				return (
 					<Box className="box" m="2" p="3">
 					<p><strong>{msg.author.username}</strong> 🎮 Game session is going on! </p>
-					<> 
+					<>
 						{/* DISPLAY MESSAGES & DATE*/}
 						<small>
 							{msg.postedAt ? new Date(msg.postedAt).toLocaleString() : ""}
@@ -186,7 +186,7 @@ export function MessageList({
 
 			return (
 				<div key={msg.messageId} className="msg-box">
-				
+
 				{/* ACCESS MEMBER PROFILE FROM CHAT */}
 					<Link
 					to={`/profile/${encodeURIComponent(msg.author.username)}`}
@@ -196,7 +196,10 @@ export function MessageList({
 					</Link>
 
 				{/* DISPLAY MESSAGES & DATE*/}
-				<p>{/*msg.status === "moderated" ? "Message moderated" : */msg.content}</p>
+				{msg.status === "deleted" &&
+					<p className="msg-deleted">This message has been deleted</p>
+				}
+				<p>{msg.content}</p>
 				<small>
 					{msg.postedAt ? new Date(msg.postedAt).toLocaleString() : ""}
 				</small>
@@ -226,7 +229,7 @@ export function MessageList({
 					)}
 
 					{/* MODERATOR ACTIONS */}
-					{permissions.canModerate && (
+					{permissions.canModerate && msg.status !== "deleted" && (
 						<>
 						{msg.status !== "moderated" && (
 							<Button

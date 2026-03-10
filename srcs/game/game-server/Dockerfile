@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends git ca-certific
 WORKDIR /app
 COPY . .
 
-RUN make
+RUN make -j
 
 FROM debian:trixie-slim
 

@@ -103,7 +103,6 @@ async function seedPrivateChats(users) {
         ? [u1.appUserId, u2.appUserId]
         : [u2.appUserId, u1.appUserId];
 
-    // Skip if private chat already exists
     const existing = await prisma.privateChat.findUnique({
       where: { user1Id_user2Id: { user1Id, user2Id }, deletedAt: null },
     });
@@ -118,6 +117,12 @@ async function seedPrivateChats(users) {
           create: [
             { userId: u1.appUserId },
             { userId: u2.appUserId },
+          ],
+        },
+        roles: {
+          create: [
+            { userId: u1.appUserId, role: chat_role_type.writer, attributedBy: u1.appUserId },
+            { userId: u2.appUserId, role: chat_role_type.writer, attributedBy: u1.appUserId },
           ],
         },
         privateChat: {
@@ -188,15 +193,6 @@ async function seedGroupChat(users) {
   }));
 
   await prisma.chatMessage.createMany({ data: messages });
-
-  await prisma.chatBan.create({
-    data: {
-      chatId: chat.chatId,
-      userId: member.appUserId,
-      bannedBy: owner.appUserId,
-      reason: "Spamming",
-    },
-  });
 
   await prisma.chatInvitation.createMany({
     data: [

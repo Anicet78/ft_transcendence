@@ -34,7 +34,7 @@ export default function GroupChatInvitations({
 		onSuccess: () => {
 			toast({ title: "Chat invitation succesfully updated", type: "is-success" });
 			//window.location.reload();//(nina) not goood causes refresh
-			queryClient.invalidateQueries({ queryKey: ["group-invitations"] }); 
+			queryClient.invalidateQueries({ queryKey: ["group-invitations"] });
 			queryClient.invalidateQueries({ queryKey: ["chat-list"] });
 		},
 		onError: (error: Error) => {
@@ -80,7 +80,7 @@ export default function GroupChatInvitations({
 						Accept
 					</Button>
 
-					<button
+					<Button
 						className="chat-reject-button"
 						onClick={() =>
 						updateMutation.mutate({
@@ -90,7 +90,7 @@ export default function GroupChatInvitations({
 						}
 					>
 						Reject
-					</button>
+					</Button>
 					</>
 				)}
 

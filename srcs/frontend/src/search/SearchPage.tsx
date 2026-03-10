@@ -175,9 +175,9 @@ const SearchPage = () => {
 
 					{totalPages > 1 && (
 						<div className="pagination">
-							<button onClick={() => navigateWithParams(page - 1)} disabled={page === 1}>Previous</button>
+							<Button onClick={() => navigateWithParams(page - 1)} disabled={page === 1}>Previous</Button>
 							<span>Page {page} of {totalPages}</span>
-							<button onClick={() => navigateWithParams(page + 1)} disabled={page === totalPages}>Next</button>
+							<Button onClick={() => navigateWithParams(page + 1)} disabled={page === totalPages}>Next</Button>
 						</div>
 					)}
 				</div>

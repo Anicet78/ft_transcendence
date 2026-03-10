@@ -79,9 +79,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			setUser(null);
 			setToken(null);
 			setAccessToken(null);
-			setRedirectURL(window.location.pathname);
-			if (!publicRoutes.includes(window.location.pathname))
+			if (!publicRoutes.includes(window.location.pathname)) {
+				setRedirectURL(window.location.pathname);
 				navigate('/');
+			}
 		}
 
 		return () => {
