@@ -11,6 +11,10 @@
   -moz-osx-font-smoothing: grayscale; /* Enhances font rendering on macOS browsers */
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* The !important ensures nothing overrides it.*/
 html, body, #root {
   width: 100% !important;

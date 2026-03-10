@@ -1,0 +1,153 @@
+.privacy-box, .tos-box {
+	width: min(900px, 90%);
+	margin: 2rem auto;
+	box-sizing: border-box;
+	color: var(--color-text);
+	border-radius: 16px; /* rounded borders */
+	background-color: var(--color-bg);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid rgba(45, 212, 191, 0.12);
+	padding: clamp(1rem, 2vw, 2rem);
+}
+
+.privacy-title, .tos-title {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.privacy-title h2, .tos-title h2 {
+	font-family: var(--font-section-title);
+	font-size:clamp(1.5rem, 4vw, 4rem) !important;
+	color: var(--color-text) !important;
+}
+
+
+
+.privacy-box p, .privacy-content li, .tos-box p, .tos-content li {
+	font-family: var(--font-body);
+	color: #cbd5e1 !important;
+	font-size:clamp(0.7rem, 1vw, 1.2rem) !important;
+	gap: 2px;
+}
+
+.privacy-toc li, .privacy-toc a, .tos-toc li, .tos-toc a {
+	color: var(--color-primary-light) !important;
+}
+
+.privacy-container h3, .tos-container h3 {
+	color: var(--color-primary) !important;
+}
+
+.privacy-box span, .tos-box span {
+	font-weight: 900;
+}
+
+.privacy-container, .tos-container {
+  display: flex;
+  gap: 2rem; /* space between TOC and content */
+  align-items: flex-start;
+  font-family: var(--font-body);
+  color: var(--color-primary-dark2);
+}
+
+.privacy-container section, 
+.privacy-container nav, 
+.tos-container section, 
+.tos-container nav {
+	box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.06);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	border: 1px solid rgba(45, 212, 191, 0.1);
+	border-radius: 12px;
+	padding: clamp(1rem, 2vw, 2rem);
+	margin: clamp(0.3rem, 1vw, 1rem);
+}
+
+.privacy-toc, .tos-toc {
+  top: 1rem; /* distance from top of viewport */
+  flex: 0 0 200px; /* fixed width for TOC */
+  background: var(--color-primary-light);
+  padding: clamp(0.5rem, 1vw, 1rem);
+  border-radius: 6px;
+  font-size:clamp(0.7rem, 1vw, 1.2rem) !important;
+}
+
+.privacy-toc ul, .tos-toc ul {
+  list-style: none;
+  padding-left: 0;
+  text-align: left !important;
+}
+
+.privacy-toc li, .tos-toc li {
+  margin: 4px 0;
+}
+
+.privacy-toc a, .tos-toc li {
+  text-decoration: none;
+  color: var(--color-primary-dark0);
+}
+
+.privacy-toc a:hover, .tos-toc a:hover {
+  text-decoration: underline;
+  color: var(--color-primary-dark2);
+}
+
+.privacy-content .section-content, .tos-content .section-content {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start !important;
+	text-align: left !important;
+}
+
+.privacy-content h3, .tos-content h3 {
+	font-family: var(--font-section-title);
+	font-size:clamp(1rem, 2vw, 2rem) !important;
+	color: var(--color-primary) !important;
+}
+
+.privacy-content h4, .tos-content h4 {
+	font-family: var(--font-section-title);
+	color: var(--color-primary-light) !important;
+	font-size:clamp(0.8rem, 2vw, 1.5rem) !important;
+}
+
+.home-button {
+	font-family: var(--font-button-large);
+	font-size: clamp(1rem, 2vw, 2rem);
+	color: var(--color-primary) !important;
+	background-color: rgba(45, 212, 191, 0.1) !important;
+	border: 1px solid rgba(45, 212, 191, 0.25) !important;
+	margin-top: 2rem;
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	transition: all 0.2s ease;
+}
+
+.home-button:hover {
+	background-color: rgba(45, 212, 191, 0.25) !important;
+	color: #fff !important;
+	border-color: rgba(45, 212, 191, 0.4) !important;
+}
+
+@media (max-width: 900px) {
+	.privacy-container, .tos-container {
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.privacy-toc, .tos-toc {
+		flex: none;
+	}
+
+	.privacy-container section,
+	.privacy-container nav,
+	.tos-container section,
+	.tos-container nav {
+		margin: 0.5rem;
+	}
+
+}

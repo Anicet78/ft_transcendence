@@ -15,6 +15,7 @@
 @import "./home/home.css";
 @import "./profile/profile.css";
 @import "./profile/update.css";
+@import "./policies/privacy_policy.css";
 @import "./search/SearchBar.css";
 @import "./search/SearchPage.css";
 
@@ -34,6 +35,11 @@
 		#003532 85%,     /* deep teal shadow */
 		#00221f 100%     /* strong teal vignette */
 	) !important;
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-primary-dark0) inset !important;
+  -webkit-text-fill-color: var(--color-primary-light) !important;
 }
 
 /* ============================= */

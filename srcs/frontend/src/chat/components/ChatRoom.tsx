@@ -48,13 +48,7 @@ export function ChatRoom({ chatId }: {chatId: string}) {
 
 	return (
 		<>
-			<div style={{
-				height: "60vh",
-				overflowY: "auto",
-				paddingRight: "8px",
-				position: "relative"
-			}}
-			>
+			<div className="messages-box">
 				<MessageList
 					messages={messages}
 					readState={readState}

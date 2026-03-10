@@ -393,9 +393,30 @@ The database has been designed to maximize unique information sources, with mini
 #### jumichel
 
 * Implemented:
+	* Front-end architecture (routes, pages, components)
+	* Front-end registration and login input verifications
+	* All front pages except game rooms and chat
+	* Project overall CSS
+
 * Modules handled:
+	* Framework for frontend
+	* Allow users to interact with other users (profile and friends system)
+	* A complete notification system for all creation, update, and deletion action
+	* Implement advanced search functionality with filters, sorting, and pagination
+	* Standard user management and authentication
+	* (Custom-made design system with reusable components, including a proper color palette, typography, and icons)
+
 * Challenges faced:
+	* Learn new language (React) with limited time and understand the usage of components, router, etc.
+	* Ensure the responsiveness of the website across devices
+	* Make a coherent design across the whole site
+	* Do collaborative work with more members than usual and learn more production level git repository organization
+	* Make changes on the back-end without a clear understanding on how it works
+
 * Solutions:
+	* Use of CSS variables for the coherent design
+	* Ask many questions to other members to understand the organization of their work and how that would influence the front and eventually made changes in the back-end is necessary
+	* Read a lot of documentation on React
 
 ---
 
