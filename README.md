@@ -347,9 +347,30 @@ The database has been designed to maximize unique information sources, with mini
 #### tpinton
 
 * Implemented:
+	* C++ architecture and tools for the game client part using SDL2, that includes graphics, keybinds, texture, timers, camera and game event management.
+	* Track in session player statistics.
+	* Communication between the server and backend using libcurl to register session status and game/player results.
+	* Created routes for the game to interpret game-server message and update database.
+	* Levels, XP and game rules.
+	* Creation of the tick-based server loop, it update session world state like monster, event, or other players.
+
 * Modules handled:
+	* Web-based game.
+	* Multiplayer game.
+	* Remote players.
+	* Custom module.
+
 * Challenges faced:
+	* Game would not launch correctly on every 42 computers, because of graphics limitation.
+	* Client side was missing some information from the server.
+	* Sync issue between players and mobs animation and position.
+	* WebSocket library use for the game server was not featuring loop tools anymore.
+
 * Solutions:
+	* Use SDL2 render-info feature to know limitation and adapt renderer and texture to the lowest performing computer.
+	* Create permanent flag in client-server communication and let client side to handle some information.
+	* For the client character, it needed movement prediction, and for others, it needed some smoothing (voluntary creation of a 1 frame delay).
+	* Use the lambda function from us_timer_set loop from libusockets and stick it to the tool and use it as our server main event loop.
 
 #### jumichel
 
