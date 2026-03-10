@@ -16,6 +16,9 @@
   gap: 32px;
   box-sizing: border-box;
   background-color: var(--color-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(45, 212, 191, 0.12);
   border-radius: 12px;
 }
 
@@ -35,7 +38,7 @@
 
 .profile_username {
   font-weight: bold;
-  color: black;
+  color: var(--color-primary-light);
   font-family: var(--font-section-title);
   font-size: clamp(1.6rem, 4vw, 4rem);
   display: flex;
@@ -66,7 +69,7 @@
 
 .head-text p {
   margin: 0;
-  color: black;
+  color: #cbd5e1;
   font-family: var(--font-body);
   font-size: clamp(1.2rem, 2vw, 2rem);
   font-weight: bold;
@@ -86,6 +89,9 @@
   padding: 24px;
   gap: 16px;
   background-color: var(--color-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(45, 212, 191, 0.12);
   border-radius: 12px;
   gap: 16px 32px; /* row-gap column-gap */
   box-sizing: border-box;
@@ -108,6 +114,9 @@
   padding: 24px;
   gap: 16px;
   background-color: var(--color-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(45, 212, 191, 0.12);
   border-radius: 12px;
   gap: 16px 32px; /* row-gap column-gap */
   box-sizing: border-box;
@@ -115,9 +124,9 @@
 
 .icon-button {
   margin-left: clamp(0.1rem, 1rem , 0.5rem);
-  background-color: var(--color-primary-light) !important;
-  color: var(--color-primary-dark2) !important;
-  border: 1px solid white !important;
+  background-color: rgba(45, 212, 191, 0.15) !important;
+  color: var(--color-primary) !important;
+  border: 1px solid rgba(45, 212, 191, 0.25) !important;
 }
 
 /* Category name (bold) */
@@ -125,22 +134,26 @@
   font-weight: 800;
   display: inline-block; /* allows fixed width for alignment */
   width: 150px;
-  color: black;
+  color: var(--color-primary);
 }
 
 .button.navlink-button {
   font-family: var(--font-button-large) !important;
   font-size: clamp(1.2rem, 2.5vw, 2rem);
-  color: var(--color-primary-dark2) !important;
-  background-color: var(--color-primary-light);
-  border: 2px solid var(--color-primary) !important;
+  color: var(--color-primary) !important;
+  background-color: rgba(45, 212, 191, 0.1);
+  border: 1px solid rgba(45, 212, 191, 0.25) !important;
   border-radius: var(--radius-md);
   margin: clamp(1rem, 2.5vw, 2rem);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
 }
 
 .button.navlink-button:hover, .icon-button:hover {
-  color: white;
-  background-color: var(--color-hover);
+  color: #fff !important;
+  background-color: rgba(45, 212, 191, 0.25) !important;
+  border-color: rgba(45, 212, 191, 0.4) !important;
 }
 
 .button-group {
@@ -163,20 +176,25 @@
   min-width: 140px;     /* optional: make buttons consistent width */
   font-family: var(--font-button-large);
   font-size: clamp(1rem, 2.5vw, 2rem);
-  color: var(--color-primary-dark2) !important;
-  background-color: var(--color-primary-light);
-  border: 2px solid var(--color-primary) !important;
+  color: var(--color-primary) !important;
+  background-color: rgba(45, 212, 191, 0.1);
+  border: 1px solid rgba(45, 212, 191, 0.25) !important;
   border-radius: var(--radius-md);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
 }
 
 .button-group .profile-button:hover {
-  color: var(--color-primary-light) !important;
-  background-color: var(--color-hover) !important;
+  color: #fff !important;
+  background-color: rgba(45, 212, 191, 0.25) !important;
+  border-color: rgba(45, 212, 191, 0.4) !important;
 }
 
 .button-group .profile-button:disabled {
-  background-color: var(--color-primary-light) !important;
-  color: black !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: #64748b !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 /* ===================== */

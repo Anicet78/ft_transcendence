@@ -10,13 +10,13 @@ import toast from "../../Notifications";
 export function ChatMembers({chatId}) {
 
 	const { data: chat } = useChatInfo(chatId);
-	const { permissions } = useChat();
+	const { permissions, role } = useChat();
 	const { user } = useAuth();
 
 	const roleMutation = useChatRoleMutation(chatId);
 	const {kickMutation} = useGroupChatMutations(chatId);
 
-	 const [open, setOpen] = useState(false); 
+	 const [open, setOpen] = useState(false);
 
 	if (!chat) {
 		toast({ title: "Error", message: "Chat not found, please refresh page.", type: "is-danger"})
@@ -38,7 +38,7 @@ export function ChatMembers({chatId}) {
 				<li key={m.chatMemberId} className="mb-1">
 					{m.user.username} - <em>{m.role}</em>
 
-					{permissions.canChangeRoles && m.user.appUserId !== user?.id && (
+					{permissions.canChangeRoles && m.user.appUserId !== user?.id && (m.role != "owner" || (role == "admin" && m.role != "admin")) && (
 					<select
 						className="ml-2 role-options"
 						value={m.role}
@@ -49,16 +49,15 @@ export function ChatMembers({chatId}) {
 							})
 						}
 					>
-						<option value="owner">Owner</option>
-						<option value="admin">Admin</option>
-						<option value="moderator">Moderator</option>
+						{role == "owner" && <option value="admin">Admin</option>}
+						{permissions.canChangeRoles && <option value="moderator">Moderator</option>}
 						<option value="writer">Writer</option>
 						<option value="member">Member</option>
 					</select>
 					)}
 
 					{/* KICK MEMBER */}
-					{permissions.canKick && m.user.appUserId !== user?.id && (
+					{permissions.canKick && m.user.appUserId !== user?.id && (m.role != "owner" || (role == "admin" && m.role != "admin")) && (
 						<Button
 							className="chat-kick-button"
 							onClick={() => kickMutation.mutate(m.user.appUserId)}

@@ -84,7 +84,7 @@ const Banner = () => {
 							</NavLink>
 						}
 						<Navbar.Dropdown right className={`profile-dropdown ${dropdownVisible ? 'is-active' : ''}`}>
-							<Navbar.Item 
+							<Navbar.Item
 								as="button"
 								className="button is-primary is-medium is-centered"
 								textColor="black"
@@ -94,9 +94,9 @@ const Banner = () => {
 								<span>Menu</span>
 							</Navbar.Item>
 							<Navbar.DropdownMenu className='dropdown-full'>
-								{user && <Navbar.Item onClick={handleClick} className="dropdown-content">Logout</Navbar.Item>}
-								{user && <Navbar.Divider className='dropdown-divider'/>}
 								<NavLink to="/about" className="navbar-item dropdown-content">About the game</NavLink>
+								{user && <Navbar.Divider className='dropdown-divider'/>}
+								{user && <Navbar.Item onClick={handleClick} className="dropdown-content">Logout</Navbar.Item>}
 							</Navbar.DropdownMenu>
 						</Navbar.Dropdown>
 					</Navbar.End>

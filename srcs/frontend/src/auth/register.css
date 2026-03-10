@@ -1,8 +1,8 @@
 .register-box {
   width: 90%; /* use most of the screen width */
   max-width: 700px; /* controls overall box width */
-  border-radius: 30px; /* rounded borders */
-  border: 2px solid var(--color-primary);
+  border-radius: 20px; /* rounded borders */
+  border: 1px solid rgba(45, 212, 191, 0.25);
   display: flex;
   flex-direction: column; /* stack children vertically */
   justify-content: center; /* vertical centering */
@@ -16,6 +16,17 @@
 
 .register-box .button {
   font-family: var(--font-button-large);
+  background-color: rgba(45, 212, 191, 0.1) !important;
+  color: var(--color-primary) !important;
+  border: 1px solid rgba(45, 212, 191, 0.25) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.register-box .button:hover {
+  background-color: rgba(45, 212, 191, 0.25) !important;
+  color: #fff !important;
+  border-color: rgba(45, 212, 191, 0.4) !important;
 }
 
 .register-box .social-buttons {
@@ -33,7 +44,7 @@
 	max-width: 600px;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	align-items: center !important;
 	gap: var(--space-md); /* consistent spacing between inputs */
 }
 
@@ -45,21 +56,27 @@
   width: 100%;
 }
 
+.register-box .field {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-md);
+}
+
 /* Label style */
 .register-box label {
   font-weight: 700;
   font-family: var(--font-label);
   font-size: clamp(1.2rem, 2vw, 2rem);
-  margin-bottom: 6px;
   display: inline-block;
-  color: #00d1b2;
+  color: var(--color-primary);
 }
 
 /* Input style */
 .register-box input, .register-box select {
-  width: 100%;
   border-radius: 8px;
-  border: 1px solid var(--color-primary);
+  border: 1px solid rgba(45, 212, 191, 0.4);
   background-color: #3f3f3f;
   color: #eee;
   font-size: var(--fs-md1);
@@ -68,7 +85,7 @@
 }
 
 .register-box input::placeholder {
-	color: var(--color-primary);
+	color: rgba(45, 212, 191, 0.6);
 }
 
 .register-box input:focus, select:focus {
@@ -77,6 +94,10 @@
 	color: var(--color-primary-light);
 	font-size: var(--fs-md1);
 	font-family: var(--font-body);
+}
+
+.input-icon {
+	color: var(--color-primary-light);
 }
 
 .register-box .bottom {
@@ -104,7 +125,7 @@
   right: 12px;
   top: 38px;
   font-size: 0.9rem;
-  color: #00f0f0;
+  color: var(--color-primary);
   cursor: pointer;
   user-select: none;
   font-weight: 600;
@@ -114,7 +135,7 @@
 .register-box .password-feedback {
   margin-top: 4px;
   font-size: 0.8rem;
-  color: #00f0f0;
+  color: var(--color-primary);
 }
 
 .register-box .password-feedback .valid {
@@ -128,8 +149,8 @@
 .resetpwd-box {
 	width: 90%; /* use most of the screen width */
   max-width: 700px; /* controls overall box width */
-  border-radius: 30px; /* rounded borders */
-  border: 2px solid var(--color-primary);
+  border-radius: 20px; /* rounded borders */
+  border: 1px solid rgba(45, 212, 191, 0.25);
   display: flex;
   flex-direction: column; /* stack children vertically */
   justify-content: center; /* vertical centering */
@@ -150,6 +171,15 @@
 .resetpwd-box .button {
   font-family: var(--font-button-large);
   margin-top: 20px;
+  background-color: rgba(45, 212, 191, 0.1) !important;
+  color: var(--color-primary) !important;
+  border: 1px solid rgba(45, 212, 191, 0.25) !important;
+}
+
+.resetpwd-box .button:hover {
+  background-color: rgba(45, 212, 191, 0.25) !important;
+  color: #fff !important;
+  border-color: rgba(45, 212, 191, 0.4) !important;
 }
 
 .resetpwd-box form {
@@ -166,19 +196,27 @@
   width: 100%;
 }
 
+.resetpwd-box .field {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: var(--space-md);
+}
+
 .resetpwd-box label {
   font-weight: 700;
   font-family: var(--font-label);
   font-size: clamp(1.2rem, 2vw, 2rem);
-  margin-bottom: 6px;
+  margin-bottom: var(--space-md);
   display: inline-block;
-  color: #00d1b2;
+  color: var(--color-primary);
 }
 
 .resetpwd-box input {
   width: 100%;
   border-radius: 8px;
-  border: 1px solid var(--color-primary);
+  border: 1px solid rgba(45, 212, 191, 0.4);
   background-color: #3f3f3f;
   color: #eee;
   font-size: var(--fs-md1);
@@ -187,7 +225,7 @@
 }
 
 .resetpwd-box input::placeholder {
-	color: var(--color-primary);
+	color: rgba(45, 212, 191, 0.6);
 }
 
 .resetpwd-box input:focus {
@@ -218,7 +256,7 @@
   right: 12px;
   top: 38px;
   font-size: 0.9rem;
-  color: #00f0f0;
+  color: var(--color-primary);
   cursor: pointer;
   user-select: none;
   font-weight: 600;
@@ -227,7 +265,7 @@
 /* Password feedback style */
 .resetpwd-box .password-feedback {
   margin-top: 4px;
-  color: #00f0f0;
+  color: var(--color-primary);
     font-family: var(--font-body) !important;
   font-size: var(--fs-sm) !important;
   font-weight: 600;
@@ -252,10 +290,7 @@
 @media (max-width: 480px) {
   .register-box .social-buttons {
     flex-direction: column;
-    width: 100%;
-  }
-  .register-box .social-buttons .button {
-    width: 100%; /* full-width buttons on mobile */
+	align-items: center;
   }
   .register-box label {
     font-size: 1.4rem;
@@ -264,11 +299,9 @@
     font-size: 0.9rem;
   }
   .register-box .button {
-    font-size: var(--fs-md1);
+    font-size: var(--fs-md2);
   }
   .register-box .bottom {
-    width: 100%;
-    align-items: stretch; /* full width dropdown & button */
     gap: var(--space-md);
   }
 }

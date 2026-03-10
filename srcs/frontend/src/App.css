@@ -68,13 +68,19 @@
 	font-family: var(--font-button-large);
 	font-size: clamp(1rem, 2.5vw, 2rem);
     color: var(--color-primary);
-    border-color: var(--color-primary-dark0);
+    background-color: rgba(45, 212, 191, 0.1);
+    border: 1px solid rgba(45, 212, 191, 0.25);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
 }
 
 .button-group .button:hover {
-        background-color: var(--color-primary-light);
+    background-color: rgba(45, 212, 191, 0.25);
+    color: #fff;
+    border-color: rgba(45, 212, 191, 0.4);
 }
 
 /* stacks buttons vertically on small devices */
@@ -209,4 +215,3 @@
             animation-timing-function: ease-out;
   }
 }
-

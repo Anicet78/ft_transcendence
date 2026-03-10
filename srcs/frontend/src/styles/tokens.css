@@ -11,41 +11,40 @@
 
 :root {
 	/* Brand */
-	--color-primary: #00d1b2;
-	--color-primary-light: #a9fcef;
-	--color-primary-dark0: #027c6a;
-	--color-primary-dark1: #026354;
-	--color-primary-dark2: #013f36;
+	--color-primary: #2dd4bf;
+	--color-primary-light: #ccfbf1;
+	--color-primary-dark0: #0f766e;
+	--color-primary-dark1: #115e59;
+	--color-primary-dark2: #134e4a;
 
 	/* Footer */
-	--footer-color-bg: #282828;
-	--footer-color-text: #00d1b2;
-	--footer-color-link: white;
-	--footer-color-shadow: #e0cc91;
-	--footer-color-shadow: #e0cc91;
+	--footer-color-bg: #1a1a1a;
+	--footer-color-text: #5eead4;
+	--footer-color-link: #e2e8f0;
+	--footer-color-shadow: #d4a853;
 
 	/* Neutral */
-	--color-bg: #1cbca4;
-	--color-bg-light: #def9f5;
-	--color-hover: #078c78;
+	--color-bg: rgba(255, 255, 255, 0.06);
+	--color-bg-light: rgba(255, 255, 255, 0.10);
+	--color-hover: rgba(45, 212, 191, 0.18);
 	--color-border: #334155;
 
 	/* Text */
-	--color-text: black;
+	--color-text: #e2e8f0;
 
 	/* Button */
-	--color-delete-bg: #fc025e;
-	--color-delete-txt: #4f021e;
-	--color-delete-bg-light: #fc377f;
-	--color-delete-txt-light: #680328;
-	--color-delete-txt-light2: #fcd1e1;
-	--color-invite-bg: #008afc;
-	--color-invite-txt: #0a0554;
-	--color-invite-bd: #1204db;
-	--color-invite-dark: #0255fc;
-	--color-invite-light: #d9e4fc;
-	--color-game-bg: #00c7b1;
-	--color-game-border: #318e83;
+	--color-delete-bg: #e11d48;
+	--color-delete-txt: #fff1f2;
+	--color-delete-bg-light: #fb7185;
+	--color-delete-txt-light: #881337;
+	--color-delete-txt-light2: #ffe4e6;
+	--color-invite-bg: #3b82f6;
+	--color-invite-txt: #eff6ff;
+	--color-invite-bd: #2563eb;
+	--color-invite-dark: #1d4ed8;
+	--color-invite-light: #dbeafe;
+	--color-game-bg: #14b8a6;
+	--color-game-border: #0f766e;
 
 	/* Fonts */
 /*	--font-game-title: 'MoRk DuNgEoN', serif;*/
@@ -84,6 +83,5 @@
 	--radius-lg: 20px;
 
 	/* Shadows */
-	--shadow-soft: 0 2px 5px #64bcaf;
+	--shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
-

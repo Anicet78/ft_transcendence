@@ -23,9 +23,8 @@ export const InputPassword: React.FC<PasswordInputProps> = ({ placeholder, error
   ];
 
   return (
-	<div style={{ position: "relative"}} className="field">
+	<div className="field">
 		<label htmlFor={placeholder}>{placeholder}</label>
-		<br />
 		<p className="control has-icons-left has-icons-right">
 			<input
 				{...register}
@@ -34,7 +33,7 @@ export const InputPassword: React.FC<PasswordInputProps> = ({ placeholder, error
 				className={`input ${error ? "error" : ""}`}
 			/>
 			<span className="icon is-small is-left">
-				<i className="fas fa-lock"></i>
+				<i className="input-icon fas fa-lock"></i>
 			</span>
 		
 			<span
@@ -42,7 +41,7 @@ export const InputPassword: React.FC<PasswordInputProps> = ({ placeholder, error
 				style={{ cursor: "pointer", pointerEvents: "auto" }} // icon clickable
 				onClick={() => setShow(prev => !prev)}
 			>
-				<i className={`fas ${show ? "fa-eye-slash" : "fa-eye"}`}></i>
+				<i className={`input-icon fas ${show ? "fa-eye-slash" : "fa-eye"}`}></i>
 			</span>
 		</p>
 		{error && <p className="error-message">{error.message}</p>}

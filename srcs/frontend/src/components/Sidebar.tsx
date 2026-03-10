@@ -76,7 +76,7 @@ const Sidebar = () => {
 				className={`chat-sidebar-desktop ${collapsed ? "collapsed" : ""}`}
 				style={{
 					width: collapsed ? "0px" : `${width}px`,
-					transition: resizing ? "none" : "width 0.3s ease"
+					transition: resizing ? "none" : "width 0.3s ease, min-width 0.3s ease"
 				}}
 			>
 				{/* COLLAPSE BUTTON */}

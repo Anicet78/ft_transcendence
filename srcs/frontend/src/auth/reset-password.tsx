@@ -4,7 +4,7 @@ import './register.css'
 import './login.css'
 
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate, useSearchParams } from "react-router";
+import { NavLink, useNavigate, useSearchParams } from "react-router";
 import type { GetBody } from "../types/GetType";
 import api from "../serverApi";
 import toast from "../Notifications";
@@ -41,11 +41,11 @@ function ResetPassword() {
 	const [searchParams] = useSearchParams();
 	const token = searchParams.get("token");
 
-	if (!token) {
-		toast({ title: "No token found", message: "Url doesn't contain any token", type: "is-danger" });
-		navigate("/login");
-		return ;
-	}
+	// if (!token) {
+	// 	toast({ title: "No token found", message: "Url doesn't contain any token", type: "is-danger" });
+	// 	navigate("/login");
+	// 	return ;
+	// }
 
 	const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({
 		resolver: yupResolver(schema),
@@ -83,9 +83,10 @@ function ResetPassword() {
 					<InputPassword placeholder="Confirm password" register={register("confirmPassword")} error={errors.confirmPassword} watchValue={confirmPassword} />
 				</div>
 				<div className='bottom'>
-					<Button type="submit" color="primary" isOutlined size='large' className="submit-wrapper">{mutation.isPending ? 'Reseting...' : 'Reset password'}</Button>
+					<Button type="submit" color="primary" size='large' className="submit-wrapper">{mutation.isPending ? 'Reseting...' : 'Reset password'}</Button>
 				</div>
 			</form>
+			<NavLink to="/" className="button is-primary is-medium is-outlined">Back to home</NavLink>
 		</div>
 	)
 }

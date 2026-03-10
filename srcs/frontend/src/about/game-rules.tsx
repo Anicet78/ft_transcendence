@@ -6,7 +6,7 @@ const GameRules = () => {
 			<h2>Game rules</h2>
 
 			<div className="rules-subbox">
-				<h3>- Single Player AND Multiplyer rules -</h3>
+				<h3>- Global rules -</h3>
 
 				<p>You are a <span>soldier lost in a multi-floors maze</span>, your goal is to <span>escape the maze</span> the faster you can, while avoiding death <span>at all cost</span>.</p>
 
@@ -38,18 +38,16 @@ const GameRules = () => {
 
 				<p><span>D</span> - move right</p>
 
-			<p><span>SPACE</span> - attack</p>
-
-			<h3>- XP Rules -</h3>
-
-			<p><span>Win</span> - 10xp</p>
-
-			<p><span>Kill</span> - 1xp</p>
-
-			<p>Level up every 20xp</p>
-
-			<NavLink to="/" className="button is-medium home-button">Back to home</NavLink>
 				<p><span>SPACE</span> - attack</p>
+			</div>
+			<div className="rules-subbox">
+				<h3>- XP Guide -</h3>
+
+				<p><span>Win</span> - 10xp</p>
+
+				<p><span>Kill</span> - 1xp</p>
+
+				<p>Level up every 20xp</p>
 			</div>
 			<NavLink to="/" className="button is-large home-button">Back to home</NavLink>
 		</div>

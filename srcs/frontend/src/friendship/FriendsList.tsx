@@ -43,8 +43,6 @@ const FriendList = () => {
 									<img src={avatarUrl} alt={friendUser.username} className="user_avatar"/>
 									<p className="username">{friendUser.username}</p>
 									<div className="friend_actions">
-										<Button className="interaction_btn">Join</Button>
-										<Button className="interaction_btn">Spectate</Button>
 										<Button
 											className="interaction_btn"
 											onClick={() => {handleRequest("remove", friendUser.appUserId)}}

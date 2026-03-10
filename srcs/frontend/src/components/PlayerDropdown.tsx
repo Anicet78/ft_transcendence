@@ -14,12 +14,12 @@ export const PlayerDropdown = ({ player, kickFn, hostFn, isHost, isSelf }) => {
 
 			{isOpen && (
 				<div className="player-buttons">
-					<NavLink to={`/profile/${player.username}`} className='button is-small is-outlined player-button' aria-label='profile button'>See Profil</NavLink>
+					<NavLink to={`/profile/${player.username}`} className='button is-small player-button' aria-label='profile button'>See Profil</NavLink>
 					{/* <li onClick={() => console.log("Message à", player.username)}>Message</li> */}
 					{isHost && !isSelf &&
 						<>
-							<Button className='button is-small is-outlined kick-button' aria-label='kick button' onClick={() => kickFn(player.id)}>Kick player</Button>
-							<Button className='button is-small is-outlined host-button' aria-label='set host button' onClick={() => hostFn(player.id)}>Set as host</Button>
+							<Button className='button is-small kick-button' aria-label='kick button' onClick={() => kickFn(player.id)}>Kick player</Button>
+							<Button className='button is-small host-button' aria-label='set host button' onClick={() => hostFn(player.id)}>Set as host</Button>
 						</>
 					}
 				</div>

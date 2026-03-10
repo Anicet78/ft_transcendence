@@ -1,8 +1,11 @@
 .rules-box {
 	width: 90%; /* use most of the screen width */
 	max-width: 700px; /* controls overall box width */
-	border-radius: 30px; /* rounded borders */
+	border-radius: 16px; /* rounded borders */
 	background-color: var(--color-bg);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid rgba(45, 212, 191, 0.12);
 	display: flex;
 	flex-direction: column; /* stack children vertically */
 	justify-content: center; /* vertical centering */
@@ -25,12 +28,12 @@
 
 .rules-box h3 {
 	font-size:clamp(1rem, 2vw, 2rem) !important;
-	color: var(--color-primary-dark2) !important;
+	color: var(--color-primary) !important;
 }
 
 .rules-box p {
 	font-family: var(--font-body);
-	color: var(--color-primary-dark0);
+	color: #cbd5e1;
 	font-size:clamp(0.7rem, 1vw, 1.2rem) !important;
 	gap: 2px;
 }
@@ -40,8 +43,13 @@
 }
 
 .rules-subbox {
-	background-color: var(--color-bg-light);
-	border-radius: 20px;
+	width: 100%;
+	box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.06);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	border: 1px solid rgba(45, 212, 191, 0.1);
+	border-radius: 12px;
 	padding: clamp(1rem, 2vw, 2rem);
 	margin: clamp(0.3rem, 1vw, 1rem);
 }
@@ -49,13 +57,17 @@
 .home-button {
 	font-family: var(--font-button-large);
 	font-size: clamp(1rem, 2vw, 2rem);
-	color:var(--color-primary-dark2) !important;
-	background-color: var(--color-primary-light) !important;
-	border: 2px solid var(--color-primary-dark0) !important;
+	color: var(--color-primary) !important;
+	background-color: rgba(45, 212, 191, 0.1) !important;
+	border: 1px solid rgba(45, 212, 191, 0.25) !important;
 	margin-top: 2rem;
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	transition: all 0.2s ease;
 }
 
 .home-button:hover {
-	background-color: var(--color-hover) !important;
-	color: white;
+	background-color: rgba(45, 212, 191, 0.25) !important;
+	color: #fff !important;
+	border-color: rgba(45, 212, 191, 0.4) !important;
 }
