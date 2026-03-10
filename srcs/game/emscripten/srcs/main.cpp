@@ -56,15 +56,6 @@ static bool gameRunning = true;
 		emscripten::function("resumeGame", &resumeGame);
 		emscripten::function("pauseGame", &pauseGame);
 	}
-	EM_JS(void, check_context_lost, (), {
-		const canvas = document.getElementById('canvas') 
-			|| Module.canvas;  // fallback sur le canvas Emscripten
-		if (!canvas) return;  // sortir proprement si pas de canvas
-		const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
-		if (gl && gl.isContextLost()) {
-			setTimeout(() => location.reload(), 500);
-		}
-	});
 #endif
 
 void mainloopE(void *arg)
