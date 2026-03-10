@@ -3,6 +3,7 @@
 Engine gSdl;
 
 bool	pause = false;
+static bool gameRunning = true;
 
 #ifdef __EMSCRIPTEN__
 
@@ -13,7 +14,8 @@ bool	pause = false;
 	{
 		SDL_EventState(SDL_KEYDOWN, SDL_DISABLE);
 		SDL_EventState(SDL_KEYUP, SDL_DISABLE);
-		emscripten_cancel_main_loop();
+		gameRunning = false;
+		gSdl.cleanup();
 	}
 
 	void	getMessage(val obj)
@@ -71,6 +73,13 @@ void mainloopE(void *arg)
 	static bool init = false;
 	static double frameTime = gSdl.getActualTime();
 	Game *game = static_cast<Game *>(arg);
+	if (!gameRunning)
+    {
+        emscripten_cancel_main_loop();
+		init = false;
+        frameTime = 0;
+        return;
+    }
 	if (pause)
 		return ;
 	try
@@ -117,8 +126,10 @@ static void	importAssetsAndRoom(void)
 int main(int ac, char **av)
 {
 	srand(time(0));
+	gameRunning = true;
 	std::string name, id;
 	(void)ac;
+	gSdl.cleanup();
 	if (!init_sdl(gSdl))
 	{
 		std::cerr << "Error in sdl init" << std::endl;
