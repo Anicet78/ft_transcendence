@@ -35,6 +35,30 @@ function buildGameProfileFilter(query: SearchUsersQuery) {
 			filter.totalGames.lte = query.maxGames;
 	}
 
+	if (query.minEnemiesKilled !== undefined || query.maxEnemiesKilled !== undefined) {
+		filter.totalEnemiesKilled = {};
+		if (query.minEnemiesKilled !== undefined)
+			filter.totalEnemiesKilled.gte = query.minEnemiesKilled;
+		if (query.maxEnemiesKilled !== undefined)
+			filter.totalEnemiesKilled.lte = query.maxEnemiesKilled;
+	}
+
+	if (query.minBestTime !== undefined || query.maxBestTime !== undefined) {
+		filter.bestTime = {};
+		if (query.minBestTime !== undefined)
+			filter.bestTime.gte = query.minBestTime;
+		if (query.maxBestTime !== undefined)
+			filter.bestTime.lte = query.maxBestTime;
+	}
+
+	if (query.minWins !== undefined || query.maxWins !== undefined) {
+		filter.totalWins = {};
+		if (query.minWins !== undefined)
+			filter.totalWins.gte = query.minWins;
+		if (query.maxWins !== undefined)
+			filter.totalWins.lte = query.maxWins;
+	}
+
 	if (Object.keys(filter).length === 1)
 		return undefined;
 
