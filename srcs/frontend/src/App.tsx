@@ -14,7 +14,7 @@ const App = () => {
 	return (
 		<div className='slide-in-elliptic-bottom-bck'>
 			<div className='text-focus-in'>
-				<p> Welcome to the game</p>
+				<p> Welcome to</p>
 				<p>DungeonNoDragon</p>
 			</div>
 			<br/>
