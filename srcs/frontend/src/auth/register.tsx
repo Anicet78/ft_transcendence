@@ -23,23 +23,29 @@ type RegionType = RegisterBodyType['region']
 const regions: RegionType[] = ["EU", "NA", "SAM", "MENA", "OCE", "APAC", "SSA"];
 
 // Regex
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-const usernameRegex = /^[a-zA-Z0-9_]{2,20}$/;
-const realnameRegex = /^[a-zA-Z]{2,20}$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+const usernameRegex = /^[a-zA-Z0-9_]+$/;
+const realnameRegex = /^[a-zA-Z'-]+$/;
 
 // Yup validation schema
 const schema = yup.object().shape({
 	firstname: yup
 		.string()
-		.matches(realnameRegex, "2-15 characters: letters")
+		.min(3, "Minimum 3 characters required")
+		.max(15, "Maximum 15 characters allowed")
+		.matches(realnameRegex, "Only letters are allowed")
 		.required("First name is required"),
 	lastname: yup
 		.string()
-		.matches(realnameRegex, "2-15 characters: letters")
+		.min(3, "Minimum 3 characters required")
+		.max(15, "Maximum 15 characters allowed")
+		.matches(realnameRegex, "Only letters are allowed")
 		.required("First name is required"),
 	username: yup
 		.string()
-		.matches(usernameRegex, "3-10 characters: letters, numbers, underscores")
+		.min(3, "Minimum 3 characters required")
+		.max(10, "Maximum 10 characters allowed")
+		.matches(usernameRegex, "Allowed characters are: letters, numbers, underscores")
 		.required("User name is required"),
 	email: yup
 		.string()
@@ -47,7 +53,8 @@ const schema = yup.object().shape({
 		.required("Email is required"),
 	password: yup
 		.string()
-		.matches(passwordRegex, "Minimum 8 characters, uppercase, lowercase, number & special")
+		.min(8, "Minimum 8 characters required")
+		.matches(passwordRegex)
 		.required("Password is required"),
 	confirmPassword: yup
 		.string()

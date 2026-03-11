@@ -51,6 +51,7 @@
 /* Form fields layout, same as login */
 .register-box form .form-fields {
   display: grid;
+
   grid-template-columns: 1fr 1fr; /* 2 equal columns */
   gap: var(--space-md) 2rem; /* row gap and column gap */
   width: 100%;
@@ -60,7 +61,6 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
 	gap: var(--space-md);
 }
 
@@ -89,9 +89,9 @@
 }
 
 .register-box input:focus, select:focus {
-	background-color: #026354;
+	background-color: #026354 !important;
 	border: 1.55px solid #013029;
-	color: var(--color-primary-light);
+	color: var(--color-primary-light) !important;
 	font-size: var(--fs-md1);
 	font-family: var(--font-body);
 }
@@ -115,6 +115,8 @@
 
 .register-box .error-message {
   color: #f44336;
+  font-family: var(--font-body) !important;
+  font-size: var(--fs-md1) !important;
   font-size: 0.8rem;
   margin-top: 2px;
 }
@@ -136,14 +138,20 @@
   margin-top: 4px;
   font-size: 0.8rem;
   color: var(--color-primary);
+  font-family: var(--font-body) !important;
+  font-size: var(--fs-md1) !important;
 }
 
 .register-box .password-feedback .valid {
   color: #4caf50;
+  font-family: var(--font-body) !important;
+  font-size: var(--fs-md1) !important;
 }
 
 .register-box .password-feedback .invalid {
   color: #f44336;
+  font-family: var(--font-body) !important;
+  font-size: var(--fs-md1) !important;
 }
 
 .resetpwd-box {
