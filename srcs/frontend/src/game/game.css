@@ -62,12 +62,12 @@
   font-family: var(--font-section-title);
   font-size: clamp(1.8rem, 4vw, 2.8rem) !important;
   margin-bottom: 1.2rem;
-  color: var(--color-primary);
+  color: #ebecf0 !important;
   text-shadow: 0 0 20px rgba(45, 212, 191, 0.3);
 }
 
 .end-results p {
-  color: var(--color-text);
+  color: #e2e8f0;
   font-family: var(--font-body);
   font-size: var(--fs-lg);
   margin: 0.6rem 0;
@@ -78,7 +78,7 @@
 
 .end-results span {
   font-weight: 700;
-  color: var(--color-primary-light);
+  color: #5eead4;
 }
 
 .end-results .game-numbers {

@@ -13,7 +13,7 @@ const Game = () => {
 	const navigate = useNavigate();
 	const { user } = useAuth();
 	const { room, start, cancelStart } = useRoom()!;
-	const [showButton, setShowButton] = useState(false);
+	const [showButton, setShowButton] = useState(true);
 	const [compact, setCompact] = useState(false);;
 	const [JsonEnd, setJsonEnd] = useState(Object);
 
@@ -280,14 +280,19 @@ const Game = () => {
 		navigate("/home");
 	}
 
+	JsonEnd.is_winner = true;
+	JsonEnd.completion_time_min = 42;
+	JsonEnd.completion_time_sec = 42;
+	JsonEnd.completion_time_mil = 0.42;
+	JsonEnd.mob_killed = 42;
 
 	return (
 		<div className={`game-box ${compact ? "game-box--results" : ""}`}>
 			{showButton &&
 			(<div className='end-results'>
-				<h2>{JsonEnd.is_winner ? "🎉 Victoire !" : "💀 Défaite"}</h2>
-				<p>🗡️ <span>Monstres tués :</span> <span className='game-numbers'>{JsonEnd.mob_killed}</span></p>
-				<p>⏱️ <span>Temps :</span>
+				<h2>{JsonEnd.is_winner ? "🎉 Victory!" : "💀 Defeat"}</h2>
+				<p>🗡️ <span>Monsters killed:</span> <span className='game-numbers'>{JsonEnd.mob_killed}</span></p>
+				<p>⏱️ <span>Time:</span>
 					<span className='game-numbers'>{JsonEnd.completion_time_min}</span>min
 					<span className='game-numbers'>{JsonEnd.completion_time_sec}</span>s
 					<span className='game-numbers'>{Math.round(JsonEnd.completion_time_mil * 1000)}</span>ms
