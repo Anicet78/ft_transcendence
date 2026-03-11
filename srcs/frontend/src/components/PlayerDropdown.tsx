@@ -15,7 +15,6 @@ export const PlayerDropdown = ({ player, kickFn, hostFn, isHost, isSelf }) => {
 			{isOpen && (
 				<div className="player-buttons">
 					<NavLink to={`/profile/${player.username}`} className='button is-small player-button' aria-label='profile button'>See Profil</NavLink>
-					{/* <li onClick={() => console.log("Message à", player.username)}>Message</li> */}
 					{isHost && !isSelf &&
 						<>
 							<Button className='button is-small kick-button' aria-label='kick button' onClick={() => kickFn(player.id)}>Kick player</Button>

@@ -75,10 +75,7 @@ clean: down
 
 fclean:
 	$(INFO) "Removing containers, images and volumes..."
-	@rm -rf srcs/frontend/src/game/build/game.data
-	@rm -rf srcs/frontend/src/game/build/game.wasm
-	@rm -rf srcs/frontend/src/game/build/game.js
-	@rm -rf srcs/game/emscripten/objs_wasm 2>/dev/null
+	@if [ -d srcs/game/emscripten/objs_wasm ]; then $(DOCKER_COMPOSE) run --rm -ti emscripten make wfclean > /dev/null 2>&1; fi
 	@$(DOCKER_COMPOSE) down --rmi all -v
 	$(INFO) "Cleanup complete."
 

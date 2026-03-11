@@ -21,8 +21,6 @@ services:
     container_name: node-c
     init: true
     restart: on-failure
-    ports:
-      - 5173:5173
     env_file:
       - .env
     secrets:
@@ -74,7 +72,7 @@ services:
       - ../srcs/frontend/src/game/build:/emscripten/build
     networks:
       - transcendence
-    entrypoint: ["make", "-j", "wasm"]
+    command: ["make", "-j", "wasm"]
 
   game-server:
     build: ../srcs/game/game-server
