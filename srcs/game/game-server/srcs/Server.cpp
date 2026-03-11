@@ -191,7 +191,10 @@ std::vector<Session>::iterator	Server::endSession(std::string sessionId, uWS::Ap
 				continue ;
 			std::shared_ptr<Player> player = p.lock();
 			if (!player->getFinished())
+			{
+				sendPlayerResultCurl(*this, *it, *player);
 				(*it).sendEndResults(app, player, 1);
+			}
 			this->removePlayer(p.lock()->getUid());
 		}
 		return this->_sessions.erase(it);
@@ -467,9 +470,12 @@ void	Server::run(void)
 				{
 					if (session.isPlayerInSession((*it)->getUid()))
 					{
-						sendPlayerResultCurl(*data->server, session, *(*it));
-						session.removePlayer((*it)->getUid());
-						break;
+						if (!(*it)->getResultCurl())
+						{
+							sendPlayerResultCurl(*data->server, session, *(*it));
+							session.removePlayer((*it)->getUid());
+							break;
+						}
 					}
 				}
 				it = data->server->_players.erase(it);

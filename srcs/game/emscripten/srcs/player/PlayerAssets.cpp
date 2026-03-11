@@ -121,12 +121,12 @@ void	PlayerAssets::rendPlayerWalk(int x, int y, int assetIndex, float scale, int
 	}
 	if (assetIndex < 0)
 	{
-		std::cerr << "Invalid index" << std::endl;
+		std::cout << "Invalid index" << std::endl;
 		return ;
 	}
 	if (scale <= 0)
 	{
-		std::cerr << "Invalid scale" << std::endl;
+		std::cout << "Invalid scale" << std::endl;
 		return ;
 	}
 
@@ -155,12 +155,12 @@ void	PlayerAssets::rendPlayerWalkFront(int x, int y, int assetIndex, float scale
 	}
 	if (assetIndex < 0)
 	{
-		std::cerr << "Invalid index" << std::endl;
+		std::cout << "Invalid index" << std::endl;
 		return ;
 	}
 	if (scale <= 0)
 	{
-		std::cerr << "Invalid scale" << std::endl;
+		std::cout << "Invalid scale" << std::endl;
 		return ;
 	}
 
@@ -186,12 +186,12 @@ void	PlayerAssets::rendPlayerWalkBack(int x, int y, int assetIndex, float scale,
 	}
 	if (assetIndex < 0)
 	{
-		std::cerr << "Invalid index" << std::endl;
+		std::cout << "Invalid index" << std::endl;
 		return ;
 	}
 	if (scale <= 0)
 	{
-		std::cerr << "Invalid scale" << std::endl;
+		std::cout << "Invalid scale" << std::endl;
 		return ;
 	}
 
@@ -218,12 +218,12 @@ void	PlayerAssets::rendPlayerAttack(int x, int y, int assetIndex, float scale, i
 	}
 	if (assetIndex < 0)
 	{
-		std::cerr << "Invalid index" << std::endl;
+		std::cout << "Invalid index" << std::endl;
 		return ;
 	}
 	if (scale <= 0)
 	{
-		std::cerr << "Invalid scale" << std::endl;
+		std::cout << "Invalid scale" << std::endl;
 		return ;
 	}
 
@@ -252,12 +252,12 @@ void	PlayerAssets::rendPlayerAttackFront(int x, int y, int assetIndex, float sca
 	}
 	if (assetIndex < 0)
 	{
-		std::cerr << "Invalid index" << std::endl;
+		std::cout << "Invalid index" << std::endl;
 		return ;
 	}
 	if (scale <= 0)
 	{
-		std::cerr << "Invalid scale" << std::endl;
+		std::cout << "Invalid scale" << std::endl;
 		return ;
 	}
 
@@ -283,12 +283,12 @@ void	PlayerAssets::rendPlayerAttackBack(int x, int y, int assetIndex, float scal
 	}
 	if (assetIndex < 0)
 	{
-		std::cerr << "Invalid index" << std::endl;
+		std::cout << "Invalid index" << std::endl;
 		return ;
 	}
 	if (scale <= 0)
 	{
-		std::cerr << "Invalid scale" << std::endl;
+		std::cout << "Invalid scale" << std::endl;
 		return ;
 	}
 
@@ -314,12 +314,12 @@ void	PlayerAssets::rendPlayerIdle(int x, int y, int assetIndex, float scale, int
 	}
 	if (assetIndex < 0)
 	{
-		std::cerr << "Invalid index" << std::endl;
+		std::cout << "Invalid index" << std::endl;
 		return ;
 	}
 	if (scale <= 0) 
 	{
-		std::cerr << "Invalid scale" << std::endl;
+		std::cout << "Invalid scale" << std::endl;
 		return ;
 	}
 
@@ -349,12 +349,12 @@ void	PlayerAssets::rendPlayerIdleFront(int x, int y, int assetIndex, float scale
 	}
 	if (assetIndex < 0)
 	{
-		std::cerr << "Invalid index" << std::endl;
+		std::cout << "Invalid index" << std::endl;
 		return ;
 	}
 	if (scale <= 0)
 	{
-		std::cerr << "Invalid scale" << std::endl;
+		std::cout << "Invalid scale" << std::endl;
 		return ;
 	}
 
@@ -381,12 +381,12 @@ void	PlayerAssets::rendPlayerIdleBack(int x, int y, int assetIndex, float scale,
 	}
 	if (assetIndex < 0)
 	{
-		std::cerr << "Invalid index" << std::endl;
+		std::cout << "Invalid index" << std::endl;
 		return ;
 	}
 	if (scale <= 0)
 	{
-		std::cerr << "Invalid scale" << std::endl;
+		std::cout << "Invalid scale" << std::endl;
 		return ;
 	}
 
@@ -414,12 +414,12 @@ void	PlayerAssets::rendPlayerHurt(int x, int y, int assetIndex, float scale, int
 	}
 	if (assetIndex < 0)
 	{
-		std::cerr << "Invalid index" << std::endl;
+		std::cout << "Invalid index" << std::endl;
 		return ;
 	}
 	if (scale <= 0)
 	{
-		std::cerr << "Invalid scale" << std::endl;
+		std::cout << "Invalid scale" << std::endl;
 		return ;
 	}
 
@@ -449,12 +449,12 @@ void	PlayerAssets::rendPlayerDeath(int x, int y, int assetIndex, float scale, in
 	}
 	if (assetIndex < 0)
 	{
-		std::cerr << "Invalid index" << std::endl;
+		std::cout << "Invalid index" << std::endl;
 		return ;
 	}
 	if (scale <= 0)
 	{
-		std::cerr << "Invalid scale" << std::endl;
+		std::cout << "Invalid scale" << std::endl;
 		return ;
 	}
 

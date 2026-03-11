@@ -339,9 +339,6 @@ void	Session::sendEndResults(uWS::App &app, std::shared_ptr<Player> &player, boo
 	{
 		player->getWs()->unsubscribe(oldTopic);
 	}
-
-	std::cout << player->getName() << ": " << std::endl
-		<< "Kills: " << player->getKills() << "Place :" << player->getFinalRanking() << std::endl;
 }
 
 void	Session::checkFinishedPlayers(uWS::App &app, Server &server)
@@ -353,7 +350,7 @@ void	Session::checkFinishedPlayers(uWS::App &app, Server &server)
 		if (p.expired() || !p.lock()->isReConnected())
 			continue ;
 		std::shared_ptr<Player> player = p.lock();
-		if (player->getFinished())
+		if (player->getFinished() && !player->getResultCurl())
 		{
 			this->sendEndResults(app, player, 0);
 			sendPlayerResultCurl(server, *this, *player.get());

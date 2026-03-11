@@ -73,12 +73,12 @@ void		Assets::rendMap(int x, int y, int assetIndex, float scale, int floor)
 {
 	if (assetIndex < 0)
 	{
-		std::cerr << "Invalid index" << std::endl;
+		std::cout << "Invalid index" << std::endl;
 		return ;
 	}
 	if (scale <= 0)
 	{
-		std::cerr << "Invalid scale" << std::endl;
+		std::cout << "Invalid scale" << std::endl;
 		return ;
 	}
 
@@ -92,12 +92,12 @@ void		Assets::rendMapFlip(int x, int y, int assetIndex, float scale, int floor, 
 {
 	if (assetIndex < 0)
 	{
-		std::cerr << "Invalid index" << std::endl;
+		std::cout << "Invalid index" << std::endl;
 		return ;
 	}
 	if (scale <= 0)
 	{
-		std::cerr << "Invalid scale" << std::endl;
+		std::cout << "Invalid scale" << std::endl;
 		return ;
 	}
 

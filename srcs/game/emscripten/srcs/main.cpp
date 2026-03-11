@@ -97,7 +97,7 @@ void mainloopE(void *arg)
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << '\n';
+		std::cout << e.what() << '\n';
 	}
 }
 
@@ -122,7 +122,7 @@ int main(int ac, char **av)
 	gSdl.cleanup();
 	if (!init_sdl(gSdl))
 	{
-		std::cerr << "Error in sdl init" << std::endl;
+		std::cout << "Sdl could not init properly." << std::endl;
 		return (1);
 	}
 	try
@@ -155,7 +155,7 @@ int main(int ac, char **av)
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << '\n';
+		std::cout << e.what() << '\n';
 		return (0);
 	}
 	Player player(id, name, (SDL_Color){0, 255, 0, 255});

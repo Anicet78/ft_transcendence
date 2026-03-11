@@ -53,7 +53,6 @@ void	setPlayerState(Player &player, Game &game, val &pStatus, int flag)
 		int nbrDeath = pStatus["player_death_amount"].as<int>();
 		if (nbrDeath != player.getNbrDeath())
 		{
-			std::cout << "player " << player.getUid() << " died" << std::endl; 
 			respawnPlayer(player, game, nbrDeath);
 		}
 		player.setDead(pStatus["player_is_dead"].as<bool>());

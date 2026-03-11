@@ -6,7 +6,7 @@ int	init_sdl(Engine &gSdl)
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
-		std::cerr << "SDL_Init error: " << SDL_GetError() << std::endl;
+		std::cout << "SDL_Init : " << SDL_GetError() << std::endl;
 		return (0);
 	}
 	int n = SDL_GetNumRenderDrivers();
@@ -27,7 +27,7 @@ int	init_sdl(Engine &gSdl)
 		gSdl.window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	if (!gSdl.window)
 	{
-		std::cerr << "Window error: " << SDL_GetError() << std::endl;
+		std::cout << "Window : " << SDL_GetError() << std::endl;
 		SDL_Quit();
 		return (0);
 	}
@@ -42,7 +42,7 @@ int	init_sdl(Engine &gSdl)
 	{
 		SDL_DestroyWindow(gSdl.window);
 		SDL_Quit();
-		SDL_Log("TTF_OpenFont error: %s", TTF_GetError());
+		SDL_Log("TTF_OpenFont : %s", TTF_GetError());
 		return false;
 	}
 
@@ -50,7 +50,7 @@ int	init_sdl(Engine &gSdl)
 	if (!gSdl.renderer)
 		gSdl.renderer = SDL_CreateRenderer(gSdl.window, n, SDL_RENDERER_ACCELERATED);
 	if (!gSdl.renderer) {
-		std::cerr << "render/20 : " << SDL_GetError() << std::endl;
+		std::cout << "Render could not be created because of WebGl, please restart your web browser." << std::endl;
 		SDL_DestroyWindow(gSdl.window);
 		SDL_Quit();
 		return (0);

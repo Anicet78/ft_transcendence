@@ -28,7 +28,6 @@ class Player
 {
 	private:
 		std::string									_uid;
-		int											_numPlayer;
 		int											_sessionSize; // size of the session requested
 		int											_partySize; //size of the group
 		std::string									_partyId; //party is for the group with you launch the game with (before matchmaking)
@@ -69,7 +68,7 @@ class Player
 		int			_atk;
 		bool		_isInvinsible;
 		std::chrono::_V2::steady_clock::time_point	_timeInvincible;
-		int			_def;
+		// int			_def;
 	//wall hitbox
 		FRect		_wallHitBox;
 		HitBox		_box;
@@ -81,6 +80,9 @@ class Player
 
 	//nbr kill
 		int			_kills;
+
+	//result curl sended
+		bool		_resultCurl;
 	
 	
 	public:
@@ -122,8 +124,9 @@ class Player
 		bool		isDead(void) const;
 		double		getTimeDeath(void) const;
 		int			getAtkFrame(void) const;
-		int			getDef(void) const;
+		// int			getDef(void) const;
 		int			getLastDir(void) const;
+		bool		getResultCurl(void) const;
 		FRect		&getWallHitBox(void);
 		Room		&getRoomRef(void);
 		HitBox		&getHitBox(void);
@@ -154,11 +157,12 @@ class Player
 		void		setHp(int hp);
 		void		setAtk(int atk);
 		void		setAtkFrame(int frame);
-		void		setDef(int def);
+		// void		setDef(int def);
 		void		setIsDead(bool value);
 		void		setWallHitBox(void);
 		void		setInQueue(bool flag);
 		void		setInSession(bool flag);
+		void		setResultCurl(bool flag);
 		void		setAnim(int anim);
 		void		setLastDir(int dir);
 
@@ -177,8 +181,6 @@ class Player
 		void		updateAnim(std::string const &req);
 		bool		updateHurt(void);
 		void		move(std::map<std::string, std::string> &req);
-		void		takeDamage(int amount);
-		void		heal(int amount);
 
 		void		dieAction(void);
 };

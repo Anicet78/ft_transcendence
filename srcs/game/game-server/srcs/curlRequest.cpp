@@ -207,6 +207,8 @@ void	sendViaCurl(Server &server, std::string url, std::string method, std::strin
 
 void	sendPlayerResultCurl(Server &server, Session const &session, Player &player)
 {
+	if (player.getResultCurl())
+		return ;
 	int xp = player.getKills();
 	int completionTime = static_cast<int>(session.getActualTime());
 	if (player.HasWin())
@@ -230,4 +232,5 @@ void	sendPlayerResultCurl(Server &server, Session const &session, Player &player
 
 	sendViaCurl(server, url, "PATCH", msg, 0);
 	std::cout << "player result sended" << std::endl;
+	player.setResultCurl(true);
 }
