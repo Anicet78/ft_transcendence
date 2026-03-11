@@ -182,7 +182,8 @@ void	Map::reset()
 
 void	Map::link(Map &up)
 {
-	size_t pos = 0;
+	size_t	pos = 0;
+	size_t	lastPos = 0;
 	for (quadList &node : this->_nodes)
 	{
 		if (!node->getRoom() || node->getRoom()->getName() != "stairs")
@@ -192,11 +193,12 @@ void	Map::link(Map &up)
 			if (!up._nodes[pos]->getRoom() || up._nodes[pos]->getRoom()->getName() != "start")
 				continue ;
 			node->up = up._nodes[pos];
+			lastPos = pos;
 			pos++;
 			break ;
 		}
-		if (pos == up._nodes.size())
-			break ;
+		if (node->up.expired())
+			node->up = up._nodes[lastPos];
 	}
 }
 
