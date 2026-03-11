@@ -9,7 +9,6 @@ const Banner = () => {
 	const [active, setActive] = useState(false)
 	const [dropdownVisible, setDropdownVisible] = useState(false)
 	const dropdownRef = useRef(null); // Reference to the dropdown menu
-	const username = user?.username
 	let logo_path = user ? '/home' : '/';
 	let button_path = user ? '/profile' : '/';
 
@@ -80,7 +79,7 @@ const Banner = () => {
 						{user &&
 							<NavLink to={button_path} aria-label='profile button' className='button is-primary is-medium is-centered'>
 								<Icon name='user' ariaLabel='user icon' />
-								<span>{username}</span>
+								<span>{user?.username}</span>
 							</NavLink>
 						}
 						<Navbar.Dropdown right className={`profile-dropdown ${dropdownVisible ? 'is-active' : ''}`}>

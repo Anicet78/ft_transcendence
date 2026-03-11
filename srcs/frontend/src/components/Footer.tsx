@@ -20,11 +20,11 @@ const MyFooter = () => {
 					<Content textAlign="centered" style={{marginTop: 'auto'}}>
 						<p>
 						<span>DungeonNoDragon</span> a transcendence project by{' '}
-						<span><a href="">agruet</a></span>{', '}
-						<span><a href="">jumichel</a></span>{', '}
-						<span><a href="">mprokosc</a></span>{', '}
-						<span><a href="">ndabbous</a></span>{', '}
-						<span><a href="">tpinton</a></span>.
+						<span><a href="https://github.com/Anicet78">agruet</a></span>{', '}
+						<span><a href="https://codeberg.org/jumichel">jumichel</a></span>{', '}
+						<span><a href="https://github.com/mprokosch0">mprokosc</a></span>{', '}
+						<span><a href="https://github.com/ndabboussi">ndabbous</a></span>{', '}
+						<span><a href="https://github.com/Snak00s">tpinton</a></span>.
 						</p>
 					</Content>
 					<Content textAlign="centered">

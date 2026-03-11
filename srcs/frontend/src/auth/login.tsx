@@ -86,7 +86,7 @@ function Login() {
 							name="password"
 							required
 							minLength={3}
-							maxLength={80}
+							maxLength={20}
 							value={formData.password}
 							onChange={handleChange}
 							placeholder="Enter your password"

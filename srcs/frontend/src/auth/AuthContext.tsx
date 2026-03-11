@@ -12,6 +12,7 @@ export type AuthContextValue = {
 	token: string | null;
 	login: (userData: User, userToken: string) => void;
 	logout: () => void;
+	updateUser: (user: Partial<User>) => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -44,6 +45,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		setAccessToken(null);
 		navigate("/");
 	}, [navigate]);
+
+	const updateUser = useCallback((newData: Partial<User>) => {
+		setUser(prev => prev ? { ...prev, ...newData } : prev);
+	}, []);
 
 	const { data, isLoading, isError } = useQuery({
 		queryKey: ['session'],
@@ -96,7 +101,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		return <div>Loading session...</div>;
 
 	return (
-		<AuthContext.Provider value={{ user, token, login, logout }}>
+		<AuthContext.Provider value={{ user, token, login, logout, updateUser }}>
 			{children}
 		</AuthContext.Provider>
 	);
