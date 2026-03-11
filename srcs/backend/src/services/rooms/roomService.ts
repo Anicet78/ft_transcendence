@@ -102,5 +102,19 @@ export const RoomService = {
 			throw new AppError('Not in the room', 403);
 
 		return room;
+	},
+
+	rename(userId: string, pseudo: string): void {
+		const room: Room | null = this.find(userId);
+
+		if (!room)
+			return ;
+
+		const user = room.players.find(({ id }) => id == userId);
+
+		if (!user)
+			return ;
+
+		user.username = pseudo;
 	}
 };

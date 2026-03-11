@@ -11,6 +11,7 @@ import { prisma } from '../../services/db/prisma.js';
 import { hashPassword, verifyPassword } from '../../services/auth/password.js';
 import { SocketService } from '../../services/socket/SocketService.js';
 import { findOrCreatePrivateChat } from '../../services/db/chat/privateChatService.js';
+import { RoomService } from '../../services/rooms/roomService.js';
 
 // GET /profile
 export async function getProfile( req: FastifyRequest, reply: FastifyReply ) {
@@ -56,6 +57,9 @@ export async function updateProfile( req: FastifyRequest<{ Body: UpdateProfileBo
 
   //if allowed, update profile
   const updated = await profileService.updateProfile(userId, req.body);
+
+  if (req.body.username)
+    RoomService.rename(updated.appUserId, req.body.username);
 
   return reply.status(200).send(serializePrisma(mapProfileToResponse(updated)));
 }
