@@ -131,7 +131,7 @@
 .chat-mobile-overlay {
 	position: fixed;
 	top: 56px;        /* clear the sticky navbar */
-	bottom: 52px;     /* clear the footer — adjust if your footer height changes */
+	bottom: 0px;     /* clear the footer — adjust if your footer height changes */
 	left: 0;
 	right: 0;
 	z-index: 80;      /* below floating button (90), above page content */

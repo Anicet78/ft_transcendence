@@ -4,8 +4,7 @@
    - Atkinson Hyperlegible Next : body / UI   (designed for low-vision users)
    - JetBrains Mono  : code / stats
    ============================================================ */
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Almendra:ital,wght@0,400;0,700;1,400&family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
 /* ============================================================
    2. DESIGN TOKENS
    ============================================================ */
@@ -105,7 +104,7 @@
 
   /* --- Typography -------------------------------------------- */
   --font-game-title:  'Press Start 2P', 'Courier New', monospace;
-  --font-title:  'Atkinson Hyperlegible Next', 'Verdana', sans-serif;
+  --font-title:  'Almendra', 'Georgia', serif;
   --font-body:   'Atkinson Hyperlegible Next', 'Verdana', sans-serif;
   --font-mono:   'JetBrains Mono', 'Courier New', monospace;
 
@@ -761,19 +760,19 @@ a:hover { color: var(--green-300); }
 }
 
 .landing-hero__eyebrow {
-  font-family: var(--font-mono);
-  font-size: .8rem;
-  color: var(--color-primary);
+  font-family: var(--font-game-title);
+  font-size: clamp(.7rem, 1.5vw, .95rem); 
+  color: var(--stone-100);
   letter-spacing: .18em;
   text-transform: uppercase;
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
 }
 
 .landing-hero__title {
   font-family: var(--font-name-title);
-  font-size: clamp(1rem, 2.5vw, 1.8rem);
+  font-size: clamp(1.4rem, 4vw, 2.8rem);
   color: var(--color-text);
-  line-height: 1.7;
+  line-height: 1.5;
   margin-bottom: var(--space-lg);
 }
 
@@ -782,7 +781,7 @@ a:hover { color: var(--green-300); }
 }
 
 .landing-hero__subtitle {
-  font-size: clamp(.95rem, 2vw, 1.15rem);
+  font-size: clamp(1rem, 2vw, 1.25rem);
   color: var(--color-text-muted);
   max-width: 480px;
   margin: 0 auto var(--space-xl);

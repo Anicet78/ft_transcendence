@@ -21,27 +21,27 @@
 }
 
 .site-footer__title {
-	font-family: var(--font-game-title);
-	font-size: .85rem;
-	color: var(--color-primary);
-	letter-spacing: .06em;
+  font-family: var(--font-game-title);
+  font-size: .7rem;          /* Press Start 2P — .7rem renders visually large */
+  color: var(--color-primary);
+  letter-spacing: .06em;
 }
 
 .site-footer__meta {
-	font-family: var(--font-mono);
-	font-size: .72rem;
-	color: var(--stone-500);
+  font-family: var(--font-mono);
+  font-size: .82rem;         /* was .72rem */
+  color: var(--stone-500);
 }
 
 .site-footer__authors {
-	font-family: var(--font-mono);
-	font-size: .78rem;
-	color: var(--stone-400);
+  font-family: var(--font-mono);
+  font-size: .88rem;         /* was .78rem */
+  color: var(--stone-400);
 }
 
 .site-footer__legal {
-	font-size: .78rem;
-	color: var(--stone-500);
+  font-size: .88rem;         /* was .78rem */
+  color: var(--stone-500);
 }
 
 .site-footer__link {
