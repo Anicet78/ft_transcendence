@@ -21,7 +21,7 @@
 }
 
 .site-footer__title {
-	font-family: var(--font-title);
+	font-family: var(--font-game-title);
 	font-size: .85rem;
 	color: var(--color-primary);
 	letter-spacing: .06em;

@@ -104,12 +104,13 @@
   --color-info:        var(--rune-300);
 
   /* --- Typography -------------------------------------------- */
-  --font-title:  'Press Start 2P', 'Courier New', monospace;
+  --font-game-title:  'Press Start 2P', 'Courier New', monospace;
+  --font-title:  'Atkinson Hyperlegible Next', 'Verdana', sans-serif;
   --font-body:   'Atkinson Hyperlegible Next', 'Verdana', sans-serif;
   --font-mono:   'JetBrains Mono', 'Courier New', monospace;
 
   /* Aliases used in existing code */
-  --font-game-title:    var(--font-title);
+  --font-name-title:    var(--font-game-title);
   --font-section-title: var(--font-title);
   --font-button-large:  var(--font-body);
 
@@ -187,7 +188,7 @@ p, li, label, input, textarea, select {
    ============================================================ */
 h1, h2, h3, h4, h5, h6,
 .title, .subtitle {
-  font-family: var(--font-title);
+  font-family: var(--font-section-title);
   font-weight: 400;
   line-height: 1.5;
   letter-spacing: .02em;
@@ -769,7 +770,7 @@ a:hover { color: var(--green-300); }
 }
 
 .landing-hero__title {
-  font-family: var(--font-title);
+  font-family: var(--font-name-title);
   font-size: clamp(1rem, 2.5vw, 1.8rem);
   color: var(--color-text);
   line-height: 1.7;
