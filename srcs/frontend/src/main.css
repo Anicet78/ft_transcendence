@@ -52,6 +52,7 @@
   position: relative;
   flex: 1;
   align-items: stretch;
+  min-height: 0;
 }
 
 .content {

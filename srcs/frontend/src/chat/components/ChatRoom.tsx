@@ -49,7 +49,9 @@ export function ChatRoom({ chatId }: {chatId: string}) {
 	return (
 		<>
 			<div style={{
-				height: "60vh",
+				flex: 1,
+				minHeight: 0,
+				height: "50vh",
 				overflowY: "auto",
 				paddingRight: "8px",
 				position: "relative"
@@ -74,12 +76,6 @@ export function ChatRoom({ chatId }: {chatId: string}) {
 			{/* <TypingIndicator typingUsers={typingUsers} /> */}
 			<TypingIndicator isTyping={isTyping} />
 
-			{/* {permissions.canWrite && (
-				<ChatInput
-					chatId={chatId}
-					onSend={mutations.sendMessageMutation.mutate}
-				/>
-			)} */}
 			{permissions.canWrite ? (
 				<ChatInput
 					chatId={chatId}
