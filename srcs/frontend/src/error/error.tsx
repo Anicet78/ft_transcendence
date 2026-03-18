@@ -1,10 +1,13 @@
-import { Box } from '@allxsmith/bestax-bulma';
+import { NavLink } from "react-router"
 
 const Error = () => {
 	return (
-		<Box  m="4" p="6" bgColor="grey-light" textColor="black" justifyContent='space-between'>
-			<h1>This page doesn't exist</h1>
-		</Box>
+		<div className="body-box">
+			<div className="error-box">
+				<h2>This page doesn't exist</h2>
+				<NavLink to="/" className="button is-large home-button">Back to home</NavLink>
+			</div>
+		</div>
 	)
 }
 
