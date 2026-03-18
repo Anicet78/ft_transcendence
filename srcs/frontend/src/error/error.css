@@ -1,0 +1,42 @@
+.error-box {
+	width: 90%; /* use most of the screen width */
+	max-width: 700px; /* controls overall box width */
+	border-radius: 16px; /* rounded borders */
+	background-color: var(--color-bg);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid rgba(45, 212, 191, 0.12);
+	display: flex;
+	flex-direction: column; /* stack children vertically */
+	justify-content: center; /* vertical centering */
+	align-items: center; /* horizontal centering */
+	padding: clamp(1rem, 2vw, 2rem); /* add some spacing between elements and borders */
+	margin: 2rem auto; /* spacing on top/bottom for mobile */
+	box-sizing: border-box; /* Include padding in width */
+	overflow: hidden; /* Prevent children from stick out of the container */
+	color: var(--color-text);
+}
+
+.error-box h2 {
+	font-size:clamp(1.5rem, 4vw, 4rem) !important;
+	color: var(--color-text) !important;
+	font-family: var(--font-section-title);
+}
+
+.home-button {
+	font-family: var(--font-button-large);
+	font-size: clamp(1rem, 2vw, 2rem);
+	color: var(--color-primary) !important;
+	background-color: rgba(45, 212, 191, 0.1) !important;
+	border: 1px solid rgba(45, 212, 191, 0.25) !important;
+	margin-top: 2rem;
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	transition: all 0.2s ease;
+}
+
+.home-button:hover {
+	background-color: rgba(45, 212, 191, 0.25) !important;
+	color: #fff !important;
+	border-color: rgba(45, 212, 191, 0.4) !important;
+}
