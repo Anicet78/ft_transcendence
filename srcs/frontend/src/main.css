@@ -1,15 +1,8 @@
-@import "bulma/css/bulma.min.css";
-@import "@fortawesome/fontawesome-free/css/all.min.css";
-@import "./styles/tokens.css";
-@import './index.css';
-@import "./App.css";
 @import "./about/game-rules.css";
 @import "./auth/login.css";
 @import "./auth/register.css";
-@import "./components/Banner.css";
 @import "./components/Footer.css";
 @import "./components/Sidebar.css";
-@import "./components/ui/parchment.css";
 @import "./friendship/friendList.css";
 @import "./game/game.css";
 @import "./home/home.css";
@@ -19,58 +12,290 @@
 @import "./search/SearchBar.css";
 @import "./search/SearchPage.css";
 
+/* ============================================================
+   PAGE SHELL
+   ============================================================ */
 .page-container {
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	height: 100% !important;
-
-	/* Darker underground gradient with teal */
-	background: radial-gradient(
-		circle at 50% 20%,
-		#2e2e2e 0% ,      /* slightly lighter center */
-		#242424 30%,     /* requested base */
-		#004c49 60%,     /* teal instead of dark blue */
-		#003532 85%,     /* deep teal shadow */
-		#00221f 100%     /* strong teal vignette */
-	) !important;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100% !important;
+  background-color: #0e110a;
+  background-image:
+    radial-gradient(
+      ellipse 400px 260px at 50% 35%,
+      rgba(26, 56, 20, .22) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 300px 500px at -5% 60%,
+      #0c1509 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 300px 500px at 105% 60%,
+      #0c1509 0%,
+      transparent 70%
+    ),
+    linear-gradient(to top,  #060a05 0%, #0a0e07 8%, transparent 30%),
+    linear-gradient(to bottom, #060a05 0%, transparent 20%);
 }
 
-input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0 1000px var(--color-primary-dark0) inset !important;
-  -webkit-text-fill-color: var(--color-primary-light) !important;
-}
-
-/* ============================= */
-/*  Animated Fog (Teal)          */
-/* ============================= */
-
-/* Fog animation removed globally */
 .page-container::before,
 .page-container::after {
-	display: none !important;
+  display: none !important;
 }
 
 .main-layout {
-	display: flex;
-	position: relative;
-	flex: 1;
-	align-items: stretch;
+  display: flex;
+  position: relative;
+  flex: 1;
+  align-items: stretch;
+  min-height: 0;
 }
 
 .content {
-	flex: 1; /* takes remaining space */
-	display: flex;
-	flex-direction: column;
-	margin-bottom: 0 !important;
-	position: relative;
-	z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0 !important;
+  position: relative;
+  z-index: 1;
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--stone-800) inset !important;
+  -webkit-text-fill-color: var(--green-200) !important;
 }
 
 @media (max-width: 480px) {
-	.main-layout {
-		flex-direction: column-reverse;
-		justify-content: flex-end !important;
-	}
+  .main-layout {
+    flex-direction: column-reverse;
+    justify-content: flex-end !important;
+  }
+}
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+.dnd-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 1.5rem;
+  height: 56px;
+  background-color: rgba(14, 17, 10, .94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--stone-700);
+}
+
+.dnd-navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.dnd-navbar__logo {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-family: var(--font-name-title);
+  font-size: .90rem;
+  color: var(--color-primary) !important;
+  letter-spacing: .04em;
+  text-decoration: none;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+.dnd-navbar__logo:hover { color: var(--green-300) !important; }
+
+.dnd-navbar__icon {
+  width: 1.4rem;
+  height: 1.4rem;
+  flex-shrink: 0;
+  color: var(--color-primary);
+}
+
+.dnd-navbar__menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.dnd-navbar__search { flex: 1; max-width: 360px; }
+
+.dnd-navbar__end {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-left: auto;
+}
+
+/* Profile button */
+.dnd-navbar__profile {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .35rem .75rem;
+  border-radius: var(--radius-md);
+  background-color: var(--green-700);
+  border: 1px solid var(--green-500);
+  color: var(--green-100) !important;
+  font-size: .95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 200ms ease, border-color 200ms ease;
+}
+
+.dnd-navbar__profile:hover {
+  background-color: var(--green-600);
+  border-color: var(--green-400);
+  color: var(--green-50) !important;
+}
+
+/* Dropdown trigger */
+.dnd-navbar__dropdown { position: relative; }
+
+.dnd-navbar__dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .35rem .95rem;
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  border: 1px solid var(--stone-600);
+  color: var(--stone-300);
+  font-size: .95rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: border-color 200ms ease, color 200ms ease;
+}
+
+.dnd-navbar__dropdown-trigger:hover {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+/* Dropdown menu */
+.dnd-navbar__dropdown-menu {
+  position: absolute;
+  top: calc(100% + .5rem);
+  right: 0;
+  min-width: 180px;
+  background-color: var(--stone-850);
+  border: 1px solid var(--stone-700);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: .35rem;
+  z-index: 200;
+}
+
+.dnd-navbar__dropdown-item {
+  display: block;
+  width: 100%;
+  padding: .5rem .95rem;
+  border-radius: var(--radius-sm);
+  background: none;
+  border: none;
+  color: var(--stone-300);
+  font-size: .95rem;
+  font-family: var(--font-body);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.dnd-navbar__dropdown-item:hover {
+  background-color: var(--stone-700);
+  color: var(--color-text);
+}
+
+.dnd-navbar__dropdown-item--danger { color: var(--blood-300); }
+.dnd-navbar__dropdown-item--danger:hover {
+  background-color: rgba(184, 48, 48, .15);
+  color: var(--blood-200);
+}
+
+.dnd-navbar__dropdown-divider {
+  height: 1px;
+  background-color: var(--stone-700);
+  border: none;
+  margin: .35rem 0;
+}
+
+/* Burger (mobile) */
+.dnd-navbar__burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 32px;
+  height: 32px;
+  padding: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.dnd-navbar__burger span {
+  display: block;
+  height: 2px;
+  background-color: var(--stone-300);
+  border-radius: 1px;
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+
+.dnd-navbar__burger.is-open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.dnd-navbar__burger.is-open span:nth-child(2) { opacity: 0; }
+.dnd-navbar__burger.is-open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+@media (max-width: 1024px) {
+  .dnd-navbar {
+    flex-wrap: wrap;
+    height: auto;
+    padding: .75rem 1rem;
+  }
+
+  .dnd-navbar__burger { display: flex; }
+
+  .dnd-navbar__menu {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    padding: .5rem 0;
+    gap: .5rem;
+  }
+
+  .dnd-navbar__menu.is-open { display: flex; }
+
+  .dnd-navbar__search { max-width: 100%; }
+
+  .dnd-navbar__end {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dnd-navbar__profile,
+  .dnd-navbar__dropdown-trigger {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .dnd-navbar__dropdown-menu {
+    position: static;
+    box-shadow: none;
+    border-radius: var(--radius-md);
+  }
 }

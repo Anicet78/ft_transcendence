@@ -2,11 +2,10 @@
 /*  Desktop layout   */
 /* ================= */
 
-/* Sidebar general layout */
 .chat-sidebar {
 	min-width: 340px !important;
 	width: 100% !important;
-	height: auto;  /* Allow height to be based on the content */
+	height: auto;
 	overflow-y: auto;
 }
 
@@ -16,7 +15,7 @@
   flex-direction: column;
   align-items: center;
   z-index: 10;
-  overflow: visible; /* IMPORTANT */
+  overflow: visible;
   border-left: 1px solid var(--color-primary);
   background-color: transparent;
   height: auto;
@@ -33,17 +32,17 @@
   position: relative;
   left: 0;
   top: 0;
-  width: 2px;           /* visual border */
+  width: 2px;
   height: 100%;
   background-color: transparent;
   flex: 1;
-  min-width: 220px !important; /* Set minimum width to avoid shrinking too small */
+  min-width: 220px !important;
   max-width: 600px;
-  pointer-events: none; /* allow resize div to capture events */
+  pointer-events: none;
 }
 
 .chat-sidebar-desktop.collapsed {
-  width: 0px; /* collapsed width */
+  width: 0px;
   min-width: 0 !important;
   border-left: none;
 }
@@ -52,17 +51,18 @@
 	display: flex !important;
 	flex: 1 !important;
 	width: 100%;
+	min-height: 0;
 	background-color: transparent;
 }
 
 .chat-sidebar-desktop .sidebar-content {
-    background-color: transparent; /* Changed background color for modern feel */
+    background-color: transparent;
 	border-top-left-radius: 12px;
 	border-bottom-left-radius: 12px;
 	padding: var(--space-md);
 	margin: 1rem 0;
-	box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Added shadow for depth */
-	flex: 1; /* Ensure content can grow to fill the sidebar */
+	box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+	flex: 1;
 	font-family: var(--font-body);
 }
 
@@ -93,65 +93,70 @@
 	left: 0px;
 }
 
-/* Resizing handle */
 .chat-sidebar-desktop div[style*="position: absolute"] {
-  cursor: ew-resize; /* Resizing cursor style added */
+  cursor: ew-resize;
 }
 
 /* ================ */
 /*  Mobile layout   */
 /* ================ */
 
-/* Floating button */
+/* Floating button — positioned relative to .is-hidden-desktop wrapper */
 .floating-chat-btn {
 	float: right !important;
-	position: absolute;
-	top: 5px;
-	right: 10px !important;
+	position: fixed;
+	/* sits just below the navbar (56px) with a small gap */
+	top: calc(56px + 8px) !important;
+	right: 12px !important;
 	border-radius: 50% !important;
 	width: 54px !important;
 	height: 54px !important;
-	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-	z-index: 30;
-	background-color: var(--color-primary) !important; /* Modern accent color for floating button */
-	color: black !important;
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+	z-index: 90;
+	background-color: var(--color-primary) !important;
+	color: #0e110a !important;
 	border-color: var(--color-primary) !important;
+	transition: background-color 150ms ease;
 }
 
 .floating-chat-btn:hover {
-  background-color: #14b8a6; /* Slightly darker teal on hover */
+  background-color: var(--green-300) !important;
 }
 
-/* Fullscreen mobile chat */
+/*
+ * Mobile overlay — spans from just below the navbar to just above the footer.
+ * The navbar is sticky at height 56px.
+ * The footer is ~52px tall.
+ * We use fixed positioning so it always fills the visible window between them.
+ */
 .chat-mobile-overlay {
 	position: fixed;
-	top: 0px;        /* offset to avoid banner */
-	bottom: 0;
+	top: 56px;        /* clear the sticky navbar */
+	bottom: 0px;     /* clear the footer — adjust if your footer height changes */
 	left: 0;
 	right: 0;
-	background-color: transparent;
-	z-index: 50;
+	z-index: 80;      /* below floating button (90), above page content */
 	display: flex;
 	flex-direction: column;
 	transform: translateY(100%);
-	animation: slideUp 0.3s ease forwards;
-	height: 100vh;                    /* Set height to 80% of the viewport height */
-	max-height: 100vh;                 /* Prevent it from going above 80% */
-	overflow-y: auto;  /* Allow scrolling if the content exceeds the max-height */
+	animation: slideUp 0.28s ease forwards;
+	/* no overflow: hidden here — inner sections handle their own scroll */
 }
 
+/* Header bar — always visible at the top of the overlay */
 .chat-mobile-header {
 	display: flex;
 	justify-content: flex-end;
+	align-items: center;
 	height: 50px;
-	padding: var(--space-md);
-	border-bottom: 1px solid rgba(45, 212, 191, 0.2);
-	background: rgba(15, 23, 42, 0.85);
+	flex-shrink: 0;   /* never compress — keeps close button always reachable */
+	padding: 0 var(--space-md);
+	border-bottom: 1px solid rgba(111, 160, 50, 0.2);
+	background: rgba(14, 17, 10, 0.96);
 	backdrop-filter: blur(16px);
 	-webkit-backdrop-filter: blur(16px);
 	color: var(--color-primary);
-	position: sticky;
-	top: 0;
+	/* NOT sticky/fixed — it's already at the top of a fixed container */
 	z-index: 2;
 }
 
@@ -161,21 +166,31 @@
 	border-color: transparent;
 }
 
+/* Body — fills the remaining space and scrolls independently */
 .chat-mobile-body {
-	background: rgba(15, 23, 42, 0.9);
+	background: rgba(14, 17, 10, 0.94);
 	backdrop-filter: blur(16px);
 	-webkit-backdrop-filter: blur(16px);
 	flex: 1;
 	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
 	padding: var(--space-md);
 	z-index: 2;
-	overflow-y: auto;
 	font-family: var(--font-body);
 }
 
+@keyframes slideUp {
+	from { transform: translateY(100%); }
+	to   { transform: translateY(0);    }
+}
+
+/* ===================== */
+/*  Shared chat colours  */
+/* ===================== */
+
 .group-chat-btn {
-	background-color: rgba(45, 212, 191, 0.12) !important;
-	border: 1px solid rgba(45, 212, 191, 0.25) !important;
+	background-color: rgba(111, 160, 50, 0.12) !important;
+	border: 1px solid rgba(111, 160, 50, 0.25) !important;
 	color: var(--color-primary) !important;
 	font-weight: 600 !important;
 	font-size: var(--fs-md1) !important;
@@ -187,9 +202,9 @@
 }
 
 .group-chat-btn:hover {
-	background-color: rgba(45, 212, 191, 0.25) !important;
-	color: #fff !important;
-	border-color: rgba(45, 212, 191, 0.4) !important;
+	background-color: rgba(111, 160, 50, 0.25) !important;
+	color: var(--green-50) !important;
+	border-color: rgba(111, 160, 50, 0.4) !important;
 }
 
 .group-invit-btn {
@@ -219,7 +234,7 @@
 	font-weight: 600 !important;
 	padding: 1em;
 	margin: 1em;
-	border: 1px solid rgba(45, 212, 191, 0.15);
+	border: 1px solid rgba(111, 160, 50, 0.15);
 	border-radius: 10px;
 }
 
@@ -233,16 +248,14 @@
 	color: var(--color-primary) !important;
 }
 
-.chat-box h2 a:hover {
-	color: #fff !important;
-}
+.chat-box h2 a:hover { color: var(--green-50) !important; }
 
 .chat-button {
 	font-size: 0.8rem !important;
 	font-weight: 600 !important;
-	background-color: rgba(45, 212, 191, 0.1) !important;
+	background-color: rgba(111, 160, 50, 0.1) !important;
 	color: var(--color-primary) !important;
-	border: 1px solid rgba(45, 212, 191, 0.2) !important;
+	border: 1px solid rgba(111, 160, 50, 0.2) !important;
 	margin-top: 5px !important;
 	border-radius: 6px !important;
 	backdrop-filter: blur(8px);
@@ -251,15 +264,9 @@
 }
 
 .chat-button:hover {
-	background-color: rgba(45, 212, 191, 0.25) !important;
-	color: #fff !important;
-	border-color: rgba(45, 212, 191, 0.4) !important;
-}
-
-@keyframes slideUp {
-	to {
-		transform: translateY(0);
-	}
+	background-color: rgba(111, 160, 50, 0.25) !important;
+	color: var(--green-50) !important;
+	border-color: rgba(111, 160, 50, 0.4) !important;
 }
 
 /* ===================== */
@@ -270,7 +277,7 @@
 	background: rgba(255, 255, 255, 0.06) !important;
 	backdrop-filter: blur(12px);
 	-webkit-backdrop-filter: blur(12px);
-	border: 1px solid rgba(45, 212, 191, 0.15);
+	border: 1px solid rgba(111, 160, 50, 0.15);
 	border-radius: 10px;
 	margin: 1em auto !important;
 	padding: 15px;
@@ -283,8 +290,8 @@
 }
 
 .back-button {
-	background-color: rgba(45, 212, 191, 0.1) !important;
-	border: 1px solid rgba(45, 212, 191, 0.25) !important;
+	background-color: rgba(111, 160, 50, 0.1) !important;
+	border: 1px solid rgba(111, 160, 50, 0.25) !important;
 	color: var(--color-primary) !important;
 	font-size: 0.9rem !important;
 	font-weight: 800 !important;
@@ -293,8 +300,8 @@
 }
 
 .back-button:hover {
-	background-color: rgba(45, 212, 191, 0.25) !important;
-	color: #fff !important;
+	background-color: rgba(111, 160, 50, 0.25) !important;
+	color: var(--green-50) !important;
 }
 
 .chat-creation h1 {
@@ -306,7 +313,7 @@
 }
 
 .chat-creation .select-label, .groupname {
-	color: var(--color-primary-light);
+	color: var(--color-primary);
 	font-size: 1.5rem;
 	font-weight: 800;
 	margin-bottom: 10px;
@@ -317,7 +324,7 @@
 }
 
 .members-checkbox {
-	display:flex;
+	display: flex;
 	flex-direction: column;
 	text-align: left;
 }
@@ -336,14 +343,14 @@
 	background: rgba(255, 255, 255, 0.06) !important;
 	backdrop-filter: blur(12px);
 	-webkit-backdrop-filter: blur(12px);
-	border: 1px solid rgba(45, 212, 191, 0.15);
+	border: 1px solid rgba(111, 160, 50, 0.15);
 	border-radius: 10px;
-	margin: 1em auto!important;
+	margin: 1em auto !important;
 	padding: 15px;
 	gap: 10px;
 	display: flex;
 	flex-direction: column;
-	align-items:center;
+	align-items: center;
 	font-family: var(--font-body);
 	width: 90%;
 }
@@ -365,7 +372,7 @@
 	background: rgba(255, 255, 255, 0.06);
 	backdrop-filter: blur(8px);
 	-webkit-backdrop-filter: blur(8px);
-	border: 1px solid rgba(45, 212, 191, 0.12);
+	border: 1px solid rgba(111, 160, 50, 0.12);
 	border-radius: var(--radius-md);
 	padding: var(--space-md);
 	width: 100%;
@@ -395,21 +402,19 @@
 	background: rgba(225, 29, 72, 0.25) !important;
 	color: #ffe4e6 !important;
 	border-color: rgba(225, 29, 72, 0.5) !important;
-	box-shadow: 0 0 12px rgba(225, 29, 72, 0.2);
 }
 
 .chat-accept-button {
-	background: rgba(45, 212, 191, 0.15) !important;
+	background: rgba(111, 160, 50, 0.15) !important;
 	color: var(--color-primary) !important;
-	border: 1px solid rgba(45, 212, 191, 0.3) !important;
+	border: 1px solid rgba(111, 160, 50, 0.3) !important;
 	border-radius: 6px !important;
 }
 
 .chat-accept-button:hover {
-	background: rgba(45, 212, 191, 0.25) !important;
-	color: #fff !important;
-	border-color: rgba(45, 212, 191, 0.5) !important;
-	box-shadow: 0 0 12px rgba(45, 212, 191, 0.2);
+	background: rgba(111, 160, 50, 0.25) !important;
+	color: var(--green-50) !important;
+	border-color: rgba(111, 160, 50, 0.5) !important;
 }
 
 .chat-pending-button {
@@ -426,8 +431,8 @@
 /* ============ */
 
 .back2chat-btn {
-	background-color: rgba(45, 212, 191, 0.1) !important;
-	border: 1px solid rgba(45, 212, 191, 0.25) !important;
+	background-color: rgba(111, 160, 50, 0.1) !important;
+	border: 1px solid rgba(111, 160, 50, 0.25) !important;
 	color: var(--color-primary) !important;
 	font-size: 0.85rem !important;
 	font-weight: 800 !important;
@@ -437,8 +442,8 @@
 }
 
 .back2chat-btn:hover {
-	background-color: rgba(45, 212, 191, 0.25) !important;
-	color: #fff !important;
+	background-color: rgba(111, 160, 50, 0.25) !important;
+	color: var(--green-50) !important;
 }
 
 .invitation-button {
@@ -464,7 +469,6 @@
 	text-align: center;
 	padding: 6px 12px !important;
 	box-sizing: border-box;
-	transition: none !important;
 }
 
 .quit-chat-button:hover {
@@ -473,12 +477,11 @@
 	border-color: rgba(225, 29, 72, 0.5) !important;
 }
 
-/* Game invite button in chat view (overrides Bulma is-info) */
 .chat-sidebar-desktop .button.is-info,
 .chat-mobile-body .button.is-info {
-	background-color: rgba(45, 212, 191, 0.12) !important;
+	background-color: rgba(111, 160, 50, 0.12) !important;
 	color: var(--color-primary) !important;
-	border: 1px solid rgba(45, 212, 191, 0.25) !important;
+	border: 1px solid rgba(111, 160, 50, 0.25) !important;
 	font-weight: 600 !important;
 	font-size: 0.9rem !important;
 	margin-bottom: 7px !important;
@@ -488,18 +491,17 @@
 	text-align: center;
 	padding: 6px 12px !important;
 	box-sizing: border-box;
-	transition: none !important;
 }
 
 .chat-sidebar-desktop .button.is-info:hover,
 .chat-mobile-body .button.is-info:hover {
-	background-color: rgba(45, 212, 191, 0.25) !important;
-	color: #fff !important;
-	border-color: rgba(45, 212, 191, 0.4) !important;
+	background-color: rgba(111, 160, 50, 0.25) !important;
+	color: var(--green-50) !important;
+	border-color: rgba(111, 160, 50, 0.4) !important;
 }
 
 .members-dropdown {
-	color: var(--color-primary-light) !important;
+	color: var(--color-primary) !important;
 	cursor: pointer;
 	font-weight: bold;
 	display: flex;
@@ -509,13 +511,13 @@
 }
 
 .members-list, .role-options {
-	color: var(--color-primary-light) !important;
+	color: var(--color-primary) !important;
 }
 
 .role-options {
 	background: rgba(255, 255, 255, 0.06) !important;
 	color: var(--color-text) !important;
-	border: 1px solid rgba(45, 212, 191, 0.2);
+	border: 1px solid rgba(111, 160, 50, 0.2);
 	border-radius: 4px;
 	padding: 2px 6px;
 	font-family: var(--font-body);
@@ -528,8 +530,7 @@
 }
 
 .role-options:focus {
-	border-color: rgba(45, 212, 191, 0.5);
-	box-shadow: 0 0 6px rgba(45, 212, 191, 0.15);
+	border-color: rgba(111, 160, 50, 0.5);
 }
 
 .members-list {
@@ -539,8 +540,8 @@
 
 .members-list li {
 	display: flex;
-	align-items: center;   /* vertical centering */
-	gap: 0.4rem;           /* spacing between elements */
+	align-items: center;
+	gap: 0.4rem;
 }
 
 .chat-kick-button {
@@ -551,8 +552,6 @@
 	font-size: 0.7rem !important;
 	font-family: var(--font-body) !important;
 	border-radius: 6px !important;
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
 	transition: all 0.2s ease-in-out !important;
 }
 
@@ -560,7 +559,6 @@
 	background: rgba(225, 29, 72, 0.25) !important;
 	color: #ffe4e6 !important;
 	border: 1px solid rgba(225, 29, 72, 0.5) !important;
-	box-shadow: 0 0 12px rgba(225, 29, 72, 0.2);
 }
 
 .invite2group {
@@ -570,10 +568,8 @@
 	font-family: var(--font-body);
 	margin: 10px;
 	padding: 15px;
-	border: 1px solid rgba(45, 212, 191, 0.15);
+	border: 1px solid rgba(111, 160, 50, 0.15);
 	border-radius: 10px;
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
 }
 
 .invite2group h2 {
@@ -590,20 +586,16 @@
 	font-family: var(--font-body);
 	margin: 10px;
 	padding: 15px;
-	border: 1px solid rgba(45, 212, 191, 0.15);
+	border: 1px solid rgba(111, 160, 50, 0.15);
 	border-radius: 10px;
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
 }
 
 .msg-box {
 	background: rgba(255, 255, 255, 0.06);
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
 	color: var(--color-text);
 	margin: 10px;
 	padding: 3px;
-	border: 1px solid rgba(45, 212, 191, 0.12);
+	border: 1px solid rgba(111, 160, 50, 0.12);
 	border-radius: 10px;
 	display: flex;
 	flex-direction: column;
@@ -627,20 +619,16 @@
 
 .view-author-profile {
 	font-weight: 600;
-	color: var(--color-primary-light);
-}
-
-.view-author-profile:hover {
 	color: var(--color-primary);
 }
+
+.view-author-profile:hover { color: var(--green-300); }
 
 .chat-actions-btn > * {
 	font-size: 0.77rem !important;
 	font-weight: 600 !important;
 	margin: 1px;
 	transition: all 0.2s ease-in-out !important;
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
 }
 
 .edit-button {
@@ -654,7 +642,6 @@
 	background-color: rgba(59, 130, 246, 0.3) !important;
 	color: #fff !important;
 	border: 1px solid rgba(59, 130, 246, 0.5) !important;
-	box-shadow: 0 0 12px rgba(59, 130, 246, 0.2) !important;
 }
 
 .delete-button {
@@ -668,7 +655,6 @@
 	background-color: rgba(225, 29, 72, 0.35) !important;
 	color: #fff !important;
 	border: 1px solid rgba(225, 29, 72, 0.6) !important;
-	box-shadow: 0 0 12px rgba(225, 29, 72, 0.25) !important;
 }
 
 .moderate-button {
@@ -682,26 +668,22 @@
 	background-color: rgba(124, 58, 237, 0.35) !important;
 	color: #fff !important;
 	border: 1px solid rgba(124, 58, 237, 0.6) !important;
-	box-shadow: 0 0 12px rgba(124, 58, 237, 0.25) !important;
 }
 
 .restore-button {
-	background-color: rgba(45, 212, 191, 0.12) !important;
+	background-color: rgba(111, 160, 50, 0.12) !important;
 	color: var(--color-primary) !important;
-	border: 1px solid rgba(45, 212, 191, 0.25) !important;
+	border: 1px solid rgba(111, 160, 50, 0.25) !important;
 	border-radius: 6px !important;
 }
 
 .restore-button:hover {
-	background-color: rgba(45, 212, 191, 0.25) !important;
-	color: #fff !important;
-	border: 1px solid rgba(45, 212, 191, 0.45) !important;
-	box-shadow: 0 0 12px rgba(45, 212, 191, 0.2) !important;
+	background-color: rgba(111, 160, 50, 0.25) !important;
+	color: var(--green-50) !important;
+	border: 1px solid rgba(111, 160, 50, 0.45) !important;
 }
 
-.input-msg {
-	margin-top: 7px;
-}
+.input-msg { margin-top: 7px; }
 
 .messages-box {
 	display: flex;
@@ -710,37 +692,35 @@
 }
 
 .input.input {
-	background-color: #026354;
-	border: 1.55px solid #013029;
-	color: var(--color-primary-light);
+	background-color: var(--stone-800);
+	border: 1.5px solid var(--stone-700);
+	color: var(--color-primary);
 	font-size: var(--fs-md1);
 	font-family: var(--font-body);
 }
 
 .input-msg .button {
-	background-color: #026354 !important;
-	color: var(--color-primary-light) !important;
-	border: 1.55px solid  #013029;
+	background-color: var(--stone-800) !important;
+	color: var(--color-primary) !important;
+	border: 1.5px solid var(--stone-700);
 	margin: 0 !important;
 }
 
-.input.input::placeholder {
-	color: var(--color-primary-light) !important;
-}
+.input.input::placeholder { color: var(--stone-500) !important; }
 
 .input.input:focus {
-	border: 2px solid var(--color-primary-light);
+	border: 2px solid var(--color-primary);
 	box-shadow: var(--shadow-soft);
 }
 
 .join-box {
-	background: rgba(45, 212, 191, 0.08) !important;
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
+	width: 90%;
+	box-sizing: border-box;
+	background: rgba(111, 160, 50, 0.08) !important;
 	color: var(--color-text) !important;
 	margin: 10px;
 	padding: 3px;
-	border: 1px solid rgba(45, 212, 191, 0.2);
+	border: 1px solid rgba(111, 160, 50, 0.2);
 	border-radius: 10px;
 	display: flex;
 	flex-direction: column;
@@ -748,40 +728,29 @@
 }
 
 @keyframes inviteGlow {
-	from {
-		box-shadow: 0 0 4px rgba(45, 212, 191, 0.2);
-	}
-	to {
-		box-shadow:
-		0 0 8px rgba(45, 212, 191, 0.3),
-		0 0 14px rgba(45, 212, 191, 0.15);
-	}
+	from { box-shadow: 0 0 4px rgba(111, 160, 50, 0.2); }
+	to   { box-shadow: 0 0 8px rgba(111, 160, 50, 0.3), 0 0 14px rgba(111, 160, 50, 0.15); }
 }
 
-.join-box p strong {
-	color: #e2e8f0 !important;
-}
+.join-box p strong { color: var(--stone-100) !important; }
 
 .chat-join-button {
 	font-size: 0.77rem !important;
 	font-weight: 700 !important;
 	align-self: center !important;
 	margin: 3px !important;
-	background: rgba(45, 212, 191, 0.15) !important;
-	border: 1px solid rgba(45, 212, 191, 0.3) !important;
+	background: rgba(111, 160, 50, 0.15) !important;
+	border: 1px solid rgba(111, 160, 50, 0.3) !important;
 	color: var(--color-primary) !important;
 	border-radius: 6px !important;
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
 	transition: all 0.2s ease-in-out !important;
 	animation: inviteGlow 2s infinite alternate;
 }
 
 .chat-join-button:hover {
-	background: rgba(45, 212, 191, 0.25) !important;
-	color: #fff !important;
-	border: 1px solid rgba(45, 212, 191, 0.5) !important;
-	box-shadow: 0 0 12px rgba(45, 212, 191, 0.25) !important;
+	background: rgba(111, 160, 50, 0.25) !important;
+	color: var(--green-50) !important;
+	border: 1px solid rgba(111, 160, 50, 0.5) !important;
 }
 
 .friend2invite {
@@ -800,8 +769,6 @@
 	font-family: var(--font-body) !important;
 	border: 1px solid rgba(59, 130, 246, 0.3) !important;
 	border-radius: 6px !important;
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
 	transition: all 0.2s ease-in-out;
 }
 
@@ -809,7 +776,6 @@
 	background: rgba(59, 130, 246, 0.25) !important;
 	color: #dbeafe !important;
 	border-color: rgba(59, 130, 246, 0.5) !important;
-	box-shadow: 0 0 12px rgba(59, 130, 246, 0.2);
 }
 
 .chat-invite-button:disabled {
@@ -817,10 +783,13 @@
 	color: rgba(226, 232, 240, 0.5) !important;
 	border: 1px solid rgba(255, 255, 255, 0.1) !important;
 	cursor: not-allowed !important;
-	box-shadow: none !important;
 }
 
-@media screen and (max-width: 1023px) { /* Bulma breakpoint for desktop */
+/* ================ */
+/*  Mobile overrides */
+/* ================ */
+
+@media screen and (max-width: 1023px) {
   .chat-sidebar-desktop {
     display: none;
   }
@@ -844,34 +813,13 @@
 		margin: 2px;
 	}
 
-	.members-dropdown {
-		color: var(--color-text) !important;
-	}
-
-	.members-list, .role-options {
-		color: var(--color-text) !important;
-	}
+	.members-dropdown { color: var(--color-text) !important; }
+	.members-list, .role-options { color: var(--color-text) !important; }
 
 	.members-list li {
 		gap: 0.1rem;
 		font-size: 0.9rem;
 	}
-	.role-options {
-		background: rgba(255, 255, 255, 0.06);
-	}
 
-	.join-box {
-		animation: inviteGlow 2s infinite alternate;
-	}
-
-	@keyframes inviteGlow {
-		from {
-			box-shadow: 0 0 4px rgba(37, 99, 235, 0.3);
-		}
-		to {
-			box-shadow:
-			0 0 8px rgba(37, 99, 235, 0.4),
-			0 0 14px rgba(59, 130, 246, 0.2);
-		}
-	}
+	.role-options { background: rgba(255, 255, 255, 0.06); }
 }

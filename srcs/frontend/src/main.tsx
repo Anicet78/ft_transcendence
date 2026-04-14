@@ -1,14 +1,17 @@
-import "./main.css"
+import './theme.css'
+import 'bulma/css/bulma.min.css'
+import '@mdi/font/css/materialdesignicons.min.css'
+import '@fortawesome/fontawesome-free/css/all.min.css'
+import './main.css'
 
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import 'bulma/css/bulma.min.css'; // bulma style css
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import "./styles/tokens.css"
-import './index.css'
-import App from './App.tsx'
+import { Toaster } from "sonner";
+
+import App from './App.tsx';
+import Navbar from './components/Navbar.tsx';
 import Login from './auth/login.tsx';
 import Register from './auth/register.tsx';
 import ProfilePrivate from './profile/profile-private.tsx';
@@ -16,7 +19,6 @@ import ProfilePublic from './profile/profile-public.tsx';
 import TermsService from './policies/TermsService.tsx';
 import Privacy from './policies/PrivacyPolicy.tsx';
 import Error from './error/error.tsx';
-import Banner from './components/Banner.tsx';
 import MyFooter from './components/Footer.tsx';
 import FriendList from './friendship/FriendsList.tsx';
 import ChatList from './chat/ChatList.tsx';
@@ -29,7 +31,6 @@ import { AuthProvider } from './auth/AuthContext.tsx';
 import { SocketProvider } from './socket/SocketContext.tsx';
 import { RoomProvider } from './home/RoomContext.tsx';
 import ProfileUpdate from './profile/ProfileUpdate.tsx';
-import { Toaster } from "sonner";
 import { ChatProvider } from './chat/ChatContext.tsx';
 import GroupChatCreation from './chat/components/GroupChatCreation.tsx';
 import GroupChatInvitations from './chat/components/GroupChatInvitations.tsx';
@@ -38,7 +39,6 @@ import Callback42 from './auth/callback42.tsx';
 import { InviteToGroupChat } from './chat/components/InviteToGroupChat.tsx';
 import SearchPage from './search/SearchPage.tsx';
 import ResetPassword from './auth/reset-password.tsx';
-import "./main.css"
 import GameRules from './about/game-rules.tsx';
 import Sidebar from './components/Sidebar.tsx';
 
@@ -53,7 +53,7 @@ const queryClient = new QueryClient({
 const AppEntryPoint = () => {
 	return (
 		<div className="page-container no-fog">
-		<Banner />
+		 <Navbar />
 		<div className="main-layout">
 			<div className="content">
 				<Routes>

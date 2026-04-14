@@ -1,80 +1,67 @@
-.my-footer {
-	background-color: transparent !important;
-	color: var(--footer-color-text);
-	padding: clamp(1rem, 1.5rem, 1.5rem) !important;
-	font-size: 0.95rem;
-	font-family: var(--font-footer);
-	background-size: cover;
-	display: flex;
-	flex-direction: row;
-	align-items: stretch;
-	justify-content: center;
+.site-footer {
+	border-top: 1px solid var(--stone-700);
+	background-color: var(--stone-900);
+	padding: 1.25rem 1.5rem;
 }
 
-/*.parchment-center {
-	background-image: url("../assets/parchment-center.png");
-	background-size: contain;
+.site-footer__inner {
+	max-width: 960px;
+	margin: 0 auto;
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
-}*/
-
-.parchment-text {
-	font-size: clamp(0.62rem, 2vw, 1.4rem);
+	justify-content: space-between;
+	gap: .75rem 2rem;
 }
 
-.my-footer .content {
-	margin-bottom: var(--space-md);
+.site-footer__brand {
+	display: flex;
+	align-items: baseline;
+	gap: .75rem;
 }
 
-.my-footer p {
-	margin-bottom: 0.75rem;
-	line-height: 1.5;
-	text-shadow: 0 0 2px var(--footer-color-shadow);
+.site-footer__title {
+  font-family: var(--font-game-title);
+  font-size: .7rem;          /* Press Start 2P — .7rem renders visually large */
+  color: var(--color-primary);
+  letter-spacing: .06em;
 }
 
-.my-footer span {
-	font-weight: 700 !important;
-	color: var(--color-primary-light) !important;
+.site-footer__meta {
+  font-family: var(--font-mono);
+  font-size: .82rem;         /* was .72rem */
+  color: var(--stone-500);
 }
 
-.my-footer p:last-child {
-	margin-bottom: 0;
+.site-footer__authors {
+  font-family: var(--font-mono);
+  font-size: .88rem;         /* was .78rem */
+  color: var(--stone-400);
 }
 
-/* Link styling */
-.my-footer a {
-	color: var(--footer-color-link);
-	font-weight: 700 !important;
+.site-footer__legal {
+  font-size: .88rem;         /* was .78rem */
+  color: var(--stone-500);
+}
+
+.site-footer__link {
+	color: var(--stone-400);
 	text-decoration: none;
-	transition: all 0.3s ease;
+	transition: color 150ms ease;
 }
 
-.my-footer a:hover, .my-footer .navlink:hover {
-	color: #ffdd99;
-	text-shadow: 0 0 5px #ffdd99;
-	transform: translateY(-2px);
+.site-footer__link:hover {
+	color: var(--color-primary);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-	.my-footer {
-		font-size: 0.85rem;
-		padding: 1.5rem 1rem;
-	}
-
-	.my-footer p {
-		line-height: 1.4;
-	}
+.site-footer__sep {
+	color: var(--stone-600);
 }
 
-@media (max-width: 400px) {
-	.my-footer {
-		font-size: 0.85rem;
-		padding: 1.5rem 1rem;
-	}
-
-	.my-footer p {
-		line-height: 1.4;
-	}
-
+@media (max-width: 600px) {
+.site-footer__inner {
+	flex-direction: column;
+	align-items: flex-start;
+	gap: .5rem;
+}
 }

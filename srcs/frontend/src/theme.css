@@ -1,0 +1,1009 @@
+/* ============================================================
+   1. GOOGLE FONTS
+   - Press Start 2P  : headings / game title  (pixel-art, retro gaming)
+   - Atkinson Hyperlegible Next : body / UI   (designed for low-vision users)
+   - JetBrains Mono  : code / stats
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Almendra:ital,wght@0,400;0,700;1,400&family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+/* ============================================================
+   2. DESIGN TOKENS
+   ============================================================ */
+:root {
+  /* --- Palette ------------------------------------------------ */
+  /*
+   * Extracted from the pixel-art forest/dungeon game asset:
+   * greens from the grass/tree canopy, greys from the stone tiles,
+   * warm earth from the soil and pottery.
+   */
+
+  /* Stone grey — UI surfaces, borders, neutrals
+     Sampled from the stone tile floor and wall blocks             */
+  --stone-950: #0e0f0d;
+  --stone-900: #161814;
+  --stone-850: #1e2019;
+  --stone-800: #272920;
+  --stone-750: #313428;
+  --stone-700: #3e4132;
+  --stone-600: #565a47;
+  --stone-500: #727660;
+  --stone-400: #949880;
+  --stone-300: #b8bca6;
+  --stone-200: #d4d8c8;
+  --stone-100: #eceee6;
+  --stone-50:  #f6f7f2;
+
+  /* Pixel green — PRIMARY accent
+     Sampled from the bright grass and tree canopy (#7db344 range) */
+  --green-900: #141f08;
+  --green-800: #1e3010;
+  --green-700: #2d4a18;
+  --green-600: #3d6420;
+  --green-500: #527f28;
+  --green-400: #6fa032;
+  --green-350: #7db344;  /* exact canopy highlight */
+  --green-300: #8fc455;
+  --green-200: #aed87c;
+  --green-150: #c4e89e;  /* light grass */
+  --green-100: #d8f0bc;
+  --green-50:  #eef8d8;
+
+  /* Earthy amber — XP, torch, warm accents
+     Sampled from the pottery and soil patches                     */
+  --amber-900: #1e1000;
+  --amber-800: #321a00;
+  --amber-700: #4e2a00;
+  --amber-600: #6e3c00;
+  --amber-500: #924f08;
+  --amber-400: #b86818;
+  --amber-300: #d4882e;
+  --amber-200: #e8ae60;
+  --amber-100: #f5d49a;
+  --amber-50:  #faecd0;
+
+  /* Blood red — danger, enemy, low HP                            */
+  --blood-900: #1a0404;
+  --blood-700: #541010;
+  --blood-500: #8e1e1e;
+  --blood-400: #b83030;
+  --blood-300: #d45858;
+  --blood-200: #e89898;
+  --blood-100: #f8dede;
+
+  /* Blue rune — info, magic, portal glow
+     Sampled from the glowing rune circles on the altar           */
+  --rune-700: #0c2040;
+  --rune-500: #1e4e8c;
+  --rune-400: #3878c8;
+  --rune-300: #60a0e0;
+  --rune-200: #98c8f0;
+  --rune-100: #cce4f8;
+
+  /* --- Semantic colours --------------------------------------- */
+  --color-bg:          var(--stone-900);
+  --color-surface:     var(--stone-850);
+  --color-surface-2:   var(--stone-800);
+  --color-surface-3:   var(--stone-750);
+  --color-border:      var(--stone-700);
+  --color-border-soft: rgba(255,255,255,.06);
+
+  --color-text:        var(--stone-100);
+  --color-text-muted:  var(--stone-400);
+  --color-text-faint:  var(--stone-500);
+
+  --color-primary:     var(--green-350);
+  --color-primary-dim: var(--green-600);
+  --color-primary-glow:rgba(125, 179, 68, .18);
+
+  --color-accent:      var(--amber-300);
+  --color-accent-dim:  var(--amber-600);
+
+  --color-danger:      var(--blood-400);
+  --color-success:     var(--green-400);
+  --color-warning:     var(--amber-300);
+  --color-info:        var(--rune-300);
+
+  /* --- Typography -------------------------------------------- */
+  --font-game-title:  'Press Start 2P', 'Courier New', monospace;
+  --font-title:  'Almendra', 'Georgia', serif;
+  --font-body:   'Atkinson Hyperlegible Next', 'Verdana', sans-serif;
+  --font-mono:   'JetBrains Mono', 'Courier New', monospace;
+
+  /* Aliases used in existing code */
+  --font-name-title:    var(--font-game-title);
+  --font-section-title: var(--font-title);
+  --font-button-large:  var(--font-body);
+
+  /* --- Spacing ----------------------------------------------- */
+  --space-xs:  .25rem;
+  --space-sm:  .5rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
+  --space-2xl: 4rem;
+
+  /* --- Radius ------------------------------------------------ */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 18px;
+
+  /* --- Shadows (stone carved depth) ------------------------- */
+  /* --- Shadows (stone carved depth) ------------------------- */
+  --shadow-soft:  0 2px 12px rgba(0,0,0,.45);
+  --shadow-inset: inset 0 1px 3px rgba(0,0,0,.5);
+  --shadow-card:  0 4px 24px rgba(0,0,0,.55);
+  --shadow-glow:  0 0 18px rgba(125,179,68,.25);
+
+  /* --- Transitions ------------------------------------------ */
+  --ease-out: cubic-bezier(.22,.68,0,1.2);
+  --dur-fast: 120ms;
+  --dur-std:  200ms;
+}
+
+/* ============================================================
+   3. GLOBAL RESET & BASE
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+  min-height: 100dvh;
+  /* Subtle stone texture via repeating gradient */
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(56,184,128,.05) 0%, transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='none'/%3E%3Cpath d='M0 0h1v1H0zm2 2h1v1H2z' fill='rgba(255,255,255,.018)'/%3E%3C/svg%3E");
+}
+
+/* Improve legibility for dyslexic users */
+p, li, label, input, textarea, select {
+  letter-spacing: .01em;
+  word-spacing: .04em;
+}
+
+/* Focus ring — always visible, no outline:none */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* ============================================================
+   4. TYPOGRAPHY SCALE
+   ============================================================ */
+h1, h2, h3, h4, h5, h6,
+.title, .subtitle {
+  font-family: var(--font-section-title);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: .02em;
+}
+
+/* Press Start 2P is naturally bold-weight, scale sizes down accordingly */
+h1, .title.is-1 { font-size: clamp(1.1rem, 2.5vw, 1.8rem); }
+h2, .title.is-2 { font-size: clamp(.9rem,  2vw,   1.4rem); }
+h3, .title.is-3 { font-size: clamp(.78rem, 1.6vw, 1.1rem); }
+h4, .title.is-4 { font-size: clamp(.7rem,  1.2vw,  .9rem); }
+
+.subtitle,
+.title.subtitle {
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--color-text-muted);
+  letter-spacing: .01em;
+}
+
+/* ============================================================
+   5. BULMA VARIABLE OVERRIDES
+   These map Bulma's SCSS vars to our tokens via CSS vars.
+   Because we're using the compiled CSS, we override via
+   attribute selectors & class overrides below.
+   ============================================================ */
+
+/* --- Colours --- */
+.has-text-primary  { color: var(--color-primary) !important; }
+.has-text-danger   { color: var(--color-danger)  !important; }
+.has-text-warning  { color: var(--color-warning) !important; }
+.has-text-success  { color: var(--color-success) !important; }
+.has-text-info     { color: var(--color-info)    !important; }
+.has-text-muted    { color: var(--color-text-muted) !important; }
+
+/* --- Backgrounds --- */
+.has-background-dark    { background-color: var(--color-surface)  !important; }
+.has-background-darker  { background-color: var(--color-bg)       !important; }
+
+/* ============================================================
+   6. LAYOUT SHELL
+   ============================================================ */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* Centered content wrapper */
+.page-shell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg) var(--space-md);
+}
+
+/* ============================================================
+   7. NAVBAR
+   ============================================================ */
+.navbar {
+  background-color: rgba(13, 12, 10, .88) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0 var(--space-lg);
+}
+
+.navbar-brand .navbar-item {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  color: var(--color-primary) !important;
+  letter-spacing: .05em;
+  gap: .5rem;
+}
+
+.navbar-item,
+.navbar-link {
+  color: var(--color-text-muted) !important;
+  font-size: .9rem;
+  transition: color var(--dur-std) ease;
+}
+
+.navbar-item:hover,
+.navbar-link:hover,
+.navbar-item.is-active {
+  background-color: transparent !important;
+  color: var(--color-text) !important;
+}
+
+.navbar-item.is-active {
+  color: var(--color-primary) !important;
+}
+
+.navbar-burger span {
+  background-color: var(--color-text-muted) !important;
+  height: 1px !important;
+}
+
+.navbar-menu {
+  background-color: var(--stone-900) !important;
+}
+
+/* ============================================================
+   8. BUTTONS
+   All buttons: no animation unless hovered.
+   ============================================================ */
+
+/* Base reset for ALL .button */
+.button {
+  font-family: var(--font-body) !important;
+  font-weight: 600 !important;
+  letter-spacing: .04em;
+  border-radius: var(--radius-md) !important;
+  transition:
+    background-color var(--dur-std) ease,
+    border-color     var(--dur-std) ease,
+    color            var(--dur-std) ease,
+    box-shadow       var(--dur-std) ease !important;
+
+  /* Kill all animations from old CSS */
+  animation: none !important;
+  -webkit-animation: none !important;
+}
+
+/* --- Primary button (pixel green) -------------------------- */
+.button.is-primary {
+  background-color: var(--green-600) !important;
+  border-color:     var(--green-500) !important;
+  color:            var(--green-100) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,.4) !important;
+}
+
+.button.is-primary:hover,
+.button.is-primary:focus-visible {
+  background-color: var(--green-500) !important;
+  border-color:     var(--green-400) !important;
+  box-shadow: 0 2px 10px rgba(125,179,68,.3) !important;
+}
+
+.button.is-primary:active {
+  background-color: var(--green-700) !important;
+  transform: translateY(1px);
+}
+
+/* --- Ghost / outline button -------------------------------- */
+.button.is-ghost,
+.button.is-outlined,
+.button:not([class*="is-"]) {
+  background-color: transparent !important;
+  border: 1px solid var(--color-border) !important;
+  color: var(--color-text-muted) !important;
+}
+
+.button.is-ghost:hover,
+.button.is-outlined:hover,
+.button:not([class*="is-"]):hover {
+  background-color: var(--color-surface-2) !important;
+  border-color:     var(--color-primary) !important;
+  color:            var(--color-text) !important;
+}
+
+/* --- Danger button ----------------------------------------- */
+.button.is-danger {
+  background-color: var(--blood-700) !important;
+  border-color:     var(--blood-500) !important;
+  color:            var(--blood-100) !important;
+}
+
+.button.is-danger:hover {
+  background-color: var(--blood-500) !important;
+}
+
+/* --- Warning button ---------------------------------------- */
+.button.is-warning {
+  background-color: var(--amber-700) !important;
+  border-color:     var(--amber-500) !important;
+  color:            var(--amber-100) !important;
+}
+
+.button.is-warning:hover {
+  background-color: var(--amber-600) !important;
+}
+
+/* Remove heartbeat on buttons everywhere */
+.heartbeat {
+  animation: none !important;
+  -webkit-animation: none !important;
+}
+
+/* ============================================================
+   9. FORMS
+   ============================================================ */
+.label {
+  color: var(--color-text-muted) !important;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: .875rem;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.input,
+.textarea,
+.select select {
+  background-color: var(--color-surface-2) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-md) !important;
+  color: var(--color-text) !important;
+  box-shadow: var(--shadow-inset) !important;
+  font-family: var(--font-body) !important;
+  font-size: 1rem;
+  transition:
+    border-color var(--dur-std) ease,
+    box-shadow   var(--dur-std) ease !important;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--color-text-faint) !important;
+}
+
+.input:focus,
+.textarea:focus,
+.select select:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow:
+    var(--shadow-inset),
+    0 0 0 3px rgba(56,184,128,.18) !important;
+  outline: none;
+}
+
+.input.is-danger,
+.textarea.is-danger {
+  border-color: var(--color-danger) !important;
+}
+
+.help {
+  color: var(--color-text-faint) !important;
+  font-size: .825rem;
+}
+
+.help.is-danger { color: var(--color-danger) !important; }
+.help.is-success { color: var(--color-success) !important; }
+
+/* ============================================================
+   10. CARDS
+   ============================================================ */
+.card {
+  background-color: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow: var(--shadow-card) !important;
+  color: var(--color-text) !important;
+}
+
+.card-header {
+  background-color: var(--color-surface-2) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0 !important;
+  box-shadow: none !important;
+}
+
+.card-header-title {
+  font-family: var(--font-title) !important;
+  color: var(--color-text) !important;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: .04em;
+}
+
+.card-content { padding: var(--space-lg) !important; }
+
+/* --- Panel / game card (custom) --- */
+.panel-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-xl);
+  width: 100%;
+  max-width: 480px;
+}
+
+.panel-card__title {
+  font-family: var(--font-title);
+  font-size: clamp(.8rem, 1.5vw, 1rem);
+  color: var(--color-primary);
+  text-align: center;
+  margin-bottom: var(--space-lg);
+  letter-spacing: .04em;
+  line-height: 1.6;
+}
+
+
+/* ============================================================
+   11. NOTIFICATION / TOAST
+   ============================================================ */
+.notification {
+  background-color: var(--color-surface-2) !important;
+  border-left: 3px solid var(--color-primary) !important;
+  border-radius: var(--radius-md) !important;
+  color: var(--color-text) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+.notification.is-primary  { border-left-color: var(--color-primary) !important; }
+.notification.is-danger   { border-left-color: var(--color-danger)  !important; }
+.notification.is-warning  { border-left-color: var(--color-warning) !important; }
+.notification.is-success  { border-left-color: var(--color-success) !important; }
+.notification.is-info     { border-left-color: var(--color-info)    !important; }
+
+.notification.is-light {
+  background-color: var(--color-surface-2) !important;
+  color: var(--color-text) !important;
+}
+
+.notification .title  { color: var(--color-text) !important; }
+.notification .subtitle { color: var(--color-text-muted) !important; }
+
+/* ============================================================
+   12. MODAL
+   ============================================================ */
+.modal-background {
+  background-color: rgba(0,0,0,.75) !important;
+  backdrop-filter: blur(4px);
+}
+
+.modal-card {
+  background-color: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+.modal-card-head,
+.modal-card-foot {
+  background-color: var(--color-surface-2) !important;
+  border-color: var(--color-border) !important;
+}
+
+.modal-card-title {
+  font-family: var(--font-title) !important;
+  color: var(--color-text) !important;
+}
+
+.modal-card-body {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+}
+
+/* ============================================================
+   13. TABS
+   ============================================================ */
+.tabs {
+  border-bottom-color: var(--color-border) !important;
+}
+
+.tabs a {
+  color: var(--color-text-muted) !important;
+  border-bottom-color: transparent !important;
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: .03em;
+  transition: color var(--dur-std) ease !important;
+}
+
+.tabs a:hover { color: var(--color-text) !important; }
+
+.tabs li.is-active a {
+  color: var(--color-primary) !important;
+  border-bottom-color: var(--color-primary) !important;
+}
+
+/* ============================================================
+   14. TABLE
+   ============================================================ */
+.table {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.table thead th {
+  background-color: var(--color-surface-2) !important;
+  color: var(--color-text-muted) !important;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  border-bottom-color: var(--color-border) !important;
+}
+
+.table td, .table th { border-color: var(--color-border) !important; }
+
+.table tbody tr:hover td {
+  background-color: var(--color-surface-2) !important;
+}
+
+/* Striped variant */
+.table.is-striped tbody tr:not(.is-selected):nth-child(even) td {
+  background-color: rgba(255,255,255,.025) !important;
+}
+
+/* ============================================================
+   15. PROGRESS / HEALTH BARS
+   ============================================================ */
+.progress {
+  border-radius: var(--radius-sm) !important;
+  background-color: var(--color-surface-2) !important;
+  height: .65rem !important;
+  box-shadow: var(--shadow-inset) !important;
+}
+
+.progress::-webkit-progress-bar  { background-color: var(--color-surface-2); }
+.progress::-webkit-progress-value { background-color: var(--color-primary); border-radius: var(--radius-sm); }
+.progress::-moz-progress-bar     { background-color: var(--color-primary); border-radius: var(--radius-sm); }
+
+.progress.is-danger::-webkit-progress-value { background-color: var(--color-danger); }
+.progress.is-warning::-webkit-progress-value { background-color: var(--color-warning); }
+.progress.is-success::-webkit-progress-value { background-color: var(--color-success); }
+.progress.is-danger::-moz-progress-bar  { background-color: var(--color-danger); }
+.progress.is-warning::-moz-progress-bar { background-color: var(--color-warning); }
+.progress.is-success::-moz-progress-bar { background-color: var(--color-success); }
+
+/* ============================================================
+   16. TAG / BADGE
+   ============================================================ */
+.tag {
+  font-family: var(--font-mono) !important;
+  font-size: .75rem !important;
+  border-radius: var(--radius-sm) !important;
+  font-weight: 500 !important;
+  letter-spacing: .04em;
+}
+
+.tag.is-primary  { background-color: var(--green-800)  !important; color: var(--green-200)  !important; }
+.tag.is-danger   { background-color: var(--blood-700) !important; color: var(--blood-200) !important; }
+.tag.is-warning  { background-color: var(--amber-800) !important; color: var(--amber-200) !important; }
+.tag.is-success  { background-color: var(--green-800)  !important; color: var(--green-200)  !important; }
+.tag.is-info     { background-color: var(--rune-700)   !important; color: var(--rune-200)   !important; }
+.tag.is-dark     { background-color: var(--stone-800) !important; color: var(--stone-300) !important; }
+
+/* ============================================================
+   17. LEVEL (XP/STATS ROW)
+   ============================================================ */
+.level-item .heading {
+  font-family: var(--font-body) !important;
+  color: var(--color-text-muted) !important;
+  font-size: .72rem !important;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.level-item .title {
+  font-family: var(--font-mono) !important;
+  color: var(--color-text) !important;
+}
+
+/* ============================================================
+   18. SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: var(--color-bg); }
+::-webkit-scrollbar-thumb  { background: var(--stone-600); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--stone-400); }
+
+/* ============================================================
+   19. DIVIDER
+   ============================================================ */
+hr {
+  background-color: var(--color-border) !important;
+  height: 1px !important;
+  margin: var(--space-lg) 0 !important;
+}
+
+/* ============================================================
+   20. LINKS
+   ============================================================ */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--dur-std) ease;
+}
+
+a:hover { color: var(--green-300); }
+
+/* ============================================================
+   21. GAME-SPECIFIC COMPONENTS
+   ============================================================ */
+
+/* --- Auth panel (login / register) ---
+   Clean, no animation, centered on page.
+   ---------------------------------------- */
+.auth-panel {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-xl);
+  width: 100%;
+  max-width: 440px;
+}
+
+.auth-panel__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.auth-panel__logo img,
+.auth-panel__logo svg {
+  width: 2.5rem;
+  height: 2.5rem;
+  filter: brightness(0) saturate(100%) invert(72%) sepia(37%) saturate(400%)
+          hue-rotate(105deg) brightness(90%);
+}
+
+.auth-panel__title {
+  font-family: var(--font-title);
+  font-size: 1rem;
+  color: var(--color-primary);
+  letter-spacing: .04em;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.auth-panel__divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin: var(--space-lg) 0;
+  color: var(--color-text-faint);
+  font-size: .8rem;
+}
+
+.auth-panel__divider::before,
+.auth-panel__divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.auth-panel__oauth {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.auth-panel__oauth .button {
+  width: 100%;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+/* --- Landing / home screen ---------------------------------- */
+.landing-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(2rem, 6vw, 5rem) var(--space-lg);
+  min-height: 70vh;
+}
+
+.landing-hero__eyebrow {
+  font-family: var(--font-game-title);
+  font-size: clamp(.7rem, 1.5vw, .95rem); 
+  color: var(--stone-100);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-xs);
+  line-height: 0.5;
+}
+
+.landing-hero__title {
+  font-family: var(--font-name-title);
+  font-size: clamp(1.4rem, 4vw, 2.8rem);
+  color: var(--color-text);
+  line-height: 1.5;
+  margin-bottom: var(--space-lg);
+}
+
+.accent {
+  color: var(--color-primary);
+}
+
+.landing-hero__subtitle {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--color-text-muted);
+  max-width: min(600px, 90%);
+  margin: 0 auto var(--space-xl);
+  line-height: 1.7;
+}
+
+.landing-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  justify-content: center;
+}
+
+/* --- Game room / lobby cards -------------------------------- */
+.room-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  transition:
+    border-color var(--dur-std) ease,
+    box-shadow   var(--dur-std) ease;
+  cursor: pointer;
+}
+
+.room-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary-glow), var(--shadow-soft);
+}
+
+.room-card__name {
+  font-family: var(--font-title);
+  font-size: .75rem;
+  color: var(--color-text);
+  margin-bottom: var(--space-xs);
+  line-height: 1.6;
+}
+
+.room-card__meta {
+  font-size: .82rem;
+  color: var(--color-text-faint);
+  font-family: var(--font-mono);
+}
+
+/* --- Stat chip (health, XP, level) ------------------------- */
+.stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: .25rem .6rem;
+  font-family: var(--font-mono);
+  font-size: .82rem;
+  color: var(--color-text-muted);
+}
+
+.stat-chip--hp     { border-color: rgba(184, 48, 48, .35);  color: var(--blood-300); }
+.stat-chip--xp     { border-color: rgba(212,136, 46, .35);  color: var(--amber-300); }
+.stat-chip--level  { border-color: rgba(111,160, 50, .35);  color: var(--green-300); }
+
+/* --- Chat bubble ------------------------------------------- */
+.chat-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+  max-width: 70%;
+}
+
+.chat-bubble__meta {
+  font-size: .72rem;
+  color: var(--color-text-faint);
+  font-family: var(--font-mono);
+}
+
+.chat-bubble__body {
+  background-color: var(--color-surface-2);
+  border-radius: var(--radius-md) var(--radius-lg) var(--radius-lg) var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  font-size: .95rem;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.chat-bubble--own .chat-bubble__body {
+  background-color: var(--green-800);
+  border-color: var(--green-600);
+  color: var(--green-100);
+}
+
+/* --- Game rules box (replaces .rules-box) ------------------ */
+.rules-box {
+  width: 90%;
+  max-width: 680px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  margin: 2rem auto;
+  color: var(--color-text);
+}
+
+.rules-box h2 {
+  font-family: var(--font-title) !important;
+  font-size: clamp(.85rem, 1.8vw, 1.1rem) !important;
+  color: var(--color-primary) !important;
+  text-align: center;
+  margin-bottom: var(--space-lg);
+  line-height: 1.7;
+}
+
+.rules-box h3 {
+  font-family: var(--font-title) !important;
+  font-size: clamp(.65rem, 1.2vw, .8rem) !important;
+  color: var(--color-accent) !important;
+  margin-bottom: var(--space-sm);
+  line-height: 1.6;
+}
+
+.rules-box p {
+  font-family: var(--font-body) !important;
+  font-size: clamp(.875rem, 1.2vw, 1rem) !important;
+  color: var(--color-text-muted) !important;
+  line-height: 1.7;
+  margin-bottom: .5rem;
+}
+
+.rules-box span { color: var(--color-text) !important; font-weight: 700; }
+
+.rules-subbox {
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+/* --- Delete / close button --------------------------------- */
+.delete {
+  background-color: var(--stone-600) !important;
+}
+
+.delete:hover {
+  background-color: var(--stone-500) !important;
+}
+
+/* ============================================================
+   22. UTILITY CLASSES
+   ============================================================ */
+
+/* Mono text for stats, codes, IDs */
+.is-mono { font-family: var(--font-mono); }
+
+/* Muted text */
+.is-muted { color: var(--color-text-muted); }
+.is-faint  { color: var(--color-text-faint); }
+
+/* Surface elevation */
+.surface-1 { background-color: var(--color-surface); }
+.surface-2 { background-color: var(--color-surface-2); }
+.surface-3 { background-color: var(--color-surface-3); }
+
+/* Bordered surface */
+.panel {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+}
+
+/* Divider with label */
+.labeled-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  color: var(--color-text-faint);
+  font-size: .78rem;
+  font-family: var(--font-mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin: var(--space-lg) 0;
+}
+
+.labeled-divider::before,
+.labeled-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================================
+   23. RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .auth-panel      { padding: var(--space-lg); border-radius: var(--radius-lg); }
+  .landing-hero    { min-height: 60vh; }
+  .rules-box       { border-radius: var(--radius-lg); margin: var(--space-lg) auto; }
+  .panel-card      { padding: var(--space-lg); }
+}
+
+/* ============================================================
+   24. REDUCED MOTION
+   All transitions become instant for users who prefer it.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}

@@ -1,53 +1,52 @@
-import { Footer, Content } from '@allxsmith/bestax-bulma';
-import { NavLink } from 'react-router';
-import parchmentCenter from "../assets/parchment-center.png"
-import parchmentLeft from "../assets/parchment-left.svg"
-import parchmentRight from "../assets/parchment-right.svg"
-
-const MyFooter = () => {
-	return (
-		<Footer className="my-footer">
-			<img src={parchmentLeft} />
-			<div className='parchment-center'
-				style={{
-					backgroundImage: `url(${parchmentCenter})`,
-					backgroundSize: 'contain',
-					display: 'flex',
-					alignItems: 'center'
-				}}
-			>
-				<div className='parchment-text'>
-					<Content textAlign="centered" style={{marginTop: 'auto'}}>
-						<p>
-						<span>DungeonNoDragon</span> a transcendence project by{' '}
-						<span><a href="https://github.com/Anicet78">agruet</a></span>{', '}
-						<span><a href="https://codeberg.org/jumichel">jumichel</a></span>{', '}
-						<span><a href="https://github.com/mprokosch0">mprokosc</a></span>{', '}
-						<span><a href="https://github.com/ndabboussi">ndabbous</a></span>{', '}
-						<span><a href="https://github.com/Snak00s">tpinton</a></span>.
-						</p>
-					</Content>
-					<Content textAlign="centered">
-						<p>
-							Find out about our{' '}
-							<NavLink to="/privacy_policy" aria-label='Privacy Policy link'>
-								<strong>Privacy Policy</strong>
-							</NavLink>{' and '}
-							<NavLink to="/terms_of_service" aria-label='Terms of Service link'>
-								<strong>Terms of Service</strong>
-								</NavLink>.
-						</p>
-					</Content>
-					<Content textAlign="centered" style={{marginBottom: 'auto'}}>
-						<p>
-							@2026 Piscine of July 2024 Team
-						</p>
-					</Content>
-				</div>
-			</div>
-			<img src={parchmentRight} />
-		</Footer>
-	)
-}
-
+import { NavLink } from 'react-router'
+ 
+const authors = [
+	{ name: 'agruet',   url: 'https://github.com/Anicet78' },
+	{ name: 'jumichel', url: 'https://codeberg.org/jumichel' },
+	{ name: 'mprokosc', url: 'https://github.com/mprokosch0' },
+	{ name: 'ndabbous', url: 'https://github.com/ndabboussi' },
+	{ name: 'tpinton',  url: 'https://github.com/Snak00s' },
+]
+ 
+const MyFooter = () => (
+	<footer className="site-footer">
+		<div className="site-footer__inner">
+	
+		<div className="site-footer__brand">
+			<span className="site-footer__title">
+			<span style={{ color: 'var(--stone-100)' }}>Dungeon</span>
+			<span style={{ color: 'var(--color-primary)' }}>NoDragon</span>
+			</span>
+			<span className="site-footer__meta">© 2026 · Piscine July 2024</span>
+		</div>
+	
+		<div className="site-footer__authors">
+			{authors.map((a, i) => (
+			<span key={a.name}>
+				<a href={a.url} target="_blank" rel="noopener noreferrer"
+				className="site-footer__link">
+				{a.name}
+				</a>
+				{i < authors.length - 1 && (
+				<span className="site-footer__sep"> · </span>
+				)}
+			</span>
+			))}
+		</div>
+	
+		<div className="site-footer__legal">
+			<NavLink to="/privacy_policy" className="site-footer__link">
+			Privacy Policy
+			</NavLink>
+			<span className="site-footer__sep"> · </span>
+			<NavLink to="/terms_of_service" className="site-footer__link">
+			Terms of Service
+			</NavLink>
+		</div>
+	
+		</div>
+	</footer>
+)
+ 
 export default MyFooter
+ 

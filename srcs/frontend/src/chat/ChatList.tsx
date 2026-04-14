@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import '../App.css'
+//import '../App.css'
 import type { GetResponse } from '../types/GetType'
 import api from '../serverApi';
 import { Button} from '@allxsmith/bestax-bulma';

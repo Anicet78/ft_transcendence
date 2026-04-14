@@ -111,14 +111,16 @@ const Sidebar = () => {
 
 			{/* ===== MOBILE ===== */}
 			<div className="is-hidden-desktop">
-				<Button
-					className="button floating-chat-btn"
-					onClick={() => setMobileOpen(true)}
-				>
-					<span className="icon">
-						<i className="fas fa-comment"></i>
-					</span>
-				</Button>
+			{!mobileOpen && (
+			<Button
+				className="button floating-chat-btn"
+				onClick={() => setMobileOpen(true)}
+			>
+				<span className="icon">
+				<i className="fas fa-comment"></i>
+				</span>
+			</Button>
+			)}
 
 				{mobileOpen && (
 					<div className="chat-mobile-overlay">
