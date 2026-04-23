@@ -83,7 +83,7 @@ The game is fully integrated into a **social platform**, allowing users to:
 
 ### 🗺️ Home page
 
-![Image](.images/home.png)
+![Image](./images/home.png)
 
 ### ⚔️ Combat & gameplay
 ![Image](./images/game_room.png)
